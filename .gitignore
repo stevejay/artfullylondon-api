@@ -15,8 +15,6 @@ build
 # Sensitive info
 env.yml
 .coveralls.yml
-#temporary exclusion
-serverless.yml
 
 # image test results
 *.result.jpg

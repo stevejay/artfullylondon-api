@@ -1,0 +1,125 @@
+service: artfullylondon-data-service
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+package:
+    individually: false
+
+provider:
+    name: aws
+    runtime: nodejs4.3
+    stage: production
+    region: eu-west-1
+    environment: ${file(env.yml):${self:custom.stage}}
+    iamRoleStatements:
+        -
+            Effect: "Allow"
+            Action: "cloudwatch:PutMetricData"
+            Resource: "*"
+
+plugins:
+    - serverless-webpack
+
+custom:
+    project: artfullylondon
+    stage: ${opt:stage, self:provider.stage}
+    region: ${opt:region, self:provider.region}
+    webpackIncludeModules: true
+
+functions:
+    siteMap:
+        handler: handlers/sitemap.handler
+        events:
+            - http:
+                path: "public/sitemap.txt"
+                method: get
+                cors: true
+
+resources:
+    Resources:
+        ApiGatewayResourceAdminSiteData:
+            Type: AWS::ApiGateway::Resource
+            Properties:
+                ParentId:
+                    Fn::GetAtt:
+                        - ApiGatewayRestApi
+                        - RootResourceId
+                PathPart: "admin-site-data"
+                RestApiId:
+                    Ref: ApiGatewayRestApi
+        AdminSiteDataEndpoint:
+            Type: AWS::ApiGateway::Method
+            Properties:
+                AuthorizationType: NONE
+                HttpMethod: GET
+                ResourceId:
+                    Ref: ApiGatewayResourceAdminSiteData
+                RestApiId:
+                    Ref: ApiGatewayRestApi
+                Integration:
+                    Type: MOCK
+                    PassthroughBehavior: WHEN_NO_MATCH
+                    RequestTemplates:
+                        application/json: '{"statusCode": 200}'
+                    IntegrationResponses:
+                        - 
+                            StatusCode: 200
+                            ResponseParameters:
+                                method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                                method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+                                method.response.header.Access-Control-Allow-Origin: "'*'"
+                            ResponseTemplates:
+                                application/json: "${file(./build/content.txt)}"
+                MethodResponses:
+                    -
+                        StatusCode: 200
+                        ResponseModels:
+                            application/json: 'Empty'
+                        ResponseParameters:
+                            method.response.header.Access-Control-Allow-Headers: false
+                            method.response.header.Access-Control-Allow-Methods: false
+                            method.response.header.Access-Control-Allow-Origin: false
+        ApiGatewayResourcePublicSiteData:
+            Type: AWS::ApiGateway::Resource
+            Properties:
+                ParentId:
+                    Fn::GetAtt:
+                        - ApiGatewayRestApi
+                        - RootResourceId
+                PathPart: "public-site-data"
+                RestApiId:
+                    Ref: ApiGatewayRestApi
+        PublicSiteDataEndpoint:
+            Type: AWS::ApiGateway::Method
+            Properties:
+                AuthorizationType: NONE
+                HttpMethod: GET
+                ResourceId:
+                    Ref: ApiGatewayResourcePublicSiteData
+                RestApiId:
+                    Ref: ApiGatewayRestApi
+                Integration:
+                    Type: MOCK
+                    PassthroughBehavior: WHEN_NO_MATCH
+                    RequestTemplates:
+                        application/json: '{"statusCode": 200}'
+                    IntegrationResponses:
+                        - 
+                            StatusCode: 200
+                            ResponseParameters:
+                                method.response.header.Access-Control-Allow-Headers: "'Cache-Control,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                                method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+                                method.response.header.Access-Control-Allow-Origin: "'*'"
+                                method.response.header.Cache-Control: "'public,max-age=86400'"
+                            ResponseTemplates:
+                                application/json: "${file(./build/content.txt)}"
+                MethodResponses:
+                    -
+                        StatusCode: 200
+                        ResponseModels:
+                            application/json: 'Empty'
+                        ResponseParameters:
+                            method.response.header.Access-Control-Allow-Headers: false
+                            method.response.header.Access-Control-Allow-Methods: false
+                            method.response.header.Access-Control-Allow-Origin: false
+                            method.response.header.Cache-Control: false

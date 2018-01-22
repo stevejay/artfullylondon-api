@@ -1,0 +1,77 @@
+service: artfullylondon-search-service
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+package:
+    individually: false
+
+provider:
+    name: aws
+    runtime: nodejs4.3
+    stage: production
+    region: eu-west-1
+    environment: ${file(env.yml):${self:custom.stage}}
+    iamRoleStatements:
+        -
+            Effect: "Allow"
+            Action: "cloudwatch:PutMetricData"
+            Resource: "*"
+
+plugins:
+    - serverless-webpack
+
+custom:
+    project: artfullylondon
+    stage: ${opt:stage, self:provider.stage}
+    region: ${opt:region, self:provider.region}
+    webpackIncludeModules: true
+
+functions:
+    autocompleteSearch:
+        handler: handlers/autocomplete-search.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+        events:
+            - http:
+                path: "admin/search/auto"
+                method: get
+                cors: true
+            - http:
+                path: "public/search/auto"
+                method: get
+                cors: true
+    basicSearch:
+        handler: handlers/basic-search.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+        events:
+            - http:
+                path: "admin/search/basic"
+                method: get
+                cors: true
+            - http:
+                path: "public/search/basic"
+                method: get
+                cors: true
+    eventAdvancedSearch:
+        handler: handlers/event-advanced-search.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+        events:
+            - http:
+                path: "public/search/event"
+                method: get
+                cors: true
+    presetSearch:
+        handler: handlers/preset-search.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+        events:
+            - http:
+                path: "public/search/preset/{name}"
+                method: get
+                cors: true
+            - http:
+                path: "admin/search/preset/{name}"
+                method: get
+                cors: true

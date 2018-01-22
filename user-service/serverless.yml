@@ -1,0 +1,250 @@
+service: artfullylondon-user-service
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+package:
+    individually: false
+
+provider:
+    name: aws
+    runtime: nodejs4.3
+    stage: production
+    region: eu-west-1
+    environment: ${file(env.yml):${self:custom.stage}}
+    iamRoleStatements:
+        -
+            Effect: "Allow"
+            Action: "cloudwatch:PutMetricData"
+            Resource: "*"
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "PublicUserDynamoTable"
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "WatchDynamoTable"
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "PreferencesDynamoTable"
+
+plugins:
+    - serverless-webpack
+
+custom:
+    project: artfullylondon
+    stage: ${opt:stage, self:provider.stage}
+    region: ${opt:region, self:provider.region}
+    publicUserTableName: ${self:custom.project}-${self:custom.stage}-publicuser
+    watchTableName: ${self:custom.project}-${self:custom.stage}-watch
+    preferencesTableName: ${self:custom.project}-${self:custom.stage}-preferences
+    webpackIncludeModules: true
+
+functions:
+    auth:
+        handler: handlers/auth.handler
+    getUser:
+        handler: handlers/get-user.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
+            SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
+            SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
+        events:
+            - http:
+                path: "user"
+                method: get
+                authorizer: auth
+                cors:
+                    origins:
+                        - "*"
+                    headers:
+                        - Content-Type
+                        - X-Amz-Date
+                        - Authorization
+                        - X-Api-Key
+                        - X-Amz-Security-Token
+    deleteUser:
+        handler: handlers/delete-user.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
+            SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
+            SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
+        events:
+            - http:
+                path: "user"
+                method: delete
+                authorizer: auth
+                cors:
+                    origins:
+                        - "*"
+                    headers:
+                        - Content-Type
+                        - X-Amz-Date
+                        - Authorization
+                        - X-Api-Key
+                        - X-Amz-Security-Token
+    getWatches:
+        handler: handlers/get-watches.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
+            SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
+        events:
+            - http:
+                path: "user/watches/{entityType}"
+                method: get
+                authorizer: auth
+                cors:
+                    origins:
+                        - "*"
+                    headers:
+                        - Content-Type
+                        - X-Amz-Date
+                        - Authorization
+                        - X-Api-Key
+                        - X-Amz-Security-Token
+    updateWatches:
+        handler: handlers/update-watches.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
+            SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
+        events:
+            - http:
+                path: "user/watches/{entityType}"
+                method: put
+                authorizer: auth
+                cors:
+                    origins:
+                        - "*"
+                    headers:
+                        - Content-Type
+                        - X-Amz-Date
+                        - Authorization
+                        - X-Api-Key
+                        - X-Amz-Security-Token
+    getPreferences:
+        handler: handlers/get-preferences.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
+        events:
+            - http:
+                path: "user/preferences"
+                method: get
+                authorizer: auth
+                cors:
+                    origins:
+                        - "*"
+                    headers:
+                        - Content-Type
+                        - X-Amz-Date
+                        - Authorization
+                        - X-Api-Key
+                        - X-Amz-Security-Token
+    updatePreferences:
+        handler: handlers/update-preferences.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
+        events:
+            - http:
+                path: "user/preferences"
+                method: put
+                authorizer: auth
+                cors:
+                    origins:
+                        - "*"
+                    headers:
+                        - Content-Type
+                        - X-Amz-Date
+                        - Authorization
+                        - X-Api-Key
+                        - X-Amz-Security-Token
+
+resources:
+    Resources:
+        PublicUserDynamoTable:
+            Type: AWS::DynamoDB::Table
+            DeletionPolicy: Retain
+            Properties:
+                TableName: ${self:custom.publicUserTableName}
+                AttributeDefinitions:
+                    -
+                        AttributeName: userName
+                        AttributeType: S
+                KeySchema:
+                    -
+                        AttributeName: userName
+                        KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 2
+                    WriteCapacityUnits: 1
+        WatchDynamoTable:
+            Type: AWS::DynamoDB::Table
+            DeletionPolicy: Retain
+            Properties:
+                TableName: ${self:custom.watchTableName}
+                AttributeDefinitions:
+                    -
+                        AttributeName: userId
+                        AttributeType: S
+                    -
+                        AttributeName: entityType
+                        AttributeType: S
+                KeySchema:
+                    -
+                        AttributeName: userId
+                        KeyType: HASH
+                    -
+                        AttributeName: entityType
+                        KeyType: RANGE
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 2
+                    WriteCapacityUnits: 1
+        PreferencesDynamoTable:
+            Type: AWS::DynamoDB::Table
+            DeletionPolicy: Retain
+            Properties:
+                TableName: ${self:custom.preferencesTableName}
+                AttributeDefinitions:
+                    -
+                        AttributeName: userId
+                        AttributeType: S
+                KeySchema:
+                    -
+                        AttributeName: userId
+                        KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 2
+                    WriteCapacityUnits: 1

@@ -1,0 +1,880 @@
+service: artfullylondon-event-service
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+package:
+    individually: false
+
+provider:
+    name: aws
+    runtime: nodejs4.3
+    stage: production
+    region: eu-west-1
+    environment: ${file(env.yml):${self:custom.stage}}
+    iamRoleStatements:
+        -
+            Effect: "Allow"
+            Action: "cloudwatch:PutMetricData"
+            Resource: "*"
+        -
+            Effect: "Allow"
+            Action: "lambda:InvokeFunction"
+            Resource: "*"
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "VenueDynamoTable"
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "VenueDynamoTable"
+                        - "/index/"
+                        - ${self:custom.venueBySchemeVersionIndexName}
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "EventDynamoTable"
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "EventDynamoTable"
+                        - "/index/"
+                        - ${self:custom.eventBySchemeVersionIndexName}
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "EventDynamoTable"
+                        - "/index/"
+                        - ${self:custom.eventByVenueIndexName}
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "EventDynamoTable"
+                        - "/index/"
+                        - ${self:custom.eventByEventSeriesIndexName}
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "EventSeriesDynamoTable"
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "EventSeriesDynamoTable"
+                        - "/index/"
+                        - ${self:custom.eventSeriesBySchemeVersionIndexName}
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "TalentDynamoTable"
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "TalentDynamoTable"
+                        - "/index/"
+                        - ${self:custom.talentBySchemeVersionIndexName}
+        -
+            Effect: "Allow"
+            Action: "sns:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:sns:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":*"
+
+plugins:
+    - serverless-webpack
+
+
+${file(./env.yml):${self:custom.stage}.arnPrefix}
+
+custom:
+    project: artfullylondon
+    stage: ${opt:stage, self:provider.stage}
+    region: ${opt:region, self:provider.region}
+    venueTableName: ${self:custom.project}-${self:custom.stage}-venue
+    venueBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-venue-by-scheme
+    eventTableName: ${self:custom.project}-${self:custom.stage}-event
+    eventBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-event-by-scheme
+    eventByVenueIndexName: ${self:custom.project}-${self:custom.stage}-event-by-venue
+    eventByEventSeriesIndexName: ${self:custom.project}-${self:custom.stage}-event-by-eventseries
+    eventSeriesTableName: ${self:custom.project}-${self:custom.stage}-eventseries
+    eventSeriesBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-eventseries-by-scheme
+    talentTableName: ${self:custom.project}-${self:custom.stage}-talent
+    talentBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-talent-by-scheme
+    eventUpdatedSnsEndpointName: "EventUpdated"
+    refreshSearchIndexSnsEndpointName: "RefreshSearchIndex"
+    eventUpdatedTopicArn: ${file(./env.yml):${self:custom.stage}.topicArnPrefix}:${self:custom.eventUpdatedSnsEndpointName}
+    refreshSearchIndexTopicArn: ${file(./env.yml):${self:custom.stage}.topicArnPrefix}:${self:custom.refreshSearchIndexSnsEndpointName}
+    webpackIncludeModules: true
+
+functions:
+    createUpdateVenue:
+        handler: handlers/venue/create-or-update-venue.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/venue"
+                method: post
+                cors: true
+            - http:
+                path: "admin/venue/{id+}"
+                method: put
+                cors: true
+    getVenue:
+        handler: handlers/venue/get-venue.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/venue/{id+}"
+                method: get
+                cors: true
+            - http:
+                path: "public/venue/{id+}"
+                method: get
+                cors: true
+    getNextVenue:
+        handler: handlers/venue/get-next-venue.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+    getVenueForEdit:
+        handler: handlers/venue/get-venue-for-edit.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/edit/venue/{id+}"
+                method: get
+                cors: true
+    getVenueMulti:
+        handler: handlers/venue/get-venue-multi.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "public/venue"
+                method: post
+                cors: true
+            - http:
+                path: "public/venue"
+                method: get
+                cors: true
+    createUpdateTalent:
+        handler: handlers/talent/create-or-update-talent.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/talent"
+                method: post
+                cors: true
+            - http:
+                path: "admin/talent/{id+}"
+                method: put
+                cors: true
+    getTalent:
+        handler: handlers/talent/get-talent.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/talent/{id+}"
+                method: get
+                cors: true
+            - http:
+                path: "public/talent/{id+}"
+                method: get
+                cors: true
+    getTalentForEdit:
+        handler: handlers/talent/get-talent-for-edit.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/edit/talent/{id+}"
+                method: get
+                cors: true
+    getTalentMulti:
+        handler: handlers/talent/get-talent-multi.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "public/talent"
+                method: post
+                cors: true
+            - http:
+                path: "public/talent"
+                method: get
+                cors: true
+    createUpdateEvent:
+        handler: handlers/event/create-or-update-event.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/event"
+                method: post
+                cors: true
+            - http:
+                path: "admin/event/{id+}"
+                method: put
+                cors: true
+    getEvent:
+        handler: handlers/event/get-event.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/event/{id+}"
+                method: get
+                cors: true
+            - http:
+                path: "public/event/{id+}"
+                method: get
+                cors: true
+    getEventForEdit:
+        handler: handlers/event/get-event-for-edit.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/edit/event/{id+}"
+                method: get
+                cors: true
+    getEventMulti:
+        handler: handlers/event/get-event-multi.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "public/event"
+                method: post
+                cors: true
+            - http:
+                path: "public/event"
+                method: get
+                cors: true
+    createUpdateEventSeries:
+        handler: handlers/event-series/create-or-update-event-series.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/event-series"
+                method: post
+                cors: true
+            - http:
+                path: "admin/event-series/{id+}"
+                method: put
+                cors: true
+    getEventSeries:
+        handler: handlers/event-series/get-event-series.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/event-series/{id+}"
+                method: get
+                cors: true
+            - http:
+                path: "public/event-series/{id+}"
+                method: get
+                cors: true
+    getEventSeriesForEdit:
+        handler: handlers/event-series/get-event-series-for-edit.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/edit/event-series/{id+}"
+                method: get
+                cors: true
+    getEventSeriesMulti:
+        handler: handlers/event-series/get-event-series-multi.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "public/event-series"
+                method: post
+                cors: true
+            - http:
+                path: "public/event-series"
+                method: get
+                cors: true
+    updateEventSearchIndex:
+        handler: handlers/search/update-event-search-index-sns.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - sns: "${self:custom.eventUpdatedSnsEndpointName}"
+    refreshSearchIndex:
+        handler: handlers/search/refresh-search-index.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - http:
+                path: "admin/search/{index}/{version}/refresh"
+                method: post
+                cors: true
+    refreshSearchIndexSns:
+        handler: handlers/search/refresh-search-index-sns.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+            SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
+            SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
+            SERVERLESS_EVENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventBySchemeVersionIndexName}
+            SERVERLESS_EVENT_BY_VENUE_INDEX_NAME: ${self:custom.eventByVenueIndexName}
+            SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME: ${self:custom.eventByEventSeriesIndexName}
+            SERVERLESS_EVENT_SERIES_TABLE_NAME: ${self:custom.eventSeriesTableName}
+            SERVERLESS_EVENT_SERIES_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.eventSeriesBySchemeVersionIndexName}
+            SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
+            SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
+            SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        timeout: 300
+        events:
+            - sns: "${self:custom.refreshSearchIndexSnsEndpointName}"
+    refreshEventFullSearch:
+        handler: handlers/search/refresh-event-full-search.handler
+        environment:
+            SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
+        events:
+            - schedule: 
+                rate: cron(0 4 * * ? *)
+                enabled: true
+
+resources:
+    Resources:
+        ApiGatewayMethodAdminVenuePost:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminVenueIdVarPut:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminVenueIdVarGet:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminEditVenueIdVarGet:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+
+        ApiGatewayMethodAdminTalentPost:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminTalentIdVarPut:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminTalentIdVarGet:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminEditTalentIdVarGet:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+
+        ApiGatewayMethodAdminEventPost:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminEventIdVarPut:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminEventIdVarGet:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminEditEventIdVarGet:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+
+        ApiGatewayMethodAdminEventDashseriesPost:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminEventDashseriesIdVarPut:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminEventDashseriesIdVarGet:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        ApiGatewayMethodAdminEditEventDashseriesIdVarGet:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+
+        ApiGatewayMethodAdminSearchIndexVarVersionVarRefreshPost:
+            Properties:
+                AuthorizationType: "COGNITO_USER_POOLS"
+                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+
+        VenueDynamoTable:
+            Type: AWS::DynamoDB::Table
+            DeletionPolicy: Retain
+            Properties:
+                TableName: ${self:custom.venueTableName}
+                AttributeDefinitions:
+                    -
+                        AttributeName: id
+                        AttributeType: S
+                    -
+                        AttributeName: schemeVersion
+                        AttributeType: N
+                KeySchema:
+                    -
+                        AttributeName: id
+                        KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 2
+                    WriteCapacityUnits: 1
+                GlobalSecondaryIndexes:
+                    -
+                        IndexName: ${self:custom.venueBySchemeVersionIndexName}
+                        KeySchema:
+                            -
+                                AttributeName: "schemeVersion"
+                                KeyType: HASH
+                        Projection:
+                            ProjectionType: "KEYS_ONLY"
+                        ProvisionedThroughput:
+                            ReadCapacityUnits: 2
+                            WriteCapacityUnits: 1
+        EventDynamoTable:
+            Type: AWS::DynamoDB::Table
+            DeletionPolicy: Retain
+            Properties:
+                TableName: ${self:custom.eventTableName}
+                AttributeDefinitions:
+                    -
+                        AttributeName: id
+                        AttributeType: S
+                    -
+                        AttributeName: schemeVersion
+                        AttributeType: N
+                    -
+                        AttributeName: venueId
+                        AttributeType: S
+                    -
+                        AttributeName: eventSeriesId
+                        AttributeType: S
+                KeySchema:
+                    -
+                        AttributeName: id
+                        KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 2
+                    WriteCapacityUnits: 1
+                GlobalSecondaryIndexes:
+                    -
+                        IndexName: ${self:custom.eventBySchemeVersionIndexName}
+                        KeySchema:
+                            -
+                                AttributeName: schemeVersion
+                                KeyType: HASH
+                        Projection:
+                            ProjectionType: "KEYS_ONLY"
+                        ProvisionedThroughput:
+                            ReadCapacityUnits: 2
+                            WriteCapacityUnits: 1
+                    -
+                        IndexName: ${self:custom.eventByVenueIndexName}
+                        KeySchema:
+                            -
+                                AttributeName: venueId
+                                KeyType: HASH
+                        Projection:
+                            NonKeyAttributes:
+                                - dateFrom
+                                - dateTo
+                            ProjectionType: "INCLUDE"
+                        ProvisionedThroughput:
+                            ReadCapacityUnits: 2
+                            WriteCapacityUnits: 1
+                    -
+                        IndexName: ${self:custom.eventByEventSeriesIndexName}
+                        KeySchema:
+                            -
+                                AttributeName: eventSeriesId
+                                KeyType: HASH
+                        Projection:
+                            ProjectionType: "KEYS_ONLY"
+                        ProvisionedThroughput:
+                            ReadCapacityUnits: 2
+                            WriteCapacityUnits: 1
+        EventSeriesDynamoTable:
+            Type: AWS::DynamoDB::Table
+            DeletionPolicy: Retain
+            Properties:
+                TableName: ${self:custom.eventSeriesTableName}
+                AttributeDefinitions:
+                    -
+                        AttributeName: id
+                        AttributeType: S
+                    -
+                        AttributeName: schemeVersion
+                        AttributeType: N
+                KeySchema:
+                    -
+                        AttributeName: id
+                        KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 2
+                    WriteCapacityUnits: 1
+                GlobalSecondaryIndexes:
+                    -
+                        IndexName: ${self:custom.eventSeriesBySchemeVersionIndexName}
+                        KeySchema:
+                            -
+                                AttributeName: schemeVersion
+                                KeyType: HASH
+                        Projection:
+                            ProjectionType: "KEYS_ONLY"
+                        ProvisionedThroughput:
+                            ReadCapacityUnits: 2
+                            WriteCapacityUnits: 1
+        TalentDynamoTable:
+            Type: AWS::DynamoDB::Table
+            DeletionPolicy: Retain
+            Properties:
+                TableName: ${self:custom.talentTableName}
+                AttributeDefinitions:
+                    -
+                        AttributeName: id
+                        AttributeType: S
+                    -
+                        AttributeName: schemeVersion
+                        AttributeType: N
+                KeySchema:
+                    -
+                        AttributeName: id
+                        KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 2
+                    WriteCapacityUnits: 1
+                GlobalSecondaryIndexes:
+                    -
+                        IndexName: ${self:custom.talentBySchemeVersionIndexName}
+                        KeySchema:
+                            -
+                                AttributeName: "schemeVersion"
+                                KeyType: HASH
+                        Projection:
+                            ProjectionType: "KEYS_ONLY"
+                        ProvisionedThroughput:
+                            ReadCapacityUnits: 2
+                            WriteCapacityUnits: 1
