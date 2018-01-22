@@ -1,0 +1,21 @@
+{
+  "name": "artfullylondon-api",
+  "scripts": {
+    "test": "NODE_ENV=test mocha ./*-service/test/**/*.js ./*-service/test/*.js --recursive",
+    "posttest": "npm run lint",
+    "lint": "eslint .",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha ./*-service/test/**/*.js ./*-service/test/*.js --recursive --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "chai-subset": "^1.5.0",
+    "coveralls": "^2.13.1",
+    "eslint": "^4.1.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.4.2",
+    "mocha-lcov-reporter": "^1.3.0"
+  },
+  "dependencies": {
+    "webpack": "^3.1.0"
+  }
+}

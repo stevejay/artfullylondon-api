@@ -1,0 +1,41 @@
+Serverless: Bundling with Webpack...
+Time: [1m634[22mms
+                                                  [1mAsset[22m     [1mSize[22m  [1mChunks[22m  [1m[22m           [1mChunk Names[22m
+          [1m[32m/handlers/search/refresh-event-full-search.js[39m[22m  88.2 kB       [1m8[22m  [1m[32m[emitted][39m[22m  /handlers/search/refresh-event-full-search
+[1m[32m/handlers/event-series/create-or-update-event-series.js[39m[22m  50.7 kB       [1m0[22m  [1m[32m[emitted][39m[22m  /handlers/event-series/create-or-update-event-series
+    [1m[32m/handlers/event-series/get-event-series-for-edit.js[39m[22m  49.8 kB       [1m2[22m  [1m[32m[emitted][39m[22m  /handlers/event-series/get-event-series-for-edit
+       [1m[32m/handlers/event-series/get-event-series-multi.js[39m[22m  49.9 kB       [1m3[22m  [1m[32m[emitted][39m[22m  /handlers/event-series/get-event-series-multi
+              [1m[32m/handlers/event/create-or-update-event.js[39m[22m   109 kB       [1m4[22m  [1m[32m[emitted][39m[22m  /handlers/event/create-or-update-event
+                           [1m[32m/handlers/event/get-event.js[39m[22m   111 kB       [1m5[22m  [1m[32m[emitted][39m[22m  /handlers/event/get-event
+                  [1m[32m/handlers/event/get-event-for-edit.js[39m[22m   108 kB       [1m6[22m  [1m[32m[emitted][39m[22m  /handlers/event/get-event-for-edit
+                     [1m[32m/handlers/event/get-event-multi.js[39m[22m   108 kB       [1m7[22m  [1m[32m[emitted][39m[22m  /handlers/event/get-event-multi
+             [1m[32m/handlers/event-series/get-event-series.js[39m[22m    51 kB       [1m1[22m  [1m[32m[emitted][39m[22m  /handlers/event-series/get-event-series
+               [1m[32m/handlers/search/refresh-search-index.js[39m[22m  89.1 kB       [1m9[22m  [1m[32m[emitted][39m[22m  /handlers/search/refresh-search-index
+           [1m[32m/handlers/search/refresh-search-index-sns.js[39m[22m  88.3 kB      [1m10[22m  [1m[32m[emitted][39m[22m  /handlers/search/refresh-search-index-sns
+      [1m[32m/handlers/search/update-event-search-index-sns.js[39m[22m  88.4 kB      [1m11[22m  [1m[32m[emitted][39m[22m  /handlers/search/update-event-search-index-sns
+            [1m[32m/handlers/talent/create-or-update-talent.js[39m[22m  52.1 kB      [1m12[22m  [1m[32m[emitted][39m[22m  /handlers/talent/create-or-update-talent
+                         [1m[32m/handlers/talent/get-talent.js[39m[22m  52.4 kB      [1m13[22m  [1m[32m[emitted][39m[22m  /handlers/talent/get-talent
+                [1m[32m/handlers/talent/get-talent-for-edit.js[39m[22m  51.1 kB      [1m14[22m  [1m[32m[emitted][39m[22m  /handlers/talent/get-talent-for-edit
+                   [1m[32m/handlers/talent/get-talent-multi.js[39m[22m  51.3 kB      [1m15[22m  [1m[32m[emitted][39m[22m  /handlers/talent/get-talent-multi
+
+[1m[31mERROR in ./lib/lambda/etag.js
+Module not found: Error: Cannot resolve 'file' or 'directory' ./external-services/redis in /Users/stephenjohns/project/artfullylondon-api/event-service/lib/lambda
+ @ ./lib/lambda/etag.js 6:22-58 20:22-58[39m[22m
+ 
+  Error --------------------------------------------------
+ 
+     Webpack compilation error, see above
+ 
+     For debugging logs, run again after setting the "SLS_DEBUG=*" environment variable.
+ 
+  Get Support --------------------------------------------
+     Docs:          docs.serverless.com
+     Bugs:          github.com/serverless/serverless/issues
+ 
+     Please report this error. We think it might be a bug.
+ 
+  Your Environment Information -----------------------------
+     OS:                 darwin
+     Node Version:       6.2.0
+     Serverless Version: 1.4.0
+ 
