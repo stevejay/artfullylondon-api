@@ -178,9 +178,6 @@ provider:
 plugins:
     - serverless-webpack
 
-
-${file(./env.yml):${self:custom.stage}.arnPrefix}
-
 custom:
     project: artfullylondon
     stage: ${opt:stage, self:provider.stage}
