@@ -15,31 +15,31 @@ const generatePolicy = principalId => {
     Version: '2012-10-17',
     Statement: [
       generatePolicyStatement(
-        'arn:aws:execute-api:eu-west-1:419005182353:iymxedumt4/*/GET/user'
+        process.env.EXECUTE_API_ID + '/*/GET/user'
       ),
       generatePolicyStatement(
-        'arn:aws:execute-api:eu-west-1:419005182353:iymxedumt4/*/DELETE/user'
+        process.env.EXECUTE_API_ID + '/*/DELETE/user'
       ),
       generatePolicyStatement(
-        'arn:aws:execute-api:eu-west-1:419005182353:iymxedumt4/*/OPTIONS/user'
+        process.env.EXECUTE_API_ID + '/*/OPTIONS/user'
       ),
       generatePolicyStatement(
-        'arn:aws:execute-api:eu-west-1:419005182353:iymxedumt4/*/GET/user/watches/*'
+        process.env.EXECUTE_API_ID + '/*/GET/user/watches/*'
       ),
       generatePolicyStatement(
-        'arn:aws:execute-api:eu-west-1:419005182353:iymxedumt4/*/PUT/user/watches/*'
+        process.env.EXECUTE_API_ID + '/*/PUT/user/watches/*'
       ),
       generatePolicyStatement(
-        'arn:aws:execute-api:eu-west-1:419005182353:iymxedumt4/*/OPTIONS/user/watches/*'
+        process.env.EXECUTE_API_ID + '/*/OPTIONS/user/watches/*'
       ),
       generatePolicyStatement(
-        'arn:aws:execute-api:eu-west-1:419005182353:iymxedumt4/*/GET/user/preferences'
+        process.env.EXECUTE_API_ID + '/*/GET/user/preferences'
       ),
       generatePolicyStatement(
-        'arn:aws:execute-api:eu-west-1:419005182353:iymxedumt4/*/PUT/user/preferences'
+        process.env.EXECUTE_API_ID + '/*/PUT/user/preferences'
       ),
       generatePolicyStatement(
-        'arn:aws:execute-api:eu-west-1:419005182353:iymxedumt4/*/OPTIONS/user/preferences'
+        process.env.EXECUTE_API_ID + '/*/OPTIONS/user/preferences'
       ),
     ],
   };
