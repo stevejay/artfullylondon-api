@@ -12,6 +12,7 @@
     "aws-sdk": "^2.80.0",
     "eslint": "^4.1.1",
     "mocha": "^3.4.2",
+    "serverless": "^1.25.0",
     "serverless-webpack": "^1.0.0-rc.4",
     "should": "^11.2.1",
     "sinon": "^2.3.6",

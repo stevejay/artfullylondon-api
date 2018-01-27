@@ -9,7 +9,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/exhibitions/`);
 
-  $(".content a:contains('VIEW')").each(function() {
+  $('.content a:contains(\'VIEW\')').each(function() {
     const href = $(this).attr('href');
     result.push(href);
   });

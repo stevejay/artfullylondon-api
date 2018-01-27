@@ -19,8 +19,8 @@ module.exports.pageFinder = co.wrap(function*() {
     result.push(href);
   };
 
-  $("a:contains('BOOK NOW')").each(pushHref);
-  $("a:contains('Click here')").each(pushHref);
+  $('a:contains(\'BOOK NOW\')').each(pushHref);
+  $('a:contains(\'Click here\')').each(pushHref);
 
   return result;
 });

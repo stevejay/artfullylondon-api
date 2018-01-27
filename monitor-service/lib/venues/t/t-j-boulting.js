@@ -9,7 +9,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/exhibitions`);
 
-  $("#main-contentexhib a:not(:contains('past'))").each(function() {
+  $('#main-contentexhib a:not(:contains(\'past\'))').each(function() {
     const href = $(this).attr('href');
 
     if (href.includes('/exhibitionspage/')) {

@@ -8,6 +8,11 @@ module.exports.downloadFile = (url, filePath) => {
     request
       .get(url)
       .on('error', reject)
+      .on('response', response => {
+        if (response.statusCode !== 200) {
+          reject(new Error(`Download file response code was ${response.statusCode}`));
+        }
+      })
       .pipe(fs.createWriteStream(filePath))
       .on('finish', () => resolve())
       .on('error', reject);

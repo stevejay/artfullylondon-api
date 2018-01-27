@@ -8,7 +8,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const $ = yield pageLoader('https://artstheatrewestend.co.uk/whats-on/');
 
   $('#main .whats-on-item a:first-of-type').each(function() {
-    const href = $(this).attr('href').replace("'", '');
+    const href = $(this).attr('href').replace('\'', '');
     result.push(href);
   });
 

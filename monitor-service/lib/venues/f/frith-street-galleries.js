@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.frithstreetgallery.com';
 
-module.exports = function(venueName) {
+module.exports = function() {
   return {
     pageFinder: co.wrap(function*() {
       const result = [];

@@ -12,7 +12,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const result = [];
   let $ = yield pageLoader(`${BASE_URL}`);
 
-  $("li.menuItem li.subMenuItem a:contains('current')").each(function() {
+  $('li.menuItem li.subMenuItem a:contains(\'current\')').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);
   });

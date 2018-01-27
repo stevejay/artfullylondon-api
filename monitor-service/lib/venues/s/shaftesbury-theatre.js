@@ -1,16 +1,16 @@
-"use strict";
+'use strict';
 
-const co = require("co");
+const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-const BASE_URL = "http://www.shaftesburytheatre.com";
+const BASE_URL = 'http://www.shaftesburytheatre.com';
 
 module.exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/`);
 
-  $("#mainBg a:has(img)").each(function() {
-    const href = $(this).attr("href");
+  $('#mainBg a:has(img)').each(function() {
+    const href = $(this).attr('href');
 
     if (/\/shows\/./.test(href)) {
       result.push(href);
@@ -22,7 +22,7 @@ module.exports.pageFinder = co.wrap(function*() {
 
 module.exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
-  const title = $("title").html();
-  const data = [$("#lowerContent").html()];
+  const title = $('title').html();
+  const data = [$('#lowerContent').html()];
   return { title, data };
 });

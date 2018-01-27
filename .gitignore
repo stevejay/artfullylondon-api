@@ -41,7 +41,6 @@ node_modules
 
 #IDE
 **/.idea
-.vscode
 
 #OS
 .DS_Store

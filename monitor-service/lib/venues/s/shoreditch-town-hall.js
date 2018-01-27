@@ -15,7 +15,7 @@ module.exports.pageFinder = co.wrap(function*() {
       result.push(href);
     });
 
-    const nextUrl = $(".pagination a:contains('Next')").first().attr('href');
+    const nextUrl = $('.pagination a:contains(\'Next\')').first().attr('href');
 
     if (nextUrl) {
       $ = yield pageLoader(nextUrl);

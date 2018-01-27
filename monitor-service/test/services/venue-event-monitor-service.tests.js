@@ -171,7 +171,7 @@ describe('venue-event-monitor-service', () => {
           return Promise.resolve(null);
         });
 
-      const putStub = sinon
+      sinon
         .stub(venueEventMonitorRepository, 'put')
         .callsFake(entities => {
           expect(entities).to.eql({

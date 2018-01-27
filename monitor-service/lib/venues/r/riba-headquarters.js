@@ -14,7 +14,7 @@ module.exports.pageFinder = co.wrap(function*() {
   );
 
   $(
-    "article.brick-event:has(.brick-location:contains('RIBA')) a:has(img)"
+    'article.brick-event:has(.brick-location:contains(\'RIBA\')) a:has(img)'
   ).each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);

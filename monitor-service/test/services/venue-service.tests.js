@@ -48,7 +48,7 @@ describe('venue-service', () => {
 
       const stubInvokeNextIteration = sinon
         .stub(venueIterationService, 'invokeNextIteration')
-        .callsFake((venueId, startTimestamp) => {
+        .callsFake((venueId) => {
           expect(venueId).to.eql(null);
           return Promise.resolve();
         });
@@ -89,7 +89,7 @@ describe('venue-service', () => {
 
       const stubInvokeNextIteration = sinon
         .stub(venueIterationService, 'invokeNextIteration')
-        .callsFake((venueId, startTimestamp) => {
+        .callsFake((venueId) => {
           expect(venueId).to.eql('tate-modern');
           return Promise.resolve();
         });
@@ -124,7 +124,7 @@ describe('venue-service', () => {
 
       const stubAddIterationError = sinon
         .stub(venueIterationService, 'addIterationError')
-        .callsFake((err, venueId, startTimestamp) => {
+        .callsFake((err, venueId) => {
           expect(err.message).to.eql('deliberately thrown');
           expect(venueId).to.eql('tate-modern');
           return Promise.resolve();
@@ -141,7 +141,7 @@ describe('venue-service', () => {
 
       const stubInvokeNextIteration = sinon
         .stub(venueIterationService, 'invokeNextIteration')
-        .callsFake((venueId, startTimestamp) => {
+        .callsFake((venueId) => {
           expect(venueId).to.eql('tate-modern');
           return Promise.resolve();
         });
@@ -221,7 +221,7 @@ describe('venue-service', () => {
 
       const stubInvokeNextIteration = sinon
         .stub(venueIterationService, 'invokeNextIteration')
-        .callsFake((venueId, startTimestamp) => {
+        .callsFake((venueId) => {
           expect(venueId).to.eql('tate-modern');
           return Promise.resolve();
         });
@@ -260,11 +260,9 @@ describe('venue-service', () => {
           return mockStrategy;
         });
 
-      const stubDiscoverEvents = sinon
+      sinon
         .stub(strategyRunner, 'discoverEvents')
-        .callsFake(
-          (venueId, venueStrategy) =>
-            new Promise(resolve => setTimeout(() => resolve(), 50000))
+        .callsFake(() => new Promise(resolve => setTimeout(() => resolve(), 50000))
         );
 
       const stubAddIterationError = sinon

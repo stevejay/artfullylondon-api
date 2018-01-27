@@ -1,7 +1,6 @@
 'use strict';
 
 const co = require('co');
-const qsm = require('qsm');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.theotherpalace.co.uk';

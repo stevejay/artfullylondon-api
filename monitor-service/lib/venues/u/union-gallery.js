@@ -9,7 +9,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/content.php?page_id=575`);
 
-  $("a:contains('more')").each(function() {
+  $('a:contains(\'more\')').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + '/' + href);
   });

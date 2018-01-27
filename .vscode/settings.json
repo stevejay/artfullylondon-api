@@ -1,0 +1,14 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true,
+        "**/.serverless": true,
+        "**/coverage": true,
+        "**/build": true,
+        "**/.webpack": true
+    },
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+}

@@ -25,6 +25,6 @@ module.exports.pageFinder = co.wrap(function*() {
 module.exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('title').html();
-  const data = $("[id='thePage:longdesc']").html();
+  const data = $('[id=\'thePage:longdesc\']').html();
   return { title, data };
 });

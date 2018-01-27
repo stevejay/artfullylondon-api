@@ -163,7 +163,7 @@ functions:
             SERVERLESS_EVENT_MONITOR_TABLE_NAME: ${self:custom.eventMonitorTableName}
             SERVERLESS_VENUE_MONITOR_TABLE_NAME: ${self:custom.venueMonitorTableName}
             SERVERLESS_GET_LATEST_ITERATION_ERRORS_LAMBDA_NAME: ${self:custom.getLatestIterationErrorsLambdaName}
-        timeout: 60
+        timeout: 30
         events:
             - http:
                 path: "monitor/status"

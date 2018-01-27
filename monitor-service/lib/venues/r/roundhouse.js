@@ -15,7 +15,7 @@ module.exports.pageFinder = co.wrap(function*() {
   );
 
   $(
-    "#primary-content article:has(a:contains('Find Tickets')) a:has(img)"
+    '#primary-content article:has(a:contains(\'Find Tickets\')) a:has(img)'
   ).each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);

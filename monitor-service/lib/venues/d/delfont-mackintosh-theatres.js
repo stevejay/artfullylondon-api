@@ -27,7 +27,7 @@ module.exports = function(venueName) {
         '.show-right-container ul li a:contains("Performance Times")'
       ).attr('href');
 
-      $ = yield pageLoader(pageUrl.replace(/\/[^\/]+$/, '/') + timesPageUrl);
+      $ = yield pageLoader(pageUrl.replace(/\/[^/]+$/, '/') + timesPageUrl);
 
       data.push(
         $(

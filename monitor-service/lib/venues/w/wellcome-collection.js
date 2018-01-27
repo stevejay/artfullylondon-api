@@ -21,7 +21,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const $ = yield pageLoader(`${BASE_URL}/youth-and-schools-events`);
 
   $(
-    ".main-content article:has(.snippet__booking:contains('Drop in')) h2 a"
+    '.main-content article:has(.snippet__booking:contains(\'Drop in\')) h2 a'
   ).each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);

@@ -8,7 +8,7 @@ module.exports.pageParser = co.wrap(function*() {
 
   const $ = yield pageLoader('http://www.arts.ac.uk/about-ual/ual-showroom/');
 
-  $("h2:contains('Current show') + p").each(function() {
+  $('h2:contains(\'Current show\') + p').each(function() {
     data.push($(this).html());
   });
 

@@ -10,7 +10,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const $ = yield pageLoader(`${BASE_URL}/`);
 
   $(
-    ".media-item.exhibition:has(.item-body:contains('London')) > a"
+    '.media-item.exhibition:has(.item-body:contains(\'London\')) > a'
   ).each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);

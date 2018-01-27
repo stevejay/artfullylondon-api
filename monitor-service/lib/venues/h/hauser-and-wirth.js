@@ -7,7 +7,7 @@ const BASE_URL = 'https://www.hauserwirth.com';
 
 module.exports.pageFinder = co.wrap(function*() {
   const result = [];
-  const linkSelector = "#container ul li dl:has(dd:contains('London')) dt a";
+  const linkSelector = '#container ul li dl:has(dd:contains(\'London\')) dt a';
 
   let $ = yield pageLoader(BASE_URL + '/exhibitions/');
   $(linkSelector).each(function() {

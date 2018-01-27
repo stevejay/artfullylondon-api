@@ -18,7 +18,7 @@ describe('file', () => {
     it('should throw when downloading a file that does not exist', done => {
       file
         .downloadFile(
-          'http://alsdfjasfl.asdfasf.com',
+          'https://siteimages.artfully.london/sfhf8yfkal8xwe.png',
           path.resolve(__dirname, '../images/image.result.png')
         )
         .then(() => done(new Error('should have thrown an error')))

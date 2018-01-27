@@ -90,7 +90,7 @@ const erskineHallAndCoe = require('../venues/e/erskine-hall-and-coe');
 const espacioGallery = require('../venues/e/espacio-gallery');
 const estorick = require('../venues/e/estorick-collection-of-modern-italian-art');
 const foldGallery = require('../venues/f/fold-gallery');
-const fashionSpaceGallery = require('../venues/f/fashion-space-gallery');
+// const fashionSpaceGallery = require('../venues/f/fashion-space-gallery');
 const fashionAndTextileMuseum = require('../venues/f/fashion-and-textile-museum');
 const finboroughTheatre = require('../venues/f/finborough-theatre');
 const flowersGalleries = require('../venues/f/flowers-galleries');
@@ -102,7 +102,7 @@ const furtherfieldGallery = require('../venues/f/furtherfield-gallery');
 const grad = require('../venues/g/grad2674');
 const gagosianGalleries = require('../venues/g/gagosian-galleries');
 const galleryElenaShchukina = require('../venues/g/gallery-elena-shchukina');
-const galleryFumi = require('../venues/g/gallery-fumi');
+// const galleryFumi = require('../venues/g/gallery-fumi');
 const gallerySO = require('../venues/g/gallery-s-o');
 const gasworksGallery = require('../venues/g/gasworks-gallery');
 const gateTheatre = require('../venues/g/gate-theatre');
@@ -128,7 +128,7 @@ const hoxtonHallTheatre = require('../venues/h/hoxton-hall-theatre');
 const imtGallery = require('../venues/i/imt-gallery');
 const imperialWarMuseumLondon = require('../venues/i/imperial-war-museum-london');
 const instituteOfContemporaryArts = require('../venues/i/institute-of-contemporary-arts');
-const platformTheatre = require('../venues/p/platform-theatre');
+// const platformTheatre = require('../venues/p/platform-theatre');
 const islingtonArtsFactory = require('../venues/i/islington-arts-factory');
 const jackStudioTheatre = require('../venues/j/jack-studio-theatre');
 const jacksonsLane = require('../venues/j/jacksons-lane');
@@ -969,7 +969,7 @@ module.exports.create = function(venueId) {
     case 'white-cube-bermondsey':
       return whiteCubeGalleries('Bermondsey');
     case 'white-cube-masons-yard':
-      return whiteCubeGalleries("Mason's Yard");
+      return whiteCubeGalleries('Mason\'s Yard');
     case 'white-rainbow':
       return whiteRainbow;
     case 'whitechapel-gallery':

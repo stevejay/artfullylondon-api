@@ -9,7 +9,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/events/`);
 
-  $(".description a:contains('Find out more')").each(function() {
+  $('.description a:contains(\'Find out more\')').each(function() {
     const href = $(this).attr('href');
 
     if (href.includes('/event/')) {

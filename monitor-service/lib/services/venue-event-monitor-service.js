@@ -1,7 +1,6 @@
 'use strict';
 
 const co = require('co');
-const chunk = require('lodash.chunk');
 const ensure = require('ensure-request').ensure;
 const ensureErrorHandler = require('../validation/ensure-error-handler');
 const constraints = require('../validation/constraints');

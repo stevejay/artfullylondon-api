@@ -2,7 +2,7 @@
   "name": "artfullylondon-api-monitor-service",
   "scripts": {
     "test": "NODE_ENV=test mocha --recursive",
-    "posttest_disabled": "yarn run lint",
+    "posttest": "yarn run lint",
     "lint": "eslint .",
     "deploy": "yarn test && AWS_CLIENT_TIMEOUT=1800000 sls deploy -v"
   },
@@ -16,6 +16,7 @@
     "mocha": "^3.4.2",
     "on-build-webpack": "^0.1.0",
     "phantomjs-prebuilt": "^2.1.14",
+    "serverless": "^1.25.0",
     "serverless-webpack": "^1.0.0-rc.2",
     "sinon": "^2.3.6",
     "webpack-node-externals": "^1.6.0"

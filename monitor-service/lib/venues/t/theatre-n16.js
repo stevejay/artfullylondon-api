@@ -11,7 +11,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/what-s-on`, 'a');
 
-  $("a:contains('MORE INFO')").each(function() {
+  $('a:contains(\'MORE INFO\')').each(function() {
     const href = $(this).attr('href');
     result.push(href);
   });

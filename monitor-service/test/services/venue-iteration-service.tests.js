@@ -6,7 +6,6 @@ const log = require('loglevel');
 const venueIterationService = require('../../lib/services/venue-iteration-service');
 const lambda = require('../../lib/external-services/lambda');
 const sns = require('../../lib/external-services/sns');
-const testUtils = require('../test-utils');
 
 process.env.SERVERLESS_START_ITERATION_LAMBDA_NAME = 'StartIteration';
 process.env.SERVERLESS_ITERATE_VENUES_TOPIC_ARN = 'IterateVenuesTopicArn';
@@ -201,7 +200,7 @@ describe('venue-iteration-service', () => {
         return Promise.reject(new Error('deliberately thrown'));
       });
 
-      const logStub = sinon.stub(log, 'error');
+      sinon.stub(log, 'error');
 
       venueIterationService
         .addIterationError(new Error('foo'), 'almeida-theatre', 123456)

@@ -9,7 +9,7 @@ module.exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/whats-on/`);
 
-  $(".whats-on-show a:contains('Read More')").each(function() {
+  $('.whats-on-show a:contains(\'Read More\')').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);
   });
