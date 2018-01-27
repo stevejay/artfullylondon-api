@@ -1,5 +1,8 @@
 {
   "name": "artfullylondon-api",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
   "scripts": {
     "test": "NODE_ENV=test mocha ./*-service/test/**/*.js ./*-service/test/*.js --recursive",
     "posttest": "npm run lint",
