@@ -643,10 +643,6 @@ resources:
             Properties:
                 AuthorizationType: "COGNITO_USER_POOLS"
                 AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminEditVenueIdVarGet:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
 
         ApiGatewayMethodAdminTalentPost:
             Properties:
@@ -657,10 +653,6 @@ resources:
                 AuthorizationType: "COGNITO_USER_POOLS"
                 AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
         ApiGatewayMethodAdminTalentIdVarGet:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminEditTalentIdVarGet:
             Properties:
                 AuthorizationType: "COGNITO_USER_POOLS"
                 AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
@@ -677,10 +669,6 @@ resources:
             Properties:
                 AuthorizationType: "COGNITO_USER_POOLS"
                 AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminEditEventIdVarGet:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
 
         ApiGatewayMethodAdminEventDashseriesPost:
             Properties:
@@ -691,10 +679,6 @@ resources:
                 AuthorizationType: "COGNITO_USER_POOLS"
                 AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
         ApiGatewayMethodAdminEventDashseriesIdVarGet:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminEditEventDashseriesIdVarGet:
             Properties:
                 AuthorizationType: "COGNITO_USER_POOLS"
                 AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}

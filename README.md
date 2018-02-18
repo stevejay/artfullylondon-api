@@ -15,6 +15,11 @@ using the Serverless framework.
 director and running the appropriate yarn commands (as listed in
 the `package.json` file for the service).
 
+## Todo
+
+- Improve the AWS Cognito serverless configuration. (I think serverless 
+supports Cognito configuration now.)
+
 ## License
 
 [MIT](LICENSE)
