@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const expect = require('chai').expect;
 const proxyHandlerRunner = require('./handler-runner');
 const iterateVenuesSns = require('../../handlers/iterate-venues-sns');
-const venueService = require('../../lib/venue/venue-service');
+const venueService = require('../../lib/services/venue-service');
 
 describe('iterate-venues-sns.handler', () => {
   afterEach(() => {

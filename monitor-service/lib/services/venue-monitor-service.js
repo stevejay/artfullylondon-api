@@ -7,8 +7,12 @@ const venueMonitorRepository = require('../persistence/venue-monitor-repository'
 const constraints = require('../validation/constraints');
 const diff = require('../venue-processing/diff');
 
-module.exports.getVenueMonitor = co.wrap(function*(venueId) {
-  const dbItem = yield venueMonitorRepository.get(venueId);
+module.exports.getVenueMonitors = co.wrap(function*(venueId) {
+  const dbItem = yield venueMonitorRepository.tryGet(venueId);
+  if (!dbItem) {
+    return [];
+  }
+
   const changeDiff = yield diff.getDiff(dbItem.oldVenueText, dbItem.venueText);
 
   if (changeDiff) {
@@ -18,7 +22,7 @@ module.exports.getVenueMonitor = co.wrap(function*(venueId) {
   delete dbItem.oldVenueText;
   delete dbItem.venueText;
 
-  return dbItem;
+  return [dbItem];
 });
 
 module.exports.updateVenueMonitor = entity => {

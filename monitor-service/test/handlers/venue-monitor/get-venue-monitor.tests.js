@@ -3,13 +3,13 @@
 const sinon = require('sinon');
 const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
-const getVenueMonitor = require('../../../handlers/venue-monitor/get-venue-monitor');
+const getVenueMonitors = require('../../../handlers/venue-monitor/get-venue-monitors');
 const venueMonitorService = require('../../../lib/services/venue-monitor-service');
 
-describe('get-venue-monitor.handler', () => {
+describe('get-venue-monitors.handler', () => {
   afterEach(() => {
-    venueMonitorService.getVenueMonitor.restore &&
-      venueMonitorService.getVenueMonitor.restore();
+    venueMonitorService.getVenueMonitors.restore &&
+      venueMonitorService.getVenueMonitors.restore();
   });
 
   it('should process a valid request', done => {
@@ -21,9 +21,9 @@ describe('get-venue-monitor.handler', () => {
       query: {},
     };
 
-    sinon.stub(venueMonitorService, 'getVenueMonitor').callsFake(venueId => {
+    sinon.stub(venueMonitorService, 'getVenueMonitors').callsFake(venueId => {
       expect(venueId).to.eql('almeida-theatre');
-      return Promise.resolve({ title: 'test' });
+      return Promise.resolve([{ title: 'test' }]);
     });
 
     const expected = {
@@ -33,10 +33,10 @@ describe('get-venue-monitor.handler', () => {
         'Access-Control-Allow-Origin': '*',
       },
       body: {
-        entity: { title: 'test' },
+        items: [{ title: 'test' }],
       },
     };
 
-    proxyHandlerRunner(getVenueMonitor.handler, event, expected, done);
+    proxyHandlerRunner(getVenueMonitors.handler, event, expected, done);
   });
 });

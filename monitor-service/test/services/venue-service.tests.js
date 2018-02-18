@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 const strategyRunner = require('../../lib/venue-processing/venue-strategy-runner');
 const strategyFactory = require('../../lib/venue-processing/venue-strategy-factory');
 const venueIterationService = require('../../lib/services/venue-iteration-service');
-const venueService = require('../../lib/venue/venue-service');
+const venueService = require('../../lib/services/venue-service');
 const venueEventMonitorService = require('../../lib/services/venue-event-monitor-service');
 const venueMonitorService = require('../../lib/services/venue-monitor-service');
 

@@ -45,16 +45,31 @@ describe('venue-monitor-service', () => {
     });
   });
 
-  describe('getVenueMonitor', () => {
+  describe('getVenueMonitors', () => {
     afterEach(() => {
-      venueMonitorRepository.get.restore &&
-        venueMonitorRepository.get.restore();
+      venueMonitorRepository.tryGet.restore &&
+        venueMonitorRepository.tryGet.restore();
 
       diff.getDiff.restore && diff.getDiff.restore();
     });
 
+    it('should handle getting a non-existent venue monitor', done => {
+      sinon.stub(venueMonitorRepository, 'tryGet').callsFake(venueId => {
+        expect(venueId).to.eql('almeida-theatre');
+        return Promise.resolve(null);
+      });
+
+      venueMonitorService
+        .getVenueMonitors('almeida-theatre')
+        .then(result => {
+          expect(result).to.eql([]);
+          done();
+        })
+        .catch(done);
+    });
+
     it('should get a venue monitor with no diff', done => {
-      sinon.stub(venueMonitorRepository, 'get').callsFake(venueId => {
+      sinon.stub(venueMonitorRepository, 'tryGet').callsFake(venueId => {
         expect(venueId).to.eql('almeida-theatre');
 
         return Promise.resolve({
@@ -72,16 +87,16 @@ describe('venue-monitor-service', () => {
       });
 
       venueMonitorService
-        .getVenueMonitor('almeida-theatre')
+        .getVenueMonitors('almeida-theatre')
         .then(result => {
-          expect(result).to.eql({ id: 'some-id' });
+          expect(result).to.eql([{ id: 'some-id' }]);
           done();
         })
         .catch(done);
     });
 
     it('should get a venue monitor with a diff', done => {
-      sinon.stub(venueMonitorRepository, 'get').callsFake(venueId => {
+      sinon.stub(venueMonitorRepository, 'tryGet').callsFake(venueId => {
         expect(venueId).to.eql('almeida-theatre');
 
         return Promise.resolve({
@@ -99,12 +114,12 @@ describe('venue-monitor-service', () => {
       });
 
       venueMonitorService
-        .getVenueMonitor('almeida-theatre')
+        .getVenueMonitors('almeida-theatre')
         .then(result => {
-          expect(result).to.eql({
+          expect(result).to.eql([{
             id: 'some-id',
             changeDiff: 'change diff text',
-          });
+          }]);
 
           done();
         })

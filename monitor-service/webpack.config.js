@@ -11,7 +11,7 @@ module.exports = {
     '/handlers/iterate-venues': './handlers/iterate-venues.js',
     '/handlers/iterate-venues-sns': './handlers/iterate-venues-sns.js',
 
-    '/handlers/venue-monitor/get-venue-monitor': './handlers/venue-monitor/get-venue-monitor.js',
+    '/handlers/venue-monitor/get-venue-monitors': './handlers/venue-monitor/get-venue-monitors.js',
     '/handlers/venue-monitor/update-venue-monitor': './handlers/venue-monitor/update-venue-monitor.js',
 
     '/handlers/venue-event-monitor/get-venue-event-monitor': './handlers/venue-event-monitor/get-venue-event-monitor.js',

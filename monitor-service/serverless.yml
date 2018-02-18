@@ -78,8 +78,8 @@ custom:
     webpackIncludeModules: true
 
 functions:
-    getVenueMonitor:
-        handler: handlers/venue-monitor/get-venue-monitor.handler
+    getVenueMonitors:
+        handler: handlers/venue-monitor/get-venue-monitors.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_MONITOR_TABLE_NAME: ${self:custom.venueMonitorTableName}
