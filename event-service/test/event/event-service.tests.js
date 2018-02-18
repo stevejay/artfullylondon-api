@@ -6,10 +6,11 @@ chai.use(require('chai-subset'));
 const expect = chai.expect;
 const dynamoDbClient = require('dynamodb-doc-client-wrapper');
 const testData = require('../test-data');
-const eventService = require('../../lib/services/event-service');
+const eventService = require('../../lib/event/event-service');
 const populate = require('../../lib/event/populate');
 const eventConstants = require('../../lib/event/constants');
 const sns = require('../../lib/external-services/sns');
+const date = require('../../lib/date');
 
 process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME = 'event-series-table';
 process.env.SERVERLESS_EVENT_TABLE_NAME = 'event-table';
@@ -17,7 +18,11 @@ process.env.SERVERLESS_VENUE_TABLE_NAME = 'venue-table';
 process.env.SERVERLESS_TALENT_TABLE_NAME = 'talent-table';
 
 describe('createOrUpdateEvent', () => {
+  beforeEach(() => sinon.stub(date, 'getTodayAsStringDate').returns('2016/01/11'));
+
   afterEach(() => {
+    date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
+
     if (dynamoDbClient.batchGet.restore) {
       dynamoDbClient.batchGet.restore();
     }
@@ -564,12 +569,12 @@ describe('getEvent', () => {
     dynamoDbClient.batchGet.restore();
   });
 
-  it('should process an admin get event request with minimal related entities', done => {
+  it('should process a get event request with minimal related entities', done => {
     sinon.stub(dynamoDbClient, 'get').callsFake(params => {
       expect(params).to.eql({
         TableName: process.env.SERVERLESS_EVENT_TABLE_NAME,
         Key: { id: testData.PERFORMANCE_EVENT_ID },
-        ConsistentRead: true,
+        ConsistentRead: false,
         ReturnConsumedCapacity: undefined,
       });
 
@@ -643,7 +648,7 @@ describe('getEvent', () => {
       .catch(done);
   });
 
-  it('should process a public get event request with all related entities', done => {
+  it('should process a get event request with all related entities', done => {
     sinon.stub(dynamoDbClient, 'get').callsFake(params => {
       expect(params).to.eql({
         TableName: process.env.SERVERLESS_EVENT_TABLE_NAME,

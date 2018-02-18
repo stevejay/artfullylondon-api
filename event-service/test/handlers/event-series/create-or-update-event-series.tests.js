@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
 const testData = require('../../test-data');
 const createOrUpdateEventSeries = require('../../../handlers/event-series/create-or-update-event-series');
-const eventSeriesService = require('../../../lib/services/event-series-service');
+const eventSeriesService = require('../../../lib/event-series/event-series-service');
 
 describe('create-or-update-event-series.handler', () => {
   afterEach(() => {

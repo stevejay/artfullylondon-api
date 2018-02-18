@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
 const testData = require('../../test-data');
 const getVenue = require('../../../handlers/venue/get-venue');
-const venueService = require('../../../lib/services/venue-service');
+const venueService = require('../../../lib/venue/venue-service');
 
 describe('getVenue', () => {
   afterEach(() => {
@@ -22,9 +22,8 @@ describe('getVenue', () => {
       query: {},
     };
 
-    sinon.stub(venueService, 'getVenue').callsFake((id, isPublicRequest) => {
+    sinon.stub(venueService, 'getVenue').callsFake((id) => {
       expect(id).to.eql(testData.MINIMAL_VENUE_ID);
-      expect(isPublicRequest).to.eql(false);
       return Promise.resolve({ name: 'The Venue' });
     });
 

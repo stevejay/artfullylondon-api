@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
 const getEventForEdit = require('../../../handlers/event/get-event-for-edit');
-const eventService = require('../../../lib/services/event-service');
+const eventService = require('../../../lib/event/event-service');
 
 describe('get-event-for-edit.handler', () => {
   afterEach(() => {

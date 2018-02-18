@@ -1,7 +1,7 @@
 'use strict';
 
 const generatorHandler = require('../../lib/lambda/generator-handler');
-const venueService = require('../../lib/services/venue-service');
+const venueService = require('../../lib/venue/venue-service');
 
 function* handler(event) {
   const id = event.pathParameters.id;

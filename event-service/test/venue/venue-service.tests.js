@@ -6,17 +6,22 @@ chai.use(require('chai-subset'));
 const expect = chai.expect;
 const dynamoDbClient = require('dynamodb-doc-client-wrapper');
 const testData = require('../test-data');
-const venueService = require('../../lib/services/venue-service');
+const venueService = require('../../lib/venue/venue-service');
 const venueConstants = require('../../lib/venue/constants');
 const elasticsearch = require('../../lib/external-services/elasticsearch');
 const eventMessaging = require('../../lib/event/messaging');
 const etag = require('../../lib/lambda/etag');
 const globalConstants = require('../../lib/constants');
+const date = require('../../lib/date');
 
 process.env.SERVERLESS_VENUE_TABLE_NAME = 'venue-table';
 
 describe('createOrUpdateVenue', () => {
+  beforeEach(() => sinon.stub(date, 'getTodayAsStringDate').returns('2016/01/11'));
+
   afterEach(() => {
+    date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
+
     if (dynamoDbClient.put.restore) {
       dynamoDbClient.put.restore();
     }
@@ -405,43 +410,7 @@ describe('getVenue', () => {
     dynamoDbClient.get.restore();
   });
 
-  it('should process admin get venue request', done => {
-    sinon.stub(dynamoDbClient, 'get').callsFake(params => {
-      expect(params).to.eql({
-        TableName: process.env.SERVERLESS_VENUE_TABLE_NAME,
-        Key: { id: testData.MINIMAL_VENUE_ID },
-        ConsistentRead: true,
-        ReturnConsumedCapacity: undefined,
-      });
-
-      return Promise.resolve(testData.createMinimalDbVenue());
-    });
-
-    const expected = {
-      entityType: 'venue',
-      isFullEntity: true,
-      id: testData.MINIMAL_VENUE_ID,
-      status: 'Active',
-      name: 'Almeida Theatre',
-      venueType: 'Theatre',
-      address: 'Almeida St\nIslington',
-      postcode: 'N1 1TA',
-      latitude: 51.539464,
-      longitude: -0.103103,
-      wheelchairAccessType: 'FullAccess',
-      disabledBathroomType: 'Present',
-      hearingFacilitiesType: 'HearingLoops',
-      hasPermanentCollection: false,
-    };
-
-    venueService
-      .getVenue(testData.MINIMAL_VENUE_ID, false)
-      .then(response => expect(response).to.eql(expected))
-      .then(() => done())
-      .catch(done);
-  });
-
-  it('should process public get venue request', done => {
+  it('should process a get venue request', done => {
     sinon.stub(dynamoDbClient, 'get').callsFake(params => {
       expect(params).to.eql({
         TableName: process.env.SERVERLESS_VENUE_TABLE_NAME,

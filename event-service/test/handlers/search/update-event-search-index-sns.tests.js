@@ -2,7 +2,7 @@
 
 const sinon = require('sinon');
 const expect = require('chai').expect;
-const searchIndexService = require('../../../lib/services/search-index-service');
+const searchIndexService = require('../../../lib/search/search-index-service');
 const proxyHandlerRunner = require('../handler-runner');
 const testData = require('../../test-data');
 const updateEventSearchIndexSns = require('../../../handlers/search/update-event-search-index-sns');

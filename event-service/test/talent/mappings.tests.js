@@ -1,12 +1,20 @@
 'use strict';
 
 const expect = require('chai').expect;
+const sinon = require('sinon');
 const testData = require('../test-data');
 const constants = require('../../lib/talent/constants');
 const mappings = require('../../lib/talent/mappings');
+const date = require('../../lib/date');
 
 describe('talent mappings', () => {
   describe('mapRequestToDbItem', () => {
+    beforeEach(() => sinon.stub(date, 'getTodayAsStringDate').returns('2016/01/11'));
+
+    afterEach(() => {
+      date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
+    });
+
     it('should map a fully populated individual talent request', () => {
       const request = testData.createFullIndividualRequestTalent();
 

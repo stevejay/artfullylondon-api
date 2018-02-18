@@ -1,7 +1,7 @@
 'use strict';
 
 const generatorHandler = require('../../lib/lambda/generator-handler');
-const venueService = require('../../lib/services/venue-service');
+const venueService = require('../../lib/venue/venue-service');
 const writeAuthorized = require('../../lib/lambda/lambda-write-authorized-decorator');
 
 function* handler(event) {

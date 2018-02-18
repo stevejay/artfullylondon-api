@@ -6,16 +6,21 @@ chai.use(require('chai-subset'));
 const expect = chai.expect;
 const dynamoDbClient = require('dynamodb-doc-client-wrapper');
 const testData = require('../test-data');
-const talentService = require('../../lib/services/talent-service');
+const talentService = require('../../lib/talent/talent-service');
 const talentConstants = require('../../lib/talent/constants');
 const elasticsearch = require('../../lib/external-services/elasticsearch');
 const etag = require('../../lib/lambda/etag');
 const globalConstants = require('../../lib/constants');
+const date = require('../../lib/date');
 
 process.env.SERVERLESS_TALENT_TABLE_NAME = 'talent-table';
 
 describe('createOrUpdateTalent', () => {
+  beforeEach(() => sinon.stub(date, 'getTodayAsStringDate').returns('2016/01/11'));
+
   afterEach(() => {
+    date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
+
     if (dynamoDbClient.put.restore) {
       dynamoDbClient.put.restore();
     }
@@ -441,37 +446,7 @@ describe('getTalent', () => {
     dynamoDbClient.get.restore();
   });
 
-  it('should process an admin get talent request', done => {
-    sinon.stub(dynamoDbClient, 'get').callsFake(params => {
-      expect(params).to.eql({
-        TableName: process.env.SERVERLESS_TALENT_TABLE_NAME,
-        Key: { id: testData.INDIVIDUAL_TALENT_ID },
-        ConsistentRead: true,
-        ReturnConsumedCapacity: undefined,
-      });
-
-      return Promise.resolve(testData.createMinimalIndividualDbTalent());
-    });
-
-    const expected = {
-      entityType: 'talent',
-      isFullEntity: true,
-      id: testData.INDIVIDUAL_TALENT_ID,
-      status: 'Active',
-      lastName: 'Cracknell',
-      talentType: 'Individual',
-      commonRole: 'Actor',
-      firstNames: 'Carrie',
-    };
-
-    talentService
-      .getTalent(testData.INDIVIDUAL_TALENT_ID, false)
-      .then(response => expect(response).to.eql(expected))
-      .then(() => done())
-      .catch(done);
-  });
-
-  it('should process a public get talent request', done => {
+  it('should process a get talent request', done => {
     sinon.stub(dynamoDbClient, 'get').callsFake(params => {
       expect(params).to.eql({
         TableName: process.env.SERVERLESS_TALENT_TABLE_NAME,

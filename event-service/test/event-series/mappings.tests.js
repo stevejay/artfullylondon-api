@@ -1,12 +1,20 @@
 'use strict';
 
 const expect = require('chai').expect;
+const sinon = require('sinon');
 const constants = require('../../lib/event-series/constants');
 const testData = require('../test-data');
 const mappings = require('../../lib/event-series/mappings');
+const date = require('../../lib/date');
 
 describe('event series mappings', () => {
   describe('mapRequestToDbItem', () => {
+    beforeEach(() => sinon.stub(date, 'getTodayAsStringDate').returns('2016/01/11'));
+
+    afterEach(() => {
+      date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
+    });
+
     it('should map a minimal event series', () => {
       const params = testData.createMinimalRequestEventSeries();
 

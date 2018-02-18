@@ -4,20 +4,20 @@ const co = require('co');
 const ensure = require('ensure-request').ensure;
 const normalise = require('normalise-request');
 const dynamoDbClient = require('dynamodb-doc-client-wrapper');
-const populate = require('../event/populate');
-const mappings = require('../event/mappings');
+const populate = require('./populate');
+const mappings = require('./mappings');
+const normalisers = require('./normalisers');
+const constraints = require('./constraints');
 const entity = require('../entity/entity');
 const sns = require('../external-services/sns');
 const identity = require('../entity/id');
 const ensureErrorHandler = require('../data/ensure-error-handler');
-const normalisers = require('../event/normalisers');
-const constraints = require('../event/constraints');
 
-module.exports.getEvent = co.wrap(function*(eventId, isPublicRequest) {
+module.exports.getEvent = co.wrap(function*(eventId) {
   const dbItem = yield entity.get(
     process.env.SERVERLESS_EVENT_TABLE_NAME,
     eventId,
-    !isPublicRequest
+    false
   );
 
   const referencedEntities = yield populate.getReferencedEntities(dbItem);

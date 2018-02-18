@@ -1,7 +1,7 @@
 'use strict';
 
 const generatorHandler = require('../../lib/lambda/generator-handler');
-const eventService = require('../../lib/services/event-service');
+const eventService = require('../../lib/event/event-service');
 
 function* handler(event) {
   const ids = event.queryStringParameters && event.queryStringParameters.ids

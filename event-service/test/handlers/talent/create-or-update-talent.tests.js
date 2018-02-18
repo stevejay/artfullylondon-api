@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
 const testData = require('../../test-data');
 const createOrUpdateTalent = require('../../../handlers/talent/create-or-update-talent');
-const talentService = require('../../../lib/services/talent-service');
+const talentService = require('../../../lib/talent/talent-service');
 
 describe('createOrUpdateTalent', () => {
   afterEach(() => {

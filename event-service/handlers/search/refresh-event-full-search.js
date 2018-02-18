@@ -1,7 +1,7 @@
 'use strict';
 
 const generatorHandler = require('../../lib/lambda/generator-handler');
-const searchIndexService = require('../../lib/services/search-index-service');
+const searchIndexService = require('../../lib/search/search-index-service');
 
 function* handler() {
   yield searchIndexService.refreshEventFullSearch();

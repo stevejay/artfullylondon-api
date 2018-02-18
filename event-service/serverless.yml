@@ -242,10 +242,6 @@ functions:
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
-                path: "admin/venue/{id+}"
-                method: get
-                cors: true
-            - http:
                 path: "public/venue/{id+}"
                 method: get
                 cors: true
@@ -272,7 +268,7 @@ functions:
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
-                path: "admin/edit/venue/{id+}"
+                path: "admin/venue/{id+}"
                 method: get
                 cors: true
     getVenueMulti:
@@ -343,10 +339,6 @@ functions:
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
-                path: "admin/talent/{id+}"
-                method: get
-                cors: true
-            - http:
                 path: "public/talent/{id+}"
                 method: get
                 cors: true
@@ -368,7 +360,7 @@ functions:
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
-                path: "admin/edit/talent/{id+}"
+                path: "admin/talent/{id+}"
                 method: get
                 cors: true
     getTalentMulti:
@@ -439,10 +431,6 @@ functions:
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
-                path: "admin/event/{id+}"
-                method: get
-                cors: true
-            - http:
                 path: "public/event/{id+}"
                 method: get
                 cors: true
@@ -464,7 +452,7 @@ functions:
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
-                path: "admin/edit/event/{id+}"
+                path: "admin/event/{id+}"
                 method: get
                 cors: true
     getEventMulti:
@@ -535,10 +523,6 @@ functions:
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
-                path: "admin/event-series/{id+}"
-                method: get
-                cors: true
-            - http:
                 path: "public/event-series/{id+}"
                 method: get
                 cors: true
@@ -560,7 +544,7 @@ functions:
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
-                path: "admin/edit/event-series/{id+}"
+                path: "admin/event-series/{id+}"
                 method: get
                 cors: true
     getEventSeriesMulti:

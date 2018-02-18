@@ -12,10 +12,13 @@ const date = require('./date');
 const constants = require('./constants');
 const globalConstants = require('../constants');
 const id = require('../entity/id');
+const globalDate = require('../date');
 
 const hasLength = mappings.hasLength;
 
 exports.mapRequestToDbItem = (id, request) => {
+  const dateToday = globalDate.getTodayAsStringDate();
+
   const result = {
     id: id,
     status: request.status,
@@ -30,8 +33,8 @@ exports.mapRequestToDbItem = (id, request) => {
     useVenueOpeningTimes: request.useVenueOpeningTimes,
     schemeVersion: constants.CURRENT_EVENT_SCHEME_VERSION,
     version: request.version,
-    createdDate: request.createdDate,
-    updatedDate: request.updatedDate,
+    createdDate: request.createdDate || dateToday,
+    updatedDate: dateToday,
   };
 
   if (request.dateFrom) {

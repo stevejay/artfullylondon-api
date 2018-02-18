@@ -4,8 +4,11 @@ const simplify = require('es-simplify');
 const constants = require('./constants');
 const globalConstants = require('../constants');
 const mappings = require('../data/mappings');
+const date = require('../date');
 
 exports.mapRequestToDbItem = (id, request) => {
+  const dateToday = date.getTodayAsStringDate();
+
   const result = {
     id: id,
     status: request.status,
@@ -16,8 +19,8 @@ exports.mapRequestToDbItem = (id, request) => {
     description: request.description,
     schemeVersion: constants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
     version: request.version,
-    createdDate: request.createdDate,
-    updatedDate: request.updatedDate,
+    createdDate: request.createdDate || dateToday,
+    updatedDate: dateToday,
   };
 
   if (request.descriptionCredit) {

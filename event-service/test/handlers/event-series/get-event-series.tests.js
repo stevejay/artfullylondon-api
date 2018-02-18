@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
 const testData = require('../../test-data');
 const getEventSeries = require('../../../handlers/event-series/get-event-series');
-const eventSeriesService = require('../../../lib/services/event-series-service');
+const eventSeriesService = require('../../../lib/event-series/event-series-service');
 
 describe('get-event-series.handler', () => {
   afterEach(() => {
@@ -24,9 +24,8 @@ describe('get-event-series.handler', () => {
 
     sinon
       .stub(eventSeriesService, 'getEventSeries')
-      .callsFake((id, isPublicRequest) => {
+      .callsFake((id) => {
         expect(id).to.eql(testData.EVENT_SERIES_ID);
-        expect(isPublicRequest).to.eql(false);
         return Promise.resolve({ name: 'The Series' });
       });
 
@@ -57,9 +56,8 @@ describe('get-event-series.handler', () => {
 
     sinon
       .stub(eventSeriesService, 'getEventSeries')
-      .callsFake((id, isPublicRequest) => {
+      .callsFake((id) => {
         expect(id).to.eql(testData.EVENT_SERIES_ID);
-        expect(isPublicRequest).to.eql(true);
         return Promise.resolve({ name: 'The Series' });
       });
 

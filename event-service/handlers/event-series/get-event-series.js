@@ -1,13 +1,11 @@
 'use strict';
 
 const cacheControlGeneratorHandler = require('../../lib/lambda/cache-control-generator-handler');
-const entityLib = require('../../lib/entity/entity');
-const eventSeriesService = require('../../lib/services/event-series-service');
+const eventSeriesService = require('../../lib/event-series/event-series-service');
 
 function* handler(event) {
-  const isPublicRequest = entityLib.isPublicRequest(event);
   const id = event.pathParameters.id;
-  const entity = yield eventSeriesService.getEventSeries(id, isPublicRequest);
+  const entity = yield eventSeriesService.getEventSeries(id);
   return { entity };
 }
 

@@ -4,8 +4,11 @@ const simplify = require('es-simplify');
 const constants = require('./constants');
 const globalConstants = require('../constants');
 const globalMappings = require('../data/mappings');
+const date = require('../date');
 
 exports.mapRequestToDbItem = (id, request, description) => {
+  const dateToday = date.getTodayAsStringDate();
+
   const result = {
     id: id,
     status: request.status,
@@ -20,8 +23,8 @@ exports.mapRequestToDbItem = (id, request, description) => {
     hearingFacilitiesType: request.hearingFacilitiesType,
     schemeVersion: constants.CURRENT_VENUE_SCHEME_VERSION,
     version: request.version,
-    createdDate: request.createdDate,
-    updatedDate: request.updatedDate,
+    createdDate: request.createdDate || dateToday,
+    updatedDate: dateToday,
     hasPermanentCollection: request.hasPermanentCollection,
   };
 

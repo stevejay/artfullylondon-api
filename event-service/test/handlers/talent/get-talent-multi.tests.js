@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
 const getTalentMulti = require('../../../handlers/talent/get-talent-multi');
-const talentService = require('../../../lib/services/talent-service');
+const talentService = require('../../../lib/talent/talent-service');
 
 describe('get-talent-multi.handler', () => {
   afterEach(() => {

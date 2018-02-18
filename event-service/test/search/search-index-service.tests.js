@@ -7,7 +7,7 @@ const dynamoDbClient = require('dynamodb-doc-client-wrapper');
 const elasticsearch = require('../../lib/external-services/elasticsearch');
 const testData = require('../test-data');
 const globalConstants = require('../../lib/constants');
-const searchIndexService = require('../../lib/services/search-index-service');
+const searchIndexService = require('../../lib/search/search-index-service');
 const etag = require('../../lib/lambda/etag');
 const sns = require('../../lib/external-services/sns');
 

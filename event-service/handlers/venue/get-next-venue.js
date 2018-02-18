@@ -1,6 +1,6 @@
 'use strict';
 
-const venueService = require('../../lib/services/venue-service');
+const venueService = require('../../lib/venue/venue-service');
 
 module.exports.handler = (event, context, cb) => {
   venueService

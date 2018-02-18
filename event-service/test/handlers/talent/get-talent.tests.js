@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
 const testData = require('../../test-data');
 const getTalent = require('../../../handlers/talent/get-talent');
-const talentService = require('../../../lib/services/talent-service');
+const talentService = require('../../../lib/talent/talent-service');
 
 describe('getTalent', () => {
   afterEach(() => {
@@ -22,9 +22,8 @@ describe('getTalent', () => {
       query: {},
     };
 
-    sinon.stub(talentService, 'getTalent').callsFake((id, isPublicRequest) => {
+    sinon.stub(talentService, 'getTalent').callsFake((id) => {
       expect(id).to.eql(testData.INDIVIDUAL_TALENT_ID);
-      expect(isPublicRequest).to.eql(false);
       return Promise.resolve({ name: 'The Talent' });
     });
 
@@ -53,9 +52,8 @@ describe('getTalent', () => {
       query: {},
     };
 
-    sinon.stub(talentService, 'getTalent').callsFake((id, isPublicRequest) => {
+    sinon.stub(talentService, 'getTalent').callsFake((id) => {
       expect(id).to.eql(testData.INDIVIDUAL_TALENT_ID);
-      expect(isPublicRequest).to.eql(true);
       return Promise.resolve({ name: 'The Talent' });
     });
 

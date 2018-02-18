@@ -3,7 +3,7 @@
 const sinon = require('sinon');
 const expect = require('chai').expect;
 const getNextVenueHandler = require('../../../handlers/venue/get-next-venue').handler;
-const venueService = require('../../../lib/services/venue-service');
+const venueService = require('../../../lib/venue/venue-service');
 
 describe('get-next-venue.handler', () => {
   afterEach(() => {

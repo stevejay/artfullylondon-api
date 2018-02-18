@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
 const testData = require('../../test-data');
 const createOrUpdateVenue = require('../../../handlers/venue/create-or-update-venue');
-const venueService = require('../../../lib/services/venue-service');
+const venueService = require('../../../lib/venue/venue-service');
 
 describe('createOrUpdateVenue', () => {
   afterEach(() => {

@@ -6,19 +6,24 @@ chai.use(require('chai-subset'));
 const expect = chai.expect;
 const dynamoDbClient = require('dynamodb-doc-client-wrapper');
 const testData = require('../test-data');
-const eventSeriesService = require('../../lib/services/event-series-service');
+const eventSeriesService = require('../../lib/event-series/event-series-service');
 const eventSeriesConstants = require('../../lib/event-series/constants');
 const elasticsearch = require('../../lib/external-services/elasticsearch');
 const eventMessaging = require('../../lib/event/messaging');
 const etag = require('../../lib/lambda/etag');
 const globalConstants = require('../../lib/constants');
+const date = require('../../lib/date');
 
 process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME = 'event-series-table';
 process.env.SERVERLESS_EVENT_TABLE_NAME = 'event-table';
 process.env.SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME = 'event-by-event-series';
 
 describe('createOrUpdateEventSeries', () => {
+  beforeEach(() => sinon.stub(date, 'getTodayAsStringDate').returns('2016/01/11'));
+
   afterEach(() => {
+    date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
+
     if (dynamoDbClient.query.restore) {
       dynamoDbClient.query.restore();
     }
@@ -422,38 +427,7 @@ describe('getEventSeries', () => {
     dynamoDbClient.get.restore();
   });
 
-  it('should process an admin request', done => {
-    sinon.stub(dynamoDbClient, 'get').callsFake(params => {
-      expect(params).to.eql({
-        TableName: process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,
-        Key: { id: testData.EVENT_SERIES_ID },
-        ConsistentRead: true,
-        ReturnConsumedCapacity: undefined,
-      });
-
-      return Promise.resolve(testData.createMinimalDbEventSeries());
-    });
-
-    const expected = {
-      entityType: 'event-series',
-      isFullEntity: true,
-      id: testData.EVENT_SERIES_ID,
-      name: 'Bang Said The Gun',
-      status: 'Active',
-      eventSeriesType: 'Occasional',
-      occurrence: 'Third Thursday of each month',
-      summary: 'A poetry riot',
-      description: 'Poetry for people who dont like poetry.',
-    };
-
-    eventSeriesService
-      .getEventSeries(testData.EVENT_SERIES_ID, false)
-      .then(response => expect(response).to.eql(expected))
-      .then(() => done())
-      .catch(done);
-  });
-
-  it('should process a public request', done => {
+  it('should process a get request', done => {
     sinon.stub(dynamoDbClient, 'get').callsFake(params => {
       expect(params).to.eql({
         TableName: process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,

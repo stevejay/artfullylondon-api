@@ -7,22 +7,22 @@ const normalise = require('normalise-request');
 const ensureErrorHandler = require('../data/ensure-error-handler');
 const entity = require('../entity/entity');
 const identity = require('../entity/id');
-const mappings = require('../event-series/mappings');
-const constants = require('../event-series/constants');
 const globalConstants = require('../constants');
-const normalisers = require('../event-series/normalisers');
-const constraints = require('../event-series/constraints');
+const mappings = require('./mappings');
+const constants = require('./constants');
+const normalisers = require('./normalisers');
+const constraints = require('./constraints');
 const EntityBulkUpdateBuilder = require('../entity/entity-bulk-update-builder');
 const elasticsearch = require('../external-services/elasticsearch');
 const eventMessaging = require('../event/messaging');
 const etag = require('../lambda/etag');
 
 module.exports.getEventSeries = co.wrap(
-  function*(eventSeriesId, isPublicRequest) {
+  function*(eventSeriesId) {
     const dbItem = yield entity.get(
       process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,
       eventSeriesId,
-      !isPublicRequest
+      false
     );
 
     const response = mappings.mapDbItemToPublicResponse(dbItem);

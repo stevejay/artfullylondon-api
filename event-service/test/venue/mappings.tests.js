@@ -1,12 +1,20 @@
 'use strict';
 
 const expect = require('chai').expect;
+const sinon = require('sinon');
 const testData = require('../test-data');
 const constants = require('../../lib/venue/constants');
 const mappings = require('../../lib/venue/mappings');
+const date = require('../../lib/date');
 
 describe('venue mappings', () => {
   describe('mapRequestToDbItem', () => {
+    beforeEach(() => sinon.stub(date, 'getTodayAsStringDate').returns('2016/01/11'));
+
+    afterEach(() => {
+      date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
+    });
+
     it('should map a fully populated request', () => {
       const request = testData.createFullRequestVenue();
       delete request.description;

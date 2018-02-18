@@ -2,7 +2,7 @@
 
 const generatorHandler = require('../../lib/lambda/generator-handler');
 const writeAuthorized = require('../../lib/lambda/lambda-write-authorized-decorator');
-const talentService = require('../../lib/services/talent-service');
+const talentService = require('../../lib/talent/talent-service');
 
 function* handler(event) {
   const request = JSON.parse(event.body);

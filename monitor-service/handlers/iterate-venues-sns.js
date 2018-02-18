@@ -1,7 +1,7 @@
 'use strict';
 
 const generatorHandler = require('lambda-generator-handler');
-const venueService = require('../lib/services/venue-service');
+const venueService = require('../lib/venue/venue-service');
 
 function* handler(event) {
   yield (event.Records || []).map(record => processRecord(record));

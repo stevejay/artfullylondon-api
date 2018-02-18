@@ -1,7 +1,7 @@
 'use strict';
 
 const sinon = require('sinon');
-const searchIndexService = require('../../../lib/services/search-index-service');
+const searchIndexService = require('../../../lib/search/search-index-service');
 const proxyHandlerRunner = require('../handler-runner');
 const refreshEventFullSearch = require('../../../handlers/search/refresh-event-full-search');
 

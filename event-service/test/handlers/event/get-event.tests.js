@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const expect = require('chai').expect;
 const proxyHandlerRunner = require('../handler-runner');
 const getEvent = require('../../../handlers/event/get-event');
-const eventService = require('../../../lib/services/event-service');
+const eventService = require('../../../lib/event/event-service');
 
 describe('get-event.handler', () => {
   afterEach(() => {
@@ -21,9 +21,8 @@ describe('get-event.handler', () => {
       query: {},
     };
 
-    sinon.stub(eventService, 'getEvent').callsFake((id, isPublicRequest) => {
+    sinon.stub(eventService, 'getEvent').callsFake((id) => {
       expect(id).to.eql('almeida-theatre/2016/taming-of-the-shrew');
-      expect(isPublicRequest).to.eql(false);
       return Promise.resolve({ name: 'The Event' });
     });
 
@@ -52,9 +51,8 @@ describe('get-event.handler', () => {
       query: {},
     };
 
-    sinon.stub(eventService, 'getEvent').callsFake((id, isPublicRequest) => {
+    sinon.stub(eventService, 'getEvent').callsFake((id) => {
       expect(id).to.eql('almeida-theatre/2016/taming-of-the-shrew');
-      expect(isPublicRequest).to.eql(true);
       return Promise.resolve({ name: 'The Event' });
     });
 
