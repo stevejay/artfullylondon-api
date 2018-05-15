@@ -18,7 +18,7 @@ the `package.json` file for the service).
 ## Todo
 
 - Improve the AWS Cognito serverless configuration. (I think serverless 
-supports Cognito configuration now.)
+supports AWS Cognito configuration now.)
 
 ## Info
 
