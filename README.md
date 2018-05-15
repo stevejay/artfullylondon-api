@@ -23,6 +23,7 @@ supports AWS Cognito configuration now.)
 ## Info
 
 - [nvm on Windows](https://github.com/coreybutler/nvm-windows)
+- [Git creds manager on Windows](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
 
 ## License
 
