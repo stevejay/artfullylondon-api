@@ -20,6 +20,10 @@ the `package.json` file for the service).
 - Improve the AWS Cognito serverless configuration. (I think serverless 
 supports Cognito configuration now.)
 
+## Info
+
+- [nvm on Windows](https://github.com/coreybutler/nvm-windows)
+
 ## License
 
 [MIT](LICENSE)
