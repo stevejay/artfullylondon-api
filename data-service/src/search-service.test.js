@@ -2,6 +2,8 @@
 
 const SearchService = require("./search-service");
 
+process.env.SITEMAP_URL_PREFIX = "https://www.artfully.london";
+
 describe("SearchService", () => {
   describe("getSitemapLinks", () => {
     it("should get sitemap links", async () => {

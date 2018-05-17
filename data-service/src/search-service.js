@@ -30,7 +30,7 @@ class SearchService {
     });
 
     const links = searchResult.hits.hits.map(
-      hit => "https://www.artfully.london/event/" + hit._source.id
+      hit => process.env.SITEMAP_URL_PREFIX + "/event/" + hit._source.id
     );
 
     return links;
