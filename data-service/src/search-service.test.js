@@ -1,14 +1,14 @@
 "use strict";
 
-const SearchService = require("./search");
+const SearchService = require("./search-service");
 
 describe("SearchService", () => {
   describe("getSitemapLinks", () => {
     it("should get sitemap links", async () => {
-      const mockSearch = jest.fn().mockResolvedValue({
+      const mockSearcher = jest.fn().mockResolvedValue({
         hits: { hits: [{ _source: { id: "a/b/c" } }] }
       });
-      const searchService = new SearchService(mockSearch);
+      const searchService = new SearchService(mockSearcher);
       const actual = await searchService.getSitemapLinks(
         new Date(1491560202450)
       );

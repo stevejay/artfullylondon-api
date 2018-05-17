@@ -12,8 +12,5 @@ module.exports = {
     filename: "[name].js"
   },
   externals: [nodeExternals(), "aws-sdk"],
-  resolve: {
-    modules: [__dirname]
-  },
-  plugins: []
+  resolve: { modules: [__dirname] }
 };

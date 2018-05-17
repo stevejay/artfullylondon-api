@@ -1,13 +1,13 @@
 "use strict";
 
-const date = require("../date");
+const dateUtil = require("./date-util");
 
 class SearchService {
   constructor(searcher) {
     this._searcher = searcher;
   }
   async getSitemapLinks(dateTo) {
-    const formattedDate = date.formatDate(dateTo);
+    const formattedDate = dateUtil.formatDate(dateTo);
 
     const searchResult = await this._searcher({
       index: "event-full",

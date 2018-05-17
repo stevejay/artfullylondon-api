@@ -31,7 +31,7 @@ custom:
 
 functions:
     siteMap:
-        handler: src/sitemap.handler
+        handler: src/sitemap-handler.handler
         events:
             - http:
                 path: "public/sitemap.txt"

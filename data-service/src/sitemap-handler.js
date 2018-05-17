@@ -1,9 +1,8 @@
 "use strict";
 
-const esSearch = require("../lib/external-services/elasticsearch");
-const SearchService = require("../lib/services/search");
-
-const searchService = new SearchService(esSearch.search);
+const elasticsearch = require("./elasticsearch");
+const SearchService = require("./search-service");
+const searchService = new SearchService(elasticsearch);
 
 module.exports.handler = async () => {
   try {

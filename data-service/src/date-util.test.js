@@ -1,8 +1,8 @@
 "use strict";
 
-const dateLib = require("./date");
+const dateUtil = require("./date-util");
 
-describe("date", () => {
+describe("dateUtil", () => {
   describe("formatDate", () => {
     const tests = [
       {
@@ -13,7 +13,7 @@ describe("date", () => {
 
     tests.map(test => {
       it(`should return ${test.expected} for arg ${test.arg}`, () => {
-        const actual = dateLib.formatDate(new Date(test.arg));
+        const actual = dateUtil.formatDate(new Date(test.arg));
         expect(actual).toEqual(test.expected);
       });
     });
