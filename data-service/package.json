@@ -1,26 +1,28 @@
 {
   "name": "artfullylondon-api-data-service",
+  "license": "MIT",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha --recursive",
     "posttest": "yarn run lint",
     "lint": "eslint .",
-    "deploy": "yarn test && node build.js && sls deploy -v"
+    "deploy": "yarn test && node build.js && sls deploy --stage=production -v",
+    "offline": "sls offline start --stage=development --port 3010 --noTimeout"
   },
   "devDependencies": {
     "cross-env": "^5.1.5",
-    "eslint": "^4.1.1",
-    "loglevel": "^1.4.1",
-    "mocha": "^3.4.2",
-    "serverless": "^1.25.0",
-    "serverless-webpack": "^1.0.0-rc.4",
-    "should": "^11.2.1",
-    "sinon": "^2.3.6",
-    "webpack-node-externals": "^1.6.0"
+    "eslint": "^4.19.1",
+    "loglevel": "^1.6.1",
+    "mocha": "^5.1.1",
+    "serverless": "^1.27.2",
+    "serverless-offline": "^3.23.0",
+    "serverless-webpack": "^5.1.5",
+    "should": "^13.2.1",
+    "sinon": "^5.0.7",
+    "webpack": "^4.8.3",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "co": "^4.6.0",
-    "elasticsearch": "^13.2.0",
-    "lambda-generator-handler": "^1.0.1",
+    "elasticsearch": "^15.0.0",
     "lodash.padstart": "^4.6.1"
   }
 }

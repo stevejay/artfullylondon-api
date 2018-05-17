@@ -1,19 +1,21 @@
-const nodeExternals = require('webpack-node-externals');
-const path = require('path');
+const nodeExternals = require("webpack-node-externals");
+const slsw = require("serverless-webpack");
+const path = require("path");
 
 module.exports = {
+  mode: slsw.lib.webpack.isLocal ? "development" : "production",
   entry: {
-    '/handlers/sitemap': './handlers/sitemap.js',
+    "/handlers/sitemap": "./handlers/sitemap.js"
   },
-  target: 'node',
+  target: "node",
   output: {
-    libraryTarget: 'commonjs',
-    path: path.join(__dirname, '.webpack'),
-    filename: '[name].js',
+    libraryTarget: "commonjs",
+    path: path.join(__dirname, ".webpack"),
+    filename: "[name].js"
   },
-  externals: [nodeExternals(), 'aws-sdk'],
+  externals: [nodeExternals(), "aws-sdk"],
   resolve: {
-    root: __dirname,
+    modules: [__dirname]
   },
-  plugins: [],
+  plugins: []
 };

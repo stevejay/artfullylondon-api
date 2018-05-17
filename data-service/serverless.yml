@@ -19,12 +19,15 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-offline
 
 custom:
     project: artfullylondon
     stage: ${opt:stage, self:provider.stage}
     region: ${opt:region, self:provider.region}
-    webpackIncludeModules: true
+    webpack:
+        includeModules: true
+        packager: 'npm'
 
 functions:
     siteMap:
