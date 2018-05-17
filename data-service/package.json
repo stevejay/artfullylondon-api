@@ -1,12 +1,13 @@
 {
   "name": "artfullylondon-api-data-service",
   "scripts": {
-    "test": "NODE_ENV=test mocha --recursive",
+    "test": "cross-env NODE_ENV=test mocha --recursive",
     "posttest": "yarn run lint",
     "lint": "eslint .",
     "deploy": "yarn test && node build.js && sls deploy -v"
   },
   "devDependencies": {
+    "cross-env": "^5.1.5",
     "eslint": "^4.1.1",
     "loglevel": "^1.4.1",
     "mocha": "^3.4.2",

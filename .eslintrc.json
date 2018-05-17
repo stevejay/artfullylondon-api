@@ -15,7 +15,7 @@
         "SwitchCase": 1
       }
     ],
-    "linebreak-style": ["error", "unix"],
+    "linebreak-style": 0,
     "quotes": [1, "single"],
     "semi": ["error", "always"],
     "no-console": 0,
