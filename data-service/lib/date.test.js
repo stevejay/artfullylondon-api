@@ -1,7 +1,6 @@
 "use strict";
 
-const expect = require("chai").expect;
-const subject = require("../lib/date");
+const dateLib = require("./date");
 
 describe("date", () => {
   describe("formatDate", () => {
@@ -14,8 +13,8 @@ describe("date", () => {
 
     tests.map(test => {
       it(`should return ${test.expected} for arg ${test.arg}`, () => {
-        const actual = subject.formatDate(new Date(test.arg));
-        expect(actual).to.eql(test.expected);
+        const actual = dateLib.formatDate(new Date(test.arg));
+        expect(actual).toEqual(test.expected);
       });
     });
   });

@@ -1,19 +1,12 @@
 {
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "extends": "eslint:recommended",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 8
-  },
-  "globals": {
-    "describe": false,
-    "it": false,
-    "before": false,
-    "beforeEach": false,
-    "after": false,
-    "afterEach": false
   }
 }
