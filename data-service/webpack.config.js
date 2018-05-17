@@ -4,9 +4,7 @@ const path = require("path");
 
 module.exports = {
   mode: slsw.lib.webpack.isLocal ? "development" : "production",
-  entry: {
-    "/handlers/sitemap": "./handlers/sitemap.js"
-  },
+  entry: slsw.lib.entries,
   target: "node",
   output: {
     libraryTarget: "commonjs",

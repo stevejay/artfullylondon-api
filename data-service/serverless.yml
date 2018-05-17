@@ -3,7 +3,7 @@ service: artfullylondon-data-service
 frameworkVersion: ">=1.2.0 <2.0.0"
 
 package:
-    individually: false
+    individually: true
 
 provider:
     name: aws
