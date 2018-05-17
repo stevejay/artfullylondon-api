@@ -2,7 +2,7 @@
   "name": "artfullylondon-api-data-service",
   "license": "MIT",
   "scripts": {
-    "test": "cross-env NODE_ENV=test mocha --recursive",
+    "test": "cross-env NODE_ENV=test mocha ./lib/**/*.tests.js",
     "posttest": "yarn run lint",
     "lint": "eslint .",
     "deploy": "yarn test && node build.js && sls deploy --stage=production -v",

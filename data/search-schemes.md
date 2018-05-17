@@ -1,13 +1,13 @@
 # Indexes
 
-- talent-full
-- talent-auto
-- venue-full
-- venue-auto
-- event-series-full
-- event-series-auto
-- event-full
-- combined-event-auto
+* talent-full
+* talent-auto
+* venue-full
+* venue-auto
+* event-series-full
+* event-series-auto
+* event-full
+* combined-event-auto
 
 # event-full Search Index
 
@@ -20,7 +20,7 @@
             "filter": {
                 "english_stop": {
                     "type":       "stop",
-                    "stopwords":  "_english_" 
+                    "stopwords":  "_english_"
                 },
                 "english_stemmer": {
                     "type":       "stemmer",
@@ -109,7 +109,7 @@
                 },
                 "postcode": {
                     "type": "text",
-                    "index": "no"
+                    "index": false
                 },
                 "eventSeriesId": {
                     "type": "keyword",
@@ -136,7 +136,7 @@
                     "index": true
                 },
                 "dateFrom": {
-                    "type": "date", 
+                    "type": "date",
                     "format": "yyyy/MM/dd",
                     "index": true
                 },
@@ -209,7 +209,7 @@
                     "index": true
                 },
                 "dates": {
-                    "type": "nested", 
+                    "type": "nested",
                     "properties": {
                         "date": {
                             "type": "date",
@@ -304,7 +304,7 @@
             "filter": {
                 "english_stop": {
                     "type":       "stop",
-                    "stopwords":  "_english_" 
+                    "stopwords":  "_english_"
                 },
                 "english_stemmer": {
                     "type":       "stemmer",
@@ -461,7 +461,7 @@
             "filter": {
                 "english_stop": {
                     "type":       "stop",
-                    "stopwords":  "_english_" 
+                    "stopwords":  "_english_"
                 },
                 "english_stemmer": {
                     "type":       "stemmer",
@@ -641,7 +641,7 @@
             "filter": {
                 "english_stop": {
                     "type":       "stop",
-                    "stopwords":  "_english_" 
+                    "stopwords":  "_english_"
                 },
                 "english_stemmer": {
                     "type":       "stemmer",
