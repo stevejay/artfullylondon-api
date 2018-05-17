@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-require('../lib/external-services/aws-cloudwatch-retry');
-const generatorHandler = require('lambda-generator-handler');
-const tagService = require('../lib/services/tag-service');
+require("../lib/external-services/aws-cloudwatch-retry");
+const generatorHandler = require("lambda-generator-handler");
+const tagService = require("../lib/services/tag-service");
 
-function* handler() {
-  return yield tagService.getAllTags();
+async function handler() {
+  return await tagService.getAllTags();
 }
 
 module.exports.handler = generatorHandler(handler);

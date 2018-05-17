@@ -1,19 +1,18 @@
-'use strict';
+"use strict";
 
-require('../lib/external-services/aws-cloudwatch-retry');
-const generatorHandler = require('lambda-generator-handler');
-const tagService = require('../lib/services/tag-service');
-const writeAuthorized = require('../lib/lambda/lambda-write-authorized-decorator');
+require("../lib/external-services/aws-cloudwatch-retry");
+const tagService = require("../lib/services/tag-service");
+const writeAuthorized = require("../lib/lambda/lambda-write-authorized-decorator");
 
-function* handler(event) {
+async function handler(event) {
   const body = JSON.parse(event.body);
 
   const request = {
     type: event.pathParameters.type,
-    label: body.label,
+    label: body.label
   };
 
-  return yield tagService.createTag(request);
+  return await tagService.createTag(request);
 }
 
-module.exports.handler = writeAuthorized(generatorHandler(handler));
+module.exports.handler = writeAuthorized(handler);
