@@ -11,7 +11,7 @@ async function handler(event) {
   };
 
   await tagService.deleteTag(request);
-  return { acknowledged: true };
+  return { body: { acknowledged: true } };
 }
 
 module.exports.handler = writeAuthorized(handler);

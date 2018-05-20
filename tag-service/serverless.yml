@@ -32,6 +32,7 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-dynamodb-local
     - serverless-offline
 
 custom:
@@ -42,6 +43,15 @@ custom:
     webpack:
         includeModules: true
         packager: 'npm'
+    dynamodb:
+        start:
+            port: 8000
+            # inMemory: true
+            migrate: true
+            sharedDb: true
+            #seed: true
+            # Uncomment only if you already have a DynamoDB running locally
+            noStart: true
 
 functions:
     createTag:
