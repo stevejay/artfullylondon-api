@@ -58,11 +58,11 @@ exports.deleteUser = async function(request) {
 };
 
 exports.getPreferences = async function(request) {
-  await preferencesService.getPreferences(request.userId);
+  return await preferencesService.getPreferences(request.userId);
 };
 
 exports.getAllWatches = async function(request) {
-  await watchesService.getAllWatches(request.userId);
+  return await watchesService.getAllWatches(request.userId);
 };
 
 exports.getWatches = async function(request) {
