@@ -473,7 +473,7 @@ atob@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.1.tgz#ae2d5a729477f289d60dd7f96a6314a22dd6c22a"
 
-aws-sdk@^2.228.0, aws-sdk@^2.7.0:
+aws-sdk@^2.228.0:
   version "2.241.1"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.241.1.tgz#ae4e1ba772cc17284df00c03b58dcf914d5c72f9"
   dependencies:
@@ -487,7 +487,7 @@ aws-sdk@^2.228.0, aws-sdk@^2.7.0:
     uuid "3.1.0"
     xml2js "0.4.17"
 
-aws-sdk@^2.243.1:
+aws-sdk@^2.243.1, aws-sdk@^2.7.0:
   version "2.243.1"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.243.1.tgz#c47b05431637c572177a1814c724cae8a5ee3f49"
   dependencies:
