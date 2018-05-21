@@ -6,7 +6,7 @@ const testUtils = require("./utils");
 
 // const SECRET = "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
 const TOKEN =
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FydGZ1bGx5bG9uZG9uLmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJlbWFpbHw1ODZhMjQ1ZTBiZGNhYjBhMGVhMGQxMWIiLCJhdWQiOiJXUjlHd0dkMm8zUllGcGtkQm0wcXk4Yk9FbTY4UEdlZyIsImlhdCI6MTUyNjkzMTI4MCwiZXhwIjoxNTI2OTY3MjgwfQ.T3MJ0nVohjggSBCloKy-AUNg7E3KdVNl4ALBfjoHA-M";
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FydGZ1bGx5bG9uZG9uLmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJlbWFpbHw1ODZhMjQ1ZTBiZGNhYjBhMGVhMGQxMWIiLCJhdWQiOiJXUjlHd0dkMm8zUllGcGtkQm0wcXk4Yk9FbTY4UEdlZyIsImlhdCI6MTUyNjkzMTI4MCwiZXhwIjoxNTI2OTY3MjgwfQ.Z4BeFZ52DmAP_Y8NlHoMf_6LlPH46zAgPW-Bia7bo44";
 
 // const TOKEN_2 = jwt.sign({ foo: "bar" }, SECRET, {
 //   algorithm: "HS256",
