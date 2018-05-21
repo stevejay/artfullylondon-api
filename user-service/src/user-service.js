@@ -1,15 +1,14 @@
 'use strict';
 
 const log = require('loglevel');
-const co = require('co');
 const ensure = require('ensure-request').ensure;
 const ManagementClient = require('auth0').ManagementClient;
+const constants = require('../constants');
 const watchesService = require('./watches-service');
 const preferencesService = require('./preferences-service');
-const constraints = require('../data/constraints');
-const constants = require('../constants');
-const ensureErrorHandler = require('../data/ensure-error-handler');
-const watchRepository = require('../persistence/watch-repository');
+const constraints = require('../domain/constraints');
+const ensureErrorHandler = require('../domain/ensure-error-handler');
+const watchRepository = require('./watch-repository');
 
 const UPDATE_PREFERENCES_CONSTRAINT = {
   preferences: {
@@ -42,50 +41,50 @@ const UPDATE_WATCHES_CONSTRAINT = {
 
 const GET_WATCHES_CONSTRAINT = { entityType: constraints.entityType };
 
-exports.deleteUser = co.wrap(function*(request) {
-  var management = new ManagementClient({
+exports.deleteUser = async function(request) {
+  const management = new ManagementClient({
     token: process.env.AUTH0_MANAGEMENT_API_TOKEN,
     domain: process.env.AUTH0_MANAGEMENT_API_DOMAIN,
   });
 
-  yield management.users.delete({ id: request.userId });
+  await management.users.delete({ id: request.userId });
 
   try {
-    yield watchesService.deleteAllWatches(request.userId);
-    yield preferencesService.deletePreferences(request.userId);
+    await watchesService.deleteAllWatches(request.userId);
+    await preferencesService.deletePreferences(request.userId);
   } catch (err) {
     log.error('cleanup error: ' + err.message);
   }
 });
 
-exports.getPreferences = co.wrap(function*(request) {
-  yield preferencesService.getPreferences(request.userId);
+exports.getPreferences = await function (request) {
+  await preferencesService.getPreferences(request.userId);
 });
 
-exports.getAllWatches = co.wrap(function*(request) {
-  yield watchesService.getAllWatches(request.userId);
+exports.getAllWatches = await function(request) {
+  await watchesService.getAllWatches(request.userId);
 });
 
-exports.getWatches = co.wrap(function*(request) {
+exports.getWatches = await function (request) {
   ensure(request, GET_WATCHES_CONSTRAINT, ensureErrorHandler);
-  return yield watchesService.getWatches(request.userId, request.entityType);
+  return await watchesService.getWatches(request.userId, request.entityType);
 });
 
-exports.updatePreferences = co.wrap(function*(request) {
+exports.updatePreferences = await function(request) {
   ensure(request, UPDATE_PREFERENCES_CONSTRAINT, ensureErrorHandler);
   request.preferences.userId = request.userId;
 
-  yield preferencesService.updatePreferences(
+  await preferencesService.updatePreferences(
     request.userId,
     request.preferences
   );
 });
 
-exports.updateWatches = co.wrap(function*(request) {
+exports.updateWatches = await function (request) {
   ensure(request, UPDATE_WATCHES_CONSTRAINT, ensureErrorHandler);
 
   // get the existing watches
-  const currentWatches = yield watchesService.getWatches(
+  const currentWatches = await watchesService.getWatches(
     request.userId,
     request.entityType
   );
@@ -127,7 +126,7 @@ exports.updateWatches = co.wrap(function*(request) {
     throw new Error('[400] Too many watches');
   }
 
-  yield watchRepository.createOrUpdateWatches(
+  await watchRepository.createOrUpdateWatches(
     currentWatches.version,
     request.newVersion,
     request.userId,
