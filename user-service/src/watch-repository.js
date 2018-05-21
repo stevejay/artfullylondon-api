@@ -1,7 +1,7 @@
 "use strict";
 
 const dynamodbClient = require("./dynamodb-client");
-const constants = require("../constants");
+const constants = require("./constants");
 
 exports.tryGetWatchesByTypeForUser = (userId, entityType) =>
   dynamodbClient.tryGet({

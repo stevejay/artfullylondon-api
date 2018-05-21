@@ -1,24 +1,24 @@
-'use strict';
+"use strict";
 
-const log = require('loglevel');
-const ensure = require('ensure-request').ensure;
-const ManagementClient = require('auth0').ManagementClient;
-const constants = require('../constants');
-const watchesService = require('./watches-service');
-const preferencesService = require('./preferences-service');
-const constraints = require('../domain/constraints');
-const ensureErrorHandler = require('../domain/ensure-error-handler');
-const watchRepository = require('./watch-repository');
+const log = require("loglevel");
+const ensure = require("ensure-request").ensure;
+const ManagementClient = require("auth0").ManagementClient;
+const constants = require("./constants");
+const watchesService = require("./watches-service");
+const preferencesService = require("./preferences-service");
+const constraints = require("./domain/constraints");
+const ensureErrorHandler = require("./domain/ensure-error-handler");
+const watchRepository = require("./watch-repository");
 
 const UPDATE_PREFERENCES_CONSTRAINT = {
   preferences: {
     object: {
       emailFrequency: {
         presence: true,
-        inclusion: constants.ALLOWED_EMAIL_FREQUENCY_TYPES,
-      },
-    },
-  },
+        inclusion: constants.ALLOWED_EMAIL_FREQUENCY_TYPES
+      }
+    }
+  }
 };
 
 const UPDATE_WATCHES_CONSTRAINT = {
@@ -33,10 +33,10 @@ const UPDATE_WATCHES_CONSTRAINT = {
         changeType: constraints.changeType,
         id: constraints.id,
         label: constraints.label,
-        created: constraints.created,
-      },
-    },
-  },
+        created: constraints.created
+      }
+    }
+  }
 };
 
 const GET_WATCHES_CONSTRAINT = { entityType: constraints.entityType };
@@ -44,7 +44,7 @@ const GET_WATCHES_CONSTRAINT = { entityType: constraints.entityType };
 exports.deleteUser = async function(request) {
   const management = new ManagementClient({
     token: process.env.AUTH0_MANAGEMENT_API_TOKEN,
-    domain: process.env.AUTH0_MANAGEMENT_API_DOMAIN,
+    domain: process.env.AUTH0_MANAGEMENT_API_DOMAIN
   });
 
   await management.users.delete({ id: request.userId });
@@ -53,24 +53,24 @@ exports.deleteUser = async function(request) {
     await watchesService.deleteAllWatches(request.userId);
     await preferencesService.deletePreferences(request.userId);
   } catch (err) {
-    log.error('cleanup error: ' + err.message);
+    log.error("cleanup error: " + err.message);
   }
-});
+};
 
-exports.getPreferences = await function (request) {
+exports.getPreferences = async function(request) {
   await preferencesService.getPreferences(request.userId);
-});
+};
 
-exports.getAllWatches = await function(request) {
+exports.getAllWatches = async function(request) {
   await watchesService.getAllWatches(request.userId);
-});
+};
 
-exports.getWatches = await function (request) {
+exports.getWatches = async function(request) {
   ensure(request, GET_WATCHES_CONSTRAINT, ensureErrorHandler);
   return await watchesService.getWatches(request.userId, request.entityType);
-});
+};
 
-exports.updatePreferences = await function(request) {
+exports.updatePreferences = async function(request) {
   ensure(request, UPDATE_PREFERENCES_CONSTRAINT, ensureErrorHandler);
   request.preferences.userId = request.userId;
 
@@ -78,9 +78,9 @@ exports.updatePreferences = await function(request) {
     request.userId,
     request.preferences
   );
-});
+};
 
-exports.updateWatches = await function (request) {
+exports.updateWatches = async function(request) {
   ensure(request, UPDATE_WATCHES_CONSTRAINT, ensureErrorHandler);
 
   // get the existing watches
@@ -91,7 +91,7 @@ exports.updateWatches = await function (request) {
 
   // check the updates were created on top of the most recent server data
   if (currentWatches.version !== request.newVersion - 1) {
-    throw new Error('[400] Stale data');
+    throw new Error("[400] Stale data");
   }
 
   // apply any changes
@@ -108,7 +108,7 @@ exports.updateWatches = await function (request) {
           currentWatches.items.push({
             id: change.id,
             label: change.label,
-            created: change.created,
+            created: change.created
           });
         }
       } else if (existingIdsLookup[change.id]) {
@@ -123,7 +123,7 @@ exports.updateWatches = await function (request) {
 
   // throw if the list of watches has grown too large
   if (currentWatches.items.length > constants.MAX_WATCHES_LENGTH) {
-    throw new Error('[400] Too many watches');
+    throw new Error("[400] Too many watches");
   }
 
   await watchRepository.createOrUpdateWatches(
@@ -133,4 +133,4 @@ exports.updateWatches = await function (request) {
     request.entityType,
     currentWatches.items
   );
-});
+};

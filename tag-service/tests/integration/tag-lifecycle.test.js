@@ -3,7 +3,7 @@
 const request = require("request-promise-native");
 const testUtils = require("./utils");
 
-describe("create-tag", () => {
+describe("tag lifecycle", () => {
   const id = testUtils.createIdForTag();
   const tag = { id: `audience/${id}`, label: id };
 

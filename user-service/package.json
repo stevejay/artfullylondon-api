@@ -6,7 +6,8 @@
     "test:integration": "cross-env NODE_ENV=test jest ./tests/integration",
     "lint": "eslint .",
     "deploy": "yarn test && node build.js && sls deploy --stage=production -v",
-    "local:service": "cross-env sls offline start --stage=development --port 3030 --noTimeout",
+    "local:service":
+      "cross-env sls offline start --stage=development --port 3020 --noTimeout",
     "local:install": "sls dynamodb install",
     "local:dynamodb": "node ./scripts/start-dynamodb-local.js"
   },
@@ -30,7 +31,9 @@
     "dynamodb-doc-client-wrapper": "^2.0.1",
     "ensure-request": "^4.0.0",
     "jsonwebtoken": "^8.2.1",
+    "lambda-error-handler": "^1.0.0",
     "loglevel": "^1.6.1",
-    "normalise-request": "^1.4.4"
+    "normalise-request": "^1.4.4",
+    "serverless-dynamodb-client": "^0.0.2"
   }
 }

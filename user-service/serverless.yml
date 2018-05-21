@@ -81,6 +81,8 @@ custom:
 functions:
     auth:
         handler: src/handlers/auth.handler
+        environment:
+            SERVERLESS_STAGE: ${self:custom.stage}
     getUser:
         handler: src/handlers/get-user.handler
         environment:

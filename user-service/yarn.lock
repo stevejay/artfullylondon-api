@@ -506,7 +506,7 @@ auth0@^2.7.0:
     request "^2.81.0"
     rest-facade "^1.5.0"
 
-aws-sdk@^2.228.0, aws-sdk@^2.243.1, aws-sdk@^2.7.0:
+aws-sdk@^2.228.0, aws-sdk@^2.243.1, aws-sdk@^2.3.19, aws-sdk@^2.7.0:
   version "2.243.1"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.243.1.tgz#c47b05431637c572177a1814c724cae8a5ee3f49"
   dependencies:
@@ -3792,6 +3792,10 @@ klaw@^1.0.0:
   optionalDependencies:
     graceful-fs "^4.1.9"
 
+lambda-error-handler@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/lambda-error-handler/-/lambda-error-handler-1.0.0.tgz#d81c27817b2a315fc091bfb72f49d79b9f4b42c8"
+
 latest-version@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/latest-version/-/latest-version-3.1.0.tgz#a205383fea322b33b5ae3b18abee0dc2f356ee15"
@@ -5371,6 +5375,12 @@ sentence-case@^1.1.1, sentence-case@^1.1.2:
 serialize-javascript@^1.4.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-1.5.0.tgz#1aa336162c88a890ddad5384baebc93a655161fe"
+
+serverless-dynamodb-client@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/serverless-dynamodb-client/-/serverless-dynamodb-client-0.0.2.tgz#41a0200e1da74f50372cc4eeeca0a8aa9da82daa"
+  dependencies:
+    aws-sdk "^2.3.19"
 
 serverless-dynamodb-local@^0.2.30:
   version "0.2.30"
