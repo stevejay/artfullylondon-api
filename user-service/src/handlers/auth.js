@@ -9,10 +9,6 @@ const generatePolicy = principalId => {
     principalId: principalId
   };
 
-  // TODO add in environment.
-
-  // 'arn:aws:execute-api:eu-west-1:random-account-id:random-api-id/development/PUT/dinosaurs/xx';
-
   const policyDocument = {
     Version: "2012-10-17",
     Statement: [
@@ -98,32 +94,18 @@ module.exports.handler = (event, context, cb) => {
         audience: process.env.AUTH0_CLIENT_ID
       };
 
-      console.log("token!", token);
-      console.log(
-        "values",
-        process.env.AUTH0_CLIENT_SECRET,
-        process.env.AUTH0_CLIENT_ID,
-        process.env.SERVERLESS_STAGE
-      );
-
       jwt.verify(
         token,
         new Buffer(process.env.AUTH0_CLIENT_SECRET, "base64"),
         options,
         (err, decoded) => {
           if (err) {
-            console.log("err in callback", err.message);
             cb("Unauthorized");
           } else {
             const policy = generatePolicy(
               decoded.sub,
               "Allow",
               event.methodArn
-            );
-            console.log(
-              "policy>>>",
-              policy.policyDocument.Statement[0],
-              JSON.stringify(policy)
             );
             cb(null, policy);
           }
@@ -133,7 +115,6 @@ module.exports.handler = (event, context, cb) => {
       cb("Unauthorized");
     }
   } catch (err) {
-    console.log("err!!", err.message);
     log.error(err.message);
     cb("Unauthorized");
   }
