@@ -46,16 +46,13 @@ custom:
     dynamodb:
         start:
             port: 8000
-            # inMemory: true
             migrate: true
             sharedDb: true
-            #seed: true
-            # Uncomment only if you already have a DynamoDB running locally
             noStart: true
 
 functions:
     createTag:
-        handler: handlers/create-tag.handler
+        handler: src/handlers/create-tag.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
@@ -65,7 +62,7 @@ functions:
                 method: post
                 cors: true
     deleteTag:
-        handler: handlers/delete-tag.handler
+        handler: src/handlers/delete-tag.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
@@ -75,7 +72,7 @@ functions:
                 method: delete
                 cors: true
     getAllTags:
-        handler: handlers/get-all-tags.handler
+        handler: src/handlers/get-all-tags.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
@@ -85,7 +82,7 @@ functions:
                 method: get
                 cors: true
     getTags:
-        handler: handlers/get-tags.handler
+        handler: src/handlers/get-tags.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}

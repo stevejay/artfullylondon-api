@@ -1,8 +1,8 @@
 "use strict";
 
-require("../lib/external-services/aws-cloudwatch-retry");
+require("../aws-cloudwatch-retry");
 const withErrorHandling = require("lambda-error-handler");
-const tagService = require("../lib/services/tag-service");
+const tagService = require("../tag-service");
 
 async function handler() {
   const result = await tagService.getAllTags();

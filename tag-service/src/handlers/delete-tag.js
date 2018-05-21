@@ -1,9 +1,9 @@
 "use strict";
 
-require("../lib/external-services/aws-cloudwatch-retry");
+require("../aws-cloudwatch-retry");
 const withErrorHandling = require("lambda-error-handler");
-const tagService = require("../lib/services/tag-service");
-const withWriteAuthorization = require("../lib/lambda/with-write-authorization");
+const tagService = require("../tag-service");
+const withWriteAuthorization = require("../with-write-authorization");
 
 async function handler(event) {
   const request = {

@@ -2,7 +2,6 @@
 
 const request = require("request-promise-native");
 const testUtil = require("./test-util");
-const TIMEOUT_MS = 5000;
 
 describe("create-tag", () => {
   const id = testUtil.createIdForTag();
