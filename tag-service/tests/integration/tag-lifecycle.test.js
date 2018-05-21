@@ -1,10 +1,10 @@
 "use strict";
 
 const request = require("request-promise-native");
-const testUtil = require("./test-util");
+const testUtils = require("./utils");
 
 describe("create-tag", () => {
-  const id = testUtil.createIdForTag();
+  const id = testUtils.createIdForTag();
   const tag = { id: `audience/${id}`, label: id };
 
   it("should create a tag", async () => {
@@ -12,7 +12,7 @@ describe("create-tag", () => {
       uri: "http://localhost:3020/tag/audience",
       json: true,
       method: "POST",
-      headers: { Authorization: testUtil.EDITOR_AUTH_TOKEN },
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
       body: { label: id },
       timeout: 4000
     });
@@ -31,12 +31,12 @@ describe("create-tag", () => {
 
   it("should fail to create a duplicate tag", async () => {
     expect(
-      await testUtil.sync(
+      await testUtils.sync(
         request({
           uri: "http://localhost:3020/tag/audience",
           json: true,
           method: "POST",
-          headers: { Authorization: testUtil.EDITOR_AUTH_TOKEN },
+          headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
           body: { label: id },
           timeout: 4000
         })
@@ -49,7 +49,7 @@ describe("create-tag", () => {
       uri: `http://localhost:3020/tag/audience/${id}`,
       json: true,
       method: "DELETE",
-      headers: { Authorization: testUtil.EDITOR_AUTH_TOKEN },
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
       timeout: 4000
     });
 
