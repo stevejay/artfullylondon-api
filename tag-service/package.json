@@ -30,6 +30,7 @@
     "dynamodb-doc-client-wrapper": "^2.0.0",
     "ensure-request": "^4.0.0",
     "jwt-decode": "^2.2.0",
+    "lambda-error-handler": "^1.0.0",
     "lambda-generator-handler": "^1.0.1",
     "limax": "^1.6.0",
     "lodash.groupby": "^4.6.0",

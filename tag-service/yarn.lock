@@ -3664,6 +3664,10 @@ klaw@^1.0.0:
   optionalDependencies:
     graceful-fs "^4.1.9"
 
+lambda-error-handler@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/lambda-error-handler/-/lambda-error-handler-1.0.0.tgz#d81c27817b2a315fc091bfb72f49d79b9f4b42c8"
+
 lambda-generator-handler@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/lambda-generator-handler/-/lambda-generator-handler-1.0.1.tgz#411256bc1263b676c3f56111825c1770893a7151"
