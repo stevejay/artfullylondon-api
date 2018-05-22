@@ -16,7 +16,7 @@ function readEnvVars() {
 
 const ENV_VARS = readEnvVars();
 
-function createJWT(userId = "email|586a245e0bdcab0a0ea0d11b") {
+function createJWT(userId = "email|cccccccccccccccccccccccc") {
   return jwt.sign(
     {
       iss: `https://${ENV_VARS.AUTH0_MANAGEMENT_API_DOMAIN}/`,

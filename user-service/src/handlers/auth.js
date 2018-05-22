@@ -3,75 +3,31 @@
 const jwt = require("jsonwebtoken");
 const log = require("loglevel");
 
-// Policy helper function
-const generatePolicy = principalId => {
+function generatePolicy(principalId) {
   const authResponse = {
     principalId: principalId
   };
 
-  const policyDocument = {
+  const prefix =
+    process.env.EXECUTE_API_ID + "/" + process.env.SERVERLESS_STAGE;
+
+  authResponse.policyDocument = {
     Version: "2012-10-17",
     Statement: [
-      generatePolicyStatement(
-        process.env.EXECUTE_API_ID +
-          "/" +
-          process.env.SERVERLESS_STAGE +
-          "/GET/user"
-      ),
-      generatePolicyStatement(
-        process.env.EXECUTE_API_ID +
-          "/" +
-          process.env.SERVERLESS_STAGE +
-          "/DELETE/user"
-      ),
-      generatePolicyStatement(
-        process.env.EXECUTE_API_ID +
-          "/" +
-          process.env.SERVERLESS_STAGE +
-          "/OPTIONS/user"
-      ),
-      generatePolicyStatement(
-        process.env.EXECUTE_API_ID +
-          "/" +
-          process.env.SERVERLESS_STAGE +
-          "/GET/user/watches/*"
-      ),
-      generatePolicyStatement(
-        process.env.EXECUTE_API_ID +
-          "/" +
-          process.env.SERVERLESS_STAGE +
-          "/PUT/user/watches/*"
-      ),
-      generatePolicyStatement(
-        process.env.EXECUTE_API_ID +
-          "/" +
-          process.env.SERVERLESS_STAGE +
-          "/OPTIONS/user/watches/*"
-      ),
-      generatePolicyStatement(
-        process.env.EXECUTE_API_ID +
-          "/" +
-          process.env.SERVERLESS_STAGE +
-          "/GET/user/preferences"
-      ),
-      generatePolicyStatement(
-        process.env.EXECUTE_API_ID +
-          "/" +
-          process.env.SERVERLESS_STAGE +
-          "/PUT/user/preferences"
-      ),
-      generatePolicyStatement(
-        process.env.EXECUTE_API_ID +
-          "/" +
-          process.env.SERVERLESS_STAGE +
-          "/OPTIONS/user/preferences"
-      )
+      generatePolicyStatement(prefix + "/GET/user"),
+      generatePolicyStatement(prefix + "/DELETE/user"),
+      generatePolicyStatement(prefix + "/OPTIONS/user"),
+      generatePolicyStatement(prefix + "/GET/user/watches/*"),
+      generatePolicyStatement(prefix + "/PUT/user/watches/*"),
+      generatePolicyStatement(prefix + "/OPTIONS/user/watches/*"),
+      generatePolicyStatement(prefix + "/GET/user/preferences"),
+      generatePolicyStatement(prefix + "/PUT/user/preferences"),
+      generatePolicyStatement(prefix + "/OPTIONS/user/preferences")
     ]
   };
 
-  authResponse.policyDocument = policyDocument;
   return authResponse;
-};
+}
 
 function generatePolicyStatement(resource) {
   return {
@@ -83,8 +39,9 @@ function generatePolicyStatement(resource) {
 
 // TODO Hopefully API Gateway will sometime support passing the authorization
 // token as a query string parameter, in order to avoid a preflight request.
+// TODO see if this is what I need: https://aws.amazon.com/blogs/compute/using-enhanced-request-authorizers-in-amazon-api-gateway/
 
-module.exports.handler = (event, context, cb) => {
+module.exports.handler = function(event, context, cb) {
   try {
     if (event.authorizationToken) {
       // remove "Bearer " from token
@@ -100,7 +57,6 @@ module.exports.handler = (event, context, cb) => {
         options,
         (err, decoded) => {
           if (err) {
-            console.log("err", err.message);
             cb("Unauthorized");
           } else {
             const policy = generatePolicy(

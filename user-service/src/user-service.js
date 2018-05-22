@@ -42,12 +42,14 @@ const UPDATE_WATCHES_CONSTRAINT = {
 const GET_WATCHES_CONSTRAINT = { entityType: constraints.entityType };
 
 exports.deleteUser = async function(request) {
-  const management = new ManagementClient({
-    token: process.env.AUTH0_MANAGEMENT_API_TOKEN,
-    domain: process.env.AUTH0_MANAGEMENT_API_DOMAIN
-  });
+  if (!process.env.IS_OFFLINE) {
+    const management = new ManagementClient({
+      token: process.env.AUTH0_MANAGEMENT_API_TOKEN,
+      domain: process.env.AUTH0_MANAGEMENT_API_DOMAIN
+    });
 
-  await management.users.delete({ id: request.userId });
+    await management.users.delete({ id: request.userId });
+  }
 
   try {
     await watchesService.deleteAllWatches(request.userId);

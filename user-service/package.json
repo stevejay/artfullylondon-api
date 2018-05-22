@@ -23,6 +23,7 @@
     "serverless-dynamodb-local": "^0.2.30",
     "serverless-offline": "^3.23.0",
     "serverless-webpack": "^5.1.5",
+    "uuid": "^3.2.1",
     "webpack": "^4.8.3",
     "webpack-node-externals": "^1.7.2"
   },
