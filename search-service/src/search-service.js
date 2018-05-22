@@ -1,21 +1,20 @@
-'use strict';
+"use strict";
 
-const co = require('co');
-const zip = require('lodash.zip');
-const includes = require('lodash.includes');
-const ensure = require('ensure-request').ensure;
-const MultiSearchBuilder = require('es-search-builder').MultiSearchBuilder;
-const normalise = require('../data/normalise-request');
-const msearch = require('../external-services/es-search');
-const constants = require('../constants');
-const searchBuilders = require('../search/search-builders');
-const normalisers = require('../data/normalisers');
-const constraints = require('../data/constraints');
-const ensureErrorHandler = require('../data/ensure-error-handler');
-const mappings = require('../data/mappings');
-const time = require('../search/time');
+const zip = require("lodash.zip");
+const includes = require("lodash.includes");
+const ensure = require("ensure-request").ensure;
+const MultiSearchBuilder = require("es-search-builder").MultiSearchBuilder;
+const normalise = require("./domain/normalise-request");
+const msearch = require("./es-search");
+const constants = require("./constants");
+const searchBuilders = require("./search/search-builders");
+const normalisers = require("./domain/normalisers");
+const constraints = require("./domain/constraints");
+const ensureErrorHandler = require("./domain/ensure-error-handler");
+const mappings = require("./domain/mappings");
+const time = require("./search/time");
 
-exports.autocompleteSearch = co.wrap(function*(request) {
+exports.autocompleteSearch = async function(request) {
   normalise(request, normalisers.autocompleteSearch);
   ensure(request, constraints.autocompleteSearch, ensureErrorHandler);
 
@@ -27,7 +26,7 @@ exports.autocompleteSearch = co.wrap(function*(request) {
   );
 
   const msearches = msearchBuilder.build();
-  const responses = yield msearch.search(msearches);
+  const responses = await msearch.search(msearches);
 
   const searchResults = mappings.mapAutocompleteSearchResults(
     responses,
@@ -40,9 +39,9 @@ exports.autocompleteSearch = co.wrap(function*(request) {
   );
 
   return items;
-});
+};
 
-exports.basicSearch = co.wrap(function*(request, isPublic) {
+exports.basicSearch = async function(request, isPublic) {
   normalise(request, normalisers.basicSearch);
   ensure(request, constraints.basicSearch, ensureErrorHandler);
 
@@ -55,7 +54,7 @@ exports.basicSearch = co.wrap(function*(request, isPublic) {
   });
 
   const msearches = msearchBuilder.build();
-  const responses = yield msearch.search(msearches);
+  const responses = await msearch.search(msearches);
 
   const searchResults = indexNames.map((indexName, i) => {
     return mappings.mapSearchResultHitsToItems(responses.responses[i]);
@@ -70,11 +69,11 @@ exports.basicSearch = co.wrap(function*(request, isPublic) {
   return {
     total: hasSingleEntityType ? searchResults[0].total : items.length,
     items,
-    params: request,
+    params: request
   };
-});
+};
 
-exports.eventAdvancedSearch = co.wrap(function*(request) {
+exports.eventAdvancedSearch = async function(request) {
   normalise(request, normalisers.eventAdvancedSearch);
   ensure(request, constraints.eventAdvancedSearch, ensureErrorHandler);
 
@@ -87,7 +86,7 @@ exports.eventAdvancedSearch = co.wrap(function*(request) {
   searchBuilders.buildPublicEventSearch(msearchBuilder, searchParams);
   const msearches = msearchBuilder.build();
 
-  const responses = yield msearch.search(msearches);
+  const responses = await msearch.search(msearches);
 
   const searchResult = mappings.mapSearchResultHitsToItems(
     responses.responses[0]
@@ -127,11 +126,11 @@ exports.eventAdvancedSearch = co.wrap(function*(request) {
   return {
     total: searchResult.total,
     items: searchResult.items,
-    params: request,
+    params: request
   };
-});
+};
 
-exports.presetSearch = co.wrap(function*(request) {
+exports.presetSearch = async function(request) {
   ensure(request, constraints.presetSearch, ensureErrorHandler);
   const presetParams = _getPresetSearchParameters(request.name);
 
@@ -141,42 +140,42 @@ exports.presetSearch = co.wrap(function*(request) {
   presetParams.builder(msearchBuilder, request.id, now);
   const msearches = msearchBuilder.build();
 
-  const results = yield msearch.search(msearches);
+  const results = await msearch.search(msearches);
   const items = presetParams.mapper(results);
   return { items: items, params: request };
-});
+};
 
 function _getPresetSearchParameters(presetName) {
   switch (presetName) {
     case constants.FEATURED_EVENTS_SEARCH_PRESET:
       return {
         builder: searchBuilders.buildFeaturedEventsSearchPreset,
-        mapper: _hitsListItemsMapper,
+        mapper: _hitsListItemsMapper
       };
     case constants.TALENT_RELATED_EVENTS_SEARCH_PRESET:
       return {
         builder: searchBuilders.buildTalentRelatedEventsSearchPreset,
-        mapper: _hitsListItemsMapper,
+        mapper: _hitsListItemsMapper
       };
     case constants.VENUE_RELATED_EVENTS_SEARCH_PRESET:
       return {
         builder: searchBuilders.buildVenueRelatedEventsSearchPreset,
-        mapper: _hitsListItemsMapper,
+        mapper: _hitsListItemsMapper
       };
     case constants.EVENT_SERIES_RELATED_EVENTS_SEARCH_PRESET:
       return {
         builder: searchBuilders.buildEventSeriesRelatedEventsSearchPreset,
-        mapper: _hitsListItemsMapper,
+        mapper: _hitsListItemsMapper
       };
     case constants.ENTITY_COUNTS_SEARCH_PRESET:
       return {
         builder: searchBuilders.buildEntityCountsSearchPreset,
-        mapper: _entityCountsMapper,
+        mapper: _entityCountsMapper
       };
     case constants.BY_EXTERNALEVENTID_PRESET:
       return {
         builder: searchBuilders.buildByExternalEventIdPreset,
-        mapper: _hitsListItemsMapper,
+        mapper: _hitsListItemsMapper
       };
     default:
       throw new Error(`Preset name out of range: ${presetName}`);
@@ -195,7 +194,7 @@ function _entityCountsMapper(results) {
       constants.ENTITY_TYPE_EVENT,
       constants.ENTITY_TYPE_EVENT_SERIES,
       constants.ENTITY_TYPE_TALENT,
-      constants.ENTITY_TYPE_VENUE,
+      constants.ENTITY_TYPE_VENUE
     ],
     results.responses
   ).map(element => {
@@ -219,7 +218,7 @@ function _getAutocompleteIndexesForEntity(entityType) {
       return [
         constants.SEARCH_INDEX_TYPE_TALENT_AUTO,
         constants.SEARCH_INDEX_TYPE_VENUE_AUTO,
-        constants.SEARCH_INDEX_TYPE_COMBINED_EVENT_AUTO,
+        constants.SEARCH_INDEX_TYPE_COMBINED_EVENT_AUTO
       ];
   }
 }
@@ -239,7 +238,7 @@ function _getBasicSearchIndexesForEntity(entityType) {
         constants.SEARCH_INDEX_TYPE_TALENT_FULL,
         constants.SEARCH_INDEX_TYPE_VENUE_FULL,
         constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL,
-        constants.SEARCH_INDEX_TYPE_EVENT_FULL,
+        constants.SEARCH_INDEX_TYPE_EVENT_FULL
       ];
   }
 }

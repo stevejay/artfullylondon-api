@@ -3,7 +3,7 @@ service: artfullylondon-search-service
 frameworkVersion: ">=1.2.0 <2.0.0"
 
 package:
-    individually: false
+    individually: true
 
 provider:
     name: aws
@@ -19,6 +19,7 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-offline
 
 custom:
     project: artfullylondon
@@ -28,7 +29,7 @@ custom:
 
 functions:
     autocompleteSearch:
-        handler: handlers/autocomplete-search.handler
+        handler: src/handlers/autocomplete-search.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
         events:
@@ -41,7 +42,7 @@ functions:
                 method: get
                 cors: true
     basicSearch:
-        handler: handlers/basic-search.handler
+        handler: src/handlers/basic-search.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
         events:
@@ -54,7 +55,7 @@ functions:
                 method: get
                 cors: true
     eventAdvancedSearch:
-        handler: handlers/event-advanced-search.handler
+        handler: src/handlers/event-advanced-search.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
         events:
@@ -63,7 +64,7 @@ functions:
                 method: get
                 cors: true
     presetSearch:
-        handler: handlers/preset-search.handler
+        handler: src/handlers/preset-search.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
         events:
