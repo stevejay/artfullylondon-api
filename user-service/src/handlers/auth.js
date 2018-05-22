@@ -100,6 +100,7 @@ module.exports.handler = (event, context, cb) => {
         options,
         (err, decoded) => {
           if (err) {
+            console.log("err", err.message);
             cb("Unauthorized");
           } else {
             const policy = generatePolicy(

@@ -1,11 +1,7 @@
 "use strict";
 
-const jwt = require("jsonwebtoken");
 const request = require("request-promise-native");
 const testUtils = require("./utils");
-
-const VALID_TOKEN =
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FydGZ1bGx5bG9uZG9uLmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJlbWFpbHw1ODZhMjQ1ZTBiZGNhYjBhMGVhMGQxMWIiLCJhdWQiOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsImlhdCI6MTUyNjkzMTI4MCwiZXhwIjo5OTI2OTY3MjgwfQ.87wqf7Q-RvspBTkqOenkxLih5we-AlbYdM4e6HY2lyM";
 
 describe("update preferences", () => {
   it("should update preferences successfully", async () => {
@@ -13,7 +9,7 @@ describe("update preferences", () => {
       uri: "http://localhost:3020/user/preferences",
       json: true,
       method: "PUT",
-      headers: { Authorization: `Bearer ${VALID_TOKEN}` },
+      headers: { Authorization: testUtils.createAuthValue() },
       body: { emailFrequency: "Weekly" },
       timeout: 4000
     });
@@ -26,7 +22,7 @@ describe("update preferences", () => {
       uri: "http://localhost:3020/user/preferences",
       json: true,
       method: "GET",
-      headers: { Authorization: `Bearer ${VALID_TOKEN}` },
+      headers: { Authorization: testUtils.createAuthValue() },
       timeout: 4000
     });
 
