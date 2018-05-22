@@ -56,3 +56,7 @@ _meta
 
 # Webpack build artifacts
 .webpack
+
+# Elasticsearch Local
+.cachedArtifacts
+.installs
