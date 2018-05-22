@@ -11,7 +11,7 @@ class SearchService {
 
     const searchResult = await this._searcher({
       index: "event-full",
-      type: "default",
+      type: "doc",
       body: {
         _source: "id",
         from: 0,

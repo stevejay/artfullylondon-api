@@ -23,7 +23,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           _source: [
             "entityType",
@@ -118,7 +118,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           _source: [
             "entityType",
@@ -213,7 +213,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           _source: [
             "entityType",
@@ -300,16 +300,16 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         { size: 0 },
         {
           index: constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL,
-          type: "default"
+          type: "doc"
         },
         { size: 0 },
-        { index: constants.SEARCH_INDEX_TYPE_TALENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_TALENT_FULL, type: "doc" },
         { size: 0 },
-        { index: constants.SEARCH_INDEX_TYPE_VENUE_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_VENUE_FULL, type: "doc" },
         { size: 0 }
       ]);
     });
@@ -329,7 +329,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 1000,
           _source: ["externalEventId", "id"],
@@ -364,7 +364,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           from: 0,
           size: 24,
@@ -510,7 +510,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 12,
           from: 0,
@@ -552,7 +552,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -604,7 +604,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -646,7 +646,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -688,7 +688,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -730,7 +730,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -772,7 +772,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -813,7 +813,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -874,7 +874,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -916,7 +916,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -958,7 +958,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1014,7 +1014,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1069,7 +1069,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1126,7 +1126,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1194,7 +1194,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1292,7 +1292,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1321,7 +1321,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_EVENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1374,7 +1374,7 @@ describe("search-builders", () => {
       expect(result).toEqual([
         {
           index: constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL,
-          type: "default"
+          type: "doc"
         },
         {
           size: 10,
@@ -1406,7 +1406,7 @@ describe("search-builders", () => {
       expect(result).toEqual([
         {
           index: constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL,
-          type: "default"
+          type: "doc"
         },
         {
           size: 10,
@@ -1447,7 +1447,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_VENUE_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_VENUE_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1476,7 +1476,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_VENUE_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_VENUE_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1518,7 +1518,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_VENUE_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_VENUE_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1573,7 +1573,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_TALENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_TALENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1603,7 +1603,7 @@ describe("search-builders", () => {
       const result = msearchBuilder.build();
 
       expect(result).toEqual([
-        { index: constants.SEARCH_INDEX_TYPE_TALENT_FULL, type: "default" },
+        { index: constants.SEARCH_INDEX_TYPE_TALENT_FULL, type: "doc" },
         {
           size: 10,
           from: 0,
@@ -1639,7 +1639,7 @@ describe("search-builders", () => {
     const result = msearchBuilder.build();
 
     expect(result).toEqual([
-      { index: "venue-auto", type: "default" },
+      { index: "venue-auto", type: "doc" },
       {
         size: 0,
         suggest: {
