@@ -1,0 +1,118 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "filter": {
+        "english_stop": {
+          "type": "stop",
+          "stopwords": "_english_"
+        },
+        "english_stemmer": {
+          "type": "stemmer",
+          "language": "english"
+        },
+        "english_possessive_stemmer": {
+          "type": "stemmer",
+          "language": "possessive_english"
+        },
+        "asciifolding_custom": {
+          "type": "asciifolding",
+          "preserve_original": true
+        }
+      },
+      "analyzer": {
+        "english_custom": {
+          "tokenizer": "standard",
+          "filter": [
+            "asciifolding_custom",
+            "english_possessive_stemmer",
+            "lowercase",
+            "english_stop",
+            "english_stemmer"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "doc": {
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "entityType": {
+          "type": "keyword",
+          "index": false
+        },
+        "id": {
+          "type": "keyword",
+          "index": false
+        },
+        "status": {
+          "type": "keyword",
+          "index": true
+        },
+        "name": {
+          "type": "text",
+          "index": true,
+          "analyzer": "english_custom",
+          "fields": {
+            "fuzzy": {
+              "type": "text",
+              "index": true,
+              "analyzer": "standard"
+            }
+          }
+        },
+        "name_sort": {
+          "type": "keyword",
+          "index": true
+        },
+        "venueType": {
+          "type": "keyword",
+          "index": true
+        },
+        "address": {
+          "type": "text",
+          "index": false
+        },
+        "postcode": {
+          "type": "text",
+          "index": false
+        },
+        "latitude": {
+          "type": "float",
+          "index": false
+        },
+        "longitude": {
+          "type": "float",
+          "index": false
+        },
+        "locationOptimized": {
+          "type": "geo_point"
+        },
+        "image": {
+          "type": "text",
+          "index": false
+        },
+        "imageCopyright": {
+          "type": "text",
+          "index": false
+        },
+        "imageRatio": {
+          "type": "float",
+          "index": false
+        },
+        "imageColor": {
+          "type": "text",
+          "index": false
+        },
+        "version": {
+          "type": "short",
+          "index": false
+        }
+      }
+    }
+  }
+}

@@ -3,37 +3,35 @@
 const request = require("request-promise-native");
 const testUtils = require("./utils");
 
-describe("basic search", () => {
+describe("autocomplete search", () => {
   beforeAll(async () => {
-    await testUtils.createElasticsearchIndex("talent-full");
-    await testUtils.indexDocument("talent-full", {
+    await testUtils.createElasticsearchIndex("talent-auto");
+    await testUtils.indexDocument("talent-auto", {
       status: "Active",
       commonRole: "Director",
       entityType: "talent",
-      firstNames: "Carrie",
       id: 1,
-      lastName: "Cracknell",
-      lastName_sort: "cracknell"
+      nameSuggest: "Carrie Cracknell",
+      output: "Carrie Cracknell"
     });
-    await testUtils.indexDocument("talent-full", {
+    await testUtils.indexDocument("talent-auto", {
       status: "Active",
       commonRole: "Actor",
       entityType: "talent",
-      firstNames: "Dave",
       id: 2,
-      lastName: "Donnelly",
-      lastName_sort: "donnelly"
+      nameSuggest: "Dave Donnelly",
+      output: "Dave Donnelly"
     });
   });
 
   afterAll(async () => {
-    await testUtils.deleteElasticsearchIndex("talent-full");
+    await testUtils.deleteElasticsearchIndex("talent-auto");
   });
 
   it("should perform a public search of talents", async () => {
     const result = await request({
       uri:
-        "http://localhost:3020/public/search/basic?term=carrie&entityType=talent",
+        "http://localhost:3020/public/search/auto?term=car&entityType=talent",
       json: true,
       method: "GET",
       timeout: 4000
@@ -44,14 +42,14 @@ describe("basic search", () => {
         {
           commonRole: "Director",
           entityType: "talent",
-          firstNames: "Carrie",
           id: 1,
-          lastName: "Cracknell",
+          name: "Carrie Cracknell",
+          nameSuggest: "Carrie Cracknell",
+          output: "Carrie Cracknell",
           status: "Active"
         }
       ],
-      params: { entityType: "talent", skip: 0, take: 12, term: "carrie" },
-      total: 1
+      params: { entityType: "talent", term: "car" }
     });
   });
 });

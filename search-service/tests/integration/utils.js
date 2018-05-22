@@ -18,7 +18,7 @@ async function deleteElasticsearchIndex(index) {
 }
 
 async function createElasticsearchIndex(index) {
-  const mappingJson = require(`../../../data/${index}.json`);
+  const mappingJson = require(`../../../elasticsearch/${index}.json`);
   await deleteElasticsearchIndex(index);
   await esClient.indices.create({ index, body: mappingJson });
 }
