@@ -4,17 +4,19 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test jest ./src",
     "posttest": "yarn run lint",
-    "test:integration": "cross-env NODE_ENV=test jest ./tests/integration",
+    "test:integration": "cross-env NODE_ENV=test jest --runInBand ./tests/integration",
     "lint": "eslint .",
     "deploy": "yarn test && node build.js && sls deploy --stage=production -v",
-    "local:service":
-      "cross-env sls offline start --stage=development --port 3020 --noTimeout"
+    "local:service": "cross-env sls offline start --stage=development --port 3020 --noTimeout",
+    "temp": "elasticdump --input=https://r7p7otgolh:dz3dcwcdgq@artfullylondon-produ-8750330393.eu-west-1.bonsaisearch.net --output=./settings.json --type=settings"
   },
   "devDependencies": {
     "aws-sdk": "^2.244.1",
     "cross-env": "^5.1.5",
+    "elasticdump": "^3.3.14",
     "eslint": "^4.19.1",
     "jest": "^22.4.4",
+    "js-yaml": "^3.11.0",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
     "serverless": "^1.27.2",

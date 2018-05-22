@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const constants = require('../constants');
-const tag = require('./tag');
-const time = require('./time');
+const constants = require("../constants");
+const tag = require("./tag");
+const time = require("./time");
 
 exports.buildEntityCountsSearchPreset = function(msearchBuilder) {
   _buildEntityCountsSearch(
@@ -27,26 +27,26 @@ exports.buildEntityCountsSearchPreset = function(msearchBuilder) {
 };
 
 function _buildEntityCountsSearch(msearchBuilder, index) {
-  msearchBuilder.createSearch({ index, type: 'default' }).setSearchTake(0);
+  msearchBuilder.createSearch({ index, type: "doc" }).setSearchTake(0);
 }
 
 exports.buildByExternalEventIdPreset = function(
   msearchBuilder,
   externalEventIds
 ) {
-  let searchSourceFields = ['externalEventId', 'id'];
+  let searchSourceFields = ["externalEventId", "id"];
 
   const search = msearchBuilder
     .createSearch({
       index: constants.SEARCH_INDEX_TYPE_EVENT_FULL,
-      type: 'default',
+      type: "doc"
     })
     .setSearchTake(1000)
     .setSearchSource(searchSourceFields);
 
   const boolQuery = search.createQuery().createBoolQuery();
 
-  const ids = externalEventIds.split(',');
+  const ids = externalEventIds.split(",");
   boolQuery.addFilter().setTerms({ externalEventId: ids });
 };
 
@@ -56,10 +56,10 @@ exports.buildFeaturedEventsSearchPreset = function(msearchBuilder) {
   const request = {
     skip: 0,
     take: 24,
-    area: 'Central',
+    area: "Central",
     dateFrom: time.formatAsStringDate(now),
-    dateTo: time.formatAsStringDate(now.add(14, 'days')),
-    source: constants.SUMMARY_EVENT_SOURCE_FIELDS,
+    dateTo: time.formatAsStringDate(now.add(14, "days")),
+    source: constants.SUMMARY_EVENT_SOURCE_FIELDS
   };
 
   return exports.buildPublicEventSearch(msearchBuilder, request);
@@ -76,8 +76,8 @@ exports.buildTalentRelatedEventsSearchPreset = function(
     take: 300,
     talentId: talentId,
     dateFrom: time.formatAsStringDate(now),
-    dateTo: time.formatAsStringDate(now.add(366, 'days')),
-    source: constants.SUMMARY_EVENT_SOURCE_FIELDS,
+    dateTo: time.formatAsStringDate(now.add(366, "days")),
+    source: constants.SUMMARY_EVENT_SOURCE_FIELDS
   };
 
   return exports.buildPublicEventSearch(msearchBuilder, request);
@@ -94,8 +94,8 @@ exports.buildVenueRelatedEventsSearchPreset = function(
     take: 300,
     venueId: venueId,
     dateFrom: time.formatAsStringDate(now),
-    dateTo: time.formatAsStringDate(now.add(366, 'days')),
-    source: constants.SUMMARY_EVENT_SOURCE_FIELDS,
+    dateTo: time.formatAsStringDate(now.add(366, "days")),
+    source: constants.SUMMARY_EVENT_SOURCE_FIELDS
   };
 
   return exports.buildPublicEventSearch(msearchBuilder, request);
@@ -112,8 +112,8 @@ exports.buildEventSeriesRelatedEventsSearchPreset = function(
     take: 300,
     eventSeriesId: eventSeriesId,
     dateFrom: time.formatAsStringDate(now),
-    dateTo: time.formatAsStringDate(now.add(366, 'days')),
-    source: constants.SUMMARY_EVENT_SOURCE_FIELDS,
+    dateTo: time.formatAsStringDate(now.add(366, "days")),
+    source: constants.SUMMARY_EVENT_SOURCE_FIELDS
   };
 
   return exports.buildPublicEventSearch(msearchBuilder, request);
@@ -151,18 +151,18 @@ exports.createPublicEventSearchParamsFromRequest = function(request) {
   }
 
   const hasMedium = !!request.medium;
-  const hasTagForMedium = hasMedium && request.medium.indexOf(':') !== 0;
+  const hasTagForMedium = hasMedium && request.medium.indexOf(":") !== 0;
 
   if (hasMedium && !hasTagForMedium) {
     switch (request.medium) {
-      case ':all-visual':
-        searchParams.artsType = 'Visual';
+      case ":all-visual":
+        searchParams.artsType = "Visual";
         break;
-      case ':all-performing':
-        searchParams.artsType = 'Performing';
+      case ":all-performing":
+        searchParams.artsType = "Performing";
         break;
-      case ':all-creative-writing':
-        searchParams.artsType = 'CreativeWriting';
+      case ":all-creative-writing":
+        searchParams.artsType = "CreativeWriting";
         break;
     }
   }
@@ -170,7 +170,7 @@ exports.createPublicEventSearchParamsFromRequest = function(request) {
   if (hasMedium && hasTagForMedium) {
     if (request.style) {
       searchParams.tags = [
-        tag.createTagIdForMediumWithStyleTag(request.medium, request.style),
+        tag.createTagIdForMediumWithStyleTag(request.medium, request.style)
       ];
     } else {
       searchParams.tags = [request.medium];
@@ -218,20 +218,20 @@ exports.buildPublicEventSearch = function(msearchBuilder, searchParams) {
   const search = msearchBuilder
     .createSearch({
       index: constants.SEARCH_INDEX_TYPE_EVENT_FULL,
-      type: 'default',
+      type: "doc"
     })
     .setSearchSkip(searchParams.skip)
     .setSearchTake(searchParams.take)
     .setSearchSource(searchParams.source || searchSourceFields)
     .setSearchSort([
-      { _score: { order: 'desc' } },
-      { name_sort: { order: 'asc' } },
+      { _score: { order: "desc" } },
+      { name_sort: { order: "asc" } }
     ]);
 
   const boolQuery = search.createQuery().createBoolQuery();
 
   // public always only see active events
-  boolQuery.addFilter().setTerm({ status: 'Active' });
+  boolQuery.addFilter().setTerm({ status: "Active" });
 
   // term can match in event name or venue name
   if (searchParams.term) {
@@ -247,17 +247,17 @@ exports.buildPublicEventSearch = function(msearchBuilder, searchParams) {
 
   if (searchParams.location) {
     boolQuery.addFilter().setGeoBoundingBox({
-      type: 'indexed',
+      type: "indexed",
       locationOptimized: {
         top_left: {
           lat: searchParams.location.north,
-          lon: searchParams.location.west,
+          lon: searchParams.location.west
         },
         bottom_right: {
           lat: searchParams.location.south,
-          lon: searchParams.location.east,
-        },
-      },
+          lon: searchParams.location.east
+        }
+      }
     });
   }
 
@@ -269,31 +269,31 @@ exports.buildPublicEventSearch = function(msearchBuilder, searchParams) {
   ) {
     const nestedBoolQuery = boolQuery
       .addFilter()
-      .createNestedQuery('dates')
+      .createNestedQuery("dates")
       .createBoolQuery();
 
     if (searchParams.dateFrom) {
       nestedBoolQuery
         .addFilter()
-        .setRange({ 'dates.date': { gte: searchParams.dateFrom } });
+        .setRange({ "dates.date": { gte: searchParams.dateFrom } });
     }
 
     if (searchParams.dateTo) {
       nestedBoolQuery
         .addFilter()
-        .setRange({ 'dates.date': { lte: searchParams.dateTo } });
+        .setRange({ "dates.date": { lte: searchParams.dateTo } });
     }
 
     if (searchParams.timeFrom) {
       nestedBoolQuery
         .addFilter()
-        .setRange({ 'dates.to': { gt: searchParams.timeFrom } });
+        .setRange({ "dates.to": { gt: searchParams.timeFrom } });
     }
 
     if (searchParams.timeTo) {
       nestedBoolQuery
         .addFilter()
-        .setRange({ 'dates.from': { lte: searchParams.timeTo } });
+        .setRange({ "dates.from": { lte: searchParams.timeTo } });
     }
   }
 
@@ -311,14 +311,18 @@ exports.buildPublicEventSearch = function(msearchBuilder, searchParams) {
 
   if (searchParams.tags) {
     searchParams.tags.forEach(tag =>
-      boolQuery.addFilter().setTerm({ tags: tag }));
+      boolQuery.addFilter().setTerm({ tags: tag })
+    );
 
     // do the following for an 'or' effect, rather than the above 'and':
     // boolQuery.addFilter().setTerms({ tags: searchParams.tags });
   }
 
   if (searchParams.audience) {
-    const subBoolQuery = boolQuery.addFilter().createQuery().createBoolQuery();
+    const subBoolQuery = boolQuery
+      .addFilter()
+      .createQuery()
+      .createBoolQuery();
 
     subBoolQuery.setMinimumShouldMatch(1);
 
@@ -326,35 +330,35 @@ exports.buildPublicEventSearch = function(msearchBuilder, searchParams) {
 
     const nestedSubBoolQuery = subBoolQuery
       .addShould()
-      .createNestedQuery('dates')
+      .createNestedQuery("dates")
       .createBoolQuery();
 
     nestedSubBoolQuery
       .addFilter()
-      .setTerm({ 'dates.tags': searchParams.audience });
+      .setTerm({ "dates.tags": searchParams.audience });
 
     if (searchParams.dateFrom) {
       nestedSubBoolQuery
         .addFilter()
-        .setRange({ 'dates.date': { gte: searchParams.dateFrom } });
+        .setRange({ "dates.date": { gte: searchParams.dateFrom } });
     }
 
     if (searchParams.dateTo) {
       nestedSubBoolQuery
         .addFilter()
-        .setRange({ 'dates.date': { lte: searchParams.dateTo } });
+        .setRange({ "dates.date": { lte: searchParams.dateTo } });
     }
 
     if (searchParams.timeFrom) {
       nestedSubBoolQuery
         .addFilter()
-        .setRange({ 'dates.to': { gt: searchParams.timeFrom } });
+        .setRange({ "dates.to": { gt: searchParams.timeFrom } });
     }
 
     if (searchParams.timeTo) {
       nestedSubBoolQuery
         .addFilter()
-        .setRange({ 'dates.from': { lte: searchParams.timeTo } });
+        .setRange({ "dates.from": { lte: searchParams.timeTo } });
     }
   }
 
@@ -379,24 +383,24 @@ exports.buildPublicEventSearch = function(msearchBuilder, searchParams) {
 
 exports.buildSuggestSearch = function(msearchBuilder, indexName, term) {
   const search = msearchBuilder
-    .createSearch({ index: indexName, type: 'default' })
+    .createSearch({ index: indexName, type: "doc" })
     .setSearchTake(0);
 
   search
-    .createSuggest('autocomplete')
+    .createSuggest("autocomplete")
     .setSuggestText(term)
     .setSuggestCompletion({
       size: constants.AUTOCOMPLETE_MAX_RESULTS,
-      field: 'nameSuggest',
+      field: "nameSuggest"
     });
 
   search
-    .createSuggest('fuzzyAutocomplete')
+    .createSuggest("fuzzyAutocomplete")
     .setSuggestText(term)
     .setSuggestCompletion({
       size: constants.AUTOCOMPLETE_MAX_RESULTS,
-      field: 'nameSuggest',
-      fuzzy: {},
+      field: "nameSuggest",
+      fuzzy: {}
     });
 };
 
@@ -404,30 +408,30 @@ exports.buildTalentSearch = function(msearchBuilder, request, isPublic) {
   const search = msearchBuilder
     .createSearch({
       index: constants.SEARCH_INDEX_TYPE_TALENT_FULL,
-      type: 'default',
+      type: "doc"
     })
     .setSearchSkip(request.skip)
     .setSearchTake(request.take)
     .setSearchSource(constants.SUMMARY_TALENT_SOURCE_FIELDS)
     .setSearchSort([
-      { _score: { order: 'desc' } },
-      { lastName_sort: { order: 'asc' } },
-      { 'firstNames.sort': { order: 'asc' } },
+      { _score: { order: "desc" } },
+      { lastName_sort: { order: "asc" } },
+      { "firstNames.sort": { order: "asc" } }
     ]);
 
   const boolQuery = search.createQuery().createBoolQuery();
 
   // public always only see active entities
   if (isPublic) {
-    boolQuery.addFilter().setTerm({ status: 'Active' });
+    boolQuery.addFilter().setTerm({ status: "Active" });
   }
 
   if (request.term) {
     boolQuery.addMust().setMultiMatch({
       query: request.term,
-      type: 'cross_fields',
-      operator: 'or',
-      fields: ['firstNames', 'lastName'],
+      type: "cross_fields",
+      operator: "or",
+      fields: ["firstNames", "lastName"]
     });
   }
 };
@@ -436,14 +440,14 @@ exports.buildVenueSearch = function(msearchBuilder, request, isPublic) {
   const search = msearchBuilder
     .createSearch({
       index: constants.SEARCH_INDEX_TYPE_VENUE_FULL,
-      type: 'default',
+      type: "doc"
     })
     .setSearchSkip(request.skip)
     .setSearchTake(request.take)
     .setSearchSource(constants.SUMMARY_VENUE_SOURCE_FIELDS)
     .setSearchSort([
-      { _score: { order: 'desc' } },
-      { name_sort: { order: 'asc' } },
+      { _score: { order: "desc" } },
+      { name_sort: { order: "asc" } }
     ]);
 
   const boolQuery = search.createQuery().createBoolQuery();
@@ -454,22 +458,22 @@ exports.buildVenueSearch = function(msearchBuilder, request, isPublic) {
 
   // public always only see active entities
   if (isPublic) {
-    boolQuery.addFilter().setTerm({ status: 'Active' });
+    boolQuery.addFilter().setTerm({ status: "Active" });
   }
 
   if (request.location) {
     boolQuery.addFilter().setGeoBoundingBox({
-      type: 'indexed',
+      type: "indexed",
       locationOptimized: {
         top_left: {
           lat: request.location.north,
-          lon: request.location.west,
+          lon: request.location.west
         },
         bottom_right: {
           lat: request.location.south,
-          lon: request.location.east,
-        },
-      },
+          lon: request.location.east
+        }
+      }
     });
   }
 };
@@ -478,21 +482,21 @@ exports.buildEventSeriesSearch = function(msearchBuilder, request, isPublic) {
   const search = msearchBuilder
     .createSearch({
       index: constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL,
-      type: 'default',
+      type: "doc"
     })
     .setSearchSkip(request.skip)
     .setSearchTake(request.take)
     .setSearchSource(constants.SUMMARY_EVENT_SERIES_SOURCE_FIELDS)
     .setSearchSort([
-      { _score: { order: 'desc' } },
-      { name_sort: { order: 'asc' } },
+      { _score: { order: "desc" } },
+      { name_sort: { order: "asc" } }
     ]);
 
   const boolQuery = search.createQuery().createBoolQuery();
 
   // public always only see active entities
   if (isPublic) {
-    boolQuery.addFilter().setTerm({ status: 'Active' });
+    boolQuery.addFilter().setTerm({ status: "Active" });
   }
 
   if (request.term) {
@@ -504,21 +508,21 @@ exports.buildEventSearch = function(msearchBuilder, request, isPublic) {
   const search = msearchBuilder
     .createSearch({
       index: constants.SEARCH_INDEX_TYPE_EVENT_FULL,
-      type: 'default',
+      type: "doc"
     })
     .setSearchSkip(request.skip)
     .setSearchTake(request.take)
     .setSearchSource(constants.SUMMARY_EVENT_SOURCE_FIELDS)
     .setSearchSort([
-      { _score: { order: 'desc' } },
-      { name_sort: { order: 'asc' } },
+      { _score: { order: "desc" } },
+      { name_sort: { order: "asc" } }
     ]);
 
   const boolQuery = search.createQuery().createBoolQuery();
 
   // public always only see active entities
   if (isPublic) {
-    boolQuery.addFilter().setTerm({ status: 'Active' });
+    boolQuery.addFilter().setTerm({ status: "Active" });
   }
 
   if (request.term) {
