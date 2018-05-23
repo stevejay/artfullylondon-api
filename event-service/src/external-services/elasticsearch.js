@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const elasticsearch = require('elasticsearch');
+const elasticsearch = require("elasticsearch");
 
 const client = new elasticsearch.Client({
   host: process.env.ELASTICSEARCH_HOST,
-  log: 'error'
+  log: "error"
 });
 
-module.exports = (exports = {
+module.exports = exports = {
   bulk: params =>
     new Promise((resolve, reject) => {
       client.bulk(params, (err, response) => {
@@ -20,4 +20,4 @@ module.exports = (exports = {
         }
       });
     })
-});
+};

@@ -1,6 +1,6 @@
 "use strict";
 
-const dynamoDbClient = require("dynamodb-doc-client-wrapper");
+const dynamodb = require("../external-services/dynamodb");
 const testData = require("../test-data");
 const talentConstants = require("../talent/constants");
 const venueConstants = require("../venue/constants");
@@ -13,11 +13,7 @@ process.env.SERVERLESS_VENUE_TABLE_NAME = "venue-table";
 
 describe("populate", () => {
   describe("getReferencedEntitiesForSearch", () => {
-    afterEach(() => {
-      dynamoDbClient.batchGet.restore();
-    });
-
-    it("should get references for an event with duplicate references", done => {
+    it("should get references for an event with duplicate references", async () => {
       const dbItemOne = {
         talents: [{ id: testData.INDIVIDUAL_TALENT_ID }],
         venueId: testData.MINIMAL_VENUE_ID,
@@ -30,35 +26,15 @@ describe("populate", () => {
         eventSeriesId: testData.EVENT_SERIES_ID
       };
 
-      sinon.stub(dynamoDbClient, "batchGet").callsFake(params => {
-        try {
-          expect(params).toEqual({
-            RequestItems: {
-              [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
-                Keys: [{ id: testData.EVENT_SERIES_ID }],
-                ConsistentRead: true
-              },
-              [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
-                Keys: [{ id: testData.MINIMAL_VENUE_ID }],
-                ConsistentRead: true
-              }
-            },
-            ReturnConsumedCapacity: undefined
-          });
-        } catch (err) {
-          return Promise.reject(new Error(err));
+      dynamodb.batchGet = jest.fn().mockResolvedValue({
+        Responses: {
+          [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: [
+            testData.createMinimalDbEventSeries()
+          ],
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
+            testData.createMinimalDbVenue()
+          ]
         }
-
-        return Promise.resolve({
-          Responses: {
-            [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: [
-              testData.createMinimalDbEventSeries()
-            ],
-            [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
-              testData.createMinimalDbVenue()
-            ]
-          }
-        });
       });
 
       const expected = [
@@ -144,54 +120,46 @@ describe("populate", () => {
         }
       ];
 
-      co(
-        populate.getReferencedEntitiesForSearch([dbItemOne, dbItemTwo], {
+      const response = await populate.getReferencedEntitiesForSearch(
+        [dbItemOne, dbItemTwo],
+        {
           ConsistentRead: true
-        })
-      )
-        .then(response => {
-          expect(response).toEqual(expected);
-          done();
-        })
-        .catch(err => done(err));
+        }
+      );
+
+      expect(response).toEqual(expected);
+
+      expect(dynamodb.batchGet).toHaveBeenCalledWith({
+        RequestItems: {
+          [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
+            Keys: [{ id: testData.EVENT_SERIES_ID }],
+            ConsistentRead: true
+          },
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
+            Keys: [{ id: testData.MINIMAL_VENUE_ID }],
+            ConsistentRead: true
+          }
+        },
+        ReturnConsumedCapacity: undefined
+      });
     });
 
-    it("should get references for an event with full references using consistent read", done => {
+    it("should get references for an event with full references using consistent read", async () => {
       const dbItem = {
         talents: [{ id: testData.INDIVIDUAL_TALENT_ID }],
         venueId: testData.MINIMAL_VENUE_ID,
         eventSeriesId: testData.EVENT_SERIES_ID
       };
 
-      sinon.stub(dynamoDbClient, "batchGet").callsFake(params => {
-        try {
-          expect(params).toEqual({
-            RequestItems: {
-              [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
-                Keys: [{ id: testData.EVENT_SERIES_ID }],
-                ConsistentRead: true
-              },
-              [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
-                Keys: [{ id: testData.MINIMAL_VENUE_ID }],
-                ConsistentRead: true
-              }
-            },
-            ReturnConsumedCapacity: undefined
-          });
-        } catch (err) {
-          return Promise.reject(new Error(err));
+      dynamodb.batchGet = jest.fn().mockResolvedValue({
+        Responses: {
+          [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: [
+            testData.createMinimalDbEventSeries()
+          ],
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
+            testData.createMinimalDbVenue()
+          ]
         }
-
-        return Promise.resolve({
-          Responses: {
-            [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: [
-              testData.createMinimalDbEventSeries()
-            ],
-            [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
-              testData.createMinimalDbVenue()
-            ]
-          }
-        });
       });
 
       const expected = [
@@ -237,46 +205,39 @@ describe("populate", () => {
         }
       ];
 
-      co(
-        populate.getReferencedEntitiesForSearch([dbItem], {
-          ConsistentRead: true
-        })
-      )
-        .then(response => {
-          expect(response).toEqual(expected);
-          done();
-        })
-        .catch(err => done(err));
+      const response = await populate.getReferencedEntitiesForSearch([dbItem], {
+        ConsistentRead: true
+      });
+
+      expect(response).toEqual(expected);
+
+      expect(dynamodb.batchGet).toHaveBeenCalledWith({
+        RequestItems: {
+          [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
+            Keys: [{ id: testData.EVENT_SERIES_ID }],
+            ConsistentRead: true
+          },
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
+            Keys: [{ id: testData.MINIMAL_VENUE_ID }],
+            ConsistentRead: true
+          }
+        },
+        ReturnConsumedCapacity: undefined
+      });
     });
 
-    it("should get references for an event with only venue not using consistent read", done => {
+    it("should get references for an event with only venue not using consistent read", async () => {
       const dbItem = {
         talents: [{ id: testData.INDIVIDUAL_TALENT_ID }],
         venueId: testData.MINIMAL_VENUE_ID
       };
 
-      sinon.stub(dynamoDbClient, "batchGet").callsFake(params => {
-        try {
-          expect(params).toEqual({
-            RequestItems: {
-              [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
-                Keys: [{ id: testData.MINIMAL_VENUE_ID }],
-                ConsistentRead: false
-              }
-            },
-            ReturnConsumedCapacity: undefined
-          });
-        } catch (err) {
-          return Promise.reject(new Error(err));
+      dynamodb.batchGet = jest.fn().mockResolvedValue({
+        Responses: {
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
+            testData.createMinimalDbVenue()
+          ]
         }
-
-        return Promise.resolve({
-          Responses: {
-            [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
-              testData.createMinimalDbVenue()
-            ]
-          }
-        });
       });
 
       const expected = [
@@ -307,63 +268,42 @@ describe("populate", () => {
         }
       ];
 
-      co(populate.getReferencedEntitiesForSearch([dbItem]))
-        .then(response => {
-          expect(response).toEqual(expected);
-          done();
-        })
-        .catch(err => done(err));
+      const response = await populate.getReferencedEntitiesForSearch([dbItem]);
+
+      expect(response).toEqual(expected);
+
+      expect(dynamodb.batchGet).toHaveBeenCalledWith({
+        RequestItems: {
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
+            Keys: [{ id: testData.MINIMAL_VENUE_ID }],
+            ConsistentRead: false
+          }
+        },
+        ReturnConsumedCapacity: undefined
+      });
     });
   });
 
   describe("getReferencedEntities", () => {
-    afterEach(() => {
-      dynamoDbClient.batchGet.restore();
-    });
-
-    it("should get references for an event with full references", done => {
+    it("should get references for an event with full references", async () => {
       const dbItem = {
         talents: [{ id: testData.INDIVIDUAL_TALENT_ID }],
         venueId: testData.MINIMAL_VENUE_ID,
         eventSeriesId: testData.EVENT_SERIES_ID
       };
 
-      sinon.stub(dynamoDbClient, "batchGet").callsFake(params => {
-        try {
-          expect(params).toEqual({
-            RequestItems: {
-              [process.env.SERVERLESS_TALENT_TABLE_NAME]: {
-                Keys: [{ id: testData.INDIVIDUAL_TALENT_ID }],
-                ConsistentRead: false
-              },
-              [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
-                Keys: [{ id: testData.EVENT_SERIES_ID }],
-                ConsistentRead: false
-              },
-              [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
-                Keys: [{ id: testData.MINIMAL_VENUE_ID }],
-                ConsistentRead: false
-              }
-            },
-            ReturnConsumedCapacity: undefined
-          });
-        } catch (err) {
-          return Promise.reject(new Error(err));
+      dynamodb.batchGet = jest.fn().mockResolvedValue({
+        Responses: {
+          [process.env.SERVERLESS_TALENT_TABLE_NAME]: [
+            testData.createMinimalIndividualDbTalent()
+          ],
+          [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: [
+            testData.createMinimalDbEventSeries()
+          ],
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
+            testData.createMinimalDbVenue()
+          ]
         }
-
-        return Promise.resolve({
-          Responses: {
-            [process.env.SERVERLESS_TALENT_TABLE_NAME]: [
-              testData.createMinimalIndividualDbTalent()
-            ],
-            [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: [
-              testData.createMinimalDbEventSeries()
-            ],
-            [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
-              testData.createMinimalDbVenue()
-            ]
-          }
-        });
       });
 
       const expected = {
@@ -418,41 +358,39 @@ describe("populate", () => {
         ]
       };
 
-      co(populate.getReferencedEntities(dbItem))
-        .then(response => {
-          expect(response).toEqual(expected);
-          done();
-        })
-        .catch(err => done(err));
+      const response = await populate.getReferencedEntities(dbItem);
+      expect(response).toEqual(expected);
+
+      expect(dynamodb.batchGet).toHaveBeenCalledWith({
+        RequestItems: {
+          [process.env.SERVERLESS_TALENT_TABLE_NAME]: {
+            Keys: [{ id: testData.INDIVIDUAL_TALENT_ID }],
+            ConsistentRead: false
+          },
+          [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
+            Keys: [{ id: testData.EVENT_SERIES_ID }],
+            ConsistentRead: false
+          },
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
+            Keys: [{ id: testData.MINIMAL_VENUE_ID }],
+            ConsistentRead: false
+          }
+        },
+        ReturnConsumedCapacity: undefined
+      });
     });
 
-    it("should get references for an event with only a venue reference", done => {
+    it("should get references for an event with only a venue reference", async () => {
       const dbItem = {
         venueId: testData.MINIMAL_VENUE_ID
       };
 
-      sinon.stub(dynamoDbClient, "batchGet").callsFake(params => {
-        try {
-          expect(params).toEqual({
-            RequestItems: {
-              [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
-                Keys: [{ id: testData.MINIMAL_VENUE_ID }],
-                ConsistentRead: false
-              }
-            },
-            ReturnConsumedCapacity: undefined
-          });
-        } catch (err) {
-          return Promise.reject(new Error(err));
+      dynamodb.batchGet = jest.fn().mockResolvedValue({
+        Responses: {
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
+            testData.createMinimalDbVenue()
+          ]
         }
-
-        return Promise.resolve({
-          Responses: {
-            [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
-              testData.createMinimalDbVenue()
-            ]
-          }
-        });
       });
 
       const expected = {
@@ -479,49 +417,35 @@ describe("populate", () => {
         ]
       };
 
-      co(populate.getReferencedEntities(dbItem))
-        .then(response => {
-          expect(response).toEqual(expected);
-          done();
-        })
-        .catch(err => done(err));
+      const response = await populate.getReferencedEntities(dbItem);
+      expect(response).toEqual(expected);
+
+      expect(dynamodb.batchGet).toHaveBeenCalledWith({
+        RequestItems: {
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
+            Keys: [{ id: testData.MINIMAL_VENUE_ID }],
+            ConsistentRead: false
+          }
+        },
+        ReturnConsumedCapacity: undefined
+      });
     });
 
-    it("should get references for an event with only venue and event series references", done => {
+    it("should get references for an event with only venue and event series references", async () => {
       const dbItem = {
         venueId: testData.MINIMAL_VENUE_ID,
         eventSeriesId: testData.EVENT_SERIES_ID
       };
 
-      sinon.stub(dynamoDbClient, "batchGet").callsFake(params => {
-        try {
-          expect(params).toEqual({
-            RequestItems: {
-              [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
-                Keys: [{ id: testData.EVENT_SERIES_ID }],
-                ConsistentRead: false
-              },
-              [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
-                Keys: [{ id: testData.MINIMAL_VENUE_ID }],
-                ConsistentRead: false
-              }
-            },
-            ReturnConsumedCapacity: undefined
-          });
-        } catch (err) {
-          return Promise.reject(new Error(err));
+      dynamodb.batchGet = jest.fn().mockResolvedValue({
+        Responses: {
+          [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: [
+            testData.createMinimalDbEventSeries()
+          ],
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
+            testData.createMinimalDbVenue()
+          ]
         }
-
-        return Promise.resolve({
-          Responses: {
-            [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: [
-              testData.createMinimalDbEventSeries()
-            ],
-            [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
-              testData.createMinimalDbVenue()
-            ]
-          }
-        });
       });
 
       const expected = {
@@ -563,49 +487,39 @@ describe("populate", () => {
         ]
       };
 
-      co(populate.getReferencedEntities(dbItem))
-        .then(response => {
-          expect(response).toEqual(expected);
-          done();
-        })
-        .catch(err => done(err));
+      const response = await populate.getReferencedEntities(dbItem);
+      expect(response).toEqual(expected);
+
+      expect(dynamodb.batchGet).toHaveBeenCalledWith({
+        RequestItems: {
+          [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
+            Keys: [{ id: testData.EVENT_SERIES_ID }],
+            ConsistentRead: false
+          },
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
+            Keys: [{ id: testData.MINIMAL_VENUE_ID }],
+            ConsistentRead: false
+          }
+        },
+        ReturnConsumedCapacity: undefined
+      });
     });
 
-    it("should get references for an event with only venue and talent references", done => {
+    it("should get references for an event with only venue and talent references", async () => {
       const dbItem = {
         talents: [{ id: testData.INDIVIDUAL_TALENT_ID }],
         venueId: testData.MINIMAL_VENUE_ID
       };
 
-      sinon.stub(dynamoDbClient, "batchGet").callsFake(params => {
-        try {
-          expect(params).toEqual({
-            RequestItems: {
-              [process.env.SERVERLESS_TALENT_TABLE_NAME]: {
-                Keys: [{ id: testData.INDIVIDUAL_TALENT_ID }],
-                ConsistentRead: false
-              },
-              [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
-                Keys: [{ id: testData.MINIMAL_VENUE_ID }],
-                ConsistentRead: false
-              }
-            },
-            ReturnConsumedCapacity: undefined
-          });
-        } catch (err) {
-          return Promise.reject(new Error(err));
+      dynamodb.batchGet = jest.fn().mockResolvedValue({
+        Responses: {
+          [process.env.SERVERLESS_TALENT_TABLE_NAME]: [
+            testData.createMinimalIndividualDbTalent()
+          ],
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
+            testData.createMinimalDbVenue()
+          ]
         }
-
-        return Promise.resolve({
-          Responses: {
-            [process.env.SERVERLESS_TALENT_TABLE_NAME]: [
-              testData.createMinimalIndividualDbTalent()
-            ],
-            [process.env.SERVERLESS_VENUE_TABLE_NAME]: [
-              testData.createMinimalDbVenue()
-            ]
-          }
-        });
       });
 
       const expected = {
@@ -645,12 +559,22 @@ describe("populate", () => {
         ]
       };
 
-      co(populate.getReferencedEntities(dbItem))
-        .then(response => {
-          expect(response).toEqual(expected);
-          done();
-        })
-        .catch(err => done(err));
+      const response = await populate.getReferencedEntities(dbItem);
+      expect(response).toEqual(expected);
+
+      expect(dynamodb.batchGet).toHaveBeenCalledWith({
+        RequestItems: {
+          [process.env.SERVERLESS_TALENT_TABLE_NAME]: {
+            Keys: [{ id: testData.INDIVIDUAL_TALENT_ID }],
+            ConsistentRead: false
+          },
+          [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
+            Keys: [{ id: testData.MINIMAL_VENUE_ID }],
+            ConsistentRead: false
+          }
+        },
+        ReturnConsumedCapacity: undefined
+      });
     });
   });
 });

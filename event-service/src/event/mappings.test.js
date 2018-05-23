@@ -8,11 +8,8 @@ const date = require("../date");
 
 describe("event mappings", () => {
   describe("mapRequestToDbItem", () => {
-    beforeEach(() =>
-      sinon.stub(date, "getTodayAsStringDate").returns("2016/01/11"));
-
-    afterEach(() => {
-      date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
+    beforeEach(() => {
+      date.getTodayAsStringDate = jest.fn().mockReturnValue("2016/01/11");
     });
 
     it("should map a minimal performance event", () => {
@@ -572,8 +569,8 @@ describe("event mappings", () => {
         referencedEntities
       );
 
-      expect(result.description).eql(undefined);
-      expect(result.descriptionCredit).eql(undefined);
+      expect(result.description).toEqual(undefined);
+      expect(result.descriptionCredit).toEqual(undefined);
     });
 
     it("should not use images from event series", () => {
@@ -599,7 +596,7 @@ describe("event mappings", () => {
         referencedEntities
       );
 
-      expect(result.images).eql(undefined);
+      expect(result.images).toEqual(undefined);
     });
 
     it("should not use images from venue", () => {
@@ -627,7 +624,7 @@ describe("event mappings", () => {
         referencedEntities
       );
 
-      expect(result.images).eql(undefined);
+      expect(result.images).toEqual(undefined);
     });
 
     it("should map an event with minimal referenced entities", () => {
@@ -708,7 +705,7 @@ describe("event mappings", () => {
 
       expect(() =>
         mappings.mapDbItemToAdminResponse(event, referencedEntities)
-      ).to.throw();
+      ).toThrow();
     });
   });
 
@@ -1022,8 +1019,8 @@ describe("event mappings", () => {
         referencedEntities
       );
 
-      expect(result.description).eql("Series description");
-      expect(result.descriptionCredit).eql("Series credit");
+      expect(result.description).toEqual("Series description");
+      expect(result.descriptionCredit).toEqual("Series credit");
     });
 
     it("should use images from event series", () => {
@@ -1047,7 +1044,7 @@ describe("event mappings", () => {
         referencedEntities
       );
 
-      expect(result.images).eql([
+      expect(result.images).toEqual([
         { id: "222222222222222222", ratio: 1.4, copyright: "bar" }
       ]);
 
@@ -1079,7 +1076,7 @@ describe("event mappings", () => {
         referencedEntities
       );
 
-      expect(result.images).eql([
+      expect(result.images).toEqual([
         { id: "333333333333333", ratio: 1.6, copyright: "bat" }
       ]);
 
@@ -1167,7 +1164,7 @@ describe("event mappings", () => {
 
       expect(() =>
         mappings.mapDbItemToPublicResponse(event, referencedEntities)
-      ).to.throw();
+      ).toThrow();
     });
   });
 

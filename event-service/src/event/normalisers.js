@@ -1,29 +1,29 @@
-'use strict';
+"use strict";
 
-const normalisers = require('../data/normalisers');
+const normalisers = require("../data/normalisers");
 
-module.exports = {
+module.exports = exports = {
   name: {
-    trim: true,
+    trim: true
   },
   summary: {
-    trim: true,
+    trim: true
   },
   description: {
     trim: true,
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   descriptionCredit: {
     trim: true,
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   duration: {
     trim: true,
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   venueGuidance: {
     trim: true,
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   timesRanges: {
     undefinedIfEmpty: true,
@@ -31,56 +31,56 @@ module.exports = {
       object: {
         dateFrom: {
           trim: true,
-          undefinedIfEmpty: true,
+          undefinedIfEmpty: true
         },
         dateTo: {
           trim: true,
-          undefinedIfEmpty: true,
+          undefinedIfEmpty: true
         },
         label: {
           trim: true,
-          undefinedIfEmpty: true,
-        },
-      },
-    },
+          undefinedIfEmpty: true
+        }
+      }
+    }
   },
   openingTimes: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   additionalOpeningTimes: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   specialOpeningTimes: {
     undefinedIfEmpty: true,
     each: {
       object: {
         audienceTags: {
-          undefinedIfEmpty: true,
-        },
-      },
-    },
+          undefinedIfEmpty: true
+        }
+      }
+    }
   },
   openingTimesClosures: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   performances: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   additionalPerformances: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   specialPerformances: {
     undefinedIfEmpty: true,
     each: {
       object: {
         audienceTags: {
-          undefinedIfEmpty: true,
-        },
-      },
-    },
+          undefinedIfEmpty: true
+        }
+      }
+    }
   },
   performancesClosures: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   talents: {
     undefinedIfEmpty: true,
@@ -89,30 +89,30 @@ module.exports = {
         roles: {
           each: {
             collapseWhitespace: true,
-            trim: true,
-          },
+            trim: true
+          }
         },
         characters: {
           undefinedIfEmpty: true,
           each: {
             collapseWhitespace: true,
-            trim: true,
-          },
-        },
-      },
-    },
+            trim: true
+          }
+        }
+      }
+    }
   },
   audienceTags: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   geoTags: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   mediumTags: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   styleTags: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   links: normalisers.linksNormaliser,
   images: normalisers.imagesNormaliser,
@@ -122,16 +122,16 @@ module.exports = {
       object: {
         source: {
           collapseWhitespace: true,
-          trim: true,
-        },
-      },
-    },
+          trim: true
+        }
+      }
+    }
   },
   weSay: {
     trim: true,
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   soldOutPerformances: {
-    undefinedIfEmpty: true,
-  },
+    undefinedIfEmpty: true
+  }
 };

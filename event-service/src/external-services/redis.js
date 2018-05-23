@@ -1,5 +1,8 @@
+"use strict";
+"use strict";
+
 module.exports = () => {
-  const redis = require('redis');
+  const redis = require("redis");
 
   const redisOptions = {
     host: process.env.REDIS_HOST,
@@ -11,7 +14,7 @@ module.exports = () => {
 
   return {
     waitForReady: () =>
-      new Promise(resolve => client.on('ready', () => resolve())),
+      new Promise(resolve => client.on("ready", () => resolve())),
     get: key =>
       new Promise(resolve => {
         client.get(key, (err, response) => {

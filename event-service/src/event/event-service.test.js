@@ -9,10 +9,8 @@ const eventConstants = require("./constants");
 const sns = require("../external-services/sns");
 const date = require("../date");
 
-process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME = "event-series-table";
 process.env.SERVERLESS_EVENT_TABLE_NAME = "event-table";
 process.env.SERVERLESS_VENUE_TABLE_NAME = "venue-table";
-process.env.SERVERLESS_TALENT_TABLE_NAME = "talent-table";
 process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN = "event-updated";
 
 const sync = fn =>

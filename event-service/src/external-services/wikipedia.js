@@ -3,7 +3,7 @@
 const request = require("request-promise-native");
 const globalConstants = require("../constants");
 
-exports.getDescription = (description, credit, links) => {
+exports.getDescription = async (description, credit, links) => {
   if (description) {
     // don't replace an existing description
     return {
@@ -32,27 +32,27 @@ exports.getDescription = (description, credit, links) => {
 
   const path = `/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${title}&exchars=4000`;
 
-  return request
-    .get("https://en.wikipedia.org" + path, { json: true })
-    .then(body => {
-      const keys = Object.keys(body.query.pages);
-      if (keys.length !== 1) {
-        return {};
-      }
+  const body = await request.get("https://en.wikipedia.org" + path, {
+    json: true
+  });
 
-      let extract = body.query.pages[keys[0]].extract || "";
-      const index = extract.indexOf("\n");
+  const keys = Object.keys(body.query.pages);
+  if (keys.length !== 1) {
+    return {};
+  }
 
-      if (index !== -1) {
-        extract = extract.substring(0, index);
-      }
+  let extract = body.query.pages[keys[0]].extract || "";
+  const index = extract.indexOf("\n");
 
-      extract = extract.replace(/\.\.\.\.?$/, ".");
+  if (index !== -1) {
+    extract = extract.substring(0, index);
+  }
 
-      return {
-        content: extract.length > 10 ? "<p>" + extract + "</p>" : null
-      };
-    });
+  extract = extract.replace(/\.\.\.\.?$/, ".");
+
+  return {
+    content: extract.length > 10 ? "<p>" + extract + "</p>" : null
+  };
 };
 
 function _getLinkByType(links, linkType) {

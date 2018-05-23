@@ -1,6 +1,5 @@
 "use strict";
 
-const dynamoDbClient = require("dynamodb-doc-client-wrapper");
 const ensure = require("ensure-request").ensure;
 const normalise = require("normalise-request");
 const ensureErrorHandler = require("../data/ensure-error-handler");
@@ -13,11 +12,12 @@ const normalisers = require("./normalisers");
 const constraints = require("./constraints");
 const EntityBulkUpdateBuilder = require("../entity/entity-bulk-update-builder");
 const elasticsearch = require("../external-services/elasticsearch");
+const dynamodb = require("../external-services/dynamodb");
 const eventMessaging = require("../event/messaging");
 const etag = require("../lambda/etag");
 
-exports.getEventSeries = co.wrap(function*(eventSeriesId) {
-  const dbItem = yield entity.get(
+exports.getEventSeries = async function(eventSeriesId) {
+  const dbItem = await entity.get(
     process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,
     eventSeriesId,
     false
@@ -27,10 +27,20 @@ exports.getEventSeries = co.wrap(function*(eventSeriesId) {
 
   response.isFullEntity = true;
   return response;
-});
+};
 
-exports.getEventSeriesMulti = co.wrap(function*(eventSeriesIds) {
-  const response = yield dynamoDbClient.batchGet({
+exports.getEventSeriesForEdit = async function(eventSeriesId) {
+  const dbItem = await entity.get(
+    process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,
+    eventSeriesId,
+    true
+  );
+
+  return mappings.mapDbItemToAdminResponse(dbItem);
+};
+
+exports.getEventSeriesMulti = async function(eventSeriesIds) {
+  const response = await dynamodb.batchGet({
     RequestItems: {
       [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
         Keys: eventSeriesIds.map(id => ({ id })),
@@ -47,19 +57,9 @@ exports.getEventSeriesMulti = co.wrap(function*(eventSeriesIds) {
     response.Responses[process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME];
 
   return dbItems.map(mappings.mapDbItemToPublicSummaryResponse);
-});
+};
 
-exports.getEventSeriesForEdit = co.wrap(function*(eventSeriesId) {
-  const dbItem = yield entity.get(
-    process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,
-    eventSeriesId,
-    true
-  );
-
-  return mappings.mapDbItemToAdminResponse(dbItem);
-});
-
-exports.createOrUpdateEventSeries = co.wrap(function*(
+exports.createOrUpdateEventSeries = async function(
   existingEventSeriesId,
   params
 ) {
@@ -70,11 +70,11 @@ exports.createOrUpdateEventSeries = co.wrap(function*(
   const isUpdate = !!existingEventSeriesId;
 
   const dbItem = mappings.mapRequestToDbItem(id, params);
-  yield entity.write(process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME, dbItem);
+  await entity.write(process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME, dbItem);
   const adminResponse = mappings.mapDbItemToAdminResponse(dbItem);
 
   if (isUpdate) {
-    yield eventMessaging.notifyEventsForEventSeries(dbItem.id);
+    await eventMessaging.notifyEventsForEventSeries(dbItem.id);
   }
 
   const fullSearchItem = mappings.mapDbItemToFullSearchIndex(dbItem);
@@ -95,14 +95,14 @@ exports.createOrUpdateEventSeries = co.wrap(function*(
       globalConstants.SEARCH_INDEX_TYPE_COMBINED_EVENT_AUTO
     );
 
-  yield elasticsearch.bulk({ body: builder.build() });
+  await elasticsearch.bulk({ body: builder.build() });
 
   const publicResponse = mappings.mapDbItemToPublicResponse(dbItem);
 
-  yield etag.writeETagToRedis(
+  await etag.writeETagToRedis(
     "event-series/" + id,
     JSON.stringify({ entity: publicResponse })
   );
 
   return adminResponse;
-});
+};
