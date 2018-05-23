@@ -1,12 +1,12 @@
 "use strict";
 
-const generatorHandler = require("../../lambda/generator-handler");
+const withErrorHandling = require("lambda-error-handler");
 const venueService = require("../../venue/venue-service");
 
-function* handler(event) {
+async function handler(event) {
   const id = event.pathParameters.id;
-  const entity = yield venueService.getVenueForEdit(id);
-  return { entity };
+  const entity = await venueService.getVenueForEdit(id);
+  return { body: { entity } };
 }
 
-exports.handler = generatorHandler(handler);
+exports.handler = withErrorHandling(handler);

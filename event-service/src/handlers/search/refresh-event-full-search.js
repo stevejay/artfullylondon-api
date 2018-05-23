@@ -1,11 +1,11 @@
 "use strict";
 
-const generatorHandler = require("../../lambda/generator-handler");
+const withErrorHandling = require("lambda-error-handler");
 const searchIndexService = require("../../search/search-index-service");
 
-function* handler() {
-  yield searchIndexService.refreshEventFullSearch();
-  return { acknowledged: true };
+async function handler() {
+  await searchIndexService.refreshEventFullSearch();
+  return { body: { acknowledged: true } };
 }
 
-exports.handler = generatorHandler(handler);
+exports.handler = withErrorHandling(handler);

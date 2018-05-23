@@ -37,6 +37,7 @@
     "es-simplify": "^1.0.3",
     "etag": "^1.8.1",
     "jwt-decode": "^2.2.0",
+    "lambda-error-handler": "^1.0.0",
     "latinize": "^0.4.0",
     "limax": "^1.6.0",
     "lodash.concat": "^4.5.0",

@@ -1,12 +1,12 @@
 "use strict";
 
-const generatorHandler = require("../../lambda/generator-handler");
+const withErrorHandling = require("lambda-error-handler");
 const eventSeriesService = require("../../event-series/event-series-service");
 
-function* handler(event) {
+async function handler(event) {
   const id = event.pathParameters.id;
-  const entity = yield eventSeriesService.getEventSeriesForEdit(id);
-  return { entity };
+  const entity = await eventSeriesService.getEventSeriesForEdit(id);
+  return { body: entity };
 }
 
-exports.handler = generatorHandler(handler);
+exports.handler = withErrorHandling(handler);

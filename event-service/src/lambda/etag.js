@@ -3,12 +3,12 @@
 const etag = require("etag");
 const log = require("loglevel");
 
-exports.tryGetETagFromRedis = function*(key) {
+exports.tryGetETagFromRedis = async function(key) {
   const redisClient = require("../external-services/redis")();
 
   try {
     redisClient.waitForReady();
-    return yield redisClient.get(key);
+    return await redisClient.get(key);
   } catch (err) {
     log.error("error when querying redis: " + err.message);
     return null;
@@ -17,13 +17,13 @@ exports.tryGetETagFromRedis = function*(key) {
   }
 };
 
-exports.writeETagToRedis = function*(key, objStr) {
+exports.writeETagToRedis = async function(key, objStr) {
   const redisClient = require("../external-services/redis")();
 
   try {
     redisClient.waitForReady();
     const value = etag(objStr);
-    yield redisClient.set(key, value);
+    await redisClient.set(key, value);
   } catch (err) {
     log.error("error when writing to redis: " + err.message);
   } finally {

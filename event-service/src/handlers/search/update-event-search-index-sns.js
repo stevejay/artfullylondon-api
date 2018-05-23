@@ -1,16 +1,17 @@
 "use strict";
 
-const generatorHandler = require("../../lambda/generator-handler");
+const withErrorHandling = require("lambda-error-handler");
 const searchIndexService = require("../../search/search-index-service");
 
-function* handler(event) {
-  yield (event.Records || []).map(record => processRecord(record));
-  return { acknowledged: true };
+async function handler(event) {
+  await Promise.all(
+    (event.Records || []).map(record => {
+      const eventId = record.Sns ? record.Sns.Message : null;
+      return searchIndexService.updateEventSearchIndex(eventId);
+    })
+  );
+
+  return { body: { acknowledged: true } };
 }
 
-function* processRecord(record) {
-  const eventId = record.Sns ? record.Sns.Message : null;
-  yield searchIndexService.updateEventSearchIndex(eventId);
-}
-
-exports.handler = generatorHandler(handler);
+exports.handler = withErrorHandling(handler);

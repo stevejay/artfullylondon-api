@@ -1,12 +1,13 @@
 "use strict";
 
-const cacheControlGeneratorHandler = require("../../lambda/cache-control-generator-handler");
+const withErrorHandling = require("lambda-error-handler");
+const withCacheControl = require("../../lambda/with-cache-control");
 const venueService = require("../../venue/venue-service");
 
-function* handler(event) {
+async function handler(event) {
   const id = event.pathParameters.id;
-  const entity = yield venueService.getVenue(id);
-  return { entity };
+  const entity = await venueService.getVenue(id);
+  return { body: { entity } };
 }
 
-exports.handler = cacheControlGeneratorHandler(handler, 1800);
+exports.handler = withErrorHandling(withCacheControl(handler, 1800));
