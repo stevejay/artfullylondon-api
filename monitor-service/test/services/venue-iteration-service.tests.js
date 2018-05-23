@@ -22,8 +22,8 @@ describe('venue-iteration-service', () => {
   describe('getNextVenue', () => {
     it('should get the next venue', done => {
       sinon.stub(lambda, 'invoke').callsFake((lambdaName, params) => {
-        expect(lambdaName).to.eql('GetNextVenue');
-        expect(params).to.eql({ lastId: 'almeida-theatre' });
+        expect(lambdaName).toEqual('GetNextVenue');
+        expect(params).toEqual({ lastId: 'almeida-theatre' });
 
         return Promise.resolve({ venueId: 'tate-modern' });
       });
@@ -31,7 +31,7 @@ describe('venue-iteration-service', () => {
       venueIterationService
         .getNextVenue('almeida-theatre')
         .then(result => {
-          expect(result).to.eql('tate-modern');
+          expect(result).toEqual('tate-modern');
           done();
         })
         .catch(done);
@@ -39,8 +39,8 @@ describe('venue-iteration-service', () => {
 
     it('should handle there being no next venue', done => {
       sinon.stub(lambda, 'invoke').callsFake((lambdaName, params) => {
-        expect(lambdaName).to.eql('GetNextVenue');
-        expect(params).to.eql({ lastId: 'almeida-theatre' });
+        expect(lambdaName).toEqual('GetNextVenue');
+        expect(params).toEqual({ lastId: 'almeida-theatre' });
 
         return Promise.resolve(null);
       });
@@ -48,7 +48,7 @@ describe('venue-iteration-service', () => {
       venueIterationService
         .getNextVenue('almeida-theatre')
         .then(result => {
-          expect(result).to.eql(null);
+          expect(result).toEqual(null);
           done();
         })
         .catch(done);
@@ -58,8 +58,8 @@ describe('venue-iteration-service', () => {
       const lambdaStub = sinon
         .stub(lambda, 'invoke')
         .callsFake((lambdaName, payload) => {
-          expect(lambdaName).to.eql('GetNextVenue');
-          expect(payload).to.eql({ lastId: null });
+          expect(lambdaName).toEqual('GetNextVenue');
+          expect(payload).toEqual({ lastId: null });
 
           return { venueId: 'almeida-theatre' };
         });
@@ -67,8 +67,8 @@ describe('venue-iteration-service', () => {
       venueIterationService
         .getNextVenue(null)
         .then(result => {
-          expect(result).to.eql('almeida-theatre');
-          expect(lambdaStub.called).to.eql(true);
+          expect(result).toEqual('almeida-theatre');
+          expect(lambdaStub.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -78,20 +78,20 @@ describe('venue-iteration-service', () => {
   describe('startIteration', () => {
     it('should start an iteration', done => {
       sinon.stub(lambda, 'invoke').callsFake((lambdaName, params) => {
-        expect(lambdaName).to.eql('StartIteration');
-        expect(params).to.eql({ actionId: 'IterateVenueMonitors' });
+        expect(lambdaName).toEqual('StartIteration');
+        expect(params).toEqual({ actionId: 'IterateVenueMonitors' });
 
         return Promise.resolve({ startTimestamp: 12345678 });
       });
 
       sinon.stub(sns, 'notify').callsFake((message, meta) => {
-        expect(message).to.eql({
+        expect(message).toEqual({
           startTimestamp: 12345678,
           lastId: null,
           retry: 0,
         });
 
-        expect(meta).to.eql({ arn: 'IterateVenuesTopicArn' });
+        expect(meta).toEqual({ arn: 'IterateVenuesTopicArn' });
 
         return Promise.resolve();
       });
@@ -123,7 +123,7 @@ describe('venue-iteration-service', () => {
 
     it('should add SNS when there is another venue to iterate', done => {
       const snsStub = sinon.stub(sns, 'notify').callsFake(payload => {
-        expect(payload).to.eql({
+        expect(payload).toEqual({
           startTimestamp: 123456,
           lastId: 'almeida-theatre',
           retry: 0,
@@ -135,7 +135,7 @@ describe('venue-iteration-service', () => {
       venueIterationService
         .invokeNextIteration('almeida-theatre', 123456)
         .then(() => {
-          expect(snsStub.called).to.eql(true);
+          expect(snsStub.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -145,7 +145,7 @@ describe('venue-iteration-service', () => {
       const lambdaStub = sinon
         .stub(lambda, 'invoke')
         .callsFake((_, payload) => {
-          expect(payload).to.eql({
+          expect(payload).toEqual({
             actionId: 'IterateVenueMonitors',
             startTimestamp: 123456,
           });
@@ -156,7 +156,7 @@ describe('venue-iteration-service', () => {
       venueIterationService
         .invokeNextIteration(null, 123456)
         .then(() => {
-          expect(lambdaStub.called).to.eql(true);
+          expect(lambdaStub.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -173,7 +173,7 @@ describe('venue-iteration-service', () => {
       const lambdaStub = sinon
         .stub(lambda, 'invoke')
         .callsFake((_, payload) => {
-          expect(payload).to.eql({
+          expect(payload).toEqual({
             actionId: 'IterateVenueMonitors',
             startTimestamp: 123456,
             entityId: 'almeida-theatre',
@@ -188,8 +188,8 @@ describe('venue-iteration-service', () => {
       venueIterationService
         .addIterationError(new Error('foo'), 'almeida-theatre', 123456)
         .then(() => {
-          expect(lambdaStub.called).to.eql(true);
-          expect(logStub.called).to.eql(true);
+          expect(lambdaStub.called).toEqual(true);
+          expect(logStub.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -205,7 +205,7 @@ describe('venue-iteration-service', () => {
       venueIterationService
         .addIterationError(new Error('foo'), 'almeida-theatre', 123456)
         .then(() => {
-          expect(lambdaStub.called).to.eql(true);
+          expect(lambdaStub.called).toEqual(true);
           done();
         })
         .catch(done);

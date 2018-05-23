@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.bl.uk';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const eventSubTypes = [
     'exhibition',
     'lecture',
@@ -30,7 +30,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('h1').html();
 
@@ -42,7 +42,7 @@ module.exports.pageParser = co.wrap(function*(pageUrl) {
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(
     BASE_URL + '/aboutus/quickinfo/loc/seasonalclosures/index.html'
   );

@@ -9,4 +9,4 @@ function* handler(event) {
   return { items: dbItems };
 }
 
-module.exports.handler = generatorHandler(handler);
+exports.handler = generatorHandler(handler);

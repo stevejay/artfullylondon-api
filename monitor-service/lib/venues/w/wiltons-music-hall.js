@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://wiltons.org.uk';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
 
   const d = new Date();
@@ -32,7 +32,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('.content h2').html();
   const data = [];

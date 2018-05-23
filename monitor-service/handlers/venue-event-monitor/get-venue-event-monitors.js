@@ -9,4 +9,4 @@ function* handler(event) {
   return { venueId, items };
 }
 
-module.exports.handler = generatorHandler(handler);
+exports.handler = generatorHandler(handler);

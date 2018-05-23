@@ -3,7 +3,7 @@
 const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const $ = yield pageLoader('http://www.ascstudios.co.uk/asc-gallery/');
   const links = $('body').find('ul.gallery div.event a');
   const result = [];
@@ -16,7 +16,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('title').html();
 
@@ -28,7 +28,7 @@ module.exports.pageParser = co.wrap(function*(pageUrl) {
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader('http://www.ascstudios.co.uk/asc-gallery/');
   return $('#content .entry-content .frame').html();
 });

@@ -8,7 +8,7 @@ const venueMonitorRepository = require('../persistence/venue-monitor-repository'
 const lambda = require('../external-services/lambda');
 const constants = require('../constants');
 
-module.exports.sendMonitorStatusEmail = co.wrap(function*() {
+exports.sendMonitorStatusEmail = co.wrap(function*() {
   const venueEventMonitors = yield venueEventMonitorRepository.getNewOrChanged();
 
   const idsOfVenuesWithEvents = uniq(

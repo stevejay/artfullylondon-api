@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.sprovieri.com';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/london/`);
 
@@ -17,14 +17,14 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('#london-name').html();
   const data = [$('#leftcolumn').html()];
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/contact/');
   return $('#container').html();
 });

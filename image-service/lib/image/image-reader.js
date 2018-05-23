@@ -6,7 +6,7 @@ const dominantColor = require('dominant-color');
 const FILE_EXTENSION_REGEX = /\.[^./]+$/i;
 const QUERY_STRING_REGEX = /\?[^?]*$/i;
 
-module.exports.getImageFeatures = imagePath => {
+exports.getImageFeatures = imagePath => {
   return new Promise((resolve, reject) => {
     im.identify(imagePath, (err, features) => {
       if (err) {
@@ -43,7 +43,7 @@ module.exports.getImageFeatures = imagePath => {
     });
 };
 
-module.exports.getExtensionFromUrl = url => {
+exports.getExtensionFromUrl = url => {
   const replacedUrl = (url || '').replace(QUERY_STRING_REGEX, '');
 
   const match = replacedUrl.match(FILE_EXTENSION_REGEX);

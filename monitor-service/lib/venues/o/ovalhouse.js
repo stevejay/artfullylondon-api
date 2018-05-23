@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.ovalhouse.com';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
   const pages = ['P1', 'P12'];
 
@@ -21,7 +21,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('#info header h1').html();
   const data = $('#info').html();

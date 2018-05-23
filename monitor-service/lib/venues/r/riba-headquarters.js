@@ -7,7 +7,7 @@ const BASE_URL = 'https://www.architecture.com';
 
 // Site is currently hosed.
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(
     `${BASE_URL}/WhatsOn/WhatsOn.aspx?type=cultural&location=0%2f660%2f666%2f669`
@@ -23,7 +23,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('.articleHeader h1').html();
   const data = [$('#mainContent article').html()];

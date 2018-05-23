@@ -17,4 +17,4 @@ async function handler(event) {
   return { body: { acknowledged: true } };
 }
 
-module.exports.handler = withErrorHandling(handler);
+exports.handler = withErrorHandling(handler);

@@ -29,8 +29,8 @@ describe('reprocess-images-sns.handler', () => {
     sinon
       .stub(imageService, 'reprocessNextImage')
       .callsFake((lastId, startTimestamp, startTime) => {
-        expect(lastId).to.eql('1234');
-        expect(startTimestamp).to.eql(12345678);
+        expect(lastId).toEqual('1234');
+        expect(startTimestamp).toEqual(12345678);
         expect(startTime).to.not.eql(null);
         return Promise.resolve();
       });
@@ -39,7 +39,7 @@ describe('reprocess-images-sns.handler', () => {
       if (err) {
         done(err);
       } else {
-        expect(result).to.eql({ acknowledged: true });
+        expect(result).toEqual({ acknowledged: true });
         done();
       }
     });
@@ -92,7 +92,7 @@ describe('reprocess-images-sns.handler', () => {
       if (err) {
         done(err);
       } else {
-        expect(result).to.eql({ acknowledged: true });
+        expect(result).toEqual({ acknowledged: true });
         done();
       }
     });

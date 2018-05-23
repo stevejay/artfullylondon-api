@@ -21,7 +21,7 @@ describe('image-service', () => {
       sinon
         .stub(entityIterationService, 'startIteration')
         .callsFake(actionId => {
-          expect(actionId).to.eql(constants.ITERATE_IMAGES_ACTION_ID);
+          expect(actionId).toEqual(constants.ITERATE_IMAGES_ACTION_ID);
           return Promise.resolve();
         });
 
@@ -49,13 +49,13 @@ describe('image-service', () => {
 
     it('should handle processing an image and continuing the iteration', done => {
       sinon.stub(imageRepository, 'getNextImage').callsFake(lastId => {
-        expect(lastId).to.eql('image-1');
+        expect(lastId).toEqual('image-1');
 
         return Promise.resolve({ id: 'image-2' });
       });
 
       sinon.stub(imageProcessor, 'reprocessImage').callsFake(imageId => {
-        expect(imageId).to.eql('image-2');
+        expect(imageId).toEqual('image-2');
         return Promise.resolve();
       });
 
@@ -66,10 +66,10 @@ describe('image-service', () => {
       sinon
         .stub(entityIterationService, 'invokeNextIteration')
         .callsFake((lastId, startTimestamp, actionId, topicArn) => {
-          expect(lastId).to.eql('image-2');
-          expect(startTimestamp).to.eql(12345678);
-          expect(actionId).to.eql(constants.ITERATE_IMAGES_ACTION_ID);
-          expect(topicArn).to.eql('ReprocessImagesTopicArn');
+          expect(lastId).toEqual('image-2');
+          expect(startTimestamp).toEqual(12345678);
+          expect(actionId).toEqual(constants.ITERATE_IMAGES_ACTION_ID);
+          expect(topicArn).toEqual('ReprocessImagesTopicArn');
 
           return Promise.resolve();
         });
@@ -92,10 +92,10 @@ describe('image-service', () => {
       sinon
         .stub(entityIterationService, 'addIterationError')
         .callsFake((message, actionId, startTimestamp, imageId) => {
-          expect(message).to.eql('deliberately thrown');
-          expect(actionId).to.eql(constants.ITERATE_IMAGES_ACTION_ID);
-          expect(startTimestamp).to.eql(12345678);
-          expect(imageId).to.eql('image-2');
+          expect(message).toEqual('deliberately thrown');
+          expect(actionId).toEqual(constants.ITERATE_IMAGES_ACTION_ID);
+          expect(startTimestamp).toEqual(12345678);
+          expect(imageId).toEqual('image-2');
 
           return Promise.resolve();
         });
@@ -107,10 +107,10 @@ describe('image-service', () => {
       sinon
         .stub(entityIterationService, 'invokeNextIteration')
         .callsFake((lastId, startTimestamp, actionId, topicArn) => {
-          expect(lastId).to.eql('image-2');
-          expect(startTimestamp).to.eql(12345678);
-          expect(actionId).to.eql(constants.ITERATE_IMAGES_ACTION_ID);
-          expect(topicArn).to.eql('ReprocessImagesTopicArn');
+          expect(lastId).toEqual('image-2');
+          expect(startTimestamp).toEqual(12345678);
+          expect(actionId).toEqual(constants.ITERATE_IMAGES_ACTION_ID);
+          expect(topicArn).toEqual('ReprocessImagesTopicArn');
 
           return Promise.resolve();
         });
@@ -123,17 +123,17 @@ describe('image-service', () => {
 
     it('should handle reaching the end of the iteration', done => {
       sinon.stub(imageRepository, 'getNextImage').callsFake(lastId => {
-        expect(lastId).to.eql('image-99');
+        expect(lastId).toEqual('image-99');
         return Promise.resolve(null);
       });
 
       sinon
         .stub(entityIterationService, 'invokeNextIteration')
         .callsFake((lastId, startTimestamp, actionId, topicArn) => {
-          expect(lastId).to.eql(null);
-          expect(startTimestamp).to.eql(12345678);
-          expect(actionId).to.eql(constants.ITERATE_IMAGES_ACTION_ID);
-          expect(topicArn).to.eql('ReprocessImagesTopicArn');
+          expect(lastId).toEqual(null);
+          expect(startTimestamp).toEqual(12345678);
+          expect(actionId).toEqual(constants.ITERATE_IMAGES_ACTION_ID);
+          expect(topicArn).toEqual('ReprocessImagesTopicArn');
 
           return Promise.resolve();
         });
@@ -152,7 +152,7 @@ describe('image-service', () => {
 
     it('should handle a valid request', done => {
       sinon.stub(imageRepository, 'getImage').callsFake(imageId => {
-        expect(imageId).to.eql('1234');
+        expect(imageId).toEqual('1234');
         return Promise.resolve({
           imageType: 'event',
           id: '1234',
@@ -169,7 +169,7 @@ describe('image-service', () => {
       imageService
         .getImageData('1234')
         .then(result => {
-          expect(result).to.eql({
+          expect(result).toEqual({
             imageType: 'event',
             id: '1234',
             mimeType: 'file/png',
@@ -196,9 +196,9 @@ describe('image-service', () => {
 
     it('should handle a valid request', done => {
       sinon.stub(imageProcessor, 'processImage').callsFake((type, id, url) => {
-        expect(type).to.eql('event');
-        expect(id).to.eql('4330825a3d7511e7a91992ebcb67fe33');
-        expect(url).to.eql('http://test.com/foo.png');
+        expect(type).toEqual('event');
+        expect(id).toEqual('4330825a3d7511e7a91992ebcb67fe33');
+        expect(url).toEqual('http://test.com/foo.png');
         return Promise.resolve();
       });
 
@@ -213,9 +213,9 @@ describe('image-service', () => {
 
     it('should handle an invalid request', done => {
       sinon.stub(imageProcessor, 'processImage').callsFake((type, id, url) => {
-        expect(type).to.eql('event');
-        expect(id).to.eql('4330825a3d7511e7a91992ebcb67fe33');
-        expect(url).to.eql('http://test.com/foo.png');
+        expect(type).toEqual('event');
+        expect(id).toEqual('4330825a3d7511e7a91992ebcb67fe33');
+        expect(url).toEqual('http://test.com/foo.png');
         return Promise.resolve();
       });
 

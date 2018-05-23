@@ -12,7 +12,7 @@ const imageProcessor = require('../image/image-processor');
 const mappings = require('../mappings');
 const entityIterationService = require('./entity-iteration-service');
 
-module.exports.addImageToStore = co.wrap(function*(request) {
+exports.addImageToStore = co.wrap(function*(request) {
   normalise(request, normaliser);
   ensure(request, constraints.image, ensureErrorHandler);
 
@@ -23,18 +23,18 @@ module.exports.addImageToStore = co.wrap(function*(request) {
   );
 });
 
-module.exports.getImageData = co.wrap(function*(imageId) {
+exports.getImageData = co.wrap(function*(imageId) {
   const image = yield imageRepository.getImage(imageId);
   return mappings.mapDbItemToResponse(image);
 });
 
-module.exports.startReprocessingImages = () =>
+exports.startReprocessingImages = () =>
   entityIterationService.startIteration(
     constants.ITERATE_IMAGES_ACTION_ID,
     process.env.SERVERLESS_REPROCESS_IMAGES_TOPIC_ARN
   );
 
-module.exports.reprocessNextImage = co.wrap(function*(
+exports.reprocessNextImage = co.wrap(function*(
   lastId,
   startTimestamp
 ) {

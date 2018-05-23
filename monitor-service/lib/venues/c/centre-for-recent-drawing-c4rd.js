@@ -3,7 +3,7 @@
 const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-module.exports.pageParser = co.wrap(function*() {
+exports.pageParser = co.wrap(function*() {
   const $ = yield pageLoader('http://www.c4rd.org.uk/WHATS_ON.html');
 
   const data = $('.graphic_textbox_layout_style_default p').each(function() {

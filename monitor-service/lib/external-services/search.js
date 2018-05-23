@@ -6,7 +6,7 @@ const request = require('request-promise-lite');
 const SEARCH_PRESET_URL =
   'https://api.artfully.london/search-service/admin/search/preset/by-external-event-id';
 
-module.exports.findEvents = co.wrap(function*(venueId, externalEventIds) {
+exports.findEvents = co.wrap(function*(venueId, externalEventIds) {
   if (!externalEventIds || externalEventIds.length === 0) {
     return [];
   }

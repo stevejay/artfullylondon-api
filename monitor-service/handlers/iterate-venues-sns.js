@@ -22,4 +22,4 @@ function* processRecord(record) {
   );
 }
 
-module.exports.handler = generatorHandler(handler);
+exports.handler = generatorHandler(handler);

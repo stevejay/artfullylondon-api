@@ -22,7 +22,7 @@ describe('get-venue-monitors.handler', () => {
     };
 
     sinon.stub(venueMonitorService, 'getVenueMonitors').callsFake(venueId => {
-      expect(venueId).to.eql('almeida-theatre');
+      expect(venueId).toEqual('almeida-theatre');
       return Promise.resolve([{ title: 'test' }]);
     });
 

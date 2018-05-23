@@ -6,7 +6,7 @@ const dynamodbClient = require("dynamodb-doc-client-wrapper")({
   documentClient: dynamodb.doc
 });
 
-module.exports.saveTag = tag =>
+exports.saveTag = tag =>
   dynamodbClient.put({
     TableName: process.env.SERVERLESS_TAG_TABLE_NAME,
     Item: tag,
@@ -15,21 +15,21 @@ module.exports.saveTag = tag =>
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
 
-module.exports.deleteTag = (tagType, tagId) =>
+exports.deleteTag = (tagType, tagId) =>
   dynamodbClient.delete({
     TableName: process.env.SERVERLESS_TAG_TABLE_NAME,
     Key: { tagType: tagType, id: tagId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
 
-module.exports.getAll = () =>
+exports.getAll = () =>
   dynamodbClient.scan({
     TableName: process.env.SERVERLESS_TAG_TABLE_NAME,
     ProjectionExpression: "id, label",
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
 
-module.exports.getAllByTagType = tagType =>
+exports.getAllByTagType = tagType =>
   dynamodbClient.query({
     TableName: process.env.SERVERLESS_TAG_TABLE_NAME,
     KeyConditionExpression: "tagType = :type",

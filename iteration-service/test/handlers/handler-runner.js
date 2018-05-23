@@ -21,7 +21,7 @@ module.exports = exports = function(handler, event, expected, done) {
         result.body = JSON.parse(result.body);
       }
 
-      expect(result).to.eql(expected);
+      expect(result).toEqual(expected);
       done();
     })
     .catch(err => done(err));

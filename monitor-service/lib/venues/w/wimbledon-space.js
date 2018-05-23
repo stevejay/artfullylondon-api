@@ -5,9 +5,9 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://events.arts.ac.uk';
 
-module.exports.minimumExpectedEvents = 0;
+exports.minimumExpectedEvents = 0;
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
   let $ = yield pageLoader(
     BASE_URL +
@@ -22,7 +22,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('title').html();
   const data = $('[id=\'thePage:longdesc\']').html();

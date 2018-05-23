@@ -15,7 +15,7 @@ describe('iteration-error-repository', () => {
 
     it('should save an error', done => {
       sinon.stub(dynamoDbClient, 'put').callsFake(param => {
-        expect(param).to.eql({
+        expect(param).toEqual({
           TableName: process.env.SERVERLESS_ITERATON_ERROR_TABLE_NAME,
           Item: { error: 'Some error' },
           ReturnConsumedCapacity: undefined,
@@ -38,7 +38,7 @@ describe('iteration-error-repository', () => {
 
     it('should get iteration errors', done => {
       sinon.stub(dynamoDbClient, 'query').callsFake(param => {
-        expect(param).to.eql({
+        expect(param).toEqual({
           TableName: process.env.SERVERLESS_ITERATON_ERROR_TABLE_NAME,
           KeyConditionExpression: 'actionIdStartTimestamp = :actionIdStartTimestamp',
           ExpressionAttributeValues: {
@@ -54,7 +54,7 @@ describe('iteration-error-repository', () => {
       iterationErrorRepository
         .getErrorsForIteration('some-key')
         .then(response => {
-          expect(response).to.eql([{ id: 'some-id' }]);
+          expect(response).toEqual([{ id: 'some-id' }]);
           done();
         })
         .catch(done);

@@ -15,7 +15,7 @@ describe('venue-monitor-service', () => {
 
     it('should update a venue monitor', done => {
       sinon.stub(venueMonitorRepository, 'update').callsFake(entity => {
-        expect(entity).to.eql({
+        expect(entity).toEqual({
           venueId: 'some-id',
           isIgnored: true,
           hasChanged: false,
@@ -55,14 +55,14 @@ describe('venue-monitor-service', () => {
 
     it('should handle getting a non-existent venue monitor', done => {
       sinon.stub(venueMonitorRepository, 'tryGet').callsFake(venueId => {
-        expect(venueId).to.eql('almeida-theatre');
+        expect(venueId).toEqual('almeida-theatre');
         return Promise.resolve(null);
       });
 
       venueMonitorService
         .getVenueMonitors('almeida-theatre')
         .then(result => {
-          expect(result).to.eql([]);
+          expect(result).toEqual([]);
           done();
         })
         .catch(done);
@@ -70,7 +70,7 @@ describe('venue-monitor-service', () => {
 
     it('should get a venue monitor with no diff', done => {
       sinon.stub(venueMonitorRepository, 'tryGet').callsFake(venueId => {
-        expect(venueId).to.eql('almeida-theatre');
+        expect(venueId).toEqual('almeida-theatre');
 
         return Promise.resolve({
           id: 'some-id',
@@ -80,8 +80,8 @@ describe('venue-monitor-service', () => {
       });
 
       sinon.stub(diff, 'getDiff').callsFake((oldVenueText, venueText) => {
-        expect(oldVenueText).to.eql('old venue text');
-        expect(venueText).to.eql('venue text');
+        expect(oldVenueText).toEqual('old venue text');
+        expect(venueText).toEqual('venue text');
 
         return Promise.resolve(null);
       });
@@ -89,7 +89,7 @@ describe('venue-monitor-service', () => {
       venueMonitorService
         .getVenueMonitors('almeida-theatre')
         .then(result => {
-          expect(result).to.eql([{ id: 'some-id' }]);
+          expect(result).toEqual([{ id: 'some-id' }]);
           done();
         })
         .catch(done);
@@ -97,7 +97,7 @@ describe('venue-monitor-service', () => {
 
     it('should get a venue monitor with a diff', done => {
       sinon.stub(venueMonitorRepository, 'tryGet').callsFake(venueId => {
-        expect(venueId).to.eql('almeida-theatre');
+        expect(venueId).toEqual('almeida-theatre');
 
         return Promise.resolve({
           id: 'some-id',
@@ -107,8 +107,8 @@ describe('venue-monitor-service', () => {
       });
 
       sinon.stub(diff, 'getDiff').callsFake((oldVenueText, venueText) => {
-        expect(oldVenueText).to.eql('old venue text');
-        expect(venueText).to.eql('venue text');
+        expect(oldVenueText).toEqual('old venue text');
+        expect(venueText).toEqual('venue text');
 
         return Promise.resolve('change diff text');
       });
@@ -116,7 +116,7 @@ describe('venue-monitor-service', () => {
       venueMonitorService
         .getVenueMonitors('almeida-theatre')
         .then(result => {
-          expect(result).to.eql([{
+          expect(result).toEqual([{
             id: 'some-id',
             changeDiff: 'change diff text',
           }]);
@@ -144,14 +144,14 @@ describe('venue-monitor-service', () => {
       const tryGetStub = sinon
         .stub(venueMonitorRepository, 'tryGet')
         .callsFake(venueId => {
-          expect(venueId).to.eql('almeida-theatre');
+          expect(venueId).toEqual('almeida-theatre');
           return Promise.resolve(null);
         });
 
       const putStub = sinon
         .stub(venueMonitorRepository, 'put')
         .callsFake(param => {
-          expect(param).to.eql({
+          expect(param).toEqual({
             venueId: 'almeida-theatre',
             venueText: 'Foo',
             isIgnored: false,
@@ -168,8 +168,8 @@ describe('venue-monitor-service', () => {
       venueMonitorService
         .save('almeida-theatre', venueMonitor)
         .then(() => {
-          expect(tryGetStub.called).to.eql(true);
-          expect(putStub.called).to.eql(true);
+          expect(tryGetStub.called).toEqual(true);
+          expect(putStub.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -179,7 +179,7 @@ describe('venue-monitor-service', () => {
       const tryGetStub = sinon
         .stub(venueMonitorRepository, 'tryGet')
         .callsFake(venueId => {
-          expect(venueId).to.eql('almeida-theatre');
+          expect(venueId).toEqual('almeida-theatre');
 
           return Promise.resolve({
             venueId: 'almeida-theatre',
@@ -192,7 +192,7 @@ describe('venue-monitor-service', () => {
       const putStub = sinon
         .stub(venueMonitorRepository, 'put')
         .callsFake(param => {
-          expect(param).to.eql({
+          expect(param).toEqual({
             venueId: 'almeida-theatre',
             venueText: 'some text',
             isIgnored: false,
@@ -209,8 +209,8 @@ describe('venue-monitor-service', () => {
       venueMonitorService
         .save('almeida-theatre', venueMonitor)
         .then(() => {
-          expect(tryGetStub.called).to.eql(true);
-          expect(putStub.called).to.eql(true);
+          expect(tryGetStub.called).toEqual(true);
+          expect(putStub.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -220,7 +220,7 @@ describe('venue-monitor-service', () => {
       const tryGetStub = sinon
         .stub(venueMonitorRepository, 'tryGet')
         .callsFake(venueId => {
-          expect(venueId).to.eql('almeida-theatre');
+          expect(venueId).toEqual('almeida-theatre');
 
           return Promise.resolve({
             venueId: 'almeida-theatre',
@@ -233,7 +233,7 @@ describe('venue-monitor-service', () => {
       const putStub = sinon
         .stub(venueMonitorRepository, 'put')
         .callsFake(param => {
-          expect(param).to.eql({
+          expect(param).toEqual({
             venueId: 'almeida-theatre',
             oldVenueText: 'some text',
             venueText: 'some new text',
@@ -251,8 +251,8 @@ describe('venue-monitor-service', () => {
       venueMonitorService
         .save('almeida-theatre', venueMonitor)
         .then(() => {
-          expect(tryGetStub.called).to.eql(true);
-          expect(putStub.called).to.eql(true);
+          expect(tryGetStub.called).toEqual(true);
+          expect(putStub.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -262,7 +262,7 @@ describe('venue-monitor-service', () => {
       const tryGetStub = sinon
         .stub(venueMonitorRepository, 'tryGet')
         .callsFake(venueId => {
-          expect(venueId).to.eql('almeida-theatre');
+          expect(venueId).toEqual('almeida-theatre');
 
           return Promise.resolve({
             venueId: 'almeida-theatre',
@@ -276,7 +276,7 @@ describe('venue-monitor-service', () => {
       const putStub = sinon
         .stub(venueMonitorRepository, 'put')
         .callsFake(param => {
-          expect(param).to.eql({
+          expect(param).toEqual({
             venueId: 'almeida-theatre',
             venueText: 'some old text',
             isIgnored: false,
@@ -293,8 +293,8 @@ describe('venue-monitor-service', () => {
       venueMonitorService
         .save('almeida-theatre', venueMonitor)
         .then(() => {
-          expect(tryGetStub.called).to.eql(true);
-          expect(putStub.called).to.eql(true);
+          expect(tryGetStub.called).toEqual(true);
+          expect(putStub.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -304,7 +304,7 @@ describe('venue-monitor-service', () => {
       const tryGetStub = sinon
         .stub(venueMonitorRepository, 'tryGet')
         .callsFake(venueId => {
-          expect(venueId).to.eql('almeida-theatre');
+          expect(venueId).toEqual('almeida-theatre');
 
           return Promise.resolve({
             venueId: 'almeida-theatre',
@@ -318,7 +318,7 @@ describe('venue-monitor-service', () => {
       const putStub = sinon
         .stub(venueMonitorRepository, 'put')
         .callsFake(param => {
-          expect(param).to.eql({
+          expect(param).toEqual({
             venueId: 'almeida-theatre',
             oldVenueText: 'some old text',
             venueText: 'some new text',
@@ -336,8 +336,8 @@ describe('venue-monitor-service', () => {
       venueMonitorService
         .save('almeida-theatre', venueMonitor)
         .then(() => {
-          expect(tryGetStub.called).to.eql(true);
-          expect(putStub.called).to.eql(true);
+          expect(tryGetStub.called).toEqual(true);
+          expect(putStub.called).toEqual(true);
           done();
         })
         .catch(done);

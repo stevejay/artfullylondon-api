@@ -9,4 +9,4 @@ async function handler() {
   return { body: result };
 }
 
-module.exports.handler = withErrorHandling(handler);
+exports.handler = withErrorHandling(handler);

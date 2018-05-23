@@ -19,7 +19,7 @@ describe('image-reader', () => {
       imageReader
         .getImageFeatures(path.resolve(__dirname, '../images/test.jpg'))
         .then(features => {
-          expect(features).to.eql({
+          expect(features).toEqual({
             mimeType: 'image/jpeg',
             width: 1000,
             height: 667,
@@ -35,7 +35,7 @@ describe('image-reader', () => {
       imageReader
         .getImageFeatures(path.resolve(__dirname, '../images/notflix.webp'))
         .then(features => {
-          expect(features).to.eql({
+          expect(features).toEqual({
             mimeType: 'image/webp',
             width: 900,
             height: 573,
@@ -51,7 +51,7 @@ describe('image-reader', () => {
       imageReader
         .getImageFeatures(path.resolve(__dirname, '../images/red.png'))
         .then(features => {
-          expect(features).to.eql({
+          expect(features).toEqual({
             mimeType: 'image/png',
             width: 2000,
             height: 1200,
@@ -67,7 +67,7 @@ describe('image-reader', () => {
       imageReader
         .getImageFeatures(path.resolve(__dirname, '../images/red'))
         .then(features => {
-          expect(features).to.eql({
+          expect(features).toEqual({
             mimeType: 'image/png',
             width: 2000,
             height: 1200,
@@ -112,7 +112,7 @@ describe('image-reader', () => {
     tests.forEach(test => {
       it(test.it, () => {
         const actual = imageReader.getExtensionFromUrl(test.arg);
-        expect(actual).to.eql(test.expected);
+        expect(actual).toEqual(test.expected);
       });
     });
   });

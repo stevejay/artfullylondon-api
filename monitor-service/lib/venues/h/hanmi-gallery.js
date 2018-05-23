@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.hanmigallery.co.uk';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
 
   let $ = yield pageLoader(BASE_URL + '/exhibitions/current/');
@@ -23,14 +23,14 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('#content h2').html();
   const data = $('#content_area').html();
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/contact/london/');
   return $('#content_area').html();
 });

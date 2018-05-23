@@ -20,7 +20,6 @@
     "jest": "^22.4.4",
     "js-yaml": "^3.11.0",
     "request": "^2.87.0",
-    "request-promise-native": "^1.0.5",
     "serverless": "^1.27.2",
     "serverless-dynamodb-local": "^0.2.30",
     "serverless-offline": "^3.23.0",
@@ -55,7 +54,7 @@
     "moment": "^2.22.1",
     "normalise-request": "^1.4.4",
     "redis": "^2.8.0",
-    "request-promise-lite": "^0.13.1",
+    "request-promise-native": "^1.0.5",
     "serverless-dynamodb-client": "^0.0.2"
   }
 }

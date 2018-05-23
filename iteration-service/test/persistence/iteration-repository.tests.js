@@ -45,7 +45,7 @@ describe('iteration-repository', () => {
 
     it('should add an iteration', done => {
       sinon.stub(dynamoDbClient, 'put').callsFake(param => {
-        expect(param).to.eql({
+        expect(param).toEqual({
           TableName: process.env.SERVERLESS_ITERATON_TABLE_NAME,
           Item: { id: 'some-id' },
           ReturnConsumedCapacity: undefined,
@@ -68,7 +68,7 @@ describe('iteration-repository', () => {
 
     it('should get the most recent iteration', done => {
       sinon.stub(dynamoDbClient, 'queryBasic').callsFake(param => {
-        expect(param).to.eql({
+        expect(param).toEqual({
           TableName: process.env.SERVERLESS_ITERATON_TABLE_NAME,
           KeyConditionExpression: 'actionId = :actionId',
           ExpressionAttributeValues: { ':actionId': 'some-action-id' },
@@ -84,7 +84,7 @@ describe('iteration-repository', () => {
       iterationRepository
         .getMostRecentIteration('some-action-id')
         .then(response => {
-          expect(response).to.eql({ Items: [{ id: 'some-id' }] });
+          expect(response).toEqual({ Items: [{ id: 'some-id' }] });
           done();
         })
         .catch(done);

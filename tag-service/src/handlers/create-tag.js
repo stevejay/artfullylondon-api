@@ -17,4 +17,4 @@ async function handler(event) {
   return { body: result };
 }
 
-module.exports.handler = withWriteAuthorization(withErrorHandling(handler));
+exports.handler = withWriteAuthorization(withErrorHandling(handler));

@@ -39,21 +39,21 @@ describe('process-image', () => {
       sinon
         .stub(imageResizer, 'resize')
         .callsFake((filePath, resizedFilePath, width, height) => {
-          expect(filePath).to.eql('/tmp/path');
-          expect(resizedFilePath).to.eql('/tmp/path.120x180.jpg');
-          expect(width).to.eql(120);
-          expect(height).to.eql(180);
+          expect(filePath).toEqual('/tmp/path');
+          expect(resizedFilePath).toEqual('/tmp/path.120x180.jpg');
+          expect(width).toEqual(120);
+          expect(height).toEqual(180);
 
           return Promise.resolve();
         });
 
       sinon.stub(file, 'readFile').callsFake(resizedFilePath => {
-        expect(resizedFilePath).to.eql('/tmp/path.120x180.jpg');
+        expect(resizedFilePath).toEqual('/tmp/path.120x180.jpg');
         return Promise.resolve('The Content');
       });
 
       sinon.stub(s3, 'putObjectToS3').callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           Bucket: 'ResizedImagesBucket',
           Key: '11/22/11223344aaaaaaaabbbbbbbbcccccccc/120x180.jpg',
           Body: 'The Content',
@@ -77,20 +77,20 @@ describe('process-image', () => {
   describe('processImage', () => {
     it('should process a new image', done => {
       sinon.stub(imageRepository, 'tryGetImage').callsFake(id => {
-        expect(id).to.eql('11223344aaaaaaaabbbbbbbbcccccccc');
+        expect(id).toEqual('11223344aaaaaaaabbbbbbbbcccccccc');
         return Promise.resolve(null);
       });
 
       sinon.stub(tmp, 'tmpNameSync').callsFake(() => '/tmp/path');
 
       sinon.stub(file, 'downloadFile').callsFake((imageUrl, tmpPath) => {
-        expect(imageUrl).to.eql('http://test.com/foo.png');
-        expect(tmpPath).to.eql('/tmp/path');
+        expect(imageUrl).toEqual('http://test.com/foo.png');
+        expect(tmpPath).toEqual('/tmp/path');
         return Promise.resolve();
       });
 
       sinon.stub(imageReader, 'getImageFeatures').callsFake(filePath => {
-        expect(filePath).to.eql('/tmp/path');
+        expect(filePath).toEqual('/tmp/path');
 
         return Promise.resolve({
           width: 600,
@@ -101,12 +101,12 @@ describe('process-image', () => {
       });
 
       sinon.stub(file, 'readFile').callsFake(filePath => {
-        expect(filePath).to.eql('/tmp/path');
+        expect(filePath).toEqual('/tmp/path');
         return Promise.resolve('The Content');
       });
 
       sinon.stub(s3, 'putObjectToS3').callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           Bucket: 'OriginalImagesBucket',
           Key: '11/22/11223344aaaaaaaabbbbbbbbcccccccc.png',
           Body: 'The Content',
@@ -119,9 +119,9 @@ describe('process-image', () => {
       sinon
         .stub(imageProcessor, 'resizeImage')
         .callsFake((resizeSizes, id, filePath) => {
-          expect(resizeSizes).to.eql(constants.RESIZE_SIZES);
-          expect(id).to.eql('11223344aaaaaaaabbbbbbbbcccccccc');
-          expect(filePath).to.eql('/tmp/path');
+          expect(resizeSizes).toEqual(constants.RESIZE_SIZES);
+          expect(id).toEqual('11223344aaaaaaaabbbbbbbbcccccccc');
+          expect(filePath).toEqual('/tmp/path');
 
           return Promise.resolve();
         });
@@ -130,7 +130,7 @@ describe('process-image', () => {
         .stub(imageRepository, 'saveImage')
         .callsFake((dbItemToSave, reprocessing) => {
           // TODO dbItemToSave
-          expect(reprocessing).to.eql(false);
+          expect(reprocessing).toEqual(false);
           return Promise.resolve();
         });
 
@@ -164,7 +164,7 @@ describe('process-image', () => {
 
     it('should throw an exception if the image already exists', done => {
       sinon.stub(imageRepository, 'tryGetImage').callsFake(id => {
-        expect(id).to.eql('image-1');
+        expect(id).toEqual('image-1');
         return Promise.resolve({ id: 'image-1' });
       });
 
@@ -184,7 +184,7 @@ describe('process-image', () => {
   describe('reprocessImage', () => {
     it('should short-circuit when processing an existing image that is at the current resize version', done => {
       sinon.stub(imageRepository, 'tryGetImage').callsFake(id => {
-        expect(id).to.eql('11223344aaaaaaaabbbbbbbbcccccccc');
+        expect(id).toEqual('11223344aaaaaaaabbbbbbbbcccccccc');
 
         return Promise.resolve({
           id: '11223344aaaaaaaabbbbbbbbcccccccc',
@@ -202,7 +202,7 @@ describe('process-image', () => {
       imageProcessor
         .reprocessImage('11223344aaaaaaaabbbbbbbbcccccccc')
         .then(result => {
-          expect(result).to.eql({
+          expect(result).toEqual({
             image: {
               id: '11223344aaaaaaaabbbbbbbbcccccccc',
               sourceUrl: 'http://test.com/foo.png',
@@ -224,7 +224,7 @@ describe('process-image', () => {
 
     it('should reprocess an existing image', done => {
       sinon.stub(imageRepository, 'tryGetImage').callsFake(id => {
-        expect(id).to.eql('11223344aaaaaaaabbbbbbbbcccccccc');
+        expect(id).toEqual('11223344aaaaaaaabbbbbbbbcccccccc');
 
         return Promise.resolve({
           id: '11223344aaaaaaaabbbbbbbbcccccccc',
@@ -244,15 +244,15 @@ describe('process-image', () => {
       sinon
         .stub(s3, 'getObjectFromS3')
         .callsFake((bucketName, s3Key, filePath) => {
-          expect(bucketName).to.eql('OriginalImagesBucket');
-          expect(s3Key).to.eql('11/22/11223344aaaaaaaabbbbbbbbcccccccc.png');
-          expect(filePath).to.eql('/tmp/path');
+          expect(bucketName).toEqual('OriginalImagesBucket');
+          expect(s3Key).toEqual('11/22/11223344aaaaaaaabbbbbbbbcccccccc.png');
+          expect(filePath).toEqual('/tmp/path');
 
           return Promise.resolve();
         });
 
       sinon.stub(imageReader, 'getImageFeatures').callsFake(filePath => {
-        expect(filePath).to.eql('/tmp/path');
+        expect(filePath).toEqual('/tmp/path');
 
         return Promise.resolve({
           width: 600,
@@ -263,12 +263,12 @@ describe('process-image', () => {
       });
 
       sinon.stub(file, 'readFile').callsFake(filePath => {
-        expect(filePath).to.eql('/tmp/path');
+        expect(filePath).toEqual('/tmp/path');
         return Promise.resolve('The Content');
       });
 
       sinon.stub(s3, 'putObjectToS3').callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           Bucket: 'OriginalImagesBucket',
           Key: '11/22/11223344aaaaaaaabbbbbbbbcccccccc.png',
           Body: 'The Content',
@@ -281,9 +281,9 @@ describe('process-image', () => {
       sinon
         .stub(imageProcessor, 'resizeImage')
         .callsFake((resizeSizes, id, filePath) => {
-          expect(resizeSizes).to.eql(constants.RESIZE_SIZES);
-          expect(id).to.eql('11223344aaaaaaaabbbbbbbbcccccccc');
-          expect(filePath).to.eql('/tmp/path');
+          expect(resizeSizes).toEqual(constants.RESIZE_SIZES);
+          expect(id).toEqual('11223344aaaaaaaabbbbbbbbcccccccc');
+          expect(filePath).toEqual('/tmp/path');
 
           return Promise.resolve();
         });
@@ -292,7 +292,7 @@ describe('process-image', () => {
         .stub(imageRepository, 'saveImage')
         .callsFake((dbItemToSave, reprocessing) => {
           // TODO dbItemToSave
-          expect(reprocessing).to.eql(true);
+          expect(reprocessing).toEqual(true);
           return Promise.resolve();
         });
 
@@ -322,7 +322,7 @@ describe('process-image', () => {
 
     it('should throw an exception if the image does not already exist', done => {
       sinon.stub(imageRepository, 'tryGetImage').callsFake(id => {
-        expect(id).to.eql('image-1');
+        expect(id).toEqual('image-1');
         return Promise.resolve(null);
       });
 

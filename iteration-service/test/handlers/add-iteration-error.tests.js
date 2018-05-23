@@ -23,10 +23,10 @@ describe('add-iteration-error.handler', () => {
     sinon
       .stub(iterationService, 'addIterationError')
       .callsFake((actionId, startTimestamp, entityId, message) => {
-        expect(actionId).to.eql('SomeActionId');
-        expect(startTimestamp).to.eql(12345678);
-        expect(entityId).to.eql('event-1');
-        expect(message).to.eql('Some message');
+        expect(actionId).toEqual('SomeActionId');
+        expect(startTimestamp).toEqual(12345678);
+        expect(entityId).toEqual('event-1');
+        expect(message).toEqual('Some message');
 
         return Promise.resolve();
       });

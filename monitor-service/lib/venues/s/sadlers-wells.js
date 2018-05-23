@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.sadlerswells.com';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
 
   let $ = yield pageLoader(`${BASE_URL}/whats-on/list?venues=88`);
@@ -23,7 +23,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   let $ = yield pageLoader(pageUrl);
   const title = $('#h2pagetitle').html();
   const data = [$('#showpage_contentarea').html(), $('#perf_rhs').html()];

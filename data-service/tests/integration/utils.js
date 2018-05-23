@@ -33,6 +33,6 @@ async function indexDocument(index, doc) {
   });
 }
 
-module.exports.createElasticsearchIndex = createElasticsearchIndex;
-module.exports.deleteElasticsearchIndex = deleteElasticsearchIndex;
-module.exports.indexDocument = indexDocument;
+exports.createElasticsearchIndex = createElasticsearchIndex;
+exports.deleteElasticsearchIndex = deleteElasticsearchIndex;
+exports.indexDocument = indexDocument;

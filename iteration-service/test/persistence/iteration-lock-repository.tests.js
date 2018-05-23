@@ -15,7 +15,7 @@ describe('iteration-lock-repository', () => {
 
     it('should delete a lock', done => {
       sinon.stub(dynamoDbClient, 'delete').callsFake(param => {
-        expect(param).to.eql({
+        expect(param).toEqual({
           TableName: process.env.SERVERLESS_ITERATON_LOCK_TABLE_NAME,
           Key: { actionId: 'some-action-id' },
           ReturnConsumedCapacity: undefined,
@@ -38,7 +38,7 @@ describe('iteration-lock-repository', () => {
 
     it('should add a lock', done => {
       sinon.stub(dynamoDbClient, 'put').callsFake(param => {
-        expect(param).to.eql({
+        expect(param).toEqual({
           TableName: process.env.SERVERLESS_ITERATON_LOCK_TABLE_NAME,
           Item: { actionId: 'some-action-id' },
           ConditionExpression: 'attribute_not_exists(actionId)',

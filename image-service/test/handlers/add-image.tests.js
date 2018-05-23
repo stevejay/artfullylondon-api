@@ -26,7 +26,7 @@ describe('add-image', () => {
     };
 
     sinon.stub(imageService, 'addImageToStore').callsFake(param => {
-      expect(param).to.eql({
+      expect(param).toEqual({
         type: 'talent',
         id: '12345678123456781234567812345678',
         url: 'https://foo.com/test.jpg',

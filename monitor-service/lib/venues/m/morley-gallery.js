@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.morleycollege.ac.uk';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/the-gallery`);
 
@@ -17,14 +17,14 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('#content_main h1').html();
   const data = [$('.event_details').html(), $('.event_detail_body').html()];
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/the-gallery');
   return $('.ugc table').html();
 });

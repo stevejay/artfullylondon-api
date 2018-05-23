@@ -11,7 +11,7 @@ const toText = require('./to-text');
 
 const URL_REGEX = /^http/i;
 
-module.exports.getVenueData = co.wrap(function*(venueStrategy) {
+exports.getVenueData = co.wrap(function*(venueStrategy) {
   let result = null;
 
   if (venueStrategy.venueOpenings) {
@@ -22,7 +22,7 @@ module.exports.getVenueData = co.wrap(function*(venueStrategy) {
   return result;
 });
 
-module.exports.discoverEvents = co.wrap(function*(venueId, venueStrategy) {
+exports.discoverEvents = co.wrap(function*(venueId, venueStrategy) {
   const hasEventPages = !!venueStrategy.pageFinder;
 
   if (hasEventPages) {

@@ -16,7 +16,7 @@ describe('start-iteration.handler', () => {
     const event = { actionId: 'SomeActionId' };
 
     sinon.stub(iterationService, 'startIteration').callsFake(actionId => {
-      expect(actionId).to.eql('SomeActionId');
+      expect(actionId).toEqual('SomeActionId');
       return Promise.resolve({ startTimestamp: 12345678 });
     });
 

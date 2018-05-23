@@ -8,7 +8,7 @@ const venueEventMonitorRepository = require('../persistence/venue-event-monitor-
 const venueIterationService = require('./venue-iteration-service');
 const diff = require('../venue-processing/diff');
 
-module.exports.getVenueEventMonitor = co.wrap(function*(
+exports.getVenueEventMonitor = co.wrap(function*(
   venueId,
   externalEventId
 ) {
@@ -29,17 +29,17 @@ module.exports.getVenueEventMonitor = co.wrap(function*(
   return dbItem;
 });
 
-module.exports.getVenueEventMonitorsForVenue = venueId =>
+exports.getVenueEventMonitorsForVenue = venueId =>
   venueEventMonitorRepository.getAllForVenue(venueId);
 
-module.exports.updateVenueEventMonitor = entity => {
+exports.updateVenueEventMonitor = entity => {
   return new Promise(resolve => {
     ensure(entity, constraints.venueEventMonitorConstraint, ensureErrorHandler);
     resolve();
   }).then(() => venueEventMonitorRepository.update(entity));
 };
 
-module.exports.save = co.wrap(function*(venueId, eventMonitors) {
+exports.save = co.wrap(function*(venueId, eventMonitors) {
   if (eventMonitors.length === 0) {
     return;
   }

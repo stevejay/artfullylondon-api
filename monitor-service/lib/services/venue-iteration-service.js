@@ -7,7 +7,7 @@ const lambda = require('../external-services/lambda');
 const constants = require('../constants');
 const sns = require('../external-services/sns');
 
-module.exports.startIteration = co.wrap(function*() {
+exports.startIteration = co.wrap(function*() {
   const iterationData = yield lambda.invoke(
     process.env.SERVERLESS_START_ITERATION_LAMBDA_NAME,
     { actionId: constants.ITERATE_VENUES_ACTION_ID }
@@ -25,7 +25,7 @@ module.exports.startIteration = co.wrap(function*() {
   );
 });
 
-module.exports.getNextVenue = co.wrap(function*(lastId) {
+exports.getNextVenue = co.wrap(function*(lastId) {
   const result = yield lambda.invoke(
     process.env.SERVERLESS_GET_NEXT_VENUE_LAMBDA_NAME,
     { lastId }
@@ -34,7 +34,7 @@ module.exports.getNextVenue = co.wrap(function*(lastId) {
   return result ? result.venueId : null;
 });
 
-module.exports.addIterationError = co.wrap(function*(
+exports.addIterationError = co.wrap(function*(
   err,
   venueId,
   startTimestamp
@@ -56,7 +56,7 @@ module.exports.addIterationError = co.wrap(function*(
   }
 });
 
-module.exports.throttleIteration = co.wrap(function*(startTime, minMs) {
+exports.throttleIteration = co.wrap(function*(startTime, minMs) {
   if (minMs > 1000) {
     throw new Error('minMs cannot be greater than 1000');
   }
@@ -72,7 +72,7 @@ module.exports.throttleIteration = co.wrap(function*(startTime, minMs) {
   }
 });
 
-module.exports.invokeNextIteration = co.wrap(function*(
+exports.invokeNextIteration = co.wrap(function*(
   venueId,
   startTimestamp
 ) {

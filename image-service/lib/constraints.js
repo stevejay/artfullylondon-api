@@ -1,6 +1,6 @@
 const constants = require('./constants');
 
-module.exports.image = {
+exports.image = {
   type: {
     inclusion: constants.ALLOWED_IMAGE_TYPES,
   },

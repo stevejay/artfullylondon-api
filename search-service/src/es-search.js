@@ -7,7 +7,7 @@ const client = new elasticsearch.Client({
   log: 'error',
 });
 
-module.exports.search = (searches, options) => {
+exports.search = (searches, options) => {
   options = options || {};
 
   return client
@@ -35,7 +35,7 @@ module.exports.search = (searches, options) => {
     });
 };
 
-module.exports.mget = (index, type, ids, source) => {
+exports.mget = (index, type, ids, source) => {
   return client.mget({
     index,
     type,

@@ -14,4 +14,4 @@ function* handler(event) {
   return { entity: dbItem };
 }
 
-module.exports.handler = generatorHandler(handler);
+exports.handler = generatorHandler(handler);

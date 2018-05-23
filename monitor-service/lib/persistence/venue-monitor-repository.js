@@ -2,21 +2,21 @@
 
 const dynamoDbClient = require('dynamodb-doc-client-wrapper');
 
-module.exports.get = venueId =>
+exports.get = venueId =>
   dynamoDbClient.get({
     TableName: process.env.SERVERLESS_VENUE_MONITOR_TABLE_NAME,
     Key: { venueId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.tryGet = venueId =>
+exports.tryGet = venueId =>
   dynamoDbClient.tryGet({
     TableName: process.env.SERVERLESS_VENUE_MONITOR_TABLE_NAME,
     Key: { venueId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.update = entity =>
+exports.update = entity =>
   dynamoDbClient.update({
     TableName: process.env.SERVERLESS_VENUE_MONITOR_TABLE_NAME,
     Key: { venueId: entity.venueId },
@@ -29,14 +29,14 @@ module.exports.update = entity =>
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.put = entity =>
+exports.put = entity =>
   dynamoDbClient.put({
     TableName: process.env.SERVERLESS_VENUE_MONITOR_TABLE_NAME,
     Item: entity,
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.getChanged = () =>
+exports.getChanged = () =>
   dynamoDbClient.scan({
     TableName: process.env.SERVERLESS_VENUE_MONITOR_TABLE_NAME,
     FilterExpression: 'isIgnored = :isIgnored AND hasChanged = :hasChanged',

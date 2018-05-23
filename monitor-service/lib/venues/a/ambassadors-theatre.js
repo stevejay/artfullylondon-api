@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.theambassadorstheatre.co.uk';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/online/default.asp');
   const result = [];
 
@@ -25,7 +25,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   let title = null, data = null;
 
   if (pageUrl.includes('0F63FD1A-BB28-4C52-A93F-8EC066C26BFA')) {

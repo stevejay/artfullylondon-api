@@ -21,8 +21,8 @@ describe('end-iteration.handler', () => {
     sinon
       .stub(iterationService, 'endIteration')
       .callsFake((actionId, startTimestamp) => {
-        expect(actionId).to.eql('SomeActionId');
-        expect(startTimestamp).to.eql(12345678);
+        expect(actionId).toEqual('SomeActionId');
+        expect(startTimestamp).toEqual(12345678);
 
         return Promise.resolve();
       });

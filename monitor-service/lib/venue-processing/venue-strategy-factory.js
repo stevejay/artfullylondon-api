@@ -299,7 +299,7 @@ const youngVic = require('../venues/y/young-vic');
 const artsdepot = require('../venues/a/artsdepot');
 const letrangere = require('../venues/l/letrangere');
 
-module.exports.create = function(venueId) {
+exports.create = function(venueId) {
   switch (venueId) {
     case '5th-base':
       return fifthBase;

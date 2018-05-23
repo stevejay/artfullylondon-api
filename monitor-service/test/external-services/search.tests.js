@@ -13,11 +13,11 @@ describe('search', () => {
 
     it('should find existing events', done => {
       sinon.stub(request, 'get').callsFake((url, options) => {
-        expect(url).to.eql(
+        expect(url).toEqual(
           'https://api.artfully.london/search-service/admin/search/preset/by-external-event-id?id=a%20a%2Cb%20b'
         );
 
-        expect(options).to.eql({ json: true });
+        expect(options).toEqual({ json: true });
 
         return Promise.resolve({
           items: [
@@ -30,7 +30,7 @@ describe('search', () => {
       search
         .findEvents('almeida-theatre', ['a a', 'b b'])
         .then(response => {
-          expect(response).to.eql(['some-id-a', 'some-id-b']);
+          expect(response).toEqual(['some-id-a', 'some-id-b']);
           done();
         })
         .catch(done);
@@ -38,11 +38,11 @@ describe('search', () => {
 
     it('should handle no event match', done => {
       sinon.stub(request, 'get').callsFake((url, options) => {
-        expect(url).to.eql(
+        expect(url).toEqual(
           'https://api.artfully.london/search-service/admin/search/preset/by-external-event-id?id=a%20a'
         );
 
-        expect(options).to.eql({ json: true });
+        expect(options).toEqual({ json: true });
 
         return Promise.resolve({
           items: [{ id: 'some-id-b', externalEventId: 'b b' }],
@@ -52,7 +52,7 @@ describe('search', () => {
       search
         .findEvents('almeida-theatre', ['a a'])
         .then(response => {
-          expect(response).to.eql([null]);
+          expect(response).toEqual([null]);
           done();
         })
         .catch(done);

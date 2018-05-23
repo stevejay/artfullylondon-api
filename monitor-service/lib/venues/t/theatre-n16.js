@@ -5,9 +5,9 @@ const pageLoader = require('../../venue-processing/page-loader').spaLoader;
 
 const BASE_URL = 'http://www.theatren16.co.uk';
 
-module.exports.pageUrlChunks = 2;
+exports.pageUrlChunks = 2;
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/what-s-on`, 'a');
 
@@ -19,7 +19,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   return { title: pageUrl, data: pageUrl };
 
   // Timeout problem.

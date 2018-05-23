@@ -10,7 +10,7 @@ describe('ensure-error-handler', () => {
       ensureErrorHandler(['foo', 'bar']);
       throw new Error('should have thrown an exception');
     } catch (err) {
-      expect(err.message).to.eql('[400] Bad Request: foo; bar');
+      expect(err.message).toEqual('[400] Bad Request: foo; bar');
     }
   });
 });

@@ -17,4 +17,4 @@ function* handler(event) {
   return { image };
 }
 
-module.exports.handler = writeAuthorized(generatorHandler(handler));
+exports.handler = writeAuthorized(generatorHandler(handler));

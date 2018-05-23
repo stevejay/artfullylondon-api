@@ -2,7 +2,7 @@
 
 const im = require('imagemagick');
 
-module.exports.resize = (srcPath, destPath, newWidth, newHeight) => {
+exports.resize = (srcPath, destPath, newWidth, newHeight) => {
   return new Promise((resolve, reject) => {
     try {
       const QUALITY = 0.82;

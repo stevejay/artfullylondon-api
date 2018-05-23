@@ -7,7 +7,7 @@ const venueEventMonitorService = require('./venue-event-monitor-service');
 const venueMonitorService = require('./venue-monitor-service');
 const venueIterationService = require('./venue-iteration-service');
 
-module.exports.startIteration = () => venueIterationService.startIteration();
+exports.startIteration = () => venueIterationService.startIteration();
 
 const doProcessNextVenue = co.wrap(function* doProcessNextVenue(
   venueId,
@@ -42,7 +42,7 @@ const doProcessNextVenue = co.wrap(function* doProcessNextVenue(
   }
 });
 
-module.exports.processNextVenue = co.wrap(function*(
+exports.processNextVenue = co.wrap(function*(
   lastId,
   startTimestamp,
   timeout

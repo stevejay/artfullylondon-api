@@ -6,7 +6,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.kingsplace.co.uk';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
 
   for (let i = 0; i < 15; ++i) {
@@ -33,7 +33,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result.slice(0, 50); // TODO increase this sometime
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('title').html();
 

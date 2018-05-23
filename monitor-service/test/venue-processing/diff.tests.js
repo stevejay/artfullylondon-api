@@ -11,7 +11,7 @@ describe('diff', () => {
       diff
         .getDiff('Foobar', 'Fowba')
         .then(result => {
-          expect(result).to.eql(
+          expect(result).toEqual(
             '<p>Fo<del>o</del><ins>w</ins>ba<del>r</del></p>'
           );
           done();
@@ -23,7 +23,7 @@ describe('diff', () => {
       diff
         .getDiff(' ', ' a\nb\nc')
         .then(result => {
-          expect(result).to.eql('<p> <ins>a<br/>b<br/>c</ins></p>');
+          expect(result).toEqual('<p> <ins>a<br/>b<br/>c</ins></p>');
           done();
         })
         .catch(done);
@@ -47,7 +47,7 @@ describe('diff', () => {
       diff
         .getDiff(null, null)
         .then(result => {
-          expect(result).to.eql('<p></p>');
+          expect(result).toEqual('<p></p>');
           done();
         })
         .catch(done);

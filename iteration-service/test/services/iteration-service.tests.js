@@ -16,7 +16,7 @@ describe('iteration-service', () => {
 
     it('should add an iteration error', done => {
       sinon.stub(iterationErrorRepository, 'saveError').callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           actionIdStartTimestamp: 'some-action-id_12345678',
           entityId: 'some-entity-id',
           message: 'Some message',
@@ -48,15 +48,15 @@ describe('iteration-service', () => {
 
     it('should end an iteration', done => {
       sinon.stub(iterationLockRepository, 'deleteLock').callsFake(actionId => {
-        expect(actionId).to.eql('some-action-id');
+        expect(actionId).toEqual('some-action-id');
         return Promise.resolve();
       });
 
       sinon
         .stub(iterationRepository, 'setIterationEndTimestamp')
         .callsFake((actionId, startTimestamp) => {
-          expect(actionId).to.eql('some-action-id');
-          expect(startTimestamp).to.eql(12345678);
+          expect(actionId).toEqual('some-action-id');
+          expect(startTimestamp).toEqual(12345678);
           return Promise.resolve();
         });
 
@@ -78,13 +78,13 @@ describe('iteration-service', () => {
 
     it('should start an iteration', done => {
       sinon.stub(iterationLockRepository, 'addLock').callsFake(item => {
-        expect(item.actionId).to.eql('some-action-id');
+        expect(item.actionId).toEqual('some-action-id');
         expect(item.startTimestamp).to.be.greaterThan(0);
         return Promise.resolve();
       });
 
       sinon.stub(iterationRepository, 'addIteration').callsFake(item => {
-        expect(item.actionId).to.eql('some-action-id');
+        expect(item.actionId).toEqual('some-action-id');
         expect(item.startTimestamp).to.be.greaterThan(0);
         return Promise.resolve();
       });
@@ -92,7 +92,7 @@ describe('iteration-service', () => {
       iterationService
         .startIteration('some-action-id')
         .then(response => {
-          expect(response.actionId).to.eql('some-action-id');
+          expect(response.actionId).toEqual('some-action-id');
           expect(response.startTimestamp).to.be.greaterThan(0);
           done();
         })
@@ -113,21 +113,21 @@ describe('iteration-service', () => {
       sinon
         .stub(iterationRepository, 'getMostRecentIteration')
         .callsFake(actionId => {
-          expect(actionId).to.eql('some-action-id');
+          expect(actionId).toEqual('some-action-id');
           return Promise.resolve({ Items: [{ startTimestamp: 12345678 }] });
         });
 
       sinon
         .stub(iterationErrorRepository, 'getErrorsForIteration')
         .callsFake(key => {
-          expect(key).to.eql('some-action-id_12345678');
+          expect(key).toEqual('some-action-id_12345678');
           return Promise.resolve([{ id: 'some-id' }]);
         });
 
       iterationService
         .getLatestIterationErrors('some-action-id')
         .then(response => {
-          expect(response).to.eql([{ id: 'some-id' }]);
+          expect(response).toEqual([{ id: 'some-id' }]);
           done();
         })
         .catch(done);
@@ -137,21 +137,21 @@ describe('iteration-service', () => {
       sinon
         .stub(iterationRepository, 'getMostRecentIteration')
         .callsFake(actionId => {
-          expect(actionId).to.eql('some-action-id');
+          expect(actionId).toEqual('some-action-id');
           return Promise.resolve({ Items: [{ startTimestamp: 12345678 }] });
         });
 
       sinon
         .stub(iterationErrorRepository, 'getErrorsForIteration')
         .callsFake(key => {
-          expect(key).to.eql('some-action-id_12345678');
+          expect(key).toEqual('some-action-id_12345678');
           return Promise.resolve([]);
         });
 
       iterationService
         .getLatestIterationErrors('some-action-id')
         .then(response => {
-          expect(response).to.eql([]);
+          expect(response).toEqual([]);
           done();
         })
         .catch(done);
@@ -161,14 +161,14 @@ describe('iteration-service', () => {
       sinon
         .stub(iterationRepository, 'getMostRecentIteration')
         .callsFake(actionId => {
-          expect(actionId).to.eql('some-action-id');
+          expect(actionId).toEqual('some-action-id');
           return Promise.resolve({ Items: [] });
         });
 
       iterationService
         .getLatestIterationErrors('some-action-id')
         .then(response => {
-          expect(response).to.eql([]);
+          expect(response).toEqual([]);
           done();
         })
         .catch(done);

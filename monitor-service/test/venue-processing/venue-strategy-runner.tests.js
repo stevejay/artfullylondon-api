@@ -15,7 +15,7 @@ describe('venue-strategy-runner', () => {
       subject
         .getVenueData(venueStrategy)
         .then(result => {
-          expect(result).to.eql({ venueText: 'description\n\nfoo' });
+          expect(result).toEqual({ venueText: 'description\n\nfoo' });
           done();
         })
         .catch(done);
@@ -37,7 +37,7 @@ describe('venue-strategy-runner', () => {
       subject
         .discoverEvents('almeida-theatre', venueStrategy)
         .then(result => {
-          expect(result).to.eql([
+          expect(result).toEqual([
             {
               title: 'Combined Events',
               externalEventId: 'almeida-theatre|/',
@@ -59,7 +59,7 @@ describe('venue-strategy-runner', () => {
       subject
         .discoverEvents('almeida-theatre', venueStrategy)
         .then(result => {
-          expect(result).to.eql([
+          expect(result).toEqual([
             {
               title: 'Combined Events',
               externalEventId: 'almeida-theatre|/',
@@ -87,8 +87,8 @@ describe('venue-strategy-runner', () => {
       const findEventsStub = sinon
         .stub(search, 'findEvents')
         .callsFake((venueId, externalEventIds) => {
-          expect(venueId).to.eql('almeida-theatre');
-          expect(externalEventIds).to.eql([
+          expect(venueId).toEqual('almeida-theatre');
+          expect(externalEventIds).toEqual([
             'almeida-theatre|/a',
             'almeida-theatre|/b',
           ]);
@@ -98,7 +98,7 @@ describe('venue-strategy-runner', () => {
       subject
         .discoverEvents('almeida-theatre', venueStrategy)
         .then(result => {
-          expect(result).to.eql([
+          expect(result).toEqual([
             {
               title: 'Some Title',
               externalEventId: 'almeida-theatre|/a',
@@ -118,7 +118,7 @@ describe('venue-strategy-runner', () => {
             },
           ]);
 
-          expect(findEventsStub.called).to.eql(true);
+          expect(findEventsStub.called).toEqual(true);
 
           done();
         })

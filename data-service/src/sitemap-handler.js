@@ -4,7 +4,7 @@ const elasticsearch = require("./elasticsearch");
 const SearchService = require("./search-service");
 const searchService = new SearchService(elasticsearch);
 
-module.exports.handler = async () => {
+exports.handler = async () => {
   try {
     const links = await searchService.getSitemapLinks(new Date());
     return {

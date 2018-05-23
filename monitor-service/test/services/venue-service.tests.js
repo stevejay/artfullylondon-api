@@ -42,22 +42,22 @@ describe('venue-service', () => {
       const stubGetNextVenue = sinon
         .stub(venueIterationService, 'getNextVenue')
         .callsFake(lastId => {
-          expect(lastId).to.eql('almeida-theatre');
+          expect(lastId).toEqual('almeida-theatre');
           return Promise.resolve(null);
         });
 
       const stubInvokeNextIteration = sinon
         .stub(venueIterationService, 'invokeNextIteration')
         .callsFake((venueId) => {
-          expect(venueId).to.eql(null);
+          expect(venueId).toEqual(null);
           return Promise.resolve();
         });
 
       venueService
         .processNextVenue('almeida-theatre', process.hrtime(), 2147483647)
         .then(() => {
-          expect(stubGetNextVenue.called).to.eql(true);
-          expect(stubInvokeNextIteration.called).to.eql(true);
+          expect(stubGetNextVenue.called).toEqual(true);
+          expect(stubInvokeNextIteration.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -67,14 +67,14 @@ describe('venue-service', () => {
       const stubGetNextVenue = sinon
         .stub(venueIterationService, 'getNextVenue')
         .callsFake(lastId => {
-          expect(lastId).to.eql('almeida-theatre');
+          expect(lastId).toEqual('almeida-theatre');
           return Promise.resolve('tate-modern');
         });
 
       const stubCreate = sinon
         .stub(strategyFactory, 'create')
         .callsFake(venueId => {
-          expect(venueId).to.eql('tate-modern');
+          expect(venueId).toEqual('tate-modern');
           return null;
         });
 
@@ -82,7 +82,7 @@ describe('venue-service', () => {
         .stub(venueIterationService, 'throttleIteration')
         .callsFake((startTime, delay) => {
           expect(startTime[0]).to.be.greaterThan(0);
-          expect(delay).to.eql(1000);
+          expect(delay).toEqual(1000);
 
           return Promise.resolve();
         });
@@ -90,17 +90,17 @@ describe('venue-service', () => {
       const stubInvokeNextIteration = sinon
         .stub(venueIterationService, 'invokeNextIteration')
         .callsFake((venueId) => {
-          expect(venueId).to.eql('tate-modern');
+          expect(venueId).toEqual('tate-modern');
           return Promise.resolve();
         });
 
       venueService
         .processNextVenue('almeida-theatre', process.hrtime(), 2147483647)
         .then(() => {
-          expect(stubGetNextVenue.called).to.eql(true);
-          expect(stubCreate.called).to.eql(true);
-          expect(stubThrottleIteration.called).to.eql(true);
-          expect(stubInvokeNextIteration.called).to.eql(true);
+          expect(stubGetNextVenue.called).toEqual(true);
+          expect(stubCreate.called).toEqual(true);
+          expect(stubThrottleIteration.called).toEqual(true);
+          expect(stubInvokeNextIteration.called).toEqual(true);
 
           done();
         })
@@ -111,22 +111,22 @@ describe('venue-service', () => {
       const stubGetNextVenue = sinon
         .stub(venueIterationService, 'getNextVenue')
         .callsFake(lastId => {
-          expect(lastId).to.eql('almeida-theatre');
+          expect(lastId).toEqual('almeida-theatre');
           return Promise.resolve('tate-modern');
         });
 
       const stubCreate = sinon
         .stub(strategyFactory, 'create')
         .callsFake(venueId => {
-          expect(venueId).to.eql('tate-modern');
+          expect(venueId).toEqual('tate-modern');
           throw new Error('deliberately thrown');
         });
 
       const stubAddIterationError = sinon
         .stub(venueIterationService, 'addIterationError')
         .callsFake((err, venueId) => {
-          expect(err.message).to.eql('deliberately thrown');
-          expect(venueId).to.eql('tate-modern');
+          expect(err.message).toEqual('deliberately thrown');
+          expect(venueId).toEqual('tate-modern');
           return Promise.resolve();
         });
 
@@ -134,7 +134,7 @@ describe('venue-service', () => {
         .stub(venueIterationService, 'throttleIteration')
         .callsFake((startTime, delay) => {
           expect(startTime[0]).to.be.greaterThan(0);
-          expect(delay).to.eql(1000);
+          expect(delay).toEqual(1000);
 
           return Promise.resolve();
         });
@@ -142,18 +142,18 @@ describe('venue-service', () => {
       const stubInvokeNextIteration = sinon
         .stub(venueIterationService, 'invokeNextIteration')
         .callsFake((venueId) => {
-          expect(venueId).to.eql('tate-modern');
+          expect(venueId).toEqual('tate-modern');
           return Promise.resolve();
         });
 
       venueService
         .processNextVenue('almeida-theatre', process.hrtime(), 2147483647)
         .then(() => {
-          expect(stubGetNextVenue.called).to.eql(true);
-          expect(stubCreate.called).to.eql(true);
-          expect(stubAddIterationError.called).to.eql(true);
-          expect(stubThrottleIteration.called).to.eql(true);
-          expect(stubInvokeNextIteration.called).to.eql(true);
+          expect(stubGetNextVenue.called).toEqual(true);
+          expect(stubCreate.called).toEqual(true);
+          expect(stubAddIterationError.called).toEqual(true);
+          expect(stubThrottleIteration.called).toEqual(true);
+          expect(stubInvokeNextIteration.called).toEqual(true);
 
           done();
         })
@@ -166,22 +166,22 @@ describe('venue-service', () => {
       const stubGetNextVenue = sinon
         .stub(venueIterationService, 'getNextVenue')
         .callsFake(lastId => {
-          expect(lastId).to.eql('almeida-theatre');
+          expect(lastId).toEqual('almeida-theatre');
           return Promise.resolve('tate-modern');
         });
 
       const stubCreate = sinon
         .stub(strategyFactory, 'create')
         .callsFake(venueId => {
-          expect(venueId).to.eql('tate-modern');
+          expect(venueId).toEqual('tate-modern');
           return mockStrategy;
         });
 
       const stubDiscoverEvents = sinon
         .stub(strategyRunner, 'discoverEvents')
         .callsFake((venueId, venueStrategy) => {
-          expect(venueId).to.eql('tate-modern');
-          expect(venueStrategy).to.eql(mockStrategy);
+          expect(venueId).toEqual('tate-modern');
+          expect(venueStrategy).toEqual(mockStrategy);
 
           return Promise.resolve([{ id: 'some-event-id' }]);
         });
@@ -189,8 +189,8 @@ describe('venue-service', () => {
       const stubSaveEventMonitors = sinon
         .stub(venueEventMonitorService, 'save')
         .callsFake((venueId, discoveredEvents) => {
-          expect(venueId).to.eql('tate-modern');
-          expect(discoveredEvents).to.eql([{ id: 'some-event-id' }]);
+          expect(venueId).toEqual('tate-modern');
+          expect(discoveredEvents).toEqual([{ id: 'some-event-id' }]);
 
           return Promise.resolve();
         });
@@ -198,15 +198,15 @@ describe('venue-service', () => {
       const stubGetVenueData = sinon
         .stub(strategyRunner, 'getVenueData')
         .callsFake(venueStrategy => {
-          expect(venueStrategy).to.eql(mockStrategy);
+          expect(venueStrategy).toEqual(mockStrategy);
           return Promise.resolve({ text: 'Venue data' });
         });
 
       const stubSaveVenueMonitors = sinon
         .stub(venueMonitorService, 'save')
         .callsFake((venueId, venueData) => {
-          expect(venueId).to.eql('tate-modern');
-          expect(venueData).to.eql({ text: 'Venue data' });
+          expect(venueId).toEqual('tate-modern');
+          expect(venueData).toEqual({ text: 'Venue data' });
 
           return Promise.resolve();
         });
@@ -215,28 +215,28 @@ describe('venue-service', () => {
         .stub(venueIterationService, 'throttleIteration')
         .callsFake((startTime, delay) => {
           expect(startTime[0]).to.be.greaterThan(0);
-          expect(delay).to.eql(1000);
+          expect(delay).toEqual(1000);
           return Promise.resolve();
         });
 
       const stubInvokeNextIteration = sinon
         .stub(venueIterationService, 'invokeNextIteration')
         .callsFake((venueId) => {
-          expect(venueId).to.eql('tate-modern');
+          expect(venueId).toEqual('tate-modern');
           return Promise.resolve();
         });
 
       venueService
         .processNextVenue('almeida-theatre', process.hrtime(), 2147483647)
         .then(() => {
-          expect(stubGetNextVenue.called).to.eql(true);
-          expect(stubCreate.called).to.eql(true);
-          expect(stubDiscoverEvents.called).to.eql(true);
-          expect(stubSaveEventMonitors.called).to.eql(true);
-          expect(stubGetVenueData.called).to.eql(true);
-          expect(stubSaveVenueMonitors.called).to.eql(true);
-          expect(stubThrottleIteration.called).to.eql(true);
-          expect(stubInvokeNextIteration.called).to.eql(true);
+          expect(stubGetNextVenue.called).toEqual(true);
+          expect(stubCreate.called).toEqual(true);
+          expect(stubDiscoverEvents.called).toEqual(true);
+          expect(stubSaveEventMonitors.called).toEqual(true);
+          expect(stubGetVenueData.called).toEqual(true);
+          expect(stubSaveVenueMonitors.called).toEqual(true);
+          expect(stubThrottleIteration.called).toEqual(true);
+          expect(stubInvokeNextIteration.called).toEqual(true);
 
           done();
         })
@@ -249,14 +249,14 @@ describe('venue-service', () => {
       const stubGetNextVenue = sinon
         .stub(venueIterationService, 'getNextVenue')
         .callsFake(lastId => {
-          expect(lastId).to.eql('almeida-theatre');
+          expect(lastId).toEqual('almeida-theatre');
           return Promise.resolve('tate-modern');
         });
 
       const stubCreate = sinon
         .stub(strategyFactory, 'create')
         .callsFake(venueId => {
-          expect(venueId).to.eql('tate-modern');
+          expect(venueId).toEqual('tate-modern');
           return mockStrategy;
         });
 
@@ -268,9 +268,9 @@ describe('venue-service', () => {
       const stubAddIterationError = sinon
         .stub(venueIterationService, 'addIterationError')
         .callsFake((err, venueId, startTimestamp) => {
-          expect(err.message).to.eql('processing venue took too long');
-          expect(venueId).to.eql('tate-modern');
-          expect(startTimestamp).to.eql(12345678);
+          expect(err.message).toEqual('processing venue took too long');
+          expect(venueId).toEqual('tate-modern');
+          expect(startTimestamp).toEqual(12345678);
 
           return Promise.resolve();
         });
@@ -278,8 +278,8 @@ describe('venue-service', () => {
       const stubInvokeNextIteration = sinon
         .stub(venueIterationService, 'invokeNextIteration')
         .callsFake((venueId, startTimestamp) => {
-          expect(venueId).to.eql('tate-modern');
-          expect(startTimestamp).to.eql(12345678);
+          expect(venueId).toEqual('tate-modern');
+          expect(startTimestamp).toEqual(12345678);
 
           return Promise.resolve();
         });
@@ -287,10 +287,10 @@ describe('venue-service', () => {
       venueService
         .processNextVenue('almeida-theatre', 12345678, 100)
         .then(() => {
-          expect(stubGetNextVenue.called).to.eql(true);
-          expect(stubCreate.called).to.eql(true);
-          expect(stubAddIterationError.called).to.eql(true);
-          expect(stubInvokeNextIteration.called).to.eql(true);
+          expect(stubGetNextVenue.called).toEqual(true);
+          expect(stubCreate.called).toEqual(true);
+          expect(stubAddIterationError.called).toEqual(true);
+          expect(stubInvokeNextIteration.called).toEqual(true);
 
           done();
         })

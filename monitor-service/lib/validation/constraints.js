@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports.venueEventMonitorConstraint = {
+exports.venueEventMonitorConstraint = {
   venueId: {
     presence: true,
     string: true,
@@ -19,7 +19,7 @@ module.exports.venueEventMonitorConstraint = {
   },
 };
 
-module.exports.venueMonitorConstraint = {
+exports.venueMonitorConstraint = {
   venueId: {
     presence: true,
     string: true,

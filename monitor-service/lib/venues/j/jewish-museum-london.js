@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.jewishmuseum.org.uk';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/exhibitions');
   const result = [];
 
@@ -17,14 +17,14 @@ module.exports.pageFinder = co.wrap(function*() {
   return result.slice(0, 12);
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('#contentarea .page_subtitle').html();
   const data = $('#contentarea').html();
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/Plan_your_visit');
   return $('.listing:has(h3:contains("Plan Your Visit"))').html();
 });

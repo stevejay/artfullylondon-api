@@ -2,7 +2,7 @@
 
 const AWS = require('aws-sdk');
 
-module.exports.invoke = function(functionName, payload) {
+exports.invoke = function(functionName, payload) {
   return new Promise((resolve, reject) => {
     const lambda = new AWS.Lambda();
 

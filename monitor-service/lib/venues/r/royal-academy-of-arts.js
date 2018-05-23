@@ -14,7 +14,7 @@ const EVENT_TYPES_TO_IGNORE = [
   'Workshops',
 ];
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/exhibitions-and-events');
 
   const currentExhibitionLinks = $('#featured-exhibition')
@@ -44,7 +44,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const isEvent = $('section.event-info').length === 1;
 
@@ -86,7 +86,7 @@ module.exports.pageParser = co.wrap(function*(pageUrl) {
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/plan-your-visit');
   return $('.main.container:has(h2:contains("Plan your visit"))').html();
 });

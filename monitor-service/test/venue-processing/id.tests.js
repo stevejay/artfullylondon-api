@@ -39,7 +39,7 @@ describe('id', function() {
           test.args.eventUrl
         );
 
-        expect(result).to.eql(test.expected);
+        expect(result).toEqual(test.expected);
       });
     });
   });

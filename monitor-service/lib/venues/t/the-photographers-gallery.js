@@ -7,9 +7,9 @@ const BASE_URL = 'http://thephotographersgallery.org.uk';
 const CATEGORY_REGEX = /PRINT SALES GALLERY|WORKSHOPS|THE SOCIAL/i;
 const TITLE_REGEX = /Folio Friday/i;
 
-module.exports.pageUrlChunks = 2;
+exports.pageUrlChunks = 2;
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
   let pageNo = 1;
 
@@ -41,14 +41,14 @@ module.exports.pageFinder = co.wrap(function*() {
   return result.slice(0, 20); // TODO increase
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('#content h1').html();
   const data = [$('#content .itemHeader').html(), $('#content #INFO').html()];
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/visit-us');
   return $('#content').html();
 });

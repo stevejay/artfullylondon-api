@@ -10,7 +10,7 @@ const mappings = require('../mappings');
 const s3 = require('../external-services/s3');
 const imageRepository = require('../persistence/image-repository');
 
-module.exports.resizeImage = co.wrap(function*(
+exports.resizeImage = co.wrap(function*(
   resizeSizes,
   imageId,
   imageFilePath
@@ -39,7 +39,7 @@ module.exports.resizeImage = co.wrap(function*(
   });
 });
 
-module.exports.processImage = co.wrap(function*(type, id, imageUrl) {
+exports.processImage = co.wrap(function*(type, id, imageUrl) {
   const dbItem = yield imageRepository.tryGetImage(id);
 
   if (dbItem) {
@@ -52,7 +52,7 @@ module.exports.processImage = co.wrap(function*(type, id, imageUrl) {
   return yield _processImage(tmpPath, type, id, imageUrl, extension, false);
 });
 
-module.exports.reprocessImage = co.wrap(function*(id) {
+exports.reprocessImage = co.wrap(function*(id) {
   const dbItem = yield imageRepository.tryGetImage(id);
 
   if (!dbItem) {
@@ -114,7 +114,7 @@ function* _processImage(
     ContentType: imageData.mimeType,
   });
 
-  yield module.exports.resizeImage(constants.RESIZE_SIZES, id, filePath);
+  yield exports.resizeImage(constants.RESIZE_SIZES, id, filePath);
   const dbItemToSave = mappings.mapRequestToDbItem(imageData);
   yield imageRepository.saveImage(dbItemToSave, reprocessing);
 

@@ -9,7 +9,7 @@ describe('page-loader', () => {
       pageLoader
         .staticLoader('https://www.google.co.uk/')
         .then($ => {
-          expect($('title').text()).to.eql('Google');
+          expect($('title').text()).toEqual('Google');
           done();
         })
         .catch(done);
@@ -21,7 +21,7 @@ describe('page-loader', () => {
       pageLoader
         .spaLoader('https://www.google.co.uk/')
         .then($ => {
-          expect($('title').text()).to.eql('Google');
+          expect($('title').text()).toEqual('Google');
           done();
         })
         .catch(done);

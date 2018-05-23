@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.nationaltheatre.org.uk';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/whats-on`);
   const locations = ['Olivier Theatre', 'Lyttelton Theatre', 'Dorfman Theatre'];
@@ -27,7 +27,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   let $ = yield pageLoader(pageUrl);
   const title = $('#maincontent h1').html();
   const data = [];

@@ -6,7 +6,7 @@ const log = require('loglevel');
 const lambda = require('../external-services/lambda');
 const sns = require('../external-services/sns');
 
-module.exports.startIteration = co.wrap(function*(actionId, topicArn) {
+exports.startIteration = co.wrap(function*(actionId, topicArn) {
   const iterationData = yield lambda.invoke(
     process.env.SERVERLESS_START_ITERATION_LAMBDA_NAME,
     { actionId }
@@ -22,7 +22,7 @@ module.exports.startIteration = co.wrap(function*(actionId, topicArn) {
   );
 });
 
-module.exports.addIterationError = co.wrap(function*(
+exports.addIterationError = co.wrap(function*(
   message,
   actionId,
   startTimestamp,
@@ -43,7 +43,7 @@ module.exports.addIterationError = co.wrap(function*(
   }
 });
 
-module.exports.throttleIteration = co.wrap(function*(startTime, minMs) {
+exports.throttleIteration = co.wrap(function*(startTime, minMs) {
   if (minMs > 1000) {
     throw new Error('minMs cannot be greater than 1000');
   }
@@ -59,7 +59,7 @@ module.exports.throttleIteration = co.wrap(function*(startTime, minMs) {
   }
 });
 
-module.exports.invokeNextIteration = co.wrap(function*(
+exports.invokeNextIteration = co.wrap(function*(
   lastId,
   startTimestamp,
   actionId,
@@ -82,7 +82,7 @@ module.exports.invokeNextIteration = co.wrap(function*(
   }
 });
 
-// module.exports.retryCurrentIteration = (
+// exports.retryCurrentIteration = (
 //   lastId,
 //   startTimestamp,
 //   topicArn,

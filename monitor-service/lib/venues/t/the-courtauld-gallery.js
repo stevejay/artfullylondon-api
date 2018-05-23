@@ -3,7 +3,7 @@
 const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').spaLoader;
 
-module.exports.pageParser = co.wrap(function*() {
+exports.pageParser = co.wrap(function*() {
   let $ = yield pageLoader(
     'http://courtauld.ac.uk/gallery/what-on/exhibitions-displays',
     '.article-content'
@@ -21,7 +21,7 @@ module.exports.pageParser = co.wrap(function*() {
   return { data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader('http://courtauld.ac.uk/gallery/opening-hours');
   return $('.article-content').html();
 });

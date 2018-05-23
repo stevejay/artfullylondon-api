@@ -15,4 +15,4 @@ async function handler(event) {
   return { body: { acknowledged: true } };
 }
 
-module.exports.handler = withWriteAuthorization(withErrorHandling(handler));
+exports.handler = withWriteAuthorization(withErrorHandling(handler));

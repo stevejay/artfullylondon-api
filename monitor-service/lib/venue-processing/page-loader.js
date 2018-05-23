@@ -9,7 +9,7 @@ const constants = require('../constants');
 const USER_AGENT =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36';
 
-module.exports.staticLoader = function(url) {
+exports.staticLoader = function(url) {
   return new Promise((resolve, reject) => {
     var options = {
       url: url,
@@ -28,7 +28,7 @@ module.exports.staticLoader = function(url) {
   });
 };
 
-module.exports.spaLoader = co.wrap(function*(url, selector, timeout) {
+exports.spaLoader = co.wrap(function*(url, selector, timeout) {
   const horseman = new Horseman({
     phantomPath: constants.PHANTOMJS_BIN_PATH,
     timeout: timeout || 20000,

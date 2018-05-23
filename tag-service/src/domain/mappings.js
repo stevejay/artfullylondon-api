@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports.mapRequestToDbTag = function(id, request) {
+exports.mapRequestToDbTag = function(id, request) {
   return {
     id: id,
     tagType: request.type,
@@ -8,7 +8,7 @@ module.exports.mapRequestToDbTag = function(id, request) {
   };
 };
 
-module.exports.mapDbTagToResponse = function(dbTag) {
+exports.mapDbTagToResponse = function(dbTag) {
   return {
     id: dbTag.id,
     label: dbTag.label,

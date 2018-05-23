@@ -41,7 +41,7 @@ function generatePolicyStatement(resource) {
 // token as a query string parameter, in order to avoid a preflight request.
 // TODO see if this is what I need: https://aws.amazon.com/blogs/compute/using-enhanced-request-authorizers-in-amazon-api-gateway/
 
-module.exports.handler = function(event, context, cb) {
+exports.handler = function(event, context, cb) {
   try {
     if (event.authorizationToken) {
       // remove "Bearer " from token

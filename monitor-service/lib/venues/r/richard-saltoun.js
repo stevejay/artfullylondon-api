@@ -8,7 +8,7 @@ const BASE_URL = 'http://www.richardsaltoun.com';
 // TODO check all the exhibitions-grid-xxx sites again to see if
 // needs # or . before the names
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
   const $ = yield pageLoader(`${BASE_URL}/exhibitions/`);
 
@@ -25,14 +25,14 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('#main_content h1').html();
   const data = [$('#main_content .exhibition').html()];
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/contact/');
   return $('#content').html();
 });

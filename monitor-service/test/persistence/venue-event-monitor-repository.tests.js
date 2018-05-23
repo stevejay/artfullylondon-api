@@ -15,7 +15,7 @@ describe('venue-event-monitor-repository', () => {
 
     it('should get a venue event monitor', done => {
       sinon.stub(dynamoDbClient, 'tryGet').callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
           Key: { venueId: 'almeida-theatre', externalEventId: 'external-id' },
           ReturnConsumedCapacity: undefined,
@@ -27,7 +27,7 @@ describe('venue-event-monitor-repository', () => {
       venueEventMonitorRepository
         .tryGet('almeida-theatre', 'external-id')
         .then(response => {
-          expect(response).to.eql({ id: 'some-id' });
+          expect(response).toEqual({ id: 'some-id' });
           done();
         })
         .catch(done);
@@ -41,7 +41,7 @@ describe('venue-event-monitor-repository', () => {
 
     it('should get all venue event monitors for a venue', done => {
       sinon.stub(dynamoDbClient, 'query').callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
           KeyConditionExpression: 'venueId = :venueId',
           ExpressionAttributeValues: { ':venueId': 'almeida-theatre' },
@@ -57,7 +57,7 @@ describe('venue-event-monitor-repository', () => {
       venueEventMonitorRepository
         .getAllForVenue('almeida-theatre')
         .then(response => {
-          expect(response).to.eql([{ id: 'some-id' }]);
+          expect(response).toEqual([{ id: 'some-id' }]);
           done();
         })
         .catch(done);
@@ -71,7 +71,7 @@ describe('venue-event-monitor-repository', () => {
 
     it('should update a venue event monitor', done => {
       sinon.stub(dynamoDbClient, 'update').callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
           Key: {
             venueId: 'almeida-theatre',
@@ -110,7 +110,7 @@ describe('venue-event-monitor-repository', () => {
 
     it('should handle putting an entity', done => {
       const putStub = sinon.stub(dynamoDbClient, 'put').callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
           Item: { id: 'some-id' },
           ReturnConsumedCapacity: undefined,
@@ -122,7 +122,7 @@ describe('venue-event-monitor-repository', () => {
       venueEventMonitorRepository
         .put({ id: 'some-id' })
         .then(() => {
-          expect(putStub.called).to.eql(true);
+          expect(putStub.called).toEqual(true);
           done();
         })
         .catch(done);
@@ -136,7 +136,7 @@ describe('venue-event-monitor-repository', () => {
 
     it('should handle a valid request', done => {
       sinon.stub(dynamoDbClient, 'scan').callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
           FilterExpression:
             'isIgnored = :false AND ' +
@@ -155,7 +155,7 @@ describe('venue-event-monitor-repository', () => {
       venueEventMonitorRepository
         .getNewOrChanged()
         .then(response => {
-          expect(response).to.eql([{ id: 'some-id' }]);
+          expect(response).toEqual([{ id: 'some-id' }]);
           done();
         })
         .catch(done);

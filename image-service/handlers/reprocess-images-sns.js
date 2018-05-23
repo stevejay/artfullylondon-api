@@ -3,7 +3,7 @@
 const co = require('co');
 const imageService = require('../lib/services/image-service');
 
-module.exports.handler = (event, context, cb) => {
+exports.handler = (event, context, cb) => {
   co(function*() {
     yield (event.Records || []).map(record => processRecord(record));
   })

@@ -12,4 +12,4 @@ async function handler(event) {
   return { body: { preferences } };
 }
 
-module.exports.handler = withErrorHandling(handler);
+exports.handler = withErrorHandling(handler);

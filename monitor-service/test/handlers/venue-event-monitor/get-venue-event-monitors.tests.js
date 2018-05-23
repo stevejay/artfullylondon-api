@@ -24,7 +24,7 @@ describe('get-venue-event-monitors.handler', () => {
     sinon
       .stub(venueEventMonitorService, 'getVenueEventMonitorsForVenue')
       .callsFake(venueId => {
-        expect(venueId).to.eql('almeida-theatre');
+        expect(venueId).toEqual('almeida-theatre');
         return Promise.resolve([{ title: 'test' }]);
       });
 

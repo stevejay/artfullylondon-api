@@ -2,14 +2,14 @@
 
 const dynamoDbClient = require('dynamodb-doc-client-wrapper');
 
-module.exports.deleteLock = actionId =>
+exports.deleteLock = actionId =>
   dynamoDbClient.delete({
     TableName: process.env.SERVERLESS_ITERATON_LOCK_TABLE_NAME,
     Key: { actionId: actionId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.addLock = lock =>
+exports.addLock = lock =>
   dynamoDbClient.put({
     TableName: process.env.SERVERLESS_ITERATON_LOCK_TABLE_NAME,
     Item: lock,

@@ -21,19 +21,19 @@ describe('entity-iteration-service', () => {
   describe('startIteration', () => {
     it('should start an iteration', done => {
       sinon.stub(lambda, 'invoke').callsFake((lambdaName, params) => {
-        expect(lambdaName).to.eql('StartIteration');
-        expect(params).to.eql({ actionId: 'SomeActionId' });
+        expect(lambdaName).toEqual('StartIteration');
+        expect(params).toEqual({ actionId: 'SomeActionId' });
         return Promise.resolve({ startTimestamp: 12345678 });
       });
 
       sinon.stub(sns, 'notify').callsFake((message, meta) => {
-        expect(message).to.eql({
+        expect(message).toEqual({
           startTimestamp: 12345678,
           lastId: null,
           retry: 0,
         });
 
-        expect(meta).to.eql({ arn: 'SomeTopicArn' });
+        expect(meta).toEqual({ arn: 'SomeTopicArn' });
 
         return Promise.resolve();
       });
@@ -48,9 +48,9 @@ describe('entity-iteration-service', () => {
   describe('addIterationError', () => {
     it('should add an iteration error', done => {
       sinon.stub(lambda, 'invoke').callsFake((lambdaName, params) => {
-        expect(lambdaName).to.eql('AddIterationError');
+        expect(lambdaName).toEqual('AddIterationError');
 
-        expect(params).to.eql({
+        expect(params).toEqual({
           actionId: 'SomeActionId',
           startTimestamp: 12345678,
           entityId: 'entity-1',
@@ -76,7 +76,7 @@ describe('entity-iteration-service', () => {
       entityIterationService
         .addIterationError('some message', 'SomeActionId', 12345678, 'entity-1')
         .then(() => {
-          expect(logErrorStub.calledOnce).to.eql(true);
+          expect(logErrorStub.calledOnce).toEqual(true);
           done();
         })
         .catch(done);
@@ -95,13 +95,13 @@ describe('entity-iteration-service', () => {
   describe('invokeNextIteration', () => {
     it('should invoke the next iteration when the iteration end has not yet been reached', done => {
       sinon.stub(sns, 'notify').callsFake((message, meta) => {
-        expect(message).to.eql({
+        expect(message).toEqual({
           startTimestamp: 12345678,
           lastId: 'image-1',
           retry: 0,
         });
 
-        expect(meta).to.eql({ arn: 'SomeTopicArn' });
+        expect(meta).toEqual({ arn: 'SomeTopicArn' });
 
         return Promise.resolve();
       });
@@ -119,9 +119,9 @@ describe('entity-iteration-service', () => {
 
     it('should signal the end of the iteration when the end has been reached', done => {
       sinon.stub(lambda, 'invoke').callsFake((lambdaName, params) => {
-        expect(lambdaName).to.eql('EndIteration');
+        expect(lambdaName).toEqual('EndIteration');
 
-        expect(params).to.eql({
+        expect(params).toEqual({
           actionId: 'SomeActionId',
           startTimestamp: 12345678,
         });

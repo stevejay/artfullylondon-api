@@ -13,7 +13,7 @@ describe('lambda', () => {
   describe('invoke', () => {
     it('should handle invoking a lambda that returns a valid result', done => {
       const mockInvoke = sinon.stub().callsFake((params, cb) => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           FunctionName: 'SomeFunction',
           Payload: '{"name":"foo"}',
         });
@@ -26,7 +26,7 @@ describe('lambda', () => {
       lambda
         .invoke('SomeFunction', { name: 'foo' })
         .then(result => {
-          expect(result).to.eql({ id: 'result-1' });
+          expect(result).toEqual({ id: 'result-1' });
           done();
         })
         .catch(done);
@@ -34,7 +34,7 @@ describe('lambda', () => {
 
     it('should handle invoking a lambda that returns a result with an error message', done => {
       const mockInvoke = sinon.stub().callsFake((params, cb) => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           FunctionName: 'SomeFunction',
           Payload: '{"name":"foo"}',
         });
@@ -63,7 +63,7 @@ describe('lambda', () => {
 
     it('should handle invoking a lambda that returns a result with a non-200 status code', done => {
       const mockInvoke = sinon.stub().callsFake((params, cb) => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           FunctionName: 'SomeFunction',
           Payload: '{"name":"foo"}',
         });
@@ -93,7 +93,7 @@ describe('lambda', () => {
 
     it('should handle invoking a lambda that returns no result', done => {
       const mockInvoke = sinon.stub().callsFake((params, cb) => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           FunctionName: 'SomeFunction',
           Payload: '{"name":"foo"}',
         });
@@ -119,7 +119,7 @@ describe('lambda', () => {
 
     it('should handle invoking a lambda that returns an error', done => {
       const mockInvoke = sinon.stub().callsFake((params, cb) => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           FunctionName: 'SomeFunction',
           Payload: '{"name":"foo"}',
         });

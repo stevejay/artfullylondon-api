@@ -3,7 +3,7 @@
 const request = require('request');
 const fs = require('fs');
 
-module.exports.downloadFile = (url, filePath) => {
+exports.downloadFile = (url, filePath) => {
   return new Promise((resolve, reject) => {
     request
       .get(url)
@@ -19,7 +19,7 @@ module.exports.downloadFile = (url, filePath) => {
   });
 };
 
-module.exports.readFile = filePath => {
+exports.readFile = filePath => {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, (err, data) => {
       if (err) {
@@ -31,7 +31,7 @@ module.exports.readFile = filePath => {
   });
 };
 
-module.exports.writeFile = (filePath, content) => {
+exports.writeFile = (filePath, content) => {
   return new Promise((resolve, reject) => {
     fs.writeFile(filePath, content, err => {
       if (err) {
@@ -43,7 +43,7 @@ module.exports.writeFile = (filePath, content) => {
   });
 };
 
-module.exports.deleteFile = filePath => {
+exports.deleteFile = filePath => {
   return new Promise(resolve => {
     fs.unlink(filePath, () => resolve());
   });

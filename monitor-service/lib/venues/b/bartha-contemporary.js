@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.barthacontemporary.com';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   let result = [];
   let $ = yield pageLoader(BASE_URL + '/exhibitions/');
 
@@ -22,14 +22,14 @@ module.exports.pageFinder = co.wrap(function*() {
   return result.map(x => (x.endsWith('/') ? x : x + '/'));
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('title').html();
   const data = [$('article .info-list').html(), $('.description').html()];
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/contact/');
   return $('body > .container').html();
 });

@@ -20,9 +20,9 @@ describe('write-authorized-decorator', () => {
     };
 
     decorated(event, null, (err, result) => {
-      expect(err).to.eql(null);
-      expect(result).to.eql(event);
-      expect(handlerSpy.callCount).to.eql(1);
+      expect(err).toEqual(null);
+      expect(result).toEqual(event);
+      expect(handlerSpy.callCount).toEqual(1);
       done();
     });
   });
@@ -43,15 +43,15 @@ describe('write-authorized-decorator', () => {
     };
 
     decorated(event, null, (err, result) => {
-      expect(err).to.eql(null);
+      expect(err).toEqual(null);
 
-      expect(result).to.eql({
+      expect(result).toEqual({
         statusCode: 401,
         headers: testData.NORMAL_RESPONSE_HEADERS,
         body: '{"error":"[401] readonly user cannot modify system"}',
       });
 
-      expect(handlerSpy.callCount).to.eql(0);
+      expect(handlerSpy.callCount).toEqual(0);
       done();
     });
   });

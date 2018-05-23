@@ -3,7 +3,7 @@
 const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
 
   let $ = yield pageLoader(
@@ -33,7 +33,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   let title, data;
 

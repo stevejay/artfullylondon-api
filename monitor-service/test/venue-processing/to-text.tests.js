@@ -35,7 +35,7 @@ describe('to-text', function() {
   tests.forEach(test => {
     it(test.it, () => {
       const actual = toText(test.arg);
-      expect(actual).to.eql(test.expected);
+      expect(actual).toEqual(test.expected);
     });
   });
 });

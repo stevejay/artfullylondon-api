@@ -12,6 +12,6 @@ async function handler(event) {
   return { items, params: request };
 }
 
-module.exports.handler = withErrorHandling(
+exports.handler = withErrorHandling(
   withCacheControl(handler, constants.CACHE_CONTROL_SECONDS)
 );

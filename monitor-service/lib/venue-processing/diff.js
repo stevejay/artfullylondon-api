@@ -2,7 +2,7 @@
 
 const diff = require('fast-diff');
 
-module.exports.getDiff = function(oldText, newText) {
+exports.getDiff = function(oldText, newText) {
   let result = null;
 
   if (!oldText) {

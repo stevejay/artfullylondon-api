@@ -26,8 +26,8 @@ describe('iterate-venues-sns.handler', () => {
     sinon
       .stub(venueService, 'processNextVenue')
       .callsFake((lastId, startTimestamp) => {
-        expect(lastId).to.eql('almeida-theatre');
-        expect(startTimestamp).to.eql(12345678);
+        expect(lastId).toEqual('almeida-theatre');
+        expect(startTimestamp).toEqual(12345678);
         return Promise.resolve();
       });
 

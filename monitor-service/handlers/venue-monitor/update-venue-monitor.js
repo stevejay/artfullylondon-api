@@ -16,4 +16,4 @@ function* handler(event) {
   return { acknowledged: true };
 }
 
-module.exports.handler = generatorHandler(handler);
+exports.handler = generatorHandler(handler);

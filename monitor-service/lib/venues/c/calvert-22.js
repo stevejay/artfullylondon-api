@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').spaLoader;
 
 const BASE_URL = 'http://calvert22.org';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   let $ = yield pageLoader(
     BASE_URL + '/exhibitions-events/',
     'a.vc_gitem-link'
@@ -24,14 +24,14 @@ module.exports.pageFinder = co.wrap(function*() {
   return result.slice(0, 6); // TODO increase this at some point
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl, '.entry-content h1');
   const title = $('title').html();
   const data = $('main article .entry-content').html();
   return { title, data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(
     BASE_URL + '/visit/',
     'main article .entry-content'

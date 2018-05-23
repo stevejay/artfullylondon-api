@@ -13,4 +13,4 @@ async function handler(event) {
   return { body: result };
 }
 
-module.exports.handler = withErrorHandling(handler);
+exports.handler = withErrorHandling(handler);

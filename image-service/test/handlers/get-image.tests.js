@@ -20,7 +20,7 @@ describe('get-image', () => {
     };
 
     sinon.stub(imageService, 'getImageData').callsFake(param => {
-      expect(param).to.eql('12345678123456781234567812345678');
+      expect(param).toEqual('12345678123456781234567812345678');
 
       return Promise.resolve({
         id: '12345678123456781234567812345678',

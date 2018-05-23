@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://cattogallery.co.uk';
 
-module.exports.pageParser = co.wrap(function*() {
+exports.pageParser = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/exhibitions/');
 
   const data = $(
@@ -17,7 +17,7 @@ module.exports.pageParser = co.wrap(function*() {
   return { data };
 });
 
-module.exports.venueOpenings = co.wrap(function*() {
+exports.venueOpenings = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL + '/contact/');
 
   return $('.page-content .row .content p:first-of-type')

@@ -12,4 +12,4 @@ function* handler(event) {
   return { errors };
 }
 
-module.exports.handler = generatorHandler(handler);
+exports.handler = generatorHandler(handler);

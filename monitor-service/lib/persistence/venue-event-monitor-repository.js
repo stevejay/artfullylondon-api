@@ -2,21 +2,21 @@
 
 const dynamoDbClient = require('dynamodb-doc-client-wrapper');
 
-module.exports.get = (venueId, externalEventId) =>
+exports.get = (venueId, externalEventId) =>
   dynamoDbClient.get({
     TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
     Key: { venueId, externalEventId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.tryGet = (venueId, externalEventId) =>
+exports.tryGet = (venueId, externalEventId) =>
   dynamoDbClient.tryGet({
     TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
     Key: { venueId, externalEventId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.getAllForVenue = venueId =>
+exports.getAllForVenue = venueId =>
   dynamoDbClient.query({
     TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
     KeyConditionExpression: 'venueId = :venueId',
@@ -27,7 +27,7 @@ module.exports.getAllForVenue = venueId =>
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.update = entity =>
+exports.update = entity =>
   dynamoDbClient.update({
     TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
     Key: { venueId: entity.venueId, externalEventId: entity.externalEventId },
@@ -42,14 +42,14 @@ module.exports.update = entity =>
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.put = entity =>
+exports.put = entity =>
   dynamoDbClient.put({
     TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
     Item: entity,
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.getNewOrChanged = () =>
+exports.getNewOrChanged = () =>
   dynamoDbClient.scan({
     TableName: process.env.SERVERLESS_EVENT_MONITOR_TABLE_NAME,
     FilterExpression:

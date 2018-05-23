@@ -9,4 +9,4 @@ function* handler() {
   return { acknowledged: true };
 }
 
-module.exports.handler = writeAuthorized(generatorHandler(handler));
+exports.handler = writeAuthorized(generatorHandler(handler));

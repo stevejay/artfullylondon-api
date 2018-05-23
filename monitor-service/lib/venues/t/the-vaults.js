@@ -5,9 +5,9 @@ const pageLoader = require('../../venue-processing/page-loader').spaLoader;
 
 const BASE_URL = 'https://www.thevaults.london';
 
-module.exports.pageUrlChunks = 1;
+exports.pageUrlChunks = 1;
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const result = [];
 
   const $ = yield pageLoader(
@@ -26,7 +26,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result;
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
   const title = $('#PAGES_CONTAINERcenteredContent h2').html();
   const data = $('#PAGES_CONTAINERcenteredContent').html();

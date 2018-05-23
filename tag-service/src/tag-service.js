@@ -15,7 +15,7 @@ const createTagConstraint = {
   label: constraints.label
 };
 
-module.exports.createTag = async function(request) {
+exports.createTag = async function(request) {
   normalise(request, normaliser);
   ensure(request, createTagConstraint, ensureErrorHandler);
 
@@ -26,19 +26,19 @@ module.exports.createTag = async function(request) {
   return { tag: { id: tagId, label: request.label } };
 };
 
-module.exports.deleteTag = async function(request) {
+exports.deleteTag = async function(request) {
   const tagId = id.createTagId(request.type, request.idPart);
   await tagRepository.deleteTag(request.type, tagId);
 };
 
-module.exports.getAllTags = async function() {
+exports.getAllTags = async function() {
   const dbResponse = await tagRepository.getAll();
   const items = dbResponse.map(mappings.mapDbTagToResponse);
   const tags = groupBy(items, _extractTagTypeFromId);
   return { tags: tags };
 };
 
-module.exports.getTagsByType = async function(request) {
+exports.getTagsByType = async function(request) {
   ensure(request, { tagType: constraints.type }, ensureErrorHandler);
   const dbResponse = await tagRepository.getAllByTagType(request.tagType);
   const tags = dbResponse.map(mappings.mapDbTagToResponse);

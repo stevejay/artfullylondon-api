@@ -2,21 +2,21 @@
 
 const dynamoDbClient = require('dynamodb-doc-client-wrapper');
 
-module.exports.getImage = imageId =>
+exports.getImage = imageId =>
   dynamoDbClient.get({
     TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
     Key: { id: imageId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.tryGetImage = imageId =>
+exports.tryGetImage = imageId =>
   dynamoDbClient.tryGet({
     TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
     Key: { id: imageId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
   });
 
-module.exports.getNextImage = lastId =>
+exports.getNextImage = lastId =>
   dynamoDbClient
     .scanBasic({
       TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
@@ -28,7 +28,7 @@ module.exports.getNextImage = lastId =>
     })
     .then(result => (result.Items.length > 0 ? result.Items[0] : null));
 
-module.exports.saveImage = (image, shouldAlreadyExist) =>
+exports.saveImage = (image, shouldAlreadyExist) =>
   dynamoDbClient.put({
     TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
     Item: image,

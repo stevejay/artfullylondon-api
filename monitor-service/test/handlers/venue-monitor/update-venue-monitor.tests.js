@@ -23,7 +23,7 @@ describe('update-venue-monitor.handler', () => {
     };
 
     sinon.stub(venueMonitorService, 'updateVenueMonitor').callsFake(entity => {
-      expect(entity).to.eql({
+      expect(entity).toEqual({
         venueId: 'almeida-theatre',
         isIgnored: true,
         hasChanged: false,

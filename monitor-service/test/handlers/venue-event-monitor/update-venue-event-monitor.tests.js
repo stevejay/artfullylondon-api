@@ -26,7 +26,7 @@ describe('update-venue-event-monitor.handler', () => {
     sinon
       .stub(venueEventMonitorService, 'updateVenueEventMonitor')
       .callsFake(entity => {
-        expect(entity).to.eql({
+        expect(entity).toEqual({
           venueId: 'almeida-theatre',
           externalEventId: 'almeida-theatre|/foo',
           isIgnored: true,

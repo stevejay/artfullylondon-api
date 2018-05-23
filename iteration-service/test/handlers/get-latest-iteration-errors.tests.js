@@ -20,7 +20,7 @@ describe('get-latest-iteration-errors.handler', () => {
     sinon
       .stub(iterationService, 'getLatestIterationErrors')
       .callsFake(actionId => {
-        expect(actionId).to.eql('SomeActionId');
+        expect(actionId).toEqual('SomeActionId');
         return Promise.resolve([{ id: '1' }, { id: '2' }]);
       });
 
@@ -44,7 +44,7 @@ describe('get-latest-iteration-errors.handler', () => {
     sinon
       .stub(iterationService, 'getLatestIterationErrors')
       .callsFake(actionId => {
-        expect(actionId).to.eql('SomeActionId');
+        expect(actionId).toEqual('SomeActionId');
         return Promise.resolve([{ id: '1' }, { id: '2' }]);
       });
 

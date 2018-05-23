@@ -15,7 +15,7 @@ describe('s3', () => {
   describe('getObjectFromS3', () => {
     it('should get an object from s3', done => {
       const mockGetObject = sinon.stub().callsFake(params => {
-        expect(params).to.eql({
+        expect(params).toEqual({
           Bucket: 'somebucket',
           Key: 'somekey',
         });
@@ -26,8 +26,8 @@ describe('s3', () => {
       sinon.stub(AWS, 'S3').callsFake(() => ({ getObject: mockGetObject }));
 
       sinon.stub(fs, 'writeFile').callsFake((filePath, data, cb) => {
-        expect(filePath).to.eql('/foo');
-        expect(data).to.eql('the-data');
+        expect(filePath).toEqual('/foo');
+        expect(data).toEqual('the-data');
         cb();
       });
 

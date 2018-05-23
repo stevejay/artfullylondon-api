@@ -5,7 +5,7 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.thedraytonarmstheatre.co.uk/';
 
-module.exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = co.wrap(function*() {
   const $ = yield pageLoader(BASE_URL);
   const result = [];
 
@@ -20,7 +20,7 @@ module.exports.pageFinder = co.wrap(function*() {
   return result.slice(0, 4);
 });
 
-module.exports.pageParser = co.wrap(function*(pageUrl) {
+exports.pageParser = co.wrap(function*(pageUrl) {
   const $ = yield pageLoader(pageUrl);
 
   const title = $('h1')

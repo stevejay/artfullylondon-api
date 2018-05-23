@@ -46,9 +46,9 @@ describe('email-service', () => {
         );
 
       sinon.stub(lambda, 'invoke').callsFake((lambdaName, params) => {
-        expect(lambdaName).to.eql('GetLatestIterationErrors');
+        expect(lambdaName).toEqual('GetLatestIterationErrors');
 
-        expect(params).to.eql({ actionId: constants.ITERATE_VENUES_ACTION_ID });
+        expect(params).toEqual({ actionId: constants.ITERATE_VENUES_ACTION_ID });
 
         return Promise.resolve({
           statusCode: 200,
@@ -63,7 +63,7 @@ describe('email-service', () => {
       });
 
       sinon.stub(ses, 'sendEmail').callsFake(email => {
-        expect(email).to.eql({
+        expect(email).toEqual({
           Destination: {
             ToAddresses: ['steve@stevejay.net'],
           },

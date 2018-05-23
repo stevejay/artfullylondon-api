@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const yaml = require("js-yaml");
 const fs = require("fs");
 
-module.exports.sync = fn =>
+exports.sync = fn =>
   fn.then(res => () => res).catch(err => () => {
     throw err;
   });
@@ -29,6 +29,6 @@ function createJWT(userId = "email|cccccccccccccccccccccccc") {
   );
 }
 
-module.exports.createAuthValue = function(userId) {
+exports.createAuthValue = function(userId) {
   return `Bearer ${createJWT(userId)}`;
 };

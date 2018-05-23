@@ -3,7 +3,7 @@
 const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-module.exports.pageParser = co.wrap(function*() {
+exports.pageParser = co.wrap(function*() {
   let $ = yield pageLoader('http://www.abovethestag.com/whatson/');
 
   const title = $('title').html();
