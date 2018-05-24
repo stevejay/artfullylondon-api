@@ -2,9 +2,9 @@
 
 const delay = require("delay");
 const log = require("loglevel");
-const dynamoDbClient = require("dynamodb-doc-client-wrapper");
 const ensure = require("ensure-request").ensure;
 const sns = require("../external-services/sns");
+const dynamodb = require("../external-services/dynamodb");
 const elasticsearch = require("../external-services/elasticsearch");
 const EntityBulkUpdateBuilder = require("../entity/entity-bulk-update-builder");
 const globalConstants = require("../constants");
@@ -16,19 +16,19 @@ const venueMappings = require("../venue/mappings");
 const eventPopulate = require("../event/populate");
 const etag = require("../lambda/etag");
 
-exports.updateEventSearchIndex = co.wrap(function*(eventId) {
+exports.updateEventSearchIndex = async function(eventId) {
   if (!eventId) {
     return;
   }
 
-  const dbItem = yield dynamoDbClient.get({
+  const dbItem = await dynamodb.get({
     TableName: process.env.SERVERLESS_EVENT_TABLE_NAME,
     Key: { id: eventId },
     ConsistentRead: true,
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
 
-  const referencedEntities = yield eventPopulate.getReferencedEntities(dbItem, {
+  const referencedEntities = await eventPopulate.getReferencedEntities(dbItem, {
     ConsistentRead: true
   });
 
@@ -52,21 +52,21 @@ exports.updateEventSearchIndex = co.wrap(function*(eventId) {
       globalConstants.SEARCH_INDEX_TYPE_COMBINED_EVENT_AUTO
     );
 
-  yield elasticsearch.bulk({ body: builder.build() });
+  await elasticsearch.bulk({ body: builder.build() });
 
   const publicResponse = eventMappings.mapDbItemToPublicResponse(
     dbItem,
     referencedEntities
   );
 
-  yield etag.writeETagToRedis(
+  await etag.writeETagToRedis(
     "event/" + eventId,
     JSON.stringify({ entity: publicResponse })
   );
-});
+};
 
-exports.refreshEventFullSearch = co.wrap(function*() {
-  yield sns.notify(
+exports.refreshEventFullSearch = async function() {
+  await sns.notify(
     {
       index: "event-full",
       version: "latest",
@@ -77,7 +77,7 @@ exports.refreshEventFullSearch = co.wrap(function*() {
       arn: process.env.SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN
     }
   );
-});
+};
 
 const refreshSearchIndexConstraints = {
   index: {
@@ -91,7 +91,7 @@ const refreshSearchIndexConstraints = {
 
 const LATEST_VERSION = "latest";
 
-exports.refreshSearchIndex = co.wrap(function*(params) {
+exports.refreshSearchIndex = async function(params) {
   ensure(params, refreshSearchIndexConstraints, ensureErrorHandler);
 
   // A search index can involve multiple entities.
@@ -102,7 +102,7 @@ exports.refreshSearchIndex = co.wrap(function*(params) {
   for (let i = 0; i < entities.length; ++i) {
     const entity = entities[i];
 
-    yield sns.notify(
+    await sns.notify(
       {
         index: params.index,
         version: params.version === LATEST_VERSION ? null : params.version,
@@ -114,9 +114,9 @@ exports.refreshSearchIndex = co.wrap(function*(params) {
       }
     );
   }
-});
+};
 
-exports.processRefreshSearchIndexMessage = co.wrap(function*(message) {
+exports.processRefreshSearchIndexMessage = async function(message) {
   if (!message) {
     return;
   }
@@ -124,7 +124,7 @@ exports.processRefreshSearchIndexMessage = co.wrap(function*(message) {
   const startTime = process.hrtime();
   const entityParams = getEntityParams(message.entity);
 
-  const scanResult = yield dynamoDbClient.scanBasic({
+  const scanResult = await dynamodb.scanBasic({
     TableName: entityParams.tableName,
     ExclusiveStartKey: message.exclusiveStartKey || null,
     Limit: globalConstants.REFRESH_SEARCH_INDEX_MAX_TAKE_PER_SCAN,
@@ -134,7 +134,7 @@ exports.processRefreshSearchIndexMessage = co.wrap(function*(message) {
   let entities = null;
 
   if (entityParams.refsGetter) {
-    entities = yield entityParams.refsGetter(scanResult.Items);
+    entities = await entityParams.refsGetter(scanResult.Items);
   } else {
     entities = scanResult.Items;
   }
@@ -166,7 +166,7 @@ exports.processRefreshSearchIndexMessage = co.wrap(function*(message) {
   });
 
   try {
-    yield elasticsearch.bulk({ body: builder.build() });
+    await elasticsearch.bulk({ body: builder.build() });
   } catch (err) {
     log.error("elasticsearch errors: " + err.message);
     // swallow exception to allow process to continue.
@@ -181,10 +181,10 @@ exports.processRefreshSearchIndexMessage = co.wrap(function*(message) {
 
     if (elapsedTime[0] < 1) {
       // console.log('delaying 1000ms');
-      yield delay(1000);
+      await delay(1000);
     }
 
-    yield sns.notify(
+    await sns.notify(
       {
         index: message.index,
         version: message.version,
@@ -196,7 +196,7 @@ exports.processRefreshSearchIndexMessage = co.wrap(function*(message) {
       }
     );
   }
-});
+};
 
 function getEntityParams(entityType) {
   switch (entityType) {
