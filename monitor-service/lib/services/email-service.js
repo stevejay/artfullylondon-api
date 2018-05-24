@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const co = require('co');
-const uniq = require('lodash.uniq');
-const ses = require('../external-services/ses');
-const venueEventMonitorRepository = require('../persistence/venue-event-monitor-repository');
-const venueMonitorRepository = require('../persistence/venue-monitor-repository');
-const lambda = require('../external-services/lambda');
-const constants = require('../constants');
+const co = require("co");
+const uniq = require("lodash.uniq");
+const ses = require("../external-services/ses");
+const venueEventMonitorRepository = require("../persistence/venue-event-monitor-repository");
+const venueMonitorRepository = require("../persistence/venue-monitor-repository");
+const lambda = require("../external-services/lambda");
+const constants = require("../constants");
 
 exports.sendMonitorStatusEmail = co.wrap(function*() {
   const venueEventMonitors = yield venueEventMonitorRepository.getNewOrChanged();
@@ -32,31 +32,31 @@ exports.sendMonitorStatusEmail = co.wrap(function*() {
       : {};
 
   const bodyText = [
-    'Changed or New Events:',
-    idsOfVenuesWithEvents.join('\n') || 'None',
-    'Changed Venue Data:',
-    idsOfChangedVenues.join('\n') || 'None',
-    'Latest Errors:',
+    "Changed or New Events:",
+    idsOfVenuesWithEvents.join("\n") || "NONE",
+    "Changed Venue Data:",
+    idsOfChangedVenues.join("\n") || "NONE",
+    "Latest Errors:",
     (parsedErrors.errors || [])
-      .map(error => (error.entityId || '') + ': ' + (error.message || ''))
-      .join('\n') || 'None',
-  ].join('\n\n');
+      .map(error => (error.entityId || "") + ": " + (error.message || ""))
+      .join("\n") || "NONE"
+  ].join("\n\n");
 
   const email = {
     Destination: {
-      ToAddresses: ['steve@stevejay.net'],
+      ToAddresses: ["steve@stevejay.net"]
     },
     Message: {
       Body: {
         Text: {
-          Data: bodyText,
-        },
+          Data: bodyText
+        }
       },
       Subject: {
-        Data: 'Venue Monitor Email',
-      },
+        Data: "Venue Monitor Email"
+      }
     },
-    Source: 'support@artfully.london',
+    Source: "support@artfully.london"
   };
 
   yield ses.sendEmail(email);

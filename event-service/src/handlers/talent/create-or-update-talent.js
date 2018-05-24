@@ -1,7 +1,7 @@
 "use strict";
 
 const withErrorHandling = require("lambda-error-handler");
-const withWriteAuthorization = require("../lambda/with-write-authorization");
+const withWriteAuthorization = require("../../lambda/with-write-authorization");
 const talentService = require("../../talent/talent-service");
 
 async function handler(event) {
