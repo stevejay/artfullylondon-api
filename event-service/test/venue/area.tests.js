@@ -1,6 +1,7 @@
 "use strict";
 
-const area = require("./area");
+const expect = require("chai").expect;
+const area = require("../../lib/venue/area");
 
 describe("area", () => {
   describe("getLondonArea", () => {

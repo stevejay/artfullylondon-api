@@ -7,11 +7,8 @@ const date = require("../date");
 
 describe("venue mappings", () => {
   describe("mapRequestToDbItem", () => {
-    beforeEach(() =>
-      sinon.stub(date, "getTodayAsStringDate").returns("2016/01/11"));
-
-    afterEach(() => {
-      date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
+    beforeEach(() => {
+      date.getTodayAsStringDate = jest.fn().mockReturnValue("2016/01/11");
     });
 
     it("should map a fully populated request", () => {

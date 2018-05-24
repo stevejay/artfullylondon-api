@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-require('aws-sdk');
-const lambda = require('aws-lambda-invoke');
+require("aws-sdk");
+const lambda = require("aws-lambda-invoke");
 
-exports.migrator = function*(entityType, item) {
+exports.migrator = async function(entityType, item) {
   if (item.images && item.images.length) {
     // fix up image id
     item.images = item.images.map(image => {
@@ -20,14 +20,14 @@ exports.migrator = function*(entityType, item) {
     for (let i = 0; i < imageIds.length; ++i) {
       const imageId = imageIds[i];
 
-      const payload = yield lambda.invoke('image-service-production-getImage', {
+      const payload = await lambda.invoke("image-service-production-getImage", {
         path: { type: entityType, id: imageId }
       });
 
       const ratio = payload.ratio;
 
       if (!ratio) {
-        throw new Error('Failed to find ratio in getImage result');
+        throw new Error("Failed to find ratio in getImage result");
       }
 
       item.images.filter(image => image.id === imageId)[0].ratio = ratio; // jshint ignore:line

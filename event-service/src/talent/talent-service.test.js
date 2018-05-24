@@ -1,119 +1,51 @@
 "use strict";
 
-const dynamoDbClient = require("dynamodb-doc-client-wrapper");
 const testData = require("../test-data");
 const talentService = require("./talent-service");
 const talentConstants = require("./constants");
+const entity = require("../entity/entity");
 const elasticsearch = require("../external-services/elasticsearch");
+const dynamodb = require("../external-services/dynamodb");
 const etag = require("../lambda/etag");
 const globalConstants = require("../constants");
 const date = require("../date");
 
 process.env.SERVERLESS_TALENT_TABLE_NAME = "talent-table";
 
+const sync = fn =>
+  fn.then(res => () => res).catch(err => () => {
+    throw err;
+  });
+
 describe("createOrUpdateTalent", () => {
-  beforeEach(() =>
-    sinon.stub(date, "getTodayAsStringDate").returns("2016/01/11"));
-
-  afterEach(() => {
-    date.getTodayAsStringDate.restore && date.getTodayAsStringDate.restore();
-
-    if (dynamoDbClient.put.restore) {
-      dynamoDbClient.put.restore();
-    }
-    if (elasticsearch.bulk.restore) {
-      elasticsearch.bulk.restore();
-    }
-    if (etag.writeETagToRedis.restore) {
-      etag.writeETagToRedis.restore();
-    }
+  beforeEach(() => {
+    date.getTodayAsStringDate = jest.fn().mockReturnValue("2016/01/11");
   });
 
-  it("should throw when request is invalid", done => {
-    talentService
-      .createOrUpdateTalent(null, { status: "Foo" })
-      .then(() => done(new Error("should have thrown an exception")))
-      .catch(() => done());
+  it("should throw when request is invalid", async () => {
+    expect(
+      await sync(talentService.createOrUpdateTalent(null, { status: "Foo" }))
+    ).toThrow();
   });
 
-  it("should process create talent request", done => {
-    sinon.stub(elasticsearch, "bulk").callsFake(params => {
-      expect(params).toEqual({
-        body: [
-          {
-            index: {
-              _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_FULL,
-              _type: "doc",
-              _id: testData.INDIVIDUAL_TALENT_ID,
-              _version: 1,
-              _version_type: "external"
-            }
-          },
-          {
-            entityType: "talent",
-            id: testData.INDIVIDUAL_TALENT_ID,
-            firstNames: "Carrie",
-            lastName: "Cracknell",
-            lastName_sort: "cracknell",
-            status: "Active",
-            talentType: "Individual",
-            commonRole: "Actor",
-            version: 1
-          },
-          {
-            index: {
-              _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_AUTO,
-              _type: "doc",
-              _id: testData.INDIVIDUAL_TALENT_ID,
-              _version: 1,
-              _version_type: "external"
-            }
-          },
-          {
-            nameSuggest: ["carrie cracknell", "cracknell"],
-            output: "Carrie Cracknell",
-            id: testData.INDIVIDUAL_TALENT_ID,
-            status: "Active",
-            talentType: "Individual",
-            commonRole: "Actor",
-            entityType: "talent",
-            version: 1
-          }
-        ]
-      });
+  it("should process create talent request", async () => {
+    elasticsearch.bulk = jest.fn().mockResolvedValue();
+    entity.write = jest.fn().mockResolvedValue();
+    etag.writeETagToRedis = jest.fn().mockResolvedValue();
 
-      return Promise.resolve();
+    const response = await talentService.createOrUpdateTalent(null, {
+      firstNames: "Carrie",
+      lastName: "Cracknell",
+      status: "Active",
+      talentType: "Individual",
+      commonRole: "Actor",
+      description: "An Actor",
+      version: 1,
+      createdDate: "2016/01/10",
+      updatedDate: "2016/01/11"
     });
 
-    sinon.stub(dynamoDbClient, "put").callsFake(params => {
-      expect(params).toEqual({
-        TableName: process.env.SERVERLESS_TALENT_TABLE_NAME,
-        Item: {
-          id: testData.INDIVIDUAL_TALENT_ID,
-          firstNames: "Carrie",
-          lastName: "Cracknell",
-          status: "Active",
-          talentType: "Individual",
-          commonRole: "Actor",
-          description: "An Actor",
-          version: 1,
-          schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
-          createdDate: "2016/01/10",
-          updatedDate: "2016/01/11"
-        },
-        ConditionExpression: "attribute_not_exists(id)",
-        ReturnConsumedCapacity: undefined
-      });
-
-      return Promise.resolve();
-    });
-
-    sinon.stub(etag, "writeETagToRedis").callsFake(key => {
-      expect(key).toEqual("talent/" + testData.INDIVIDUAL_TALENT_ID);
-      return Promise.resolve();
-    });
-
-    const expected = {
+    expect(response).toEqual({
       id: testData.INDIVIDUAL_TALENT_ID,
       firstNames: "Carrie",
       lastName: "Cracknell",
@@ -125,10 +57,56 @@ describe("createOrUpdateTalent", () => {
       schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
       createdDate: "2016/01/10",
       updatedDate: "2016/01/11"
-    };
+    });
 
-    talentService
-      .createOrUpdateTalent(null, {
+    expect(elasticsearch.bulk).toHaveBeenCalledWith({
+      body: [
+        {
+          index: {
+            _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_FULL,
+            _type: "doc",
+            _id: testData.INDIVIDUAL_TALENT_ID,
+            _version: 1,
+            _version_type: "external"
+          }
+        },
+        {
+          entityType: "talent",
+          id: testData.INDIVIDUAL_TALENT_ID,
+          firstNames: "Carrie",
+          lastName: "Cracknell",
+          lastName_sort: "cracknell",
+          status: "Active",
+          talentType: "Individual",
+          commonRole: "Actor",
+          version: 1
+        },
+        {
+          index: {
+            _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_AUTO,
+            _type: "doc",
+            _id: testData.INDIVIDUAL_TALENT_ID,
+            _version: 1,
+            _version_type: "external"
+          }
+        },
+        {
+          nameSuggest: ["carrie cracknell", "cracknell"],
+          output: "Carrie Cracknell",
+          id: testData.INDIVIDUAL_TALENT_ID,
+          status: "Active",
+          talentType: "Individual",
+          commonRole: "Actor",
+          entityType: "talent",
+          version: 1
+        }
+      ]
+    });
+
+    expect(entity.write).toHaveBeenCalledWith(
+      process.env.SERVERLESS_TALENT_TABLE_NAME,
+      {
+        id: testData.INDIVIDUAL_TALENT_ID,
         firstNames: "Carrie",
         lastName: "Cracknell",
         status: "Active",
@@ -136,93 +114,36 @@ describe("createOrUpdateTalent", () => {
         commonRole: "Actor",
         description: "An Actor",
         version: 1,
+        schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
         createdDate: "2016/01/10",
         updatedDate: "2016/01/11"
-      })
-      .then(response => expect(response).toEqual(expected))
-      .then(() => done())
-      .catch(done);
+      }
+    );
+
+    expect(etag.writeETagToRedis).toHaveBeenCalled();
   });
 
-  it("should process update talent request", done => {
-    sinon.stub(elasticsearch, "bulk").callsFake(params => {
-      expect(params).toEqual({
-        body: [
-          {
-            index: {
-              _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_FULL,
-              _type: "doc",
-              _id: testData.INDIVIDUAL_TALENT_ID,
-              _version: 4,
-              _version_type: "external"
-            }
-          },
-          {
-            entityType: "talent",
-            id: testData.INDIVIDUAL_TALENT_ID,
-            firstNames: "Carrie",
-            lastName: "Cracknell",
-            lastName_sort: "cracknell",
-            status: "Active",
-            talentType: "Individual",
-            commonRole: "Actor",
-            version: 4
-          },
-          {
-            index: {
-              _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_AUTO,
-              _type: "doc",
-              _id: testData.INDIVIDUAL_TALENT_ID,
-              _version: 4,
-              _version_type: "external"
-            }
-          },
-          {
-            nameSuggest: ["carrie cracknell", "cracknell"],
-            output: "Carrie Cracknell",
-            id: testData.INDIVIDUAL_TALENT_ID,
-            status: "Active",
-            talentType: "Individual",
-            commonRole: "Actor",
-            entityType: "talent",
-            version: 4
-          }
-        ]
-      });
+  it("should process update talent request", async () => {
+    elasticsearch.bulk = jest.fn().mockResolvedValue();
+    entity.write = jest.fn().mockResolvedValue();
+    etag.writeETagToRedis = jest.fn().mockResolvedValue();
 
-      return Promise.resolve();
-    });
+    const response = await talentService.createOrUpdateTalent(
+      testData.INDIVIDUAL_TALENT_ID,
+      {
+        firstNames: "Carrie",
+        lastName: "Cracknell",
+        status: "Active",
+        talentType: "Individual",
+        commonRole: "Actor",
+        description: "An Actor",
+        version: 4,
+        createdDate: "2016/01/10",
+        updatedDate: "2016/01/11"
+      }
+    );
 
-    sinon.stub(dynamoDbClient, "put").callsFake(params => {
-      expect(params).toEqual({
-        TableName: process.env.SERVERLESS_TALENT_TABLE_NAME,
-        Item: {
-          id: testData.INDIVIDUAL_TALENT_ID,
-          firstNames: "Carrie",
-          lastName: "Cracknell",
-          status: "Active",
-          talentType: "Individual",
-          commonRole: "Actor",
-          description: "An Actor",
-          version: 4,
-          schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
-          createdDate: "2016/01/10",
-          updatedDate: "2016/01/11"
-        },
-        ConditionExpression: "attribute_exists(id) and version = :oldVersion",
-        ExpressionAttributeValues: { ":oldVersion": 3 },
-        ReturnConsumedCapacity: undefined
-      });
-
-      return Promise.resolve();
-    });
-
-    sinon.stub(etag, "writeETagToRedis").callsFake(key => {
-      expect(key).toEqual("talent/" + testData.INDIVIDUAL_TALENT_ID);
-      return Promise.resolve();
-    });
-
-    const expected = {
+    expect(response).toEqual({
       id: testData.INDIVIDUAL_TALENT_ID,
       firstNames: "Carrie",
       lastName: "Cracknell",
@@ -234,10 +155,56 @@ describe("createOrUpdateTalent", () => {
       schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
       createdDate: "2016/01/10",
       updatedDate: "2016/01/11"
-    };
+    });
 
-    talentService
-      .createOrUpdateTalent(testData.INDIVIDUAL_TALENT_ID, {
+    expect(elasticsearch.bulk).toHaveBeenCalledWith({
+      body: [
+        {
+          index: {
+            _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_FULL,
+            _type: "doc",
+            _id: testData.INDIVIDUAL_TALENT_ID,
+            _version: 4,
+            _version_type: "external"
+          }
+        },
+        {
+          entityType: "talent",
+          id: testData.INDIVIDUAL_TALENT_ID,
+          firstNames: "Carrie",
+          lastName: "Cracknell",
+          lastName_sort: "cracknell",
+          status: "Active",
+          talentType: "Individual",
+          commonRole: "Actor",
+          version: 4
+        },
+        {
+          index: {
+            _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_AUTO,
+            _type: "doc",
+            _id: testData.INDIVIDUAL_TALENT_ID,
+            _version: 4,
+            _version_type: "external"
+          }
+        },
+        {
+          nameSuggest: ["carrie cracknell", "cracknell"],
+          output: "Carrie Cracknell",
+          id: testData.INDIVIDUAL_TALENT_ID,
+          status: "Active",
+          talentType: "Individual",
+          commonRole: "Actor",
+          entityType: "talent",
+          version: 4
+        }
+      ]
+    });
+
+    expect(entity.write).toHaveBeenCalledWith(
+      process.env.SERVERLESS_TALENT_TABLE_NAME,
+      {
+        id: testData.INDIVIDUAL_TALENT_ID,
         firstNames: "Carrie",
         lastName: "Cracknell",
         status: "Active",
@@ -245,82 +212,36 @@ describe("createOrUpdateTalent", () => {
         commonRole: "Actor",
         description: "An Actor",
         version: 4,
+        schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
         createdDate: "2016/01/10",
         updatedDate: "2016/01/11"
-      })
-      .then(response => expect(response).toEqual(expected))
-      .then(() => done())
-      .catch(done);
+      }
+    );
+
+    expect(etag.writeETagToRedis).toHaveBeenCalled();
   });
 
-  it("should process update talent request for deleted talent", done => {
-    sinon.stub(elasticsearch, "bulk").callsFake(params => {
-      expect(params).toEqual({
-        body: [
-          {
-            index: {
-              _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_FULL,
-              _type: "doc",
-              _id: testData.INDIVIDUAL_TALENT_ID,
-              _version: 4,
-              _version_type: "external"
-            }
-          },
-          {
-            entityType: "talent",
-            id: testData.INDIVIDUAL_TALENT_ID,
-            firstNames: "Carrie",
-            lastName: "Cracknell",
-            lastName_sort: "cracknell",
-            status: "Deleted",
-            talentType: "Individual",
-            commonRole: "Actor",
-            version: 4
-          },
-          {
-            delete: {
-              _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_AUTO,
-              _type: "doc",
-              _id: testData.INDIVIDUAL_TALENT_ID,
-              _version: 4,
-              _version_type: "external"
-            }
-          }
-        ]
-      });
+  it("should process update talent request for deleted talent", async () => {
+    elasticsearch.bulk = jest.fn().mockResolvedValue();
+    entity.write = jest.fn().mockResolvedValue();
+    etag.writeETagToRedis = jest.fn().mockResolvedValue();
 
-      return Promise.resolve();
-    });
+    const response = await talentService.createOrUpdateTalent(
+      testData.INDIVIDUAL_TALENT_ID,
+      {
+        firstNames: "Carrie",
+        lastName: "Cracknell",
+        status: "Deleted",
+        talentType: "Individual",
+        commonRole: "Actor",
+        description: "An Actor",
+        version: 4,
+        createdDate: "2016/01/10",
+        updatedDate: "2016/01/11"
+      }
+    );
 
-    sinon.stub(dynamoDbClient, "put").callsFake(params => {
-      expect(params).toEqual({
-        TableName: process.env.SERVERLESS_TALENT_TABLE_NAME,
-        Item: {
-          id: testData.INDIVIDUAL_TALENT_ID,
-          firstNames: "Carrie",
-          lastName: "Cracknell",
-          status: "Deleted",
-          talentType: "Individual",
-          commonRole: "Actor",
-          description: "An Actor",
-          version: 4,
-          schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
-          createdDate: "2016/01/10",
-          updatedDate: "2016/01/11"
-        },
-        ConditionExpression: "attribute_exists(id) and version = :oldVersion",
-        ExpressionAttributeValues: { ":oldVersion": 3 },
-        ReturnConsumedCapacity: undefined
-      });
-
-      return Promise.resolve();
-    });
-
-    sinon.stub(etag, "writeETagToRedis").callsFake(() => {
-      return Promise.resolve();
-    });
-
-    const expected = {
+    expect(response).toEqual({
       id: testData.INDIVIDUAL_TALENT_ID,
       firstNames: "Carrie",
       lastName: "Cracknell",
@@ -332,10 +253,46 @@ describe("createOrUpdateTalent", () => {
       schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
       createdDate: "2016/01/10",
       updatedDate: "2016/01/11"
-    };
+    });
 
-    talentService
-      .createOrUpdateTalent(testData.INDIVIDUAL_TALENT_ID, {
+    expect(elasticsearch.bulk).toHaveBeenCalledWith({
+      body: [
+        {
+          index: {
+            _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_FULL,
+            _type: "doc",
+            _id: testData.INDIVIDUAL_TALENT_ID,
+            _version: 4,
+            _version_type: "external"
+          }
+        },
+        {
+          entityType: "talent",
+          id: testData.INDIVIDUAL_TALENT_ID,
+          firstNames: "Carrie",
+          lastName: "Cracknell",
+          lastName_sort: "cracknell",
+          status: "Deleted",
+          talentType: "Individual",
+          commonRole: "Actor",
+          version: 4
+        },
+        {
+          delete: {
+            _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_AUTO,
+            _type: "doc",
+            _id: testData.INDIVIDUAL_TALENT_ID,
+            _version: 4,
+            _version_type: "external"
+          }
+        }
+      ]
+    });
+
+    expect(entity.write).toHaveBeenCalledWith(
+      process.env.SERVERLESS_TALENT_TABLE_NAME,
+      {
+        id: testData.INDIVIDUAL_TALENT_ID,
         firstNames: "Carrie",
         lastName: "Cracknell",
         status: "Deleted",
@@ -343,34 +300,26 @@ describe("createOrUpdateTalent", () => {
         commonRole: "Actor",
         description: "An Actor",
         version: 4,
+        schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
         createdDate: "2016/01/10",
         updatedDate: "2016/01/11"
-      })
-      .then(response => expect(response).toEqual(expected))
-      .then(() => done())
-      .catch(done);
+      }
+    );
+
+    expect(etag.writeETagToRedis).toHaveBeenCalled();
   });
 });
 
 describe("getTalentForEdit", () => {
-  afterEach(() => {
-    dynamoDbClient.get.restore();
-  });
+  it("should process request", async () => {
+    const dbItem = testData.createMinimalIndividualDbTalent();
+    entity.get = jest.fn().mockResolvedValue(dbItem);
 
-  it("should process request", done => {
-    sinon.stub(dynamoDbClient, "get").callsFake(params => {
-      expect(params).toEqual({
-        TableName: process.env.SERVERLESS_TALENT_TABLE_NAME,
-        Key: { id: testData.INDIVIDUAL_TALENT_ID },
-        ConsistentRead: true,
-        ReturnConsumedCapacity: undefined
-      });
+    const response = await talentService.getTalentForEdit(
+      testData.INDIVIDUAL_TALENT_ID
+    );
 
-      const dbItem = testData.createMinimalIndividualDbTalent();
-      return Promise.resolve(dbItem);
-    });
-
-    const expected = {
+    expect(response).toEqual({
       id: testData.INDIVIDUAL_TALENT_ID,
       status: "Active",
       lastName: "Cracknell",
@@ -381,81 +330,64 @@ describe("getTalentForEdit", () => {
       updatedDate: "2016/01/11",
       schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
       version: 3
-    };
+    });
 
-    talentService
-      .getTalentForEdit(testData.INDIVIDUAL_TALENT_ID)
-      .then(response => expect(response).toEqual(expected))
-      .then(() => done())
-      .catch(done);
+    expect(entity.get).toHaveBeenCalledWith(
+      process.env.SERVERLESS_TALENT_TABLE_NAME,
+      testData.INDIVIDUAL_TALENT_ID,
+      true
+    );
   });
 });
 
 describe("getTalentMulti", () => {
-  afterEach(() => {
-    dynamoDbClient.batchGet.restore();
-  });
-
-  it("should process a get multiple request", done => {
-    sinon.stub(dynamoDbClient, "batchGet").callsFake(params => {
-      expect(
-        params.RequestItems[process.env.SERVERLESS_TALENT_TABLE_NAME].Keys
-      ).toEqual([
-        { id: "carrie-cracknell-director" },
-        { id: "philipe-parreno-artist" }
-      ]);
-
-      return Promise.resolve({
-        Responses: {
-          [process.env.SERVERLESS_TALENT_TABLE_NAME]: [
-            {
-              id: "carrie-cracknell-director"
-            },
-            {
-              id: "philipe-parreno-artist"
-            }
-          ]
-        }
-      });
+  it("should process a get multiple request", async () => {
+    dynamodb.batchGet = jest.fn().mockResolvedValue({
+      Responses: {
+        [process.env.SERVERLESS_TALENT_TABLE_NAME]: [
+          {
+            id: "carrie-cracknell-director"
+          },
+          {
+            id: "philipe-parreno-artist"
+          }
+        ]
+      }
     });
 
-    const expected = [
-      {
-        entityType: "talent",
-        id: "carrie-cracknell-director"
-      },
-      {
-        entityType: "talent",
-        id: "philipe-parreno-artist"
-      }
-    ];
+    const response = await talentService.getTalentMulti([
+      "carrie-cracknell-director",
+      "philipe-parreno-artist"
+    ]);
 
-    talentService
-      .getTalentMulti(["carrie-cracknell-director", "philipe-parreno-artist"])
-      .then(response => expect(response).to.containSubset(expected))
-      .then(() => done())
-      .catch(done);
+    expect(response).toEqual(
+      expect.arrayContaining([
+        {
+          entityType: "talent",
+          id: "carrie-cracknell-director"
+        },
+        {
+          entityType: "talent",
+          id: "philipe-parreno-artist"
+        }
+      ])
+    );
+
+    expect(dynamodb.batchGet).toHaveBeenCalled();
   });
 });
 
 describe("getTalent", () => {
-  afterEach(() => {
-    dynamoDbClient.get.restore();
-  });
+  it("should process a get talent request", async () => {
+    const dbItem = testData.createMinimalIndividualDbTalent();
+    entity.get = jest.fn().mockResolvedValue(dbItem);
 
-  it("should process a get talent request", done => {
-    sinon.stub(dynamoDbClient, "get").callsFake(params => {
-      expect(params).toEqual({
-        TableName: process.env.SERVERLESS_TALENT_TABLE_NAME,
-        Key: { id: testData.INDIVIDUAL_TALENT_ID },
-        ConsistentRead: false,
-        ReturnConsumedCapacity: undefined
-      });
+    const response = await talentService.getTalent(
+      testData.INDIVIDUAL_TALENT_ID,
+      true
+    );
 
-      return Promise.resolve(testData.createMinimalIndividualDbTalent());
-    });
-
-    const expected = {
+    expect(response).toEqual({
       entityType: "talent",
       isFullEntity: true,
       id: testData.INDIVIDUAL_TALENT_ID,
@@ -464,12 +396,12 @@ describe("getTalent", () => {
       talentType: "Individual",
       commonRole: "Actor",
       firstNames: "Carrie"
-    };
+    });
 
-    talentService
-      .getTalent(testData.INDIVIDUAL_TALENT_ID, true)
-      .then(response => expect(response).toEqual(expected))
-      .then(() => done())
-      .catch(done);
+    expect(entity.get).toHaveBeenCalledWith(
+      process.env.SERVERLESS_TALENT_TABLE_NAME,
+      testData.INDIVIDUAL_TALENT_ID,
+      false
+    );
   });
 });

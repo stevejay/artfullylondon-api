@@ -1,6 +1,5 @@
 "use strict";
 
-const dynamoDbClient = require("dynamodb-doc-client-wrapper");
 const ensure = require("ensure-request").ensure;
 const normalise = require("normalise-request");
 const ensureErrorHandler = require("../data/ensure-error-handler");
@@ -14,13 +13,14 @@ const constraints = require("./constraints");
 const globalConstants = require("../constants");
 const EntityBulkUpdateBuilder = require("../entity/entity-bulk-update-builder");
 const elasticsearch = require("../external-services/elasticsearch");
+const dynamodb = require("../external-services/dynamodb");
 const eventMessaging = require("../event/messaging");
 const etag = require("../lambda/etag");
 const addressNormaliser = require("./address-normaliser");
 normalise.normalisers.address = addressNormaliser;
 
-exports.getVenue = co.wrap(function*(venueId) {
-  const dbItem = yield entity.get(
+exports.getVenue = async function(venueId) {
+  const dbItem = await entity.get(
     process.env.SERVERLESS_VENUE_TABLE_NAME,
     venueId,
     false
@@ -29,10 +29,10 @@ exports.getVenue = co.wrap(function*(venueId) {
   const response = mappings.mapDbItemToPublicResponse(dbItem);
   response.isFullEntity = true;
   return response;
-});
+};
 
-exports.getVenueMulti = co.wrap(function*(venueIds) {
-  const response = yield dynamoDbClient.batchGet({
+exports.getVenueMulti = async function(venueIds) {
+  const response = await dynamodb.batchGet({
     RequestItems: {
       [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
         Keys: venueIds.map(id => ({ id })),
@@ -45,20 +45,20 @@ exports.getVenueMulti = co.wrap(function*(venueIds) {
 
   const dbItems = response.Responses[process.env.SERVERLESS_VENUE_TABLE_NAME];
   return dbItems.map(mappings.mapDbItemToPublicSummaryResponse);
-});
+};
 
-exports.getVenueForEdit = co.wrap(function*(venueId) {
-  const dbItem = yield entity.get(
+exports.getVenueForEdit = async function(venueId) {
+  const dbItem = await entity.get(
     process.env.SERVERLESS_VENUE_TABLE_NAME,
     venueId,
     true
   );
 
   return mappings.mapDbItemToAdminResponse(dbItem);
-});
+};
 
-exports.getNextVenue = previousVenueId => {
-  return dynamoDbClient.scanBasic({
+exports.getNextVenue = async function(previousVenueId) {
+  return await dynamodb.scanBasic({
     TableName: process.env.SERVERLESS_VENUE_TABLE_NAME,
     ExclusiveStartKey: previousVenueId ? { id: previousVenueId } : null,
     Limit: 1,
@@ -67,28 +67,25 @@ exports.getNextVenue = previousVenueId => {
   });
 };
 
-exports.createOrUpdateVenue = co.wrap(function*(
-  existingVenueId,
-  params
-) {
+exports.createOrUpdateVenue = async function(existingVenueId, params) {
   normalise(params, normalisers);
   ensure(params, constraints, ensureErrorHandler);
 
   const id = existingVenueId || identity.createIdFromName(params.name);
   const isUpdate = !!existingVenueId;
 
-  const description = yield wikipedia.getDescription(
+  const description = await wikipedia.getDescription(
     params.description,
     params.descriptionCredit,
     params.links
   );
 
   const dbItem = mappings.mapRequestToDbItem(id, params, description);
-  yield entity.write(process.env.SERVERLESS_VENUE_TABLE_NAME, dbItem);
+  await entity.write(process.env.SERVERLESS_VENUE_TABLE_NAME, dbItem);
   const adminResponse = mappings.mapDbItemToAdminResponse(dbItem);
 
   if (isUpdate) {
-    yield eventMessaging.notifyEventsForVenue(dbItem.id);
+    await eventMessaging.notifyEventsForVenue(dbItem.id);
   }
 
   const fullSearchItem = mappings.mapDbItemToFullSearchIndex(dbItem);
@@ -104,14 +101,14 @@ exports.createOrUpdateVenue = co.wrap(function*(
       globalConstants.SEARCH_INDEX_TYPE_VENUE_AUTO
     );
 
-  yield elasticsearch.bulk({ body: builder.build() });
+  await elasticsearch.bulk({ body: builder.build() });
 
   const publicResponse = mappings.mapDbItemToPublicResponse(dbItem);
 
-  yield etag.writeETagToRedis(
+  await etag.writeETagToRedis(
     "venue/" + id,
     JSON.stringify({ entity: publicResponse })
   );
 
   return adminResponse;
-});
+};

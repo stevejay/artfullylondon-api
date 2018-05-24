@@ -27,7 +27,7 @@ describe("talent normalisers", () => {
 
     normalise(request, normalisers);
 
-    expect(request).eql({
+    expect(request).toEqual({
       firstNames: "Anne",
       lastName: "Trixy Stage",
       status: "Active",
@@ -61,7 +61,7 @@ describe("talent normalisers", () => {
 
     normalise(request, normalisers);
 
-    expect(request).eql({
+    expect(request).toEqual({
       firstNames: undefined,
       lastName: "Stage",
       status: "Active",
