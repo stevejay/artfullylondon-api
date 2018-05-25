@@ -1,5 +1,6 @@
 "use strict";
 
+const log = require("loglevel");
 const searchIndexService = require("../../search/search-index-service");
 
 async function handler(event, context, callback) {
@@ -13,7 +14,7 @@ async function handler(event, context, callback) {
 
     callback(null, "Success");
   } catch (err) {
-    console.log(`Error in refresh-search-index-sns: ${err.message}`);
+    log.error(`Error in refresh-search-index-sns: ${err.message}`);
     callback(err);
   }
 }

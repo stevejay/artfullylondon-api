@@ -69,7 +69,6 @@ exports.truncateTable = async function(tableName) {
   });
 
   for (let i = 0; i < items.length; ++i) {
-    console.log("ID TO DELETE", items[i].id);
     await dynamodb.delete({
       TableName: tableName,
       Key: items[i]
@@ -153,8 +152,8 @@ exports.createNewTalentBody = function() {
 exports.createNewEventBody = function(venueId, talentId, eventSeriesId) {
   return {
     name: uuidv4(),
-    status: "Active",
     version: 1,
+    status: "Active",
     eventType: "Exhibition",
     occurrenceType: "Bounded",
     costType: "Free",

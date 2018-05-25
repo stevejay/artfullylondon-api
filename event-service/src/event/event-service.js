@@ -13,12 +13,6 @@ const identity = require("../entity/id");
 const ensureErrorHandler = require("../data/ensure-error-handler");
 
 exports.getEvent = async function(eventId) {
-  console.log(
-    "GETTING EVENT",
-    eventId,
-    process.env.SERVERLESS_EVENT_TABLE_NAME
-  );
-
   const dbItem = await entity.get(
     process.env.SERVERLESS_EVENT_TABLE_NAME,
     eventId,

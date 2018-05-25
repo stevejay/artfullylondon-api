@@ -18,30 +18,15 @@ const eventPopulate = require("../event/populate");
 const etag = require("../lambda/etag");
 
 exports.updateEventSearchIndex = async function(message) {
-  console.log(
-    "IN updateEventSearchIndex >>>>>",
-    message.eventId,
-    process.env.SERVERLESS_EVENT_TABLE_NAME
-  );
-
   if (!message || !message.eventId) {
     return;
   }
 
-  let dbItem = null;
-
-  try {
-    dbItem = await entity.get(
-      process.env.SERVERLESS_EVENT_TABLE_NAME,
-      message.eventId,
-      true
-    );
-  } catch (err) {
-    console.log("YEP, THIS THROWS", err.message);
-    throw err;
-  }
-
-  console.log("SUCCEEDED!");
+  const dbItem = await entity.get(
+    process.env.SERVERLESS_EVENT_TABLE_NAME,
+    message.eventId,
+    true
+  );
 
   const referencedEntities = await eventPopulate.getReferencedEntities(dbItem, {
     ConsistentRead: true
@@ -78,8 +63,6 @@ exports.updateEventSearchIndex = async function(message) {
     "event/" + message.eventId,
     JSON.stringify({ entity: publicResponse })
   );
-
-  console.log("COMPLETED updateEventSearchIndex");
 };
 
 const refreshSearchIndexConstraints = {

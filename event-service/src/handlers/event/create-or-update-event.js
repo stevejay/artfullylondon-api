@@ -6,7 +6,10 @@ const eventService = require("../../event/event-service");
 
 async function handler(event) {
   const request = JSON.parse(event.body);
-  const pathId = event.pathParameters && event.pathParameters.id;
+  const pathId =
+    event.pathParameters && event.pathParameters.id
+      ? decodeURIComponent(event.pathParameters.id)
+      : null;
   const entity = await eventService.createOrUpdateEvent(pathId, request);
   return { body: { entity } };
 }

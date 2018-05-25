@@ -113,8 +113,7 @@ describe("event", () => {
 
     testEventId = response.entity.id;
 
-    console.log("TEST_EVENT_ID", testEventId);
-
+    // Allow time for the SNS search index update message to be processed.
     await delay(5000);
   });
 
@@ -178,6 +177,30 @@ describe("event", () => {
     );
   });
 
+  it("should get the event using the get multi endpoint", async () => {
+    const response = await request({
+      uri:
+        "http://localhost:3030/public/event?ids=" +
+        encodeURIComponent(testEventId),
+      json: true,
+      method: "GET",
+      timeout: 14000
+    });
+
+    expect(response.entities.length).toEqual(1);
+
+    expect(response.entities[0]).toEqual(
+      expect.objectContaining({
+        id: testEventId,
+        eventType: "Exhibition",
+        occurrenceType: "Bounded",
+        costType: "Free",
+        entityType: "event",
+        status: "Active"
+      })
+    );
+  });
+
   it("should have put the created event in elasticsearch", async () => {
     let response = await testUtils.getDocument("event-full", testEventId);
 
@@ -199,6 +222,145 @@ describe("event", () => {
         _index: "combined-event-auto",
         _type: "doc",
         _version: 1,
+        found: true
+      })
+    );
+  });
+
+  it("should reject a stale update to the event", async () => {
+    expect(
+      await testUtils.sync(
+        request({
+          uri: "http://localhost:3030/admin/event/" + testEventId,
+          json: true,
+          method: "PUT",
+          headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+          body: testEventBody,
+          timeout: 14000
+        })
+      )
+    ).toThrow(/Stale Data/);
+  });
+
+  it("should accept a valid update to the event", async () => {
+    const response = await request({
+      uri: "http://localhost:3030/admin/event/" + testEventId,
+      json: true,
+      method: "PUT",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      body: {
+        ...testEventBody,
+        duration: "02:00",
+        version: 2
+      },
+      timeout: 14000
+    });
+
+    expect(response.entity).toEqual(
+      expect.objectContaining({
+        id: testEventId,
+        duration: "02:00",
+        status: "Active",
+        version: 2
+      })
+    );
+
+    // Allow time for the SNS search index update message to be processed.
+    await delay(5000);
+  });
+
+  it("should put the updated event in elasticsearch", async () => {
+    let response = await testUtils.getDocument("event-full", testEventId);
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testEventId,
+        _index: "event-full",
+        _type: "doc",
+        _version: 2,
+        found: true
+      })
+    );
+
+    response = await testUtils.getDocument("combined-event-auto", testEventId);
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testEventId,
+        _index: "combined-event-auto",
+        _type: "doc",
+        _version: 2,
+        found: true
+      })
+    );
+  });
+
+  it("should fail to get a non-existent event", async () => {
+    expect(
+      await testUtils.sync(
+        request({
+          uri: "http://localhost:3030/public/event/does/not/exist",
+          json: true,
+          method: "GET",
+          timeout: 14000,
+          resolveWithFullResponse: true
+        })
+      )
+    ).toThrow(/Entity Not Found/);
+  });
+
+  it("should refresh the event-full search index", async () => {
+    await testUtils.createElasticsearchIndex("event-full");
+
+    let response = await request({
+      uri: "http://localhost:3030/admin/search/event-full/latest/refresh",
+      json: true,
+      method: "POST",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({ acknowledged: true });
+
+    await delay(5000);
+
+    response = await testUtils.getDocument("event-full", testEventId);
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testEventId,
+        _index: "event-full",
+        _type: "doc",
+        _version: 1, // event-full index does not use external versioning
+        found: true
+      })
+    );
+  });
+
+  it("should refresh the combined-event-auto search index", async () => {
+    await testUtils.createElasticsearchIndex("combined-event-auto");
+
+    let response = await request({
+      uri:
+        "http://localhost:3030/admin/search/combined-event-auto/latest/refresh",
+      json: true,
+      method: "POST",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({ acknowledged: true });
+
+    await delay(5000);
+
+    response = await testUtils.getDocument("combined-event-auto", testEventId);
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testEventId,
+        _index: "combined-event-auto",
+        _type: "doc",
+        _version: 2,
         found: true
       })
     );
