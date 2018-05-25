@@ -7,7 +7,7 @@ const venueService = require("../../venue/venue-service");
 async function handler(event) {
   const id = event.pathParameters.id;
   const entity = await venueService.getVenue(id);
-  return { body: { entity } };
+  return { entity };
 }
 
 exports.handler = withErrorHandling(withCacheControl(handler, 1800));

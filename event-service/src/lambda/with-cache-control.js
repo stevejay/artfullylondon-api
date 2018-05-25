@@ -39,8 +39,8 @@ module.exports = exports = function(handler, maxAgeSeconds) {
     } else {
       const etagValue = etag.getETagValue(body);
 
-      headers["ETag"] = etagValue;
-      headers["Cache-Control"] = "public, max-age=" + maxAgeSeconds;
+      headers["etag"] = etagValue;
+      headers["cache-control"] = "public, max-age=" + maxAgeSeconds;
 
       if (ifNoneMatchHeader === etagValue) {
         result = { statusCode: 304, headers };

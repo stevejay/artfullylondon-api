@@ -78,7 +78,6 @@ exports.createOrUpdateEventSeries = async function(
   }
 
   const fullSearchItem = mappings.mapDbItemToFullSearchIndex(dbItem);
-
   const autocompleteItem = mappings.mapDbItemToAutocompleteSearchIndex(dbItem);
 
   const builder = new EntityBulkUpdateBuilder()
@@ -96,7 +95,6 @@ exports.createOrUpdateEventSeries = async function(
     );
 
   await elasticsearch.bulk({ body: builder.build() });
-
   const publicResponse = mappings.mapDbItemToPublicResponse(dbItem);
 
   await etag.writeETagToRedis(

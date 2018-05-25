@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const isNil = require('lodash.isnil');
-const constants = require('./constants');
-const globalConstants = require('../constants');
-const constraints = require('../data/constraints');
+const isNil = require("lodash.isnil");
+const constants = require("./constants");
+const globalConstants = require("../constants");
+const constraints = require("../data/constraints");
 
 module.exports = {
   status: {
@@ -16,7 +16,7 @@ module.exports = {
     dependency: {
       test: value => value === constants.TALENT_TYPE_GROUP,
       ensure: (_, attrs) => isNil(attrs.firstNames),
-      message: 'first names should be blank for group talent'
+      message: "first names should be blank for group talent"
     }
   },
   firstNames: {
@@ -61,11 +61,9 @@ module.exports = {
     numericality: constraints.VERSION_NUMERICALITY
   },
   createdDate: {
-    presence: true,
     format: constraints.DATE_REGEX
   },
   updatedDate: {
-    presence: true,
     format: constraints.DATE_REGEX
   }
 };

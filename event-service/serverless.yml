@@ -11,6 +11,8 @@ provider:
     stage: production
     region: eu-west-1
     environment: ${file(env.yml):${self:custom.stage}}
+    apiKeys:
+        - apiKey
     iamRoleStatements:
         -
             Effect: "Allow"
@@ -178,13 +180,14 @@ provider:
 plugins:
     - serverless-webpack
     - serverless-dynamodb-local
+    - serverless-offline-sns
     - serverless-offline
 
 custom:
     project: artfullylondon
     stage: ${opt:stage, self:provider.stage}
     region: ${opt:region, self:provider.region}
-    envYml: ${file(./env.yml):${self:custom.stage}}
+    env: ${file(./env.yml):${self:custom.stage}}
     venueTableName: ${self:custom.project}-${self:custom.stage}-venue
     venueBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-venue-by-scheme
     eventTableName: ${self:custom.project}-${self:custom.stage}-event
@@ -197,9 +200,9 @@ custom:
     talentBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-talent-by-scheme
     eventUpdatedSnsEndpointName: "EventUpdated"
     refreshSearchIndexSnsEndpointName: "RefreshSearchIndex"
-    eventUpdatedTopicArn: ${self:custom.envYml.topicArnPrefix}:${self:custom.eventUpdatedSnsEndpointName}
+    eventUpdatedTopicArn: ${self:custom.env.topicArnPrefix}:${self:custom.eventUpdatedSnsEndpointName}
         # ${file(./env.yml):${self:custom.stage}.topicArnPrefix}:${self:custom.eventUpdatedSnsEndpointName}
-    refreshSearchIndexTopicArn: ${self:custom.envYml.topicArnPrefix}:${self:custom.refreshSearchIndexSnsEndpointName}
+    refreshSearchIndexTopicArn: ${self:custom.env.topicArnPrefix}:${self:custom.refreshSearchIndexSnsEndpointName}
         # ${file(./env.yml):${self:custom.stage}.topicArnPrefix}:${self:custom.refreshSearchIndexSnsEndpointName}
     webpack:
         includeModules: true
@@ -210,6 +213,12 @@ custom:
             migrate: true
             sharedDb: true
             noStart: true
+    serverless-offline-sns:
+        port: 4002 # a free port for the sns server to run on
+        debug: false
+        # host: 0.0.0.0 # Optional, defaults to 127.0.0.1 if not provided to serverless-offline
+        # sns-endpoint: http://127.0.0.1:4567 # Optional. Only if you want to use a custom endpoint
+        # accountId: 123456789012 # Optional
 
 functions:
     createUpdateVenue:
@@ -263,6 +272,12 @@ functions:
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
+        events:
+            - http:
+                path: "admin/next-venue/{lastId+}"
+                method: get
+                cors: true
+                private: true
     getVenueForEdit:
         handler: src/handlers/venue/get-venue-for-edit.handler
         environment:

@@ -4,6 +4,10 @@ const etag = require("etag");
 const log = require("loglevel");
 
 exports.tryGetETagFromRedis = async function(key) {
+  if (process.env.IS_OFFLINE) {
+    return null;
+  }
+
   const redisClient = require("../external-services/redis")();
 
   try {
@@ -18,6 +22,10 @@ exports.tryGetETagFromRedis = async function(key) {
 };
 
 exports.writeETagToRedis = async function(key, objStr) {
+  if (process.env.IS_OFFLINE) {
+    return;
+  }
+
   const redisClient = require("../external-services/redis")();
 
   try {

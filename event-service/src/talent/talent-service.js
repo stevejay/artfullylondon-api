@@ -70,21 +70,17 @@ exports.createOrUpdateTalent = async function(existingTalentId, params) {
   await entity.write(process.env.SERVERLESS_TALENT_TABLE_NAME, dbItem);
   const adminResponse = mappings.mapDbItemToAdminResponse(dbItem);
 
-  const fullSearchItem = mappings.mapDbItemToFullSearchIndex(dbItem);
-  const autocompleteItem = mappings.mapDbItemToAutocompleteSearchIndex(dbItem);
-
   const builder = new EntityBulkUpdateBuilder()
     .addFullSearchUpdate(
-      fullSearchItem,
+      mappings.mapDbItemToFullSearchIndex(dbItem),
       globalConstants.SEARCH_INDEX_TYPE_TALENT_FULL
     )
     .addAutocompleteSearchUpdate(
-      autocompleteItem,
+      mappings.mapDbItemToAutocompleteSearchIndex(dbItem),
       globalConstants.SEARCH_INDEX_TYPE_TALENT_AUTO
     );
 
   await elasticsearch.bulk({ body: builder.build() });
-
   const publicResponse = mappings.mapDbItemToPublicResponse(dbItem);
 
   await etag.writeETagToRedis(

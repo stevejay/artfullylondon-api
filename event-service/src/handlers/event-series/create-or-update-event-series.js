@@ -13,7 +13,7 @@ async function handler(event) {
     request
   );
 
-  return { body: entity };
+  return { body: { entity } };
 }
 
 exports.handler = withWriteAuthorization(withErrorHandling(handler));

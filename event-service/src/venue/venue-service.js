@@ -102,7 +102,6 @@ exports.createOrUpdateVenue = async function(existingVenueId, params) {
     );
 
   await elasticsearch.bulk({ body: builder.build() });
-
   const publicResponse = mappings.mapDbItemToPublicResponse(dbItem);
 
   await etag.writeETagToRedis(

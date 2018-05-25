@@ -10,7 +10,7 @@ module.exports = exports = function(handler, maxAgeSeconds) {
     };
 
     if (isPublic) {
-      headers["Cache-Control"] = "public, max-age=" + maxAgeSeconds;
+      headers["cache-control"] = "public, max-age=" + maxAgeSeconds;
     }
 
     const handlerResult = await handler(event, context);

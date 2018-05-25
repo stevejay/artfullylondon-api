@@ -10,7 +10,7 @@ async function handler(event) {
       : JSON.parse(event.body).ids;
 
   const entities = await eventSeriesService.getEventSeriesMulti(ids);
-  return { body: entities };
+  return { body: { entities } };
 }
 
 exports.handler = withErrorHandling(handler);

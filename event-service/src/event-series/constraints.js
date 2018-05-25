@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const constants = require('./constants');
-const globalConstants = require('../constants');
-const constraints = require('../data/constraints');
+const constants = require("./constants");
+const globalConstants = require("../constants");
+const constraints = require("../data/constraints");
 
 module.exports = {
   status: {
@@ -57,11 +57,9 @@ module.exports = {
     numericality: constraints.VERSION_NUMERICALITY
   },
   createdDate: {
-    presence: true,
     format: constraints.DATE_REGEX
   },
   updatedDate: {
-    presence: true,
     format: constraints.DATE_REGEX
   }
 };

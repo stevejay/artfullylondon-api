@@ -4,11 +4,14 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test jest ./src",
     "posttest": "yarn run lint",
-    "test:integration": "cross-env NODE_ENV=test jest --runInBand ./tests/integration",
+    "test:integration":
+      "cross-env NODE_ENV=test jest --no-cache --runInBand ./tests/integration",
     "lint": "eslint .",
     "deploy": "yarn test && node build.js && sls deploy --stage=production -v",
-    "local:service": "sls offline start --stage=development --port 3020 --noTimeout",
-    "temp": "elasticdump --input=https://r7p7otgolh:dz3dcwcdgq@artfullylondon-produ-8750330393.eu-west-1.bonsaisearch.net --output=./settings.json --type=settings"
+    "local:service":
+      "sls offline start --stage=development --port 3020 --noTimeout",
+    "temp":
+      "elasticdump --input=https://r7p7otgolh:dz3dcwcdgq@artfullylondon-produ-8750330393.eu-west-1.bonsaisearch.net --output=./settings.json --type=settings"
   },
   "devDependencies": {
     "aws-sdk": "^2.244.1",
