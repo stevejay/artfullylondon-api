@@ -15,9 +15,10 @@ exports.notifyEventsForVenue = async function(venueId) {
 
   await Promise.all(
     events.map(event =>
-      sns.notify(event.id, {
-        arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN
-      })
+      sns.notify(
+        { eventId: event.id },
+        { arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN }
+      )
     )
   );
 };
@@ -34,9 +35,10 @@ exports.notifyEventsForEventSeries = async function(eventSeriesId) {
 
   await Promise.all(
     events.map(event =>
-      sns.notify(event.id, {
-        arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN
-      })
+      sns.notify(
+        { eventId: event.id },
+        { arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN }
+      )
     )
   );
 };

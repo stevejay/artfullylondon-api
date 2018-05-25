@@ -5,6 +5,7 @@ const log = require("loglevel");
 const ensure = require("ensure-request").ensure;
 const sns = require("../external-services/sns");
 const dynamodb = require("../external-services/dynamodb");
+const entity = require("../entity/entity");
 const elasticsearch = require("../external-services/elasticsearch");
 const EntityBulkUpdateBuilder = require("../entity/entity-bulk-update-builder");
 const globalConstants = require("../constants");
@@ -16,17 +17,31 @@ const venueMappings = require("../venue/mappings");
 const eventPopulate = require("../event/populate");
 const etag = require("../lambda/etag");
 
-exports.updateEventSearchIndex = async function(eventId) {
-  if (!eventId) {
+exports.updateEventSearchIndex = async function(message) {
+  console.log(
+    "IN updateEventSearchIndex >>>>>",
+    message.eventId,
+    process.env.SERVERLESS_EVENT_TABLE_NAME
+  );
+
+  if (!message || !message.eventId) {
     return;
   }
 
-  const dbItem = await dynamodb.get({
-    TableName: process.env.SERVERLESS_EVENT_TABLE_NAME,
-    Key: { id: eventId },
-    ConsistentRead: true,
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
-  });
+  let dbItem = null;
+
+  try {
+    dbItem = await entity.get(
+      process.env.SERVERLESS_EVENT_TABLE_NAME,
+      message.eventId,
+      true
+    );
+  } catch (err) {
+    console.log("YEP, THIS THROWS", err.message);
+    throw err;
+  }
+
+  console.log("SUCCEEDED!");
 
   const referencedEntities = await eventPopulate.getReferencedEntities(dbItem, {
     ConsistentRead: true
@@ -60,9 +75,11 @@ exports.updateEventSearchIndex = async function(eventId) {
   );
 
   await etag.writeETagToRedis(
-    "event/" + eventId,
+    "event/" + message.eventId,
     JSON.stringify({ entity: publicResponse })
   );
+
+  console.log("COMPLETED updateEventSearchIndex");
 };
 
 const refreshSearchIndexConstraints = {

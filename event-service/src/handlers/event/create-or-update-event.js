@@ -8,7 +8,7 @@ async function handler(event) {
   const request = JSON.parse(event.body);
   const pathId = event.pathParameters && event.pathParameters.id;
   const entity = await eventService.createOrUpdateEvent(pathId, request);
-  return { body: entity };
+  return { body: { entity } };
 }
 
 exports.handler = withWriteAuthorization(withErrorHandling(handler));

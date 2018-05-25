@@ -1,31 +1,13 @@
 "use strict";
 
 const request = require("request-promise-native");
-const uuidv4 = require("uuid/v4");
 const delay = require("delay");
 const testUtils = require("./utils");
 jest.setTimeout(30000);
 
-const VALID_NEW_EVENT_SERIES = {
-  eventSeriesType: "Occasional",
-  occurrence: "Third Thursday of each month",
-  name: uuidv4(),
-  images: [
-    {
-      id: "89bbe5df833341c88976f2572c0a1557",
-      ratio: 1,
-      copyright: "Bang Said The Gun"
-    }
-  ],
-  summary: "Stand-up poetry",
-  description:
-    "<p>Poetry for people who don't like poetry! This event is held on the third Thursday of each month. Each night consists of performances by a number of poets followed by an open mic spot.</p>",
-  status: "Active",
-  version: 1
-};
-
-describe("talent", () => {
+describe("event series", () => {
   let testEventSeriesId = null;
+  const testEventSeriesBody = testUtils.createNewEventSeriesBody();
 
   beforeAll(async () => {
     await testUtils.createElasticsearchIndex("event-series-full");
@@ -63,7 +45,7 @@ describe("talent", () => {
           json: true,
           method: "POST",
           headers: { Authorization: testUtils.READONLY_AUTH_TOKEN },
-          body: VALID_NEW_EVENT_SERIES,
+          body: testEventSeriesBody,
           timeout: 14000
         })
       )
@@ -76,7 +58,7 @@ describe("talent", () => {
       json: true,
       method: "POST",
       headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-      body: VALID_NEW_EVENT_SERIES,
+      body: testEventSeriesBody,
       timeout: 14000
     });
 
@@ -139,6 +121,34 @@ describe("talent", () => {
     );
   });
 
+  it("should get the event series without cache control headers when using the admin api", async () => {
+    const response = await request({
+      uri: "http://localhost:3030/admin/event-series/" + testEventSeriesId,
+      json: true,
+      method: "GET",
+      timeout: 14000,
+      resolveWithFullResponse: true
+    });
+
+    expect(response.headers).toEqual(
+      expect.objectContaining({
+        "cache-control": "no-cache"
+      })
+    );
+
+    expect(response.headers.etag).not.toBeDefined();
+
+    expect(response.body.entity).toEqual(
+      expect.objectContaining({
+        id: testEventSeriesId,
+        eventSeriesType: "Occasional",
+        summary: "Stand-up poetry",
+        status: "Active",
+        version: 1
+      })
+    );
+  });
+
   it("should get the event series with cache control headers when using the public api", async () => {
     const response = await request({
       uri: "http://localhost:3030/public/event-series/" + testEventSeriesId,
@@ -165,34 +175,6 @@ describe("talent", () => {
         entityType: "event-series",
         status: "Active",
         isFullEntity: true
-      })
-    );
-  });
-
-  it("should get the event series without cache control headers when using the admin api", async () => {
-    const response = await request({
-      uri: "http://localhost:3030/admin/event-series/" + testEventSeriesId,
-      json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
-
-    expect(response.headers).toEqual(
-      expect.objectContaining({
-        "cache-control": "no-cache"
-      })
-    );
-
-    expect(response.headers.etag).not.toBeDefined();
-
-    expect(response.body.entity).toEqual(
-      expect.objectContaining({
-        id: testEventSeriesId,
-        eventSeriesType: "Occasional",
-        summary: "Stand-up poetry",
-        status: "Active",
-        version: 1
       })
     );
   });
@@ -228,7 +210,7 @@ describe("talent", () => {
           json: true,
           method: "PUT",
           headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-          body: VALID_NEW_EVENT_SERIES,
+          body: testEventSeriesBody,
           timeout: 14000
         })
       )
@@ -242,7 +224,7 @@ describe("talent", () => {
       method: "PUT",
       headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
       body: {
-        ...VALID_NEW_EVENT_SERIES,
+        ...testEventSeriesBody,
         summary: "Stand-up poetry New",
         version: 2
       },

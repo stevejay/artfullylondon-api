@@ -1,25 +1,15 @@
 "use strict";
 
 const request = require("request-promise-native");
-const uuidv4 = require("uuid/v4");
 const delay = require("delay");
 const testUtils = require("./utils");
 jest.setTimeout(30000);
 
 // TODO test wikipedia integration
 
-const VALID_NEW_TALENT = {
-  commonRole: "Poet",
-  lastName: uuidv4(),
-  links: [{ type: "Homepage", url: "http://www.byronvincent.com/" }],
-  talentType: "Individual",
-  version: 1,
-  firstNames: "Byron",
-  status: "Active"
-};
-
 describe("talent", () => {
   let testTalentId = null;
+  const testTalentBody = testUtils.createNewTalentBody();
 
   beforeAll(async () => {
     await testUtils.createElasticsearchIndex("talent-full");
@@ -55,7 +45,7 @@ describe("talent", () => {
           json: true,
           method: "POST",
           headers: { Authorization: testUtils.READONLY_AUTH_TOKEN },
-          body: VALID_NEW_TALENT,
+          body: testTalentBody,
           timeout: 14000
         })
       )
@@ -68,7 +58,7 @@ describe("talent", () => {
       json: true,
       method: "POST",
       headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-      body: VALID_NEW_TALENT,
+      body: testTalentBody,
       timeout: 14000
     });
 
@@ -112,6 +102,33 @@ describe("talent", () => {
     );
   });
 
+  it("should get the talent without cache control headers when using the admin api", async () => {
+    const response = await request({
+      uri: "http://localhost:3030/admin/talent/" + testTalentId,
+      json: true,
+      method: "GET",
+      timeout: 14000,
+      resolveWithFullResponse: true
+    });
+
+    expect(response.headers).toEqual(
+      expect.objectContaining({
+        "cache-control": "no-cache"
+      })
+    );
+
+    expect(response.headers.etag).not.toBeDefined();
+
+    expect(response.body.entity).toEqual(
+      expect.objectContaining({
+        id: testTalentId,
+        firstNames: "Byron",
+        status: "Active",
+        version: 1
+      })
+    );
+  });
+
   it("should get the talent with cache control headers when using the public api", async () => {
     const response = await request({
       uri: "http://localhost:3030/public/talent/" + testTalentId,
@@ -139,33 +156,6 @@ describe("talent", () => {
         talentType: "Individual",
         entityType: "talent",
         isFullEntity: true
-      })
-    );
-  });
-
-  it("should get the talent without cache control headers when using the admin api", async () => {
-    const response = await request({
-      uri: "http://localhost:3030/admin/talent/" + testTalentId,
-      json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
-
-    expect(response.headers).toEqual(
-      expect.objectContaining({
-        "cache-control": "no-cache"
-      })
-    );
-
-    expect(response.headers.etag).not.toBeDefined();
-
-    expect(response.body.entity).toEqual(
-      expect.objectContaining({
-        id: testTalentId,
-        firstNames: "Byron",
-        status: "Active",
-        version: 1
       })
     );
   });
@@ -202,7 +192,7 @@ describe("talent", () => {
           json: true,
           method: "PUT",
           headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-          body: VALID_NEW_TALENT,
+          body: testTalentBody,
           timeout: 14000
         })
       )
@@ -216,7 +206,7 @@ describe("talent", () => {
       method: "PUT",
       headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
       body: {
-        ...VALID_NEW_TALENT,
+        ...testTalentBody,
         firstNames: "Byron New",
         version: 2
       },

@@ -13,6 +13,7 @@ async function handler(event, context, callback) {
 
     callback(null, "Success");
   } catch (err) {
+    console.log(`Error in refresh-search-index-sns: ${err.message}`);
     callback(err);
   }
 }

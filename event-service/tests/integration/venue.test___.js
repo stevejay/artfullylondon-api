@@ -1,44 +1,15 @@
 "use strict";
 
 const request = require("request-promise-native");
-const uuidv4 = require("uuid/v4");
 const delay = require("delay");
 const testUtils = require("./utils");
 jest.setTimeout(30000);
 
 // TODO test wikipedia integration
 
-const VALID_NEW_VENUE = {
-  name: uuidv4(),
-  version: 1,
-  status: "Active",
-  hearingFacilitiesType: "Unknown",
-  links: [
-    { type: "Wikipedia", url: "https://en.wikipedia.org/wiki/Almeida_Theatre" },
-    { type: "Twitter", url: "https://twitter.com/AlmeidaTheatre" },
-    { type: "Homepage", url: "https://www.almeida.co.uk/" },
-    { type: "Facebook", url: "https://www.facebook.com/almeidatheatre/" },
-    { type: "Access", url: "https://www.almeida.co.uk/access" }
-  ],
-  postcode: "N1 1TA",
-  disabledBathroomType: "Present",
-  address: "Almeida St\\nLondon",
-  email: "boxoffice@almeida.co.uk",
-  longitude: -0.103103,
-  images: [
-    { id: "eed89908d1aa41a69ec6acc5dc92bc99", ratio: 0.6656905807711079 }
-  ],
-  telephone: "020 7359 4404",
-  description:
-    "<p>The Almeida Theatre, opened in 1980, is a 325-seat studio theatre with an international reputation, which takes its name from the street on which it is located, off Upper Street, in the London Borough of Islington. The theatre produces a diverse range of drama. Successful plays often transfer to West End theatres.</p>",
-  wheelchairAccessType: "Unknown",
-  latitude: 51.539464,
-  venueType: "Theatre",
-  hasPermanentCollection: false
-};
-
 describe("venue", () => {
   let testVenueId = null;
+  const testVenueBody = testUtils.createNewVenueBody();
 
   beforeAll(async () => {
     await testUtils.createElasticsearchIndex("venue-full");
@@ -74,7 +45,7 @@ describe("venue", () => {
           json: true,
           method: "POST",
           headers: { Authorization: testUtils.READONLY_AUTH_TOKEN },
-          body: VALID_NEW_VENUE,
+          body: testVenueBody,
           timeout: 14000
         })
       )
@@ -87,7 +58,7 @@ describe("venue", () => {
       json: true,
       method: "POST",
       headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-      body: VALID_NEW_VENUE,
+      body: testVenueBody,
       timeout: 14000
     });
 
@@ -128,6 +99,33 @@ describe("venue", () => {
     );
   });
 
+  it("should get the venue without cache control headers when using the admin api", async () => {
+    const response = await request({
+      uri: "http://localhost:3030/admin/venue/" + testVenueId,
+      json: true,
+      method: "GET",
+      timeout: 14000,
+      resolveWithFullResponse: true
+    });
+
+    expect(response.headers).toEqual(
+      expect.objectContaining({
+        "cache-control": "no-cache"
+      })
+    );
+
+    expect(response.headers.etag).not.toBeDefined();
+
+    expect(response.body.entity).toEqual(
+      expect.objectContaining({
+        id: testVenueId,
+        postcode: "N1 1TA",
+        status: "Active",
+        version: 1
+      })
+    );
+  });
+
   it("should get the venue with cache control headers when using the public api", async () => {
     const response = await request({
       uri: "http://localhost:3030/public/venue/" + testVenueId,
@@ -153,33 +151,6 @@ describe("venue", () => {
         entityType: "venue",
         status: "Active",
         isFullEntity: true
-      })
-    );
-  });
-
-  it("should get the venue without cache control headers when using the admin api", async () => {
-    const response = await request({
-      uri: "http://localhost:3030/admin/venue/" + testVenueId,
-      json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
-
-    expect(response.headers).toEqual(
-      expect.objectContaining({
-        "cache-control": "no-cache"
-      })
-    );
-
-    expect(response.headers.etag).not.toBeDefined();
-
-    expect(response.body.entity).toEqual(
-      expect.objectContaining({
-        id: testVenueId,
-        postcode: "N1 1TA",
-        status: "Active",
-        version: 1
       })
     );
   });
@@ -214,7 +185,7 @@ describe("venue", () => {
           json: true,
           method: "PUT",
           headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-          body: VALID_NEW_VENUE,
+          body: testVenueBody,
           timeout: 14000
         })
       )
@@ -228,7 +199,7 @@ describe("venue", () => {
       method: "PUT",
       headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
       body: {
-        ...VALID_NEW_VENUE,
+        ...testVenueBody,
         postcode: "N8 0KL",
         version: 2
       },

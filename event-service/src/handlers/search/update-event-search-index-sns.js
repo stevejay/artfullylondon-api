@@ -6,13 +6,14 @@ async function handler(event, context, callback) {
   try {
     await Promise.all(
       (event.Records || []).map(record => {
-        const eventId = record.Sns ? record.Sns.Message : null;
-        return searchIndexService.updateEventSearchIndex(eventId);
+        const message = record.Sns ? JSON.parse(record.Sns.Message) : null;
+        return searchIndexService.updateEventSearchIndex(message);
       })
     );
 
     callback(null, "Success");
   } catch (err) {
+    console.log(`Error in update-event-search-index-sns: ${err.message}`);
     callback(err);
   }
 }

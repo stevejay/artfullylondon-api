@@ -12,6 +12,8 @@ const config = process.env.IS_OFFLINE
 const sns = new AWS.SNS(config);
 
 exports.notify = async (body, headers) => {
+  console.log("notifying >>>", body, headers);
+
   await sns
     .publish({
       Message: JSON.stringify(body),

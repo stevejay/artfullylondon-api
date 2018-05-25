@@ -13,6 +13,12 @@ const identity = require("../entity/id");
 const ensureErrorHandler = require("../data/ensure-error-handler");
 
 exports.getEvent = async function(eventId) {
+  console.log(
+    "GETTING EVENT",
+    eventId,
+    process.env.SERVERLESS_EVENT_TABLE_NAME
+  );
+
   const dbItem = await entity.get(
     process.env.SERVERLESS_EVENT_TABLE_NAME,
     eventId,
@@ -84,9 +90,10 @@ exports.createOrUpdateEvent = async function(existingEventId, params) {
     referencedEntities
   );
 
-  await sns.notify(id, {
-    arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN
-  });
+  await sns.notify(
+    { eventId: id },
+    { arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN }
+  );
 
   return response;
 };
