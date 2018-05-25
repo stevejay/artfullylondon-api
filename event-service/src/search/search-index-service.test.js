@@ -20,24 +20,6 @@ const sync = fn =>
     throw err;
   });
 
-describe("refreshEventFullSearch", () => {
-  it("should process a request", async () => {
-    sns.notify = jest.fn().mockResolvedValue();
-
-    await searchIndexService.refreshEventFullSearch();
-
-    expect(sns.notify).toHaveBeenCalledWith(
-      {
-        index: globalConstants.SEARCH_INDEX_TYPE_EVENT_FULL,
-        version: "latest",
-        entity: "event",
-        exclusiveStartKey: null
-      },
-      { arn: "refresh-search-index" }
-    );
-  });
-});
-
 describe("processRefreshSearchIndexMessage", () => {
   it("should refresh talents in the talent full index when multiple scans are required", async () => {
     dynamodb.scanBasic = jest.fn().mockResolvedValue({

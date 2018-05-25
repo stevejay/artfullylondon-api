@@ -1,5 +1,22 @@
 "use strict";
 
-const snsPublish = require("aws-sns-publish");
+const AWS = require("aws-sdk");
 
-exports.notify = (body, headers) => snsPublish(body, headers);
+const config = process.env.IS_OFFLINE
+  ? {
+      endpoint: "http://localhost:4002",
+      region: "eu-west-1"
+    }
+  : undefined;
+
+const sns = new AWS.SNS(config);
+
+exports.notify = async (body, headers) => {
+  await sns
+    .publish({
+      Message: JSON.stringify(body),
+      MessageStructure: "json",
+      TopicArn: headers.arn
+    })
+    .promise();
+};

@@ -1,17 +1,20 @@
 "use strict";
 
-const withErrorHandling = require("lambda-error-handler");
 const searchIndexService = require("../../search/search-index-service");
 
-async function handler(event) {
-  await Promise.all(
-    (event.Records || []).map(record => {
-      const message = JSON.parse(record.Sns.Message);
-      return searchIndexService.processRefreshSearchIndexMessage(message);
-    })
-  );
+async function handler(event, context, callback) {
+  try {
+    await Promise.all(
+      (event.Records || []).map(record => {
+        const message = JSON.parse(record.Sns.Message);
+        return searchIndexService.processRefreshSearchIndexMessage(message);
+      })
+    );
 
-  return { body: { acknowledged: true } };
+    callback(null, "Success");
+  } catch (err) {
+    callback(err);
+  }
 }
 
-exports.handler = withErrorHandling(handler);
+exports.handler = handler;

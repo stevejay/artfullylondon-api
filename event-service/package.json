@@ -4,12 +4,10 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test jest ./src",
     "posttest": "yarn run lint",
-    "test:integration":
-      "cross-env NODE_ENV=test jest --no-cache --runInBand ./tests/integration",
+    "test:integration": "cross-env NODE_ENV=test jest --no-cache --runInBand ./tests/integration",
     "lint": "eslint .",
     "deploy": "yarn test && node build.js && sls deploy --stage=production -v",
-    "local:service":
-      "cross-env sls offline start --stage=development --port 3030 --noTimeout --apiKey dddddddddddddddddddddddddddddddd",
+    "local:service": "cross-env sls offline start --stage=development --port 3030 --noTimeout --apiKey dddddddddddddddddddddddddddddddd",
     "local:install": "sls dynamodb install  --stage=development",
     "local:dynamodb": "node ./scripts/start-dynamodb-local.js"
   },

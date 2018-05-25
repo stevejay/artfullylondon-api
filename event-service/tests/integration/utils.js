@@ -4,6 +4,13 @@ const elasticsearch = require("elasticsearch");
 const yaml = require("js-yaml");
 const fs = require("fs");
 
+const dynamodb = require("dynamodb-doc-client-wrapper")({
+  connection: {
+    region: "localhost",
+    endpoint: "http://localhost:8000"
+  }
+});
+
 exports.EDITOR_AUTH_TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiY29nbml0bzp1c2VybmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ._ANmL9jse6JQCwQJumzBEH6omY7OjFFSFYJdS5wdeZE";
 
@@ -24,19 +31,19 @@ const esClient = new elasticsearch.Client({
   log: "error"
 });
 
-async function deleteElasticsearchIndex(index) {
+exports.deleteElasticsearchIndex = async function(index) {
   if (await esClient.indices.exists({ index })) {
     await esClient.indices.delete({ index });
   }
-}
+};
 
-async function createElasticsearchIndex(index) {
+exports.createElasticsearchIndex = async function(index) {
   const mappingJson = require(`../../../elasticsearch/${index}.json`);
-  await deleteElasticsearchIndex(index);
+  await exports.deleteElasticsearchIndex(index);
   await esClient.indices.create({ index, body: mappingJson });
-}
+};
 
-async function indexDocument(index, doc) {
+exports.indexDocument = async function(index, doc) {
   await esClient.create({
     index,
     type: "doc",
@@ -44,17 +51,33 @@ async function indexDocument(index, doc) {
     body: doc,
     refresh: "true"
   });
-}
+};
 
-async function getDocument(index, id) {
+exports.getDocument = async function(index, id) {
   return await esClient.get({
     index,
     type: "doc",
     id
   });
-}
+};
 
-exports.createElasticsearchIndex = createElasticsearchIndex;
-exports.deleteElasticsearchIndex = deleteElasticsearchIndex;
-exports.indexDocument = indexDocument;
-exports.getDocument = getDocument;
+exports.truncateTable = async function(tableName) {
+  const items = await dynamodb.scan({
+    TableName: tableName,
+    ProjectionExpression: "id"
+  });
+
+  for (let i = 0; i < items.length; ++i) {
+    await dynamodb.delete({
+      TableName: tableName,
+      Key: items[i]
+    });
+  }
+};
+
+exports.truncateAllTables = async function() {
+  await exports.truncateTable("artfullylondon-development-event");
+  await exports.truncateTable("artfullylondon-development-eventseries");
+  await exports.truncateTable("artfullylondon-development-talent");
+  await exports.truncateTable("artfullylondon-development-venue");
+};

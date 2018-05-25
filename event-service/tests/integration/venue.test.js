@@ -2,8 +2,9 @@
 
 const request = require("request-promise-native");
 const uuidv4 = require("uuid/v4");
+const delay = require("delay");
 const testUtils = require("./utils");
-jest.setTimeout(15000);
+jest.setTimeout(30000);
 
 // TODO test wikipedia integration
 
@@ -42,6 +43,7 @@ describe("venue", () => {
   beforeAll(async () => {
     await testUtils.createElasticsearchIndex("venue-full");
     await testUtils.createElasticsearchIndex("venue-auto");
+    await testUtils.truncateAllTables();
   });
 
   afterAll(async () => {
@@ -299,5 +301,61 @@ describe("venue", () => {
         })
       )
     ).toThrow(/Entity Not Found/);
+  });
+
+  it("should refresh the venue-full search index", async () => {
+    await testUtils.createElasticsearchIndex("venue-full");
+
+    let response = await request({
+      uri: "http://localhost:3030/admin/search/venue-full/latest/refresh",
+      json: true,
+      method: "POST",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({ acknowledged: true });
+
+    await delay(5000);
+
+    response = await testUtils.getDocument("venue-full", testVenueId);
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testVenueId,
+        _index: "venue-full",
+        _type: "doc",
+        _version: 2,
+        found: true
+      })
+    );
+  });
+
+  it("should refresh the venue-auto search index", async () => {
+    await testUtils.createElasticsearchIndex("venue-auto");
+
+    let response = await request({
+      uri: "http://localhost:3030/admin/search/venue-auto/latest/refresh",
+      json: true,
+      method: "POST",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({ acknowledged: true });
+
+    await delay(5000);
+
+    response = await testUtils.getDocument("venue-auto", testVenueId);
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testVenueId,
+        _index: "venue-auto",
+        _type: "doc",
+        _version: 2,
+        found: true
+      })
+    );
   });
 });

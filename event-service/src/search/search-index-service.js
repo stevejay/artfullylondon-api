@@ -65,20 +65,6 @@ exports.updateEventSearchIndex = async function(eventId) {
   );
 };
 
-exports.refreshEventFullSearch = async function() {
-  await sns.notify(
-    {
-      index: "event-full",
-      version: "latest",
-      entity: "event",
-      exclusiveStartKey: null
-    },
-    {
-      arn: process.env.SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN
-    }
-  );
-};
-
 const refreshSearchIndexConstraints = {
   index: {
     presence: true,
@@ -166,7 +152,10 @@ exports.processRefreshSearchIndexMessage = async function(message) {
   });
 
   try {
-    await elasticsearch.bulk({ body: builder.build() });
+    const body = builder.build();
+    if (body.length) {
+      await elasticsearch.bulk({ body });
+    }
   } catch (err) {
     log.error("elasticsearch errors: " + err.message);
     // swallow exception to allow process to continue.

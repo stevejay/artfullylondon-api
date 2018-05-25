@@ -2,8 +2,9 @@
 
 const request = require("request-promise-native");
 const uuidv4 = require("uuid/v4");
+const delay = require("delay");
 const testUtils = require("./utils");
-jest.setTimeout(15000);
+jest.setTimeout(30000);
 
 const VALID_NEW_EVENT_SERIES = {
   eventSeriesType: "Occasional",
@@ -30,6 +31,7 @@ describe("talent", () => {
     await testUtils.createElasticsearchIndex("event-series-full");
     await testUtils.createElasticsearchIndex("event-series-auto");
     await testUtils.createElasticsearchIndex("combined-event-auto");
+    await testUtils.truncateAllTables();
   });
 
   afterAll(async () => {
@@ -316,5 +318,69 @@ describe("talent", () => {
         })
       )
     ).toThrow(/Entity Not Found/);
+  });
+
+  it("should refresh the event-series-full search index", async () => {
+    await testUtils.createElasticsearchIndex("event-series-full");
+
+    let response = await request({
+      uri:
+        "http://localhost:3030/admin/search/event-series-full/latest/refresh",
+      json: true,
+      method: "POST",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({ acknowledged: true });
+
+    await delay(5000);
+
+    response = await testUtils.getDocument(
+      "event-series-full",
+      testEventSeriesId
+    );
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testEventSeriesId,
+        _index: "event-series-full",
+        _type: "doc",
+        _version: 2,
+        found: true
+      })
+    );
+  });
+
+  it("should refresh the event-series-auto search index", async () => {
+    await testUtils.createElasticsearchIndex("event-series-auto");
+
+    let response = await request({
+      uri:
+        "http://localhost:3030/admin/search/event-series-auto/latest/refresh",
+      json: true,
+      method: "POST",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({ acknowledged: true });
+
+    await delay(5000);
+
+    response = await testUtils.getDocument(
+      "event-series-auto",
+      testEventSeriesId
+    );
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testEventSeriesId,
+        _index: "event-series-auto",
+        _type: "doc",
+        _version: 2,
+        found: true
+      })
+    );
   });
 });

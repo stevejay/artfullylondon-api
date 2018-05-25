@@ -2,8 +2,9 @@
 
 const request = require("request-promise-native");
 const uuidv4 = require("uuid/v4");
+const delay = require("delay");
 const testUtils = require("./utils");
-jest.setTimeout(15000);
+jest.setTimeout(30000);
 
 // TODO test wikipedia integration
 
@@ -23,6 +24,7 @@ describe("talent", () => {
   beforeAll(async () => {
     await testUtils.createElasticsearchIndex("talent-full");
     await testUtils.createElasticsearchIndex("talent-auto");
+    await testUtils.truncateAllTables();
   });
 
   afterAll(async () => {
@@ -269,5 +271,61 @@ describe("talent", () => {
         })
       )
     ).toThrow(/Entity Not Found/);
+  });
+
+  it("should refresh the talent-full search index", async () => {
+    await testUtils.createElasticsearchIndex("talent-full");
+
+    let response = await request({
+      uri: "http://localhost:3030/admin/search/talent-full/latest/refresh",
+      json: true,
+      method: "POST",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({ acknowledged: true });
+
+    await delay(5000);
+
+    response = await testUtils.getDocument("talent-full", testTalentId);
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testTalentId,
+        _index: "talent-full",
+        _type: "doc",
+        _version: 2,
+        found: true
+      })
+    );
+  });
+
+  it("should refresh the talent-auto search index", async () => {
+    await testUtils.createElasticsearchIndex("talent-auto");
+
+    let response = await request({
+      uri: "http://localhost:3030/admin/search/talent-auto/latest/refresh",
+      json: true,
+      method: "POST",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({ acknowledged: true });
+
+    await delay(5000);
+
+    response = await testUtils.getDocument("talent-auto", testTalentId);
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testTalentId,
+        _index: "talent-auto",
+        _type: "doc",
+        _version: 2,
+        found: true
+      })
+    );
   });
 });
