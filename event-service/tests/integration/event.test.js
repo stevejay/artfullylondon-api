@@ -9,9 +9,11 @@ jest.setTimeout(30000);
 describe("event", () => {
   let testVenueId = null;
   let testTalentId = null;
+  let testEventSeriesId = null;
   let testEventId = null;
   const testVenueBody = testUtils.createNewVenueBody();
   const testTalentBody = testUtils.createNewTalentBody();
+  const testEventSeriesBody = testUtils.createNewEventSeriesBody();
   let testEventBody = null;
 
   beforeAll(async () => {
@@ -19,6 +21,8 @@ describe("event", () => {
     await testUtils.createElasticsearchIndex("venue-auto");
     await testUtils.createElasticsearchIndex("talent-full");
     await testUtils.createElasticsearchIndex("talent-auto");
+    await testUtils.createElasticsearchIndex("event-series-full");
+    await testUtils.createElasticsearchIndex("event-series-auto");
     await testUtils.createElasticsearchIndex("event-full");
     await testUtils.createElasticsearchIndex("combined-event-auto");
     await testUtils.truncateAllTables();
@@ -45,10 +49,21 @@ describe("event", () => {
 
     testTalentId = response.entity.id;
 
+    response = await request({
+      uri: "http://localhost:3030/admin/event-series",
+      json: true,
+      method: "POST",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      body: testEventSeriesBody,
+      timeout: 14000
+    });
+
+    testEventSeriesId = response.entity.id;
+
     testEventBody = testUtils.createNewEventBody(
       testVenueId,
       testTalentId,
-      null
+      testEventSeriesId
     );
   });
 
@@ -57,6 +72,8 @@ describe("event", () => {
     await testUtils.deleteElasticsearchIndex("venue-auto");
     await testUtils.deleteElasticsearchIndex("talent-full");
     await testUtils.deleteElasticsearchIndex("talent-auto");
+    await testUtils.deleteElasticsearchIndex("event-series-full");
+    await testUtils.deleteElasticsearchIndex("event-series-auto");
     await testUtils.deleteElasticsearchIndex("event-full");
     await testUtils.deleteElasticsearchIndex("combined-event-auto");
   });
@@ -111,6 +128,10 @@ describe("event", () => {
       })
     );
 
+    expect(response.entity.venue.id).toEqual(testVenueId);
+    expect(response.entity.talents[0].id).toEqual(testTalentId);
+    expect(response.entity.eventSeries.id).toEqual(testEventSeriesId);
+
     testEventId = response.entity.id;
 
     // Allow time for the SNS search index update message to be processed.
@@ -144,6 +165,10 @@ describe("event", () => {
         version: 1
       })
     );
+
+    expect(response.body.entity.venue.id).toEqual(testVenueId);
+    expect(response.body.entity.talents[0].id).toEqual(testTalentId);
+    expect(response.body.entity.eventSeries.id).toEqual(testEventSeriesId);
   });
 
   it("should get the event with cache control headers when using the public api", async () => {
@@ -175,6 +200,10 @@ describe("event", () => {
         isFullEntity: true
       })
     );
+
+    expect(response.body.entity.venue.id).toEqual(testVenueId);
+    expect(response.body.entity.talents[0].id).toEqual(testTalentId);
+    expect(response.body.entity.eventSeries.id).toEqual(testEventSeriesId);
   });
 
   it("should get the event using the get multi endpoint", async () => {
@@ -199,6 +228,8 @@ describe("event", () => {
         status: "Active"
       })
     );
+
+    expect(response.entities[0].venueId).toEqual(testVenueId);
   });
 
   it("should have put the created event in elasticsearch", async () => {
@@ -214,6 +245,15 @@ describe("event", () => {
       })
     );
 
+    expect(response._source).toEqual(
+      expect.objectContaining({
+        postcode: "N1 1TA",
+        venueId: testVenueId,
+        eventSeriesId: testEventSeriesId,
+        talents: [testTalentId]
+      })
+    );
+
     response = await testUtils.getDocument("combined-event-auto", testEventId);
 
     expect(response).toEqual(
@@ -223,6 +263,13 @@ describe("event", () => {
         _type: "doc",
         _version: 1,
         found: true
+      })
+    );
+
+    expect(response._source).toEqual(
+      expect.objectContaining({
+        id: testEventId,
+        eventType: "Exhibition"
       })
     );
   });
@@ -265,6 +312,10 @@ describe("event", () => {
       })
     );
 
+    expect(response.entity.venue.id).toEqual(testVenueId);
+    expect(response.entity.talents[0].id).toEqual(testTalentId);
+    expect(response.entity.eventSeries.id).toEqual(testEventSeriesId);
+
     // Allow time for the SNS search index update message to be processed.
     await delay(5000);
   });
@@ -282,6 +333,14 @@ describe("event", () => {
       })
     );
 
+    expect(response._source).toEqual(
+      expect.objectContaining({
+        venueId: testVenueId,
+        eventSeriesId: testEventSeriesId,
+        talents: [testTalentId]
+      })
+    );
+
     response = await testUtils.getDocument("combined-event-auto", testEventId);
 
     expect(response).toEqual(
@@ -291,6 +350,13 @@ describe("event", () => {
         _type: "doc",
         _version: 2,
         found: true
+      })
+    );
+
+    expect(response._source).toEqual(
+      expect.objectContaining({
+        id: testEventId,
+        eventType: "Exhibition"
       })
     );
   });
@@ -365,4 +431,81 @@ describe("event", () => {
       })
     );
   });
+
+  it("should update the event when the venue entity updates", async () => {
+    await request({
+      uri: "http://localhost:3030/admin/venue/" + testVenueId,
+      json: true,
+      method: "PUT",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      body: {
+        ...testVenueBody,
+        postcode: "N8 0KL",
+        version: 2
+      },
+      timeout: 14000
+    });
+
+    // Allow time for the search index update message to be processed.
+    await delay(5000);
+
+    const response = await testUtils.getDocument("event-full", testEventId);
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testEventId,
+        _index: "event-full",
+        _type: "doc",
+        _version: 2, // event-full index does not use external versioning
+        found: true
+      })
+    );
+
+    expect(response._source).toEqual(
+      expect.objectContaining({
+        postcode: "N8 0KL",
+        venueId: testVenueId,
+        eventSeriesId: testEventSeriesId,
+        talents: [testTalentId]
+      })
+    );
+  });
+
+  // it("should update the event when the event series entity updates", async () => {
+  //   await request({
+  //     uri: "http://localhost:3030/admin/event-series/" + testEventSeriesId,
+  //     json: true,
+  //     method: "PUT",
+  //     headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+  //     body: {
+  //       ...testEventSeriesBody,
+  //       name: "New Event Name",
+  //       version: 2
+  //     },
+  //     timeout: 14000
+  //   });
+
+  //   // Allow time for the search index update message to be processed.
+  //   await delay(5000);
+
+  //   const response = await testUtils.getDocument("event-full", testEventId);
+
+  //   expect(response).toEqual(
+  //     expect.objectContaining({
+  //       _id: testEventId,
+  //       _index: "event-full",
+  //       _type: "doc",
+  //       _version: 3, // event-full index does not use external versioning
+  //       found: true
+  //     })
+  //   );
+
+  //   expect(response._source).toEqual(
+  //     expect.objectContaining({
+  //       venueId: testVenueId,
+  //       eventSeriesId: testEventSeriesId,
+  //       talents: [testTalentId]
+  //     })
+  //   );
+  // });
 });

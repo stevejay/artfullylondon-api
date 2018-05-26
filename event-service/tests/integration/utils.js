@@ -161,8 +161,6 @@ exports.createNewEventBody = function(venueId, talentId, eventSeriesId) {
       "An exhibition of paintings and the rarely seen drawings of the pioneering and visionary architect Zaha Hadid",
     dateFrom: "2017/01/13",
     dateTo: "2017/02/12",
-    venueName: "Serpentine Sackler Gallery",
-    postcode: "W2 2AR",
     rating: 3,
     bookingType: "NotRequired",
     useVenueOpeningTimes: true,
@@ -194,6 +192,7 @@ exports.createNewEventBody = function(venueId, talentId, eventSeriesId) {
         ratio: 0.43567251461988304
       }
     ],
+    eventSeriesId,
     venueId
   };
 };
