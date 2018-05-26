@@ -32,12 +32,3 @@ exports.search = async (searches, options) => {
 
   return results;
 };
-
-exports.mget = async (index, type, ids, source) => {
-  return await client.mget({
-    index,
-    type,
-    body: { ids },
-    _source: source
-  });
-};

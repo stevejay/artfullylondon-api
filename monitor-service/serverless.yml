@@ -3,7 +3,7 @@ service: artfullylondon-monitor-service
 frameworkVersion: ">=1.2.0 <2.0.0"
 
 package:
-    individually: false
+    individually: true
 
 provider:
     name: aws
@@ -61,6 +61,8 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-dynamodb-local
+    - serverless-offline
 
 custom:
     project: artfullylondon
@@ -75,11 +77,19 @@ custom:
     venueMonitorTableName: ${self:custom.project}-${self:custom.stage}-venuemonitor
     iterateVenuesSnsEndpointName: "MonitorServiceIterateVenues"
     iterateVenuesTopicArn: ${file(./env.yml):${self:custom.stage}.topicArnPrefix}:${self:custom.iterateVenuesSnsEndpointName}
-    webpackIncludeModules: true
+    webpack:
+        includeModules: true
+        packager: 'npm'
+    dynamodb:
+        start:
+            port: 8000
+            migrate: true
+            sharedDb: true
+            noStart: true
 
 functions:
     getVenueMonitors:
-        handler: handlers/venue-monitor/get-venue-monitors.handler
+        handler: src/handlers/venue-monitor/get-venue-monitors.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_MONITOR_TABLE_NAME: ${self:custom.venueMonitorTableName}
@@ -89,7 +99,7 @@ functions:
                 method: get
                 cors: true
     updateVenueMonitor:
-        handler: handlers/venue-monitor/update-venue-monitor.handler
+        handler: src/handlers/venue-monitor/update-venue-monitor.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_MONITOR_TABLE_NAME: ${self:custom.venueMonitorTableName}
@@ -99,7 +109,7 @@ functions:
                 method: put
                 cors: true
     getEventMonitors:
-        handler: handlers/venue-event-monitor/get-venue-event-monitors.handler
+        handler: src/handlers/venue-event-monitor/get-venue-event-monitors.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_EVENT_MONITOR_TABLE_NAME: ${self:custom.eventMonitorTableName}
@@ -109,7 +119,7 @@ functions:
                 method: get
                 cors: true
     getEventMonitor:
-        handler: handlers/venue-event-monitor/get-venue-event-monitor.handler
+        handler: src/handlers/venue-event-monitor/get-venue-event-monitor.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_EVENT_MONITOR_TABLE_NAME: ${self:custom.eventMonitorTableName}
@@ -119,7 +129,7 @@ functions:
                 method: get
                 cors: true
     updateEventMonitor:
-        handler: handlers/venue-event-monitor/update-venue-event-monitor.handler
+        handler: src/handlers/venue-event-monitor/update-venue-event-monitor.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_EVENT_MONITOR_TABLE_NAME: ${self:custom.eventMonitorTableName}
@@ -129,7 +139,7 @@ functions:
                 method: put
                 cors: true
     iterateVenues:
-        handler: handlers/iterate-venues.handler
+        handler: src/handlers/iterate-venues.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_ITERATE_VENUES_TOPIC_ARN: ${self:custom.iterateVenuesTopicArn}
@@ -144,7 +154,7 @@ functions:
             #     rate: cron(0 10 * * ? *) # 10:00 a.m. daily
             #     enabled: true
     iterateVenuesSns:
-        handler: handlers/iterate-venues-sns.handler
+        handler: src/handlers/iterate-venues-sns.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_EVENT_MONITOR_TABLE_NAME: ${self:custom.eventMonitorTableName}
@@ -157,7 +167,7 @@ functions:
         events:
             - sns: "${self:custom.iterateVenuesSnsEndpointName}"
     monitorStatusEmail:
-        handler: handlers/send-monitor-status-email.handler
+        handler: src/handlers/send-monitor-status-email.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_EVENT_MONITOR_TABLE_NAME: ${self:custom.eventMonitorTableName}

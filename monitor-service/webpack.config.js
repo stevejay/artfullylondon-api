@@ -1,39 +1,27 @@
-'use strict';
+"use strict";
 
-const nodeExternals = require('webpack-node-externals');
-const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const WebpackOnBuildPlugin = require('on-build-webpack');
-const chmod = require('chmod');
+const nodeExternals = require("webpack-node-externals");
+const slsw = require("serverless-webpack");
+const path = require("path");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const WebpackOnBuildPlugin = require("on-build-webpack");
+const chmod = require("chmod");
 
 module.exports = {
-  entry: {
-    '/handlers/iterate-venues': './handlers/iterate-venues.js',
-    '/handlers/iterate-venues-sns': './handlers/iterate-venues-sns.js',
-
-    '/handlers/venue-monitor/get-venue-monitors': './handlers/venue-monitor/get-venue-monitors.js',
-    '/handlers/venue-monitor/update-venue-monitor': './handlers/venue-monitor/update-venue-monitor.js',
-
-    '/handlers/venue-event-monitor/get-venue-event-monitor': './handlers/venue-event-monitor/get-venue-event-monitor.js',
-    '/handlers/venue-event-monitor/get-venue-event-monitors': './handlers/venue-event-monitor/get-venue-event-monitors.js',
-    '/handlers/venue-event-monitor/update-venue-event-monitor': './handlers/venue-event-monitor/update-venue-event-monitor.js',
-
-    '/handlers/send-monitor-status-email': './handlers/send-monitor-status-email.js',
-  },
-  target: 'node',
+  mode: slsw.lib.webpack.isLocal ? "development" : "production",
+  entry: slsw.lib.entries,
+  target: "node",
   output: {
-    libraryTarget: 'commonjs',
-    path: path.join(__dirname, '.webpack'),
-    filename: '[name].js',
+    libraryTarget: "commonjs",
+    path: path.join(__dirname, ".webpack"),
+    filename: "[name].js"
   },
-  externals: [nodeExternals(), 'aws-sdk'],
-  resolve: {
-    root: __dirname,
-  },
+  externals: [nodeExternals(), "aws-sdk"],
+  resolve: { modules: [__dirname] },
   plugins: [
-    new CopyWebpackPlugin([{ from: './bin/phantomjs' }]),
+    new CopyWebpackPlugin([{ from: "./bin/phantomjs" }]),
     new WebpackOnBuildPlugin(() => {
-      chmod('.webpack/phantomjs', 777);
-    }),
-  ],
+      chmod(".webpack/phantomjs", 777);
+    })
+  ]
 };
