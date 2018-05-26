@@ -106,7 +106,7 @@ describe("createOrUpdateVenue", () => {
             _type: "doc",
             _id: testData.MINIMAL_VENUE_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -129,7 +129,7 @@ describe("createOrUpdateVenue", () => {
             _type: "doc",
             _id: testData.MINIMAL_VENUE_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -231,7 +231,7 @@ describe("createOrUpdateVenue", () => {
             _type: "doc",
             _id: testData.MINIMAL_VENUE_ID,
             _version: 2,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -254,7 +254,7 @@ describe("createOrUpdateVenue", () => {
             _type: "doc",
             _id: testData.MINIMAL_VENUE_ID,
             _version: 2,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {

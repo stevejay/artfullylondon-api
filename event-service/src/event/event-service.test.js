@@ -121,9 +121,10 @@ describe("createOrUpdateEvent", () => {
       dbItem
     );
 
-    expect(sns.notify).toHaveBeenCalledWith(testData.PERFORMANCE_EVENT_ID, {
-      arn: "event-updated"
-    });
+    expect(sns.notify).toHaveBeenCalledWith(
+      { eventId: testData.PERFORMANCE_EVENT_ID },
+      { arn: "event-updated" }
+    );
   });
 
   it("should process update event request", async () => {
@@ -221,9 +222,10 @@ describe("createOrUpdateEvent", () => {
       dbItem
     );
 
-    expect(sns.notify).toHaveBeenCalledWith(testData.PERFORMANCE_EVENT_ID, {
-      arn: "event-updated"
-    });
+    expect(sns.notify).toHaveBeenCalledWith(
+      { eventId: testData.PERFORMANCE_EVENT_ID },
+      { arn: "event-updated" }
+    );
   });
 });
 

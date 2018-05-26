@@ -31,9 +31,10 @@ describe("event messaging", () => {
         ReturnConsumedCapacity: undefined
       });
 
-      expect(sns.notify).toHaveBeenCalledWith(testData.PERFORMANCE_EVENT_ID, {
-        arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN
-      });
+      expect(sns.notify).toHaveBeenCalledWith(
+        { eventId: testData.PERFORMANCE_EVENT_ID },
+        { arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN }
+      );
     });
 
     it("should not notify when the venue has zero related events", async () => {
@@ -74,9 +75,10 @@ describe("event messaging", () => {
         ReturnConsumedCapacity: undefined
       });
 
-      expect(sns.notify).toHaveBeenCalledWith(testData.PERFORMANCE_EVENT_ID, {
-        arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN
-      });
+      expect(sns.notify).toHaveBeenCalledWith(
+        { eventId: testData.PERFORMANCE_EVENT_ID },
+        { arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN }
+      );
     });
 
     it("should not notify when the event series has zero related events", async () => {

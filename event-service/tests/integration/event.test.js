@@ -1,7 +1,6 @@
 "use strict";
 
 const request = require("request-promise-native");
-const uuidv4 = require("uuid/v4");
 const delay = require("delay");
 const testUtils = require("./utils");
 jest.setTimeout(30000);
@@ -397,7 +396,7 @@ describe("event", () => {
         _id: testEventId,
         _index: "event-full",
         _type: "doc",
-        _version: 1, // event-full index does not use external versioning
+        _version: 2,
         found: true
       })
     );
@@ -456,7 +455,7 @@ describe("event", () => {
         _id: testEventId,
         _index: "event-full",
         _type: "doc",
-        _version: 2, // event-full index does not use external versioning
+        _version: 2,
         found: true
       })
     );
@@ -471,41 +470,41 @@ describe("event", () => {
     );
   });
 
-  // it("should update the event when the event series entity updates", async () => {
-  //   await request({
-  //     uri: "http://localhost:3030/admin/event-series/" + testEventSeriesId,
-  //     json: true,
-  //     method: "PUT",
-  //     headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-  //     body: {
-  //       ...testEventSeriesBody,
-  //       name: "New Event Name",
-  //       version: 2
-  //     },
-  //     timeout: 14000
-  //   });
+  it("should update the event when the event series entity updates", async () => {
+    await request({
+      uri: "http://localhost:3030/admin/event-series/" + testEventSeriesId,
+      json: true,
+      method: "PUT",
+      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      body: {
+        ...testEventSeriesBody,
+        name: "New Event Series Name",
+        version: 2
+      },
+      timeout: 14000
+    });
 
-  //   // Allow time for the search index update message to be processed.
-  //   await delay(5000);
+    // Allow time for the search index update message to be processed.
+    await delay(5000);
 
-  //   const response = await testUtils.getDocument("event-full", testEventId);
+    const response = await testUtils.getDocument("event-full", testEventId);
 
-  //   expect(response).toEqual(
-  //     expect.objectContaining({
-  //       _id: testEventId,
-  //       _index: "event-full",
-  //       _type: "doc",
-  //       _version: 3, // event-full index does not use external versioning
-  //       found: true
-  //     })
-  //   );
+    expect(response).toEqual(
+      expect.objectContaining({
+        _id: testEventId,
+        _index: "event-full",
+        _type: "doc",
+        _version: 2,
+        found: true
+      })
+    );
 
-  //   expect(response._source).toEqual(
-  //     expect.objectContaining({
-  //       venueId: testVenueId,
-  //       eventSeriesId: testEventSeriesId,
-  //       talents: [testTalentId]
-  //     })
-  //   );
-  // });
+    expect(response._source).toEqual(
+      expect.objectContaining({
+        venueId: testVenueId,
+        eventSeriesId: testEventSeriesId,
+        talents: [testTalentId]
+      })
+    );
+  });
 });

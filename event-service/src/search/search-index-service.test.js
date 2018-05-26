@@ -4,6 +4,7 @@ const moment = require("moment");
 const dynamodb = require("../external-services/dynamodb");
 const elasticsearch = require("../external-services/elasticsearch");
 const sns = require("../external-services/sns");
+const entity = require("../entity/entity");
 const testData = require("../test-data");
 const globalConstants = require("../constants");
 const searchIndexService = require("./search-index-service");
@@ -53,7 +54,7 @@ describe("processRefreshSearchIndexMessage", () => {
             _type: "doc",
             _id: testData.INDIVIDUAL_TALENT_ID,
             _version: 3,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -107,7 +108,7 @@ describe("processRefreshSearchIndexMessage", () => {
             _type: "doc",
             _id: testData.INDIVIDUAL_TALENT_ID,
             _version: 3,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -166,7 +167,7 @@ describe("processRefreshSearchIndexMessage", () => {
             _type: "doc",
             _id: testData.INDIVIDUAL_TALENT_ID,
             _version: 3,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -218,7 +219,7 @@ describe("processRefreshSearchIndexMessage", () => {
             _type: "doc",
             _id: testData.INDIVIDUAL_TALENT_ID,
             _version: 3,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -269,7 +270,7 @@ describe("processRefreshSearchIndexMessage", () => {
             _type: "doc",
             _id: testData.MINIMAL_VENUE_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -324,7 +325,7 @@ describe("processRefreshSearchIndexMessage", () => {
             _type: "doc",
             _id: testData.MINIMAL_VENUE_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -377,7 +378,7 @@ describe("processRefreshSearchIndexMessage", () => {
             _type: "doc",
             _id: testData.EVENT_SERIES_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -430,7 +431,7 @@ describe("processRefreshSearchIndexMessage", () => {
             _type: "doc",
             _id: testData.EVENT_SERIES_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -484,7 +485,9 @@ describe("processRefreshSearchIndexMessage", () => {
           index: {
             _index: globalConstants.SEARCH_INDEX_TYPE_EVENT_FULL + "_v10",
             _type: "doc",
-            _id: testData.PERFORMANCE_EVENT_ID
+            _id: testData.PERFORMANCE_EVENT_ID,
+            _version: 4,
+            _version_type: "external_gte"
           }
         },
         {
@@ -666,7 +669,7 @@ describe("updateEventSearchIndex", () => {
       }
     ];
 
-    dynamodb.get = jest.fn().mockResolvedValue(dbItem);
+    entity.get = jest.fn().mockResolvedValue(dbItem);
 
     dynamodb.batchGet = jest.fn().mockResolvedValue({
       Responses: {
@@ -679,16 +682,15 @@ describe("updateEventSearchIndex", () => {
     elasticsearch.bulk = jest.fn().mockResolvedValue();
     etag.writeETagToRedis = jest.fn().mockResolvedValue();
 
-    await searchIndexService.updateEventSearchIndex(
-      testData.PERFORMANCE_EVENT_ID
-    );
-
-    expect(dynamodb.get).toHaveBeenCalledWith({
-      TableName: process.env.SERVERLESS_EVENT_TABLE_NAME,
-      Key: { id: testData.PERFORMANCE_EVENT_ID },
-      ConsistentRead: true,
-      ReturnConsumedCapacity: undefined
+    await searchIndexService.updateEventSearchIndex({
+      eventId: testData.PERFORMANCE_EVENT_ID
     });
+
+    expect(entity.get).toHaveBeenCalledWith(
+      process.env.SERVERLESS_EVENT_TABLE_NAME,
+      testData.PERFORMANCE_EVENT_ID,
+      true
+    );
 
     expect(dynamodb.batchGet).toHaveBeenCalledWith({
       RequestItems: {
@@ -706,7 +708,9 @@ describe("updateEventSearchIndex", () => {
           index: {
             _index: globalConstants.SEARCH_INDEX_TYPE_EVENT_FULL,
             _type: "doc",
-            _id: testData.PERFORMANCE_EVENT_ID
+            _id: testData.PERFORMANCE_EVENT_ID,
+            _version: 4,
+            _version_type: "external_gte"
           }
         },
         {
@@ -757,7 +761,7 @@ describe("updateEventSearchIndex", () => {
             _type: "doc",
             _id: testData.PERFORMANCE_EVENT_ID,
             _version: 4,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {

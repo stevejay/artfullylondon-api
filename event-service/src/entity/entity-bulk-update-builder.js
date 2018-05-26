@@ -9,14 +9,14 @@ class EntityBulkUpdateBuilder {
   }
 
   addFullSearchUpdate(document, indexName) {
-    // Event full search does not use external versioning.
-
-    const version =
-      document.entityType === globalConstants.ENTITY_TYPE_EVENT
-        ? null
-        : document.version;
-
-    this.builder.index(document, indexName, "doc", document.id, version);
+    this.builder.index(
+      document,
+      indexName,
+      "doc",
+      document.id,
+      document.version,
+      "external_gte"
+    );
     return this;
   }
 
@@ -27,10 +27,11 @@ class EntityBulkUpdateBuilder {
         indexName,
         "doc",
         document.id,
-        document.version
+        document.version,
+        "external_gte"
       );
     } else {
-      this.builder.delete(indexName, "doc", document.id, document.version);
+      this.builder.delete(indexName, "doc", document.id);
     }
 
     return this;

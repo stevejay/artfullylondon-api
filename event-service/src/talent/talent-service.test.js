@@ -67,7 +67,7 @@ describe("createOrUpdateTalent", () => {
             _type: "doc",
             _id: testData.INDIVIDUAL_TALENT_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -87,7 +87,7 @@ describe("createOrUpdateTalent", () => {
             _type: "doc",
             _id: testData.INDIVIDUAL_TALENT_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -165,7 +165,7 @@ describe("createOrUpdateTalent", () => {
             _type: "doc",
             _id: testData.INDIVIDUAL_TALENT_ID,
             _version: 4,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -185,7 +185,7 @@ describe("createOrUpdateTalent", () => {
             _type: "doc",
             _id: testData.INDIVIDUAL_TALENT_ID,
             _version: 4,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -263,7 +263,7 @@ describe("createOrUpdateTalent", () => {
             _type: "doc",
             _id: testData.INDIVIDUAL_TALENT_ID,
             _version: 4,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -281,9 +281,7 @@ describe("createOrUpdateTalent", () => {
           delete: {
             _index: globalConstants.SEARCH_INDEX_TYPE_TALENT_AUTO,
             _type: "doc",
-            _id: testData.INDIVIDUAL_TALENT_ID,
-            _version: 4,
-            _version_type: "external"
+            _id: testData.INDIVIDUAL_TALENT_ID
           }
         }
       ]

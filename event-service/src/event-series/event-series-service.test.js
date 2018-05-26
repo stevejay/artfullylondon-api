@@ -95,7 +95,7 @@ describe("createOrUpdateEventSeries", () => {
             _type: "doc",
             _id: testData.EVENT_SERIES_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -115,7 +115,7 @@ describe("createOrUpdateEventSeries", () => {
             _type: "doc",
             _id: testData.EVENT_SERIES_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -132,7 +132,7 @@ describe("createOrUpdateEventSeries", () => {
             _type: "doc",
             _id: testData.EVENT_SERIES_ID,
             _version: 1,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -213,7 +213,7 @@ describe("createOrUpdateEventSeries", () => {
             _type: "doc",
             _id: testData.EVENT_SERIES_ID,
             _version: 5,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -233,7 +233,7 @@ describe("createOrUpdateEventSeries", () => {
             _type: "doc",
             _id: testData.EVENT_SERIES_ID,
             _version: 5,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {
@@ -250,7 +250,7 @@ describe("createOrUpdateEventSeries", () => {
             _type: "doc",
             _id: testData.EVENT_SERIES_ID,
             _version: 5,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         {

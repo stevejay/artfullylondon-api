@@ -24,7 +24,7 @@ describe("entity-bulk-update-builder", () => {
             _type: "doc",
             _id: "some-id",
             _version: 4,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         document
@@ -49,7 +49,9 @@ describe("entity-bulk-update-builder", () => {
           index: {
             _index: "some-index",
             _type: "doc",
-            _id: "some-id"
+            _id: "some-id",
+            _version: 4,
+            _version_type: "external_gte"
           }
         },
         document
@@ -80,7 +82,7 @@ describe("entity-bulk-update-builder", () => {
             _type: "doc",
             _id: "some-id",
             _version: 4,
-            _version_type: "external"
+            _version_type: "external_gte"
           }
         },
         document
@@ -107,9 +109,7 @@ describe("entity-bulk-update-builder", () => {
           delete: {
             _index: "some-auto-index",
             _type: "doc",
-            _id: "some-id",
-            _version: 4,
-            _version_type: "external"
+            _id: "some-id"
           }
         }
       ]);
