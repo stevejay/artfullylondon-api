@@ -1,10 +1,10 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').spaLoader;
 
-exports.pageParser = co.wrap(function*() {
-  const $ = yield pageLoader(
+exports.pageParser = async function() {
+  const $ = await pageLoader(
     'http://www.arts.ac.uk/csm/whats-on-at-csm/platform-theatre/',
     'h1.WhatsOnHeading'
   );
@@ -12,4 +12,4 @@ exports.pageParser = co.wrap(function*() {
   const title = $('title').html();
   const data = $('.EventsList .Events').html();
   return { data, title };
-});
+};

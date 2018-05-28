@@ -1,13 +1,12 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.blainsouthern.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  let $ = yield pageLoader(BASE_URL + '/exhibitions');
+  let $ = await pageLoader(BASE_URL + '/exhibitions');
 
   $(
     'li.exhibition:has(.gallery_title:contains("London")) a:has(img)'
@@ -17,19 +16,19 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('h1').html();
   const data = $('#center').html();
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/gallery-info');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/gallery-info');
 
   return $('#content #center p').each(function() {
     $(this).html();
   });
-});
+};

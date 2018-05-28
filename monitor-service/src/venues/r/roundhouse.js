@@ -1,6 +1,6 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 // TODO improve this
@@ -8,9 +8,9 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.roundhouse.org.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  const $ = yield pageLoader(
+  const $ = await pageLoader(
     `${BASE_URL}/whats-on/list?categories%5B11%5D=11&categories%5B54%5D=54&categories%5B61%5D=61&categories%5B103%5D=103&categories%5B108%5D=108&categories%5B124%5D=124&categories%5B131%5D=131&categories%5B133%5D=133`
   );
 
@@ -22,10 +22,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('#container h1').html();
 
   const data = [
@@ -34,4 +34,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   ];
 
   return { title, data };
-});
+};

@@ -1,12 +1,12 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.kcl.ac.uk';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/greenwood/whatson/index.aspx');
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL + '/greenwood/whatson/index.aspx');
   const result = [];
 
   $('#Listing1_List a:has(img)').each(function() {
@@ -15,11 +15,11 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = $('#events_item_column').html();
   return { title, data };
-});
+};

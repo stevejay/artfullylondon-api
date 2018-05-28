@@ -1,14 +1,14 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.estorickcollection.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  let $ = yield pageLoader(BASE_URL + '/events');
+  let $ = await pageLoader(BASE_URL + '/events');
   $('.u-space--mb-s a').each(function() {
     const href = $(this).attr('href');
 
@@ -17,7 +17,7 @@ exports.pageFinder = co.wrap(function*() {
     }
   });
 
-  $ = yield pageLoader(BASE_URL + '/exhibitions/in-the/future');
+  $ = await pageLoader(BASE_URL + '/exhibitions/in-the/future');
   $('.u-space--mb-s a').each(function() {
     const href = $(this).attr('href');
 
@@ -27,16 +27,16 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('h1').html();
   const data = $('main p').html();
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/visitor-information');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/visitor-information');
   return $('main h3:contains("Opening Times") + p').html();
-});
+};

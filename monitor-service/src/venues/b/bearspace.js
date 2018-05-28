@@ -1,10 +1,9 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').spaLoader;
 
-exports.pageParser = co.wrap(function*() {
-  const $ = yield pageLoader(
+exports.pageParser = async function() {
+  const $ = await pageLoader(
     'https://www.bearspace.co.uk/upcoming',
     'span:contains("MORE")'
   );
@@ -17,4 +16,4 @@ exports.pageParser = co.wrap(function*() {
   });
 
   return { data, title };
-});
+};

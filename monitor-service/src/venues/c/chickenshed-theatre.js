@@ -1,15 +1,14 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.chickenshed.org.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
   for (let i = 0; i < 3; ++i) {
-    const $ = yield pageLoader(BASE_URL + '/whats-on?page=' + i);
+    const $ = await pageLoader(BASE_URL + '/whats-on?page=' + i);
 
     $(
       '.listings li:has(p.venue:contains("Chickenshed")) a:has(img)'
@@ -20,11 +19,11 @@ exports.pageFinder = co.wrap(function*() {
   }
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = $('.mainContent').html();
   return { title, data };
-});
+};

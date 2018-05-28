@@ -1,14 +1,14 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.delfontmackintosh.co.uk';
 
 module.exports = function(venueName) {
   return {
-    pageFinder: co.wrap(function*() {
-      const $ = yield pageLoader(`${BASE_URL}/theatres/${venueName}/index.php`);
+    pageFinder: async function() {
+      const $ = await pageLoader(`${BASE_URL}/theatres/${venueName}/index.php`);
       const result = [];
 
       $('a:has(.tickets-landing)').each(function() {
@@ -18,8 +18,8 @@ module.exports = function(venueName) {
 
       return result;
     }),
-    pageParser: co.wrap(function*(pageUrl) {
-      let $ = yield pageLoader(pageUrl);
+    pageParser: async function(pageUrl) {
+      let $ = await pageLoader(pageUrl);
       const title = $('title').first().html();
       const data = [$('.show-info-main-container').html()];
 
@@ -27,7 +27,7 @@ module.exports = function(venueName) {
         '.show-right-container ul li a:contains("Performance Times")'
       ).attr('href');
 
-      $ = yield pageLoader(pageUrl.replace(/\/[^/]+$/, '/') + timesPageUrl);
+      $ = await pageLoader(pageUrl.replace(/\/[^/]+$/, '/') + timesPageUrl);
 
       data.push(
         $(

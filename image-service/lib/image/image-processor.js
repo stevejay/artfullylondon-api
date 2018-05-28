@@ -1,6 +1,6 @@
 'use strict';
 
-const co = require('co');
+
 const tmp = require('tmp');
 const imageReader = require('./image-reader');
 const imageResizer = require('./image-resizer');
@@ -10,7 +10,7 @@ const mappings = require('../mappings');
 const s3 = require('../external-services/s3');
 const imageRepository = require('../persistence/image-repository');
 
-exports.resizeImage = co.wrap(function*(
+exports.resizeImage = async function(
   resizeSizes,
   imageId,
   imageFilePath
@@ -39,7 +39,7 @@ exports.resizeImage = co.wrap(function*(
   });
 });
 
-exports.processImage = co.wrap(function*(type, id, imageUrl) {
+exports.processImage = async function(type, id, imageUrl) {
   const dbItem = yield imageRepository.tryGetImage(id);
 
   if (dbItem) {
@@ -52,7 +52,7 @@ exports.processImage = co.wrap(function*(type, id, imageUrl) {
   return yield _processImage(tmpPath, type, id, imageUrl, extension, false);
 });
 
-exports.reprocessImage = co.wrap(function*(id) {
+exports.reprocessImage = async function(id) {
   const dbItem = yield imageRepository.tryGetImage(id);
 
   if (!dbItem) {

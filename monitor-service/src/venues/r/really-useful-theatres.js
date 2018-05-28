@@ -1,14 +1,14 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.reallyusefultheatres.co.uk';
 
 module.exports = function(theatreUrlName) {
   return {
-    pageFinder: co.wrap(function*() {
-      const $ = yield pageLoader(BASE_URL + '/our-theatres/' + theatreUrlName);
+    pageFinder: async function() {
+      const $ = await pageLoader(BASE_URL + '/our-theatres/' + theatreUrlName);
       const links = $('article div.wrapper:has(h2:contains("Now Booking")) a');
       const result = [];
 
@@ -24,8 +24,8 @@ module.exports = function(theatreUrlName) {
 
       return result;
     }),
-    pageParser: co.wrap(function*(pageUrl) {
-      let $ = yield pageLoader(pageUrl);
+    pageParser: async function(pageUrl) {
+      let $ = await pageLoader(pageUrl);
       const title = $('title').html();
       const data = $('#show-about-main').html();
 
@@ -33,7 +33,7 @@ module.exports = function(theatreUrlName) {
         .find('a:contains("Times")')
         .attr('href');
 
-      $ = yield pageLoader(BASE_URL + timesAndPricesHref);
+      $ = await pageLoader(BASE_URL + timesAndPricesHref);
       const times = $('#shows-about-inner').html();
 
       return { title, data: [data, times] };

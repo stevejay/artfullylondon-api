@@ -1,13 +1,13 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.tate.org.uk';
 
 module.exports = function(venueName, venueOpeningsName) {
   return {
-    pageFinder: co.wrap(function*() {
+    pageFinder: async function() {
       const result = [];
 
       const eventGroups = [
@@ -18,7 +18,7 @@ module.exports = function(venueName, venueOpeningsName) {
       ]; // 'events'];
 
       for (let i = 0; i < eventGroups.length; ++i) {
-        const $ = yield pageLoader(
+        const $ = await pageLoader(
           `${BASE_URL}/whats-on?event_group=${eventGroups[
             i
           ]}&gallery_group=${venueName}&daterange=fromnow`
@@ -32,8 +32,8 @@ module.exports = function(venueName, venueOpeningsName) {
 
       return result;
     }),
-    pageParser: co.wrap(function*(pageUrl) {
-      const $ = yield pageLoader(pageUrl);
+    pageParser: async function(pageUrl) {
+      const $ = await pageLoader(pageUrl);
       const title = $('#content h1').html();
       const data = [$('header.content-header').html()];
 
@@ -43,8 +43,8 @@ module.exports = function(venueName, venueOpeningsName) {
 
       return { title, data };
     }),
-    venueOpenings: co.wrap(function*() {
-      const $ = yield pageLoader(
+    venueOpenings: async function() {
+      const $ = await pageLoader(
         BASE_URL + `/visit/${venueOpeningsName}#visit`
       );
 

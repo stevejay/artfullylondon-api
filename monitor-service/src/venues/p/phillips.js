@@ -1,13 +1,13 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.phillips.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  const $ = yield pageLoader(`${BASE_URL}/auctions/exhibitions`);
+  const $ = await pageLoader(`${BASE_URL}/auctions/exhibitions`);
 
   $('li.auction:has(h3:contains("London")) a:has(img)').each(function() {
     const href = $(this).attr('href');
@@ -15,12 +15,12 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result.slice(0, 5);
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = [$('.sale-title-banner').html()];
   data.push($('#auction-info').html());
   return { title, data };
-});
+};

@@ -1,12 +1,12 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.brockleyjack.co.uk';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/whats-on/theatre/');
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL + '/whats-on/theatre/');
   const result = [];
 
   $('#page-main section.production a').each(function() {
@@ -15,10 +15,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('h1').html();
 
   const data = $('.entry_content p').each(function() {
@@ -26,4 +26,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   });
 
   return { title, data };
-});
+};

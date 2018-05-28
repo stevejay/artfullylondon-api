@@ -1,346 +1,238 @@
-'use strict';
+"use strict";
 
-const sinon = require('sinon');
-const expect = require('chai').expect;
-const diff = require('../../lib/venue-processing/diff');
-const venueMonitorRepository = require('../../lib/persistence/venue-monitor-repository');
-const venueMonitorService = require('../../lib/services/venue-monitor-service');
+const diff = require("../venue-processing/diff");
+const venueMonitorRepository = require("./venue-monitor-repository");
+const venueMonitorService = require("./venue-monitor-service");
 
-describe('venue-monitor-service', () => {
-  describe('updateVenueMonitor', () => {
-    afterEach(() => {
-      venueMonitorRepository.update.restore &&
-        venueMonitorRepository.update.restore();
-    });
+const sync = fn =>
+  fn.then(res => () => res).catch(err => () => {
+    throw err;
+  });
 
-    it('should update a venue monitor', done => {
-      sinon.stub(venueMonitorRepository, 'update').callsFake(entity => {
-        expect(entity).toEqual({
-          venueId: 'some-id',
-          isIgnored: true,
-          hasChanged: false,
-        });
+describe("venue-monitor-service", () => {
+  describe("updateVenueMonitor", () => {
+    it("should update a venue monitor", async () => {
+      venueMonitorRepository.update = jest.fn().mockResolvedValue();
 
-        return Promise.resolve();
+      await venueMonitorService.updateVenueMonitor({
+        venueId: "some-id",
+        isIgnored: true,
+        hasChanged: false
       });
 
-      venueMonitorService
-        .updateVenueMonitor({
-          venueId: 'some-id',
-          isIgnored: true,
-          hasChanged: false,
-        })
-        .then(() => done())
-        .catch(done);
+      expect(venueMonitorRepository.update).toHaveBeenCalledWith({
+        venueId: "some-id",
+        isIgnored: true,
+        hasChanged: false
+      });
     });
 
-    it('should throw an error when updating a venue monitor with invalid values', done => {
-      venueMonitorService
-        .updateVenueMonitor({
-          venueId: 'some-id',
-          hasChanged: false,
-        })
-        .then(() => done(new Error('should have thrown an exception')))
-        .catch(() => done());
+    it("should throw an error when updating a venue monitor with invalid values", async () => {
+      expect(
+        await sync(
+          venueMonitorService.updateVenueMonitor({
+            venueId: "some-id",
+            hasChanged: false
+          })
+        )
+      ).toThrow();
     });
   });
 
-  describe('getVenueMonitors', () => {
-    afterEach(() => {
-      venueMonitorRepository.tryGet.restore &&
-        venueMonitorRepository.tryGet.restore();
+  describe("getVenueMonitors", () => {
+    it("should handle getting a non-existent venue monitor", async () => {
+      venueMonitorRepository.tryGet = jest.fn().mockResolvedValue(null);
 
-      diff.getDiff.restore && diff.getDiff.restore();
+      const result = await venueMonitorService.getVenueMonitors(
+        "almeida-theatre"
+      );
+
+      expect(result).toEqual([]);
+
+      expect(venueMonitorRepository.tryGet).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
     });
 
-    it('should handle getting a non-existent venue monitor', done => {
-      sinon.stub(venueMonitorRepository, 'tryGet').callsFake(venueId => {
-        expect(venueId).toEqual('almeida-theatre');
-        return Promise.resolve(null);
+    it("should get a venue monitor with no diff", async () => {
+      venueMonitorRepository.tryGet = jest.fn().mockResolvedValue({
+        id: "some-id",
+        oldVenueText: "old venue text",
+        venueText: "venue text"
       });
 
-      venueMonitorService
-        .getVenueMonitors('almeida-theatre')
-        .then(result => {
-          expect(result).toEqual([]);
-          done();
-        })
-        .catch(done);
+      diff.getDiff = jest.fn().mockResolvedValue(null);
+
+      const result = await venueMonitorService.getVenueMonitors(
+        "almeida-theatre"
+      );
+
+      expect(result).toEqual([{ id: "some-id" }]);
+
+      expect(venueMonitorRepository.tryGet).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
+
+      expect(diff.getDiff).toHaveBeenCalledWith("old venue text", "venue text");
     });
 
-    it('should get a venue monitor with no diff', done => {
-      sinon.stub(venueMonitorRepository, 'tryGet').callsFake(venueId => {
-        expect(venueId).toEqual('almeida-theatre');
-
-        return Promise.resolve({
-          id: 'some-id',
-          oldVenueText: 'old venue text',
-          venueText: 'venue text',
-        });
+    it("should get a venue monitor with a diff", async () => {
+      venueMonitorRepository.tryGet = jest.fn().mockResolvedValue({
+        id: "some-id",
+        oldVenueText: "old venue text",
+        venueText: "venue text"
       });
 
-      sinon.stub(diff, 'getDiff').callsFake((oldVenueText, venueText) => {
-        expect(oldVenueText).toEqual('old venue text');
-        expect(venueText).toEqual('venue text');
+      diff.getDiff = jest.fn().mockResolvedValue("change diff text");
 
-        return Promise.resolve(null);
-      });
+      const result = await venueMonitorService.getVenueMonitors(
+        "almeida-theatre"
+      );
 
-      venueMonitorService
-        .getVenueMonitors('almeida-theatre')
-        .then(result => {
-          expect(result).toEqual([{ id: 'some-id' }]);
-          done();
-        })
-        .catch(done);
-    });
+      expect(result).toEqual([
+        {
+          id: "some-id",
+          changeDiff: "change diff text"
+        }
+      ]);
 
-    it('should get a venue monitor with a diff', done => {
-      sinon.stub(venueMonitorRepository, 'tryGet').callsFake(venueId => {
-        expect(venueId).toEqual('almeida-theatre');
+      expect(venueMonitorRepository.tryGet).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
 
-        return Promise.resolve({
-          id: 'some-id',
-          oldVenueText: 'old venue text',
-          venueText: 'venue text',
-        });
-      });
-
-      sinon.stub(diff, 'getDiff').callsFake((oldVenueText, venueText) => {
-        expect(oldVenueText).toEqual('old venue text');
-        expect(venueText).toEqual('venue text');
-
-        return Promise.resolve('change diff text');
-      });
-
-      venueMonitorService
-        .getVenueMonitors('almeida-theatre')
-        .then(result => {
-          expect(result).toEqual([{
-            id: 'some-id',
-            changeDiff: 'change diff text',
-          }]);
-
-          done();
-        })
-        .catch(done);
+      expect(diff.getDiff).toHaveBeenCalledWith("old venue text", "venue text");
     });
   });
 
-  describe('save', () => {
-    afterEach(() => {
-      venueMonitorRepository.tryGet.restore &&
-        venueMonitorRepository.tryGet.restore();
-
-      venueMonitorRepository.put.restore &&
-        venueMonitorRepository.put.restore();
+  describe("save", () => {
+    it("should handle saving no venue monitor", async () => {
+      await venueMonitorService.save("almeida-theatre", null);
     });
 
-    it('should handle saving no venue monitor', done => {
-      venueMonitorService.save('almeida-theatre', null).then(done).catch(done);
+    it("should handle saving venue monitor when it does not already exist", async () => {
+      venueMonitorRepository.tryGet = jest.fn().mockResolvedValue(null);
+      venueMonitorRepository.put = jest.fn().mockResolvedValue();
+
+      await venueMonitorService.save("almeida-theatre", venueMonitor);
+
+      expect(venueMonitorRepository.tryGet).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
+
+      expect(venueMonitorRepository.put).toHaveBeenCalledWith({
+        venueId: "almeida-theatre",
+        venueText: "Foo",
+        isIgnored: false,
+        hasChanged: false
+      });
     });
 
-    it('should handle saving venue monitor when it does not already exist', done => {
-      const tryGetStub = sinon
-        .stub(venueMonitorRepository, 'tryGet')
-        .callsFake(venueId => {
-          expect(venueId).toEqual('almeida-theatre');
-          return Promise.resolve(null);
-        });
+    it("should handle saving venue monitor when it exists already with no old venue text and venue text is not updated", async () => {
+      venueMonitorRepository.tryGet = jest.fn().mockResolvedValue({
+        venueId: "almeida-theatre",
+        venueText: "some text",
+        isIgnored: false,
+        hasChanged: false
+      });
 
-      const putStub = sinon
-        .stub(venueMonitorRepository, 'put')
-        .callsFake(param => {
-          expect(param).toEqual({
-            venueId: 'almeida-theatre',
-            venueText: 'Foo',
-            isIgnored: false,
-            hasChanged: false,
-          });
+      venueMonitorRepository.put = jest.fn().mockResolvedValue();
 
-          return Promise.resolve();
-        });
+      await venueMonitorService.save("almeida-theatre", {
+        venueText: "some text"
+      });
 
-      const venueMonitor = {
-        venueText: 'Foo',
-      };
+      expect(venueMonitorRepository.tryGet).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
 
-      venueMonitorService
-        .save('almeida-theatre', venueMonitor)
-        .then(() => {
-          expect(tryGetStub.called).toEqual(true);
-          expect(putStub.called).toEqual(true);
-          done();
-        })
-        .catch(done);
+      expect(venueMonitorRepository.put).toHaveBeenCalledWith({
+        venueId: "almeida-theatre",
+        venueText: "some text",
+        isIgnored: false,
+        hasChanged: false
+      });
     });
 
-    it('should handle saving venue monitor when it exists already with no old venue text and venue text is not updated', done => {
-      const tryGetStub = sinon
-        .stub(venueMonitorRepository, 'tryGet')
-        .callsFake(venueId => {
-          expect(venueId).toEqual('almeida-theatre');
+    it("should handle saving venue monitor when it exists already with no old venue text and venue text is updated", async () => {
+      venueMonitorRepository.tryGet = jest.fn().mockResolvedValue({
+        venueId: "almeida-theatre",
+        venueText: "some text",
+        isIgnored: false,
+        hasChanged: false
+      });
 
-          return Promise.resolve({
-            venueId: 'almeida-theatre',
-            venueText: 'some text',
-            isIgnored: false,
-            hasChanged: false,
-          });
-        });
+      venueMonitorRepository.put = jest.fn().mockResolvedValue();
 
-      const putStub = sinon
-        .stub(venueMonitorRepository, 'put')
-        .callsFake(param => {
-          expect(param).toEqual({
-            venueId: 'almeida-theatre',
-            venueText: 'some text',
-            isIgnored: false,
-            hasChanged: false,
-          });
+      await venueMonitorService.save("almeida-theatre", {
+        venueText: "some new text"
+      });
 
-          return Promise.resolve();
-        });
+      expect(venueMonitorRepository.tryGet).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
 
-      const venueMonitor = {
-        venueText: 'some text',
-      };
-
-      venueMonitorService
-        .save('almeida-theatre', venueMonitor)
-        .then(() => {
-          expect(tryGetStub.called).toEqual(true);
-          expect(putStub.called).toEqual(true);
-          done();
-        })
-        .catch(done);
+      expect(venueMonitorRepository.put).toHaveBeenCalledWith({
+        venueId: "almeida-theatre",
+        oldVenueText: "some text",
+        venueText: "some new text",
+        isIgnored: false,
+        hasChanged: true
+      });
     });
 
-    it('should handle saving venue monitor when it exists already with no old venue text and venue text is updated', done => {
-      const tryGetStub = sinon
-        .stub(venueMonitorRepository, 'tryGet')
-        .callsFake(venueId => {
-          expect(venueId).toEqual('almeida-theatre');
+    it("should handle saving venue monitor when it exists already with old venue text and updated venue text is same as old", async () => {
+      venueMonitorRepository.tryGet = jest.fn().mockResolvedValue({
+        venueId: "almeida-theatre",
+        oldVenueText: "some old text",
+        venueText: "some text",
+        isIgnored: false,
+        hasChanged: true
+      });
 
-          return Promise.resolve({
-            venueId: 'almeida-theatre',
-            venueText: 'some text',
-            isIgnored: false,
-            hasChanged: false,
-          });
-        });
+      venueMonitorRepository.put = jest.fn().mockResolvedValue();
 
-      const putStub = sinon
-        .stub(venueMonitorRepository, 'put')
-        .callsFake(param => {
-          expect(param).toEqual({
-            venueId: 'almeida-theatre',
-            oldVenueText: 'some text',
-            venueText: 'some new text',
-            isIgnored: false,
-            hasChanged: true,
-          });
+      await venueMonitorService.save("almeida-theatre", {
+        venueText: "some old text"
+      });
 
-          return Promise.resolve();
-        });
+      expect(venueMonitorRepository.tryGet).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
 
-      const venueMonitor = {
-        venueText: 'some new text',
-      };
-
-      venueMonitorService
-        .save('almeida-theatre', venueMonitor)
-        .then(() => {
-          expect(tryGetStub.called).toEqual(true);
-          expect(putStub.called).toEqual(true);
-          done();
-        })
-        .catch(done);
+      expect(venueMonitorRepository.put).toHaveBeenCalledWith({
+        venueId: "almeida-theatre",
+        venueText: "some old text",
+        isIgnored: false,
+        hasChanged: false
+      });
     });
 
-    it('should handle saving venue monitor when it exists already with old venue text and updated venue text is same as old', done => {
-      const tryGetStub = sinon
-        .stub(venueMonitorRepository, 'tryGet')
-        .callsFake(venueId => {
-          expect(venueId).toEqual('almeida-theatre');
+    it("should handle saving venue monitor when it exists already with old venue text and updated venue text is different", async () => {
+      venueMonitorRepository.tryGet = jest.fn().mockResolvedValue({
+        venueId: "almeida-theatre",
+        oldVenueText: "some old text",
+        venueText: "some text",
+        isIgnored: false,
+        hasChanged: true
+      });
 
-          return Promise.resolve({
-            venueId: 'almeida-theatre',
-            oldVenueText: 'some old text',
-            venueText: 'some text',
-            isIgnored: false,
-            hasChanged: true,
-          });
-        });
+      venueMonitorRepository.put = jest.fn().mockResolvedValue();
 
-      const putStub = sinon
-        .stub(venueMonitorRepository, 'put')
-        .callsFake(param => {
-          expect(param).toEqual({
-            venueId: 'almeida-theatre',
-            venueText: 'some old text',
-            isIgnored: false,
-            hasChanged: false,
-          });
+      await venueMonitorService.save("almeida-theatre", {
+        venueText: "some new text"
+      });
 
-          return Promise.resolve();
-        });
+      expect(venueMonitorRepository.tryGet).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
 
-      const venueMonitor = {
-        venueText: 'some old text',
-      };
-
-      venueMonitorService
-        .save('almeida-theatre', venueMonitor)
-        .then(() => {
-          expect(tryGetStub.called).toEqual(true);
-          expect(putStub.called).toEqual(true);
-          done();
-        })
-        .catch(done);
-    });
-
-    it('should handle saving venue monitor when it exists already with old venue text and updated venue text is different', done => {
-      const tryGetStub = sinon
-        .stub(venueMonitorRepository, 'tryGet')
-        .callsFake(venueId => {
-          expect(venueId).toEqual('almeida-theatre');
-
-          return Promise.resolve({
-            venueId: 'almeida-theatre',
-            oldVenueText: 'some old text',
-            venueText: 'some text',
-            isIgnored: false,
-            hasChanged: true,
-          });
-        });
-
-      const putStub = sinon
-        .stub(venueMonitorRepository, 'put')
-        .callsFake(param => {
-          expect(param).toEqual({
-            venueId: 'almeida-theatre',
-            oldVenueText: 'some old text',
-            venueText: 'some new text',
-            isIgnored: false,
-            hasChanged: true,
-          });
-
-          return Promise.resolve();
-        });
-
-      const venueMonitor = {
-        venueText: 'some new text',
-      };
-
-      venueMonitorService
-        .save('almeida-theatre', venueMonitor)
-        .then(() => {
-          expect(tryGetStub.called).toEqual(true);
-          expect(putStub.called).toEqual(true);
-          done();
-        })
-        .catch(done);
+      expect(venueMonitorRepository.put).toHaveBeenCalledWith({
+        venueId: "almeida-theatre",
+        oldVenueText: "some old text",
+        venueText: "some new text",
+        isIgnored: false,
+        hasChanged: true
+      });
     });
   });
 });

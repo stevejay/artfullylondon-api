@@ -1,14 +1,13 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.bac.org.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  const $ = yield pageLoader(
+  const $ = await pageLoader(
     BASE_URL + '/content_category/3262/whats_on/whats_on'
   );
 
@@ -21,10 +20,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
 
   const data = $(
@@ -32,4 +31,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   ).html();
 
   return { title, data };
-});
+};

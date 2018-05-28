@@ -1,6 +1,6 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.piano-nobile.com';
@@ -8,8 +8,8 @@ const BASE_URL = 'http://www.piano-nobile.com';
 module.exports = function(venueName, venueOpeningTimesUrl) {
   return {
     minimumExpectedEvents: 0,
-    pageFinder: co.wrap(function*() {
-      const $ = yield pageLoader(`${BASE_URL}/exhibitions/`);
+    pageFinder: async function() {
+      const $ = await pageLoader(`${BASE_URL}/exhibitions/`);
       const result = [];
 
       function hrefCallback() {
@@ -35,8 +35,8 @@ module.exports = function(venueName, venueOpeningTimesUrl) {
 
       return result;
     }),
-    pageParser: co.wrap(function*(pageUrl) {
-      const $ = yield pageLoader(pageUrl);
+    pageParser: async function(pageUrl) {
+      const $ = await pageLoader(pageUrl);
       const title = $('h1').first().html();
 
       const data = [
@@ -46,8 +46,8 @@ module.exports = function(venueName, venueOpeningTimesUrl) {
 
       return { title, data };
     }),
-    venueOpenings: co.wrap(function*() {
-      const $ = yield pageLoader(
+    venueOpenings: async function() {
+      const $ = await pageLoader(
         BASE_URL + '/contact/' + venueOpeningTimesUrl + '/'
       );
       return $('#content_module').html();

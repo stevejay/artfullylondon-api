@@ -1,15 +1,15 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.architecture.com';
 
 // Site is currently hosed.
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  const $ = yield pageLoader(
+  const $ = await pageLoader(
     `${BASE_URL}/WhatsOn/WhatsOn.aspx?type=cultural&location=0%2f660%2f666%2f669`
   );
 
@@ -21,11 +21,11 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('.articleHeader h1').html();
   const data = [$('#mainContent article').html()];
   return { title, data };
-});
+};

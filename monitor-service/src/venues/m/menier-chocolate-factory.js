@@ -1,14 +1,14 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.menierchocolatefactory.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  const $ = yield pageLoader(
+  const $ = await pageLoader(
     BASE_URL +
       '/Online/default.asp?doWork::WScontent::loadArticle=Load&BOparam::WScontent::loadArticle::article_id=39729810-70D5-4EA6-AC95-A353C92526EF'
   );
@@ -19,10 +19,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = [$('#main_table #av_left').html()];
 
@@ -31,4 +31,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   });
 
   return { title, data };
-});
+};

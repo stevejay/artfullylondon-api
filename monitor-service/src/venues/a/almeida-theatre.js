@@ -1,12 +1,11 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://almeida.co.uk';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/whats-on');
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL + '/whats-on');
   const result = [];
 
   $('.card a').each(function() {
@@ -18,10 +17,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('h1').html();
 
   const data = $('.content-box').each(function() {
@@ -29,4 +28,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   });
 
   return { title, data };
-});
+};

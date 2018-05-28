@@ -1,12 +1,12 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.thedraytonarmstheatre.co.uk/';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL);
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL);
   const result = [];
 
   $('.calendarcell > a').each(function() {
@@ -18,10 +18,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result.slice(0, 4);
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
 
   const title = $('h1')
     .map(function() {
@@ -32,4 +32,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
 
   const data = $('#jevents').html();
   return { title, data };
-});
+};

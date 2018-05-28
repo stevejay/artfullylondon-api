@@ -1,23 +1,23 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageParser = co.wrap(function*() {
-  const $ = yield pageLoader(
+exports.pageParser = async function() {
+  const $ = await pageLoader(
     'http://www.meniergallery.co.uk/Menier_Gallery/Exhibitions.html'
   );
 
   const data = [$('.exhibition_title').html(), $('.exhibition_dates').html()];
   return { data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(
     'http://www.meniergallery.co.uk/Menier_Gallery/Contact.html'
   );
 
   return $('.text-content p').each(function() {
     $(this).html();
   });
-});
+};

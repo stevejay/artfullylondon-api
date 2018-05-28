@@ -1,12 +1,11 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.alancristea.com';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/schedule.php');
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL + '/schedule.php');
   const result = [];
 
   $('.artfair-container a').each(function() {
@@ -15,16 +14,16 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('h2.artfair-title').html();
   const data = $('p.artfair-date').parent().html();
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/contact.php');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/contact.php');
   return $('.contact-span:has(p)').html();
-});
+};

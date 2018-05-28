@@ -1,24 +1,24 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.gatetheatre.co.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  let $ = yield pageLoader(BASE_URL + '/events/all-productions');
+  let $ = await pageLoader(BASE_URL + '/events/all-productions');
   $('#content section:first-of-type .productions a:has(h2)').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + '/events/' + href);
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = pageUrl.substring(pageUrl.lastIndexOf('/') + 1);
 
   const data = [
@@ -28,4 +28,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   ];
 
   return { title, data };
-});
+};

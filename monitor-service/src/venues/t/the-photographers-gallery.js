@@ -1,6 +1,6 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').spaLoader;
 
 const BASE_URL = 'http://thephotographersgallery.org.uk';
@@ -9,12 +9,12 @@ const TITLE_REGEX = /Folio Friday/i;
 
 exports.pageUrlChunks = 2;
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
   let pageNo = 1;
 
   while (true) {
-    const $ = yield pageLoader(
+    const $ = await pageLoader(
       `${BASE_URL}/whats-on?page=${pageNo}`,
       '#content'
     );
@@ -39,16 +39,16 @@ exports.pageFinder = co.wrap(function*() {
   }
 
   return result.slice(0, 20); // TODO increase
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('#content h1').html();
   const data = [$('#content .itemHeader').html(), $('#content #INFO').html()];
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/visit-us');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/visit-us');
   return $('#content').html();
-});
+};

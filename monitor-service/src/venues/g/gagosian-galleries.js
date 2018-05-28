@@ -1,16 +1,16 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.gagosian.com';
 
 module.exports = function(venueName) {
   return {
-    pageFinder: co.wrap(function*() {
+    pageFinder: async function() {
       const result = [];
 
-      let $ = yield pageLoader(BASE_URL + '/current');
+      let $ = await pageLoader(BASE_URL + '/current');
       $(
         `.exhibition-grid-col:has(a span:contains("${venueName}")) a:has(img)`
       ).each(function() {
@@ -21,7 +21,7 @@ module.exports = function(venueName) {
         }
       });
 
-      $ = yield pageLoader(BASE_URL + '/upcoming');
+      $ = await pageLoader(BASE_URL + '/upcoming');
       $(`.info-detail a:contains("${venueName}")`).each(function() {
         const href = $(this).attr('href');
         result.push(href);
@@ -29,8 +29,8 @@ module.exports = function(venueName) {
 
       return result;
     }),
-    pageParser: co.wrap(function*(pageUrl) {
-      const $ = yield pageLoader(pageUrl);
+    pageParser: async function(pageUrl) {
+      const $ = await pageLoader(pageUrl);
       const title = $('title').html();
 
       const data = [
@@ -44,8 +44,8 @@ module.exports = function(venueName) {
 
       return { title, data };
     }),
-    venueOpenings: co.wrap(function*() {
-      const $ = yield pageLoader(BASE_URL + '/contact');
+    venueOpenings: async function() {
+      const $ = await pageLoader(BASE_URL + '/contact');
       return $(`.location-col:has(strong:contains("${venueName}"))`).html();
     }),
   };

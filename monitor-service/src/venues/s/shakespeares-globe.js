@@ -1,13 +1,13 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.shakespearesglobe.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  const $ = yield pageLoader(`${BASE_URL}/theatre/whats-on`);
+  const $ = await pageLoader(`${BASE_URL}/theatre/whats-on`);
 
   $('#mainArticle a:has(img)').each(function() {
     const href = $(this).attr('href');
@@ -18,11 +18,11 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = [$('article.showdates').html(), $('#mainArticle').html()];
   return { title, data };
-});
+};

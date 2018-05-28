@@ -1,12 +1,12 @@
 'use strict';
 
-const co = require('co');
+
 const id = require('../persistence/id');
 const iterationErrorRepository = require('../persistence/iteration-error-repository');
 const iterationLockRepository = require('../persistence/iteration-lock-repository');
 const iterationRepository = require('../persistence/iteration-repository');
 
-exports.startIteration = co.wrap(function*(actionId) {
+exports.startIteration = async function(actionId) {
   const item = { actionId, startTimestamp: Date.now() };
   yield iterationLockRepository.addLock(item);
   yield iterationRepository.addIteration(item);
@@ -25,12 +25,12 @@ exports.addIterationError = (
     message,
   });
 
-exports.endIteration = co.wrap(function*(actionId, startTimestamp) {
+exports.endIteration = async function(actionId, startTimestamp) {
   yield iterationLockRepository.deleteLock(actionId);
   yield iterationRepository.setIterationEndTimestamp(actionId, startTimestamp);
 });
 
-exports.getLatestIterationErrors = co.wrap(function*(actionId) {
+exports.getLatestIterationErrors = async function(actionId) {
   // get the most recent run of the action.
   const iterationResponse = yield iterationRepository.getMostRecentIteration(
     actionId

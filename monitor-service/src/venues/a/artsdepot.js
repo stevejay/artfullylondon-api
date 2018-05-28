@@ -1,16 +1,15 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.artsdepot.co.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
   const categories = [1, 3, 4, 261];
 
   for (let i = 0; i < categories.length; ++i) {
-    const $ = yield pageLoader(
+    const $ = await pageLoader(
       `${BASE_URL}/whats-on?field_event_type_tid%5B%5D=${i}`
     );
 
@@ -21,10 +20,10 @@ exports.pageFinder = co.wrap(function*() {
   }
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('.mainContent h1').html();
 
   const data = [
@@ -34,9 +33,9 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   ];
 
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/opening-hours');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/opening-hours');
   return $('.mainContent').each(() => $(this).html());
-});
+};

@@ -1,23 +1,19 @@
-'use strict';
+"use strict";
 
-const co = require('co');
-const ensure = require('ensure-request').ensure;
-const ensureErrorHandler = require('../validation/ensure-error-handler');
-const constraints = require('../validation/constraints');
-const venueEventMonitorRepository = require('../persistence/venue-event-monitor-repository');
-const venueIterationService = require('./venue-iteration-service');
-const diff = require('../venue-processing/diff');
+const ensure = require("ensure-request").ensure;
+const ensureErrorHandler = require("../validation/ensure-error-handler");
+const constraints = require("../validation/constraints");
+const venueEventMonitorRepository = require("../persistence/venue-event-monitor-repository");
+const venueIterationService = require("./venue-iteration-service");
+const diff = require("../venue-processing/diff");
 
-exports.getVenueEventMonitor = co.wrap(function*(
-  venueId,
-  externalEventId
-) {
-  const dbItem = yield venueEventMonitorRepository.get(
+exports.getVenueEventMonitor = async function(venueId, externalEventId) {
+  const dbItem = await venueEventMonitorRepository.get(
     venueId,
     externalEventId
   );
 
-  const changeDiff = yield diff.getDiff(dbItem.oldEventText, dbItem.eventText);
+  const changeDiff = await diff.getDiff(dbItem.oldEventText, dbItem.eventText);
 
   if (changeDiff) {
     dbItem.changeDiff = changeDiff;
@@ -27,19 +23,17 @@ exports.getVenueEventMonitor = co.wrap(function*(
   delete dbItem.eventText;
 
   return dbItem;
-});
+};
 
 exports.getVenueEventMonitorsForVenue = venueId =>
   venueEventMonitorRepository.getAllForVenue(venueId);
 
-exports.updateVenueEventMonitor = entity => {
-  return new Promise(resolve => {
-    ensure(entity, constraints.venueEventMonitorConstraint, ensureErrorHandler);
-    resolve();
-  }).then(() => venueEventMonitorRepository.update(entity));
+exports.updateVenueEventMonitor = async entity => {
+  ensure(entity, constraints.venueEventMonitorConstraint, ensureErrorHandler);
+  await venueEventMonitorRepository.update(entity);
 };
 
-exports.save = co.wrap(function*(venueId, eventMonitors) {
+exports.save = async function(venueId, eventMonitors) {
   if (eventMonitors.length === 0) {
     return;
   }
@@ -48,7 +42,7 @@ exports.save = co.wrap(function*(venueId, eventMonitors) {
     const startTime = process.hrtime();
     const newEventMonitor = eventMonitors[i];
 
-    const existingEventMonitor = yield venueEventMonitorRepository.tryGet(
+    const existingEventMonitor = await venueEventMonitorRepository.tryGet(
       venueId,
       newEventMonitor.externalEventId
     );
@@ -93,7 +87,7 @@ exports.save = co.wrap(function*(venueId, eventMonitors) {
       result.currentUrl = newEventMonitor.currentUrl;
     }
 
-    yield venueEventMonitorRepository.put(result);
-    yield venueIterationService.throttleIteration(startTime, 250);
+    await venueEventMonitorRepository.put(result);
+    await venueIterationService.throttleIteration(startTime, 250);
   }
-});
+};

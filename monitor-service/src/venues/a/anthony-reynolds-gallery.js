@@ -1,10 +1,9 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageParser = co.wrap(function*() {
-  const $ = yield pageLoader('http://anthonyreynolds.com/current.html');
+exports.pageParser = async function() {
+  const $ = await pageLoader('http://anthonyreynolds.com/current.html');
 
   const websiteUnderConstruction =
     $('h4:contains("website update in progress")').get().length > 0;
@@ -18,4 +17,4 @@ exports.pageParser = co.wrap(function*() {
     .html();
 
   return { data };
-});
+};

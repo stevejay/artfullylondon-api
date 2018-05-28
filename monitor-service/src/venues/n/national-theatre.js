@@ -1,13 +1,13 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.nationaltheatre.org.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  const $ = yield pageLoader(`${BASE_URL}/whats-on`);
+  const $ = await pageLoader(`${BASE_URL}/whats-on`);
   const locations = ['Olivier Theatre', 'Lyttelton Theatre', 'Dorfman Theatre'];
 
   for (let i = 0; i < locations.length; ++i) {
@@ -25,10 +25,10 @@ exports.pageFinder = co.wrap(function*() {
   }
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  let $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  let $ = await pageLoader(pageUrl);
   const title = $('#maincontent h1').html();
   const data = [];
 
@@ -43,10 +43,10 @@ exports.pageParser = co.wrap(function*(pageUrl) {
       ticketPageUrl = BASE_URL + ticketPageUrl;
     }
 
-    $ = yield pageLoader(ticketPageUrl);
+    $ = await pageLoader(ticketPageUrl);
     data.push($('#maincontent header').html());
     data.push($('#wo-results-list').html());
   }
 
   return { title, data };
-});
+};

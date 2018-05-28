@@ -1,30 +1,30 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.hampsteadtheatre.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  let $ = yield pageLoader(BASE_URL + '/whats-on/main-stage/');
+  let $ = await pageLoader(BASE_URL + '/whats-on/main-stage/');
   $('.prodlist__buttons > a').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);
   });
 
-  $ = yield pageLoader(BASE_URL + '/whats-on/hampstead-downstairs/');
+  $ = await pageLoader(BASE_URL + '/whats-on/hampstead-downstairs/');
   $('.prodlist__buttons > a').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('h1.production-intro__title').html();
 
   const data = [
@@ -34,4 +34,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   ];
 
   return { title, data };
-});
+};

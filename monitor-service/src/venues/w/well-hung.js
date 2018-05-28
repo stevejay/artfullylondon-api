@@ -1,13 +1,13 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://wellhung.co.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  const $ = yield pageLoader(`${BASE_URL}/exhibitions/`);
+  const $ = await pageLoader(`${BASE_URL}/exhibitions/`);
 
   const callback = function() {
     const href = $(this).attr('href');
@@ -20,11 +20,11 @@ exports.pageFinder = co.wrap(function*() {
   $('.next-exhibition a').each(callback);
   $('.future-exhibitions-list a').each(callback);
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('#main h1').html();
   const data = $('#main').html();
   return { title, data };
-});
+};

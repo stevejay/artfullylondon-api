@@ -1,14 +1,13 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://cgplondon.org';
 
 module.exports = function(venueName) {
   return {
-    pageFinder: co.wrap(function*() {
-      const $ = yield pageLoader(BASE_URL + '/category/exhibitions/');
+    pageFinder: async function() {
+      const $ = await pageLoader(BASE_URL + '/category/exhibitions/');
       const result = [];
 
       $(
@@ -20,14 +19,14 @@ module.exports = function(venueName) {
 
       return result;
     }),
-    pageParser: co.wrap(function*(pageUrl) {
-      const $ = yield pageLoader(pageUrl);
+    pageParser: async function(pageUrl) {
+      const $ = await pageLoader(pageUrl);
       const title = $('h1').html();
       const data = $('.standard-page article').html();
       return { title, data };
     }),
-    venueOpenings: co.wrap(function*() {
-      const $ = yield pageLoader(BASE_URL + '/visit/');
+    venueOpenings: async function() {
+      const $ = await pageLoader(BASE_URL + '/visit/');
       return $('article .col-half.right').html();
     }),
   };

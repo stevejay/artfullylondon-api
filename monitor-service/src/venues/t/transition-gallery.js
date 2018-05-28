@@ -1,14 +1,14 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.transitiongallery.co.uk/htmlpages';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   let result = [];
 
-  let $ = yield pageLoader(`${BASE_URL}/shows.htm`);
+  let $ = await pageLoader(`${BASE_URL}/shows.htm`);
   $('strong > em > a').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + '/' + href);
@@ -16,18 +16,18 @@ exports.pageFinder = co.wrap(function*() {
 
   result = result.slice(0, 4);
 
-  $ = yield pageLoader(`${BASE_URL}/future.htm`);
+  $ = await pageLoader(`${BASE_URL}/future.htm`);
   $('strong > em > a').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + '/' + href);
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = $('body > table').html();
   return { title, data };
-});
+};

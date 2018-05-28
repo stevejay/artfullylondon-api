@@ -1,24 +1,24 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageParser = co.wrap(function*() {
+exports.pageParser = async function() {
   const data = [];
 
-  let $ = yield pageLoader('http://www.studiovoltaire.org/exhibitions/');
+  let $ = await pageLoader('http://www.studiovoltaire.org/exhibitions/');
   data.push($('.fullWidthContainer:has(h1)').html());
 
-  $ = yield pageLoader(
+  $ = await pageLoader(
     'http://www.studiovoltaire.org/exhibitions/forthcoming/'
   );
 
   data.push($('.fullWidthContainer:has(h1)').html());
 
   return { data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader('http://www.studiovoltaire.org/visit/');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader('http://www.studiovoltaire.org/visit/');
   return $('#gmap + div').html();
-});
+};

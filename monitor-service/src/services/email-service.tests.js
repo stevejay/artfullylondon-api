@@ -1,90 +1,70 @@
-'use strict';
+"use strict";
 
-const sinon = require('sinon');
-const expect = require('chai').expect;
-const ses = require('../../lib/external-services/ses');
-const emailService = require('../../lib/services/email-service');
-const venueEventMonitorRepository = require('../../lib/persistence/venue-event-monitor-repository');
-const venueMonitorRepository = require('../../lib/persistence/venue-monitor-repository');
-const lambda = require('../../lib/external-services/lambda');
-const constants = require('../../lib/constants');
+const emailService = require("./email-service");
+const ses = require("../external-services/ses");
+const venueEventMonitorRepository = require("../persistence/venue-event-monitor-repository");
+const venueMonitorRepository = require("../persistence/venue-monitor-repository");
+const lambda = require("../external-services/lambda");
+const constants = require("../../lib/constants");
 
 process.env.SERVERLESS_GET_LATEST_ITERATION_ERRORS_LAMBDA_NAME =
-  'GetLatestIterationErrors';
+  "GetLatestIterationErrors";
 
-describe('email-service', () => {
-  describe('sendMonitorStatusEmail', () => {
-    afterEach(() => {
-      venueEventMonitorRepository.getNewOrChanged.restore &&
-        venueEventMonitorRepository.getNewOrChanged.restore();
+describe("email-service", () => {
+  describe("sendMonitorStatusEmail", () => {
+    it("should process a valid request", async () => {
+      venueEventMonitorRepository.getNewOrChanged = jest
+        .fn()
+        .mockResolvedValue([
+          { venueId: "almeida-theatre" },
+          { venueId: "almeida-theatre" },
+          { venueId: "tate-modern" }
+        ]);
 
-      venueMonitorRepository.getChanged.restore &&
-        venueMonitorRepository.getChanged.restore();
+      venueMonitorRepository.getChanged = jest
+        .fn()
+        .mockResolvedValue([
+          { venueId: "park-theatre" },
+          { venueId: "park-theatre" },
+          { venueId: "tate-britain" }
+        ]);
 
-      lambda.invoke.restore && lambda.invoke.restore();
-    });
-
-    it('should process a valid request', done => {
-      sinon
-        .stub(venueEventMonitorRepository, 'getNewOrChanged')
-        .callsFake(() =>
-          Promise.resolve([
-            { venueId: 'almeida-theatre' },
-            { venueId: 'almeida-theatre' },
-            { venueId: 'tate-modern' },
-          ])
-        );
-
-      sinon
-        .stub(venueMonitorRepository, 'getChanged')
-        .callsFake(() =>
-          Promise.resolve([
-            { venueId: 'park-theatre' },
-            { venueId: 'park-theatre' },
-            { venueId: 'tate-britain' },
-          ])
-        );
-
-      sinon.stub(lambda, 'invoke').callsFake((lambdaName, params) => {
-        expect(lambdaName).toEqual('GetLatestIterationErrors');
-
-        expect(params).toEqual({ actionId: constants.ITERATE_VENUES_ACTION_ID });
-
-        return Promise.resolve({
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Credentials': true,
-          },
-          body: JSON.stringify({
-            errors: [{ entityId: 'bloomsbury', message: 'Some error' }],
-          }),
-        });
+      lambda.invoke = jest.fn().mockResolvedValue({
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": true
+        },
+        body: JSON.stringify({
+          errors: [{ entityId: "bloomsbury", message: "Some error" }]
+        })
       });
 
-      sinon.stub(ses, 'sendEmail').callsFake(email => {
-        expect(email).toEqual({
-          Destination: {
-            ToAddresses: ['steve@stevejay.net'],
-          },
-          Message: {
-            Body: {
-              Text: {
-                Data:
-                  'Changed or New Events:\n\nalmeida-theatre\ntate-modern\n\nChanged Venue Data:\n\npark-theatre\ntate-britain\n\nLatest Errors:\n\nbloomsbury: Some error',
-              },
-            },
-            Subject: {
-              Data: 'Venue Monitor Email',
-            },
-          },
-          Source: 'support@artfully.london',
-        });
+      ses.sendEmail = jest.fn().mockResolvedValue();
 
-        return Promise.resolve();
+      await emailService.sendMonitorStatusEmail();
+
+      expect(lambda.invoke).toHaveBeenCalledWith("GetLatestIterationErrors", {
+        actionId: constants.ITERATE_VENUES_ACTION_ID
       });
 
-      emailService.sendMonitorStatusEmail().then(() => done()).catch(done);
+      expect(ses.sendEmail).toHaveBeenCalledWith({
+        Destination: {
+          ToAddresses: ["steve@stevejay.net"]
+        },
+        Message: {
+          Body: {
+            Text: {
+              Data:
+                "Changed or New Events:\n\nalmeida-theatre\ntate-modern\n\nChanged Venue Data:\n\npark-theatre\ntate-britain\n\nLatest Errors:\n\nbloomsbury: Some error"
+            }
+          },
+          Subject: {
+            Data: "Venue Monitor Email"
+          }
+        },
+        Source: "support@artfully.london"
+      });
     });
   });
 });

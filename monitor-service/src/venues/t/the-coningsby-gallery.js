@@ -1,30 +1,30 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.coningsbygallery.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  const $ = yield pageLoader(`${BASE_URL}/exhibitions`);
+  const $ = await pageLoader(`${BASE_URL}/exhibitions`);
   $('section.exhibitions ul li a:has(img)').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('#content article h2').html();
   const data = [$('#content article').html(), $('#content .opening').html()];
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/contact');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/contact');
   return $('.span-5:has(h2:contains("Gallery information"))').html();
-});
+};

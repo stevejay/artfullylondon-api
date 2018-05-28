@@ -1,6 +1,5 @@
 "use strict";
 
-const co = require("co");
 const uniq = require("lodash.uniq");
 const zip = require("lodash.zip");
 const some = require("lodash.some");
@@ -11,22 +10,22 @@ const toText = require("./to-text");
 
 const URL_REGEX = /^http/i;
 
-exports.getVenueData = co.wrap(function*(venueStrategy) {
+exports.getVenueData = async function(venueStrategy) {
   let result = null;
 
   if (venueStrategy.venueOpenings) {
-    const venueOpenings = yield venueStrategy.venueOpenings();
+    const venueOpenings = await venueStrategy.venueOpenings();
     result = { venueText: toText(venueOpenings) };
   }
 
   return result;
-});
+};
 
-exports.discoverEvents = co.wrap(function*(venueId, venueStrategy) {
+exports.discoverEvents = async function(venueId, venueStrategy) {
   const hasEventPages = !!venueStrategy.pageFinder;
 
   if (hasEventPages) {
-    const pageFinderResult = yield venueStrategy.pageFinder();
+    const pageFinderResult = await venueStrategy.pageFinder();
     const pageUrls = uniq(pageFinderResult).map(url => (url || "").trim());
 
     if (some(pageUrls, url => !URL_REGEX.test(url))) {
@@ -49,7 +48,7 @@ exports.discoverEvents = co.wrap(function*(venueId, venueStrategy) {
     const parsedPages = [];
 
     for (let i = 0; i < pageUrlChunks.length; ++i) {
-      const results = yield pageUrlChunks[i].map(pageUrl => {
+      const results = await pageUrlChunks[i].map(pageUrl => {
         return new Promise((resolve, reject) => {
           venueStrategy
             .pageParser(pageUrl)
@@ -68,7 +67,7 @@ exports.discoverEvents = co.wrap(function*(venueId, venueStrategy) {
       id.createExternalEventId(venueId, url)
     );
 
-    const artfullyEvents = yield searchService.findEvents(externalEventIds);
+    const artfullyEvents = await searchService.findEvents(externalEventIds);
 
     return zip(externalEventIds, parsedPages, artfullyEvents, pageUrls).map(
       tuple => {
@@ -99,7 +98,7 @@ exports.discoverEvents = co.wrap(function*(venueId, venueStrategy) {
       }
     );
   } else {
-    let parsedPage = yield venueStrategy.pageParser();
+    let parsedPage = await venueStrategy.pageParser();
     parsedPage = processParsePageResult(parsedPage);
     const externalEventId = id.createExternalEventId(venueId);
 
@@ -112,7 +111,7 @@ exports.discoverEvents = co.wrap(function*(venueId, venueStrategy) {
       }
     ];
   }
-});
+};
 
 function processParsePageResult(parsedPage) {
   if (parsedPage) {

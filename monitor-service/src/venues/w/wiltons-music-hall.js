@@ -1,11 +1,11 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://wiltons.org.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
   const d = new Date();
@@ -14,7 +14,7 @@ exports.pageFinder = co.wrap(function*() {
 
   for (let monthCount = 0; monthCount < 12; ++monthCount) {
     const url = `${BASE_URL}/whatson/${year}${month < 10 ? '0' : ''}${month}`;
-    let $ = yield pageLoader(url);
+    let $ = await pageLoader(url);
 
     $('.content .event h2 > a').each(function() {
       const href = $(this).attr('href');
@@ -30,10 +30,10 @@ exports.pageFinder = co.wrap(function*() {
   }
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('.content h2').html();
   const data = [];
 
@@ -44,4 +44,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   data.push($('.details .text').html());
 
   return { title, data };
-});
+};

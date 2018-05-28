@@ -1,14 +1,13 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://new-www.atgtickets.com';
 
 module.exports = function(venueName) {
   return {
-    pageFinder: co.wrap(function*() {
-      const $ = yield pageLoader(`${BASE_URL}/venues/${venueName}/shows`);
+    pageFinder: async function() {
+      const $ = await pageLoader(`${BASE_URL}/venues/${venueName}/shows`);
       const result = [];
 
       $('a.button:contains("More Details")').each(function() {
@@ -18,8 +17,8 @@ module.exports = function(venueName) {
 
       return result;
     }),
-    pageParser: co.wrap(function*(pageUrl) {
-      const $ = yield pageLoader(pageUrl);
+    pageParser: async function(pageUrl) {
+      const $ = await pageLoader(pageUrl);
       const title = $('h1').first().html();
       const data = $('#mainContent .show-intro').html();
       return { title, data };

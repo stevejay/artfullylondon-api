@@ -1,10 +1,10 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageParser = co.wrap(function*() {
-  let $ = yield pageLoader(
+exports.pageParser = async function() {
+  let $ = await pageLoader(
     'http://www.newportstreetgallery.com/exhibitions/current'
   );
 
@@ -13,7 +13,7 @@ exports.pageParser = co.wrap(function*() {
   data.push($('.exhibition-current .intro-inner').html());
   data.push($('.exhibition-current .desc').html());
 
-  $ = yield pageLoader(
+  $ = await pageLoader(
     'http://www.newportstreetgallery.com/exhibitions/forthcoming'
   );
 
@@ -21,9 +21,9 @@ exports.pageParser = co.wrap(function*() {
   data.push($('.exhibition-forthcoming .desc').html());
 
   return { data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader('http://www.newportstreetgallery.com/visit');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader('http://www.newportstreetgallery.com/visit');
   return $('#visit').html();
-});
+};

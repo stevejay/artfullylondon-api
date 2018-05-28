@@ -1,30 +1,30 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.pangolinlondon.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  let $ = yield pageLoader(`${BASE_URL}/exhibitions/current`);
+  let $ = await pageLoader(`${BASE_URL}/exhibitions/current`);
   $('ul.exhibitions li a:has(img)').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);
   });
 
-  $ = yield pageLoader(`${BASE_URL}/exhibitions/future`);
+  $ = await pageLoader(`${BASE_URL}/exhibitions/future`);
   $('ul.exhibitions li a:has(img)').each(function() {
     const href = $(this).attr('href');
     result.push(BASE_URL + href);
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('.title h2').html();
 
   const data = [
@@ -34,9 +34,9 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   ];
 
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL);
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL);
   return $('.opening-hours').html();
-});
+};

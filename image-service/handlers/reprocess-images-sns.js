@@ -1,6 +1,6 @@
 'use strict';
 
-const co = require('co');
+
 const imageService = require('../lib/services/image-service');
 
 exports.handler = (event, context, cb) => {

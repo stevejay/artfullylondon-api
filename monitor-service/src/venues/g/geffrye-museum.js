@@ -1,18 +1,18 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   return [
     'http://www.geffrye-museum.org.uk/whatson/exhibitions-and-displays/',
     'http://www.geffrye-museum.org.uk/whatson/future/',
   ];
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = $('.contentMain').html();
   return { title, data };
-});
+};

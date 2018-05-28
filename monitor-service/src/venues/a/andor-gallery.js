@@ -1,12 +1,11 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.creativeandorcultural.com';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL);
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL);
 
   const exhibitionsParagraph = $('aside#sidebar-b p').filter(function() {
     return $(this).text().startsWith('EXHIBITIONS');
@@ -25,10 +24,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result.slice(0, 5);
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
 
   if (title === '508 Resource Limit Is Reached') {
@@ -37,10 +36,10 @@ exports.pageParser = co.wrap(function*(pageUrl) {
 
   const data = $('section#content article').html();
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(
     'http://www.creativeandorcultural.com/index.php/about-andor'
   );
 
@@ -50,4 +49,4 @@ exports.venueOpenings = co.wrap(function*() {
       /This email address is being protected from spambots\. You need JavaScript enabled to view it\./g,
       ''
     );
-});
+};

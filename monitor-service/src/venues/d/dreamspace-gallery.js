@@ -1,12 +1,12 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://adremgroup.com';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/dreamspace-gallery/');
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL + '/dreamspace-gallery/');
   const result = [];
 
   $('article a:has(img)').each(function() {
@@ -15,16 +15,16 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('h1').html();
   const data = $('article .content').html();
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/dreamspace-gallery/');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/dreamspace-gallery/');
   return $('.container-main .sidebar-widget').html();
-});
+};

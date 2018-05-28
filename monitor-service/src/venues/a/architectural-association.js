@@ -1,12 +1,11 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  let $ = yield pageLoader(
+  let $ = await pageLoader(
     'http://www.aaschool.ac.uk/PUBLIC/WHATSON/Exhibitions.php?filter=0'
   );
   $('.exhibition_list dd .description > a').each(function() {
@@ -14,7 +13,7 @@ exports.pageFinder = co.wrap(function*() {
     result.push(href);
   });
 
-  $ = yield pageLoader(
+  $ = await pageLoader(
     'http://www.aaschool.ac.uk/PUBLIC/WHATSON/Exhibitions.php?filter=2'
   );
   $('.exhibition_list dd .description > a').each(function() {
@@ -22,7 +21,7 @@ exports.pageFinder = co.wrap(function*() {
     result.push(href);
   });
 
-  $ = yield pageLoader(
+  $ = await pageLoader(
     'http://www.aaschool.ac.uk/PUBLIC/WHATSON/publiclectures.php'
   );
   $('.eventList a:first-of-type').each(function() {
@@ -31,10 +30,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   let title, data;
 
   if (pageUrl.includes('/VIDEO/lecture')) {
@@ -47,4 +46,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   }
 
   return { title, data };
-});
+};

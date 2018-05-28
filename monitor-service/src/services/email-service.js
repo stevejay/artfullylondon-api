@@ -1,6 +1,5 @@
 "use strict";
 
-const co = require("co");
 const uniq = require("lodash.uniq");
 const ses = require("../external-services/ses");
 const venueEventMonitorRepository = require("../persistence/venue-event-monitor-repository");
@@ -8,20 +7,20 @@ const venueMonitorRepository = require("../persistence/venue-monitor-repository"
 const lambda = require("../external-services/lambda");
 const constants = require("../constants");
 
-exports.sendMonitorStatusEmail = co.wrap(function*() {
-  const venueEventMonitors = yield venueEventMonitorRepository.getNewOrChanged();
+exports.sendMonitorStatusEmail = async function() {
+  const venueEventMonitors = await venueEventMonitorRepository.getNewOrChanged();
 
   const idsOfVenuesWithEvents = uniq(
     venueEventMonitors.map(monitor => monitor.venueId)
   ).sort();
 
-  const venueMonitors = yield venueMonitorRepository.getChanged();
+  const venueMonitors = await venueMonitorRepository.getChanged();
 
   const idsOfChangedVenues = uniq(
     venueMonitors.map(monitor => monitor.venueId)
   ).sort();
 
-  const latestIterationErrors = yield lambda.invoke(
+  const latestIterationErrors = await lambda.invoke(
     process.env.SERVERLESS_GET_LATEST_ITERATION_ERRORS_LAMBDA_NAME,
     { actionId: constants.ITERATE_VENUES_ACTION_ID }
   );
@@ -59,5 +58,5 @@ exports.sendMonitorStatusEmail = co.wrap(function*() {
     Source: "support@artfully.london"
   };
 
-  yield ses.sendEmail(email);
-});
+  await ses.sendEmail(email);
+};

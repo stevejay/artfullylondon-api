@@ -1,13 +1,13 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.yeolderoseandcrowntheatrepub.co.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  let $ = yield pageLoader(`${BASE_URL}/index.php/in-the-theatre/`);
+  let $ = await pageLoader(`${BASE_URL}/index.php/in-the-theatre/`);
 
   $('.main a:contains("More Info")').each(function() {
     const href = $(this).attr('href');
@@ -15,11 +15,11 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('.cro_title').html();
   const data = [$('.singlepage').html()];
   return { title, data };
-});
+};

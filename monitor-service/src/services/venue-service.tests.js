@@ -1,300 +1,138 @@
-'use strict';
+"use strict";
 
-const sinon = require('sinon');
-const expect = require('chai').expect;
-const strategyRunner = require('../../lib/venue-processing/venue-strategy-runner');
-const strategyFactory = require('../../lib/venue-processing/venue-strategy-factory');
-const venueIterationService = require('../../lib/services/venue-iteration-service');
-const venueService = require('../../lib/services/venue-service');
-const venueEventMonitorService = require('../../lib/services/venue-event-monitor-service');
-const venueMonitorService = require('../../lib/services/venue-monitor-service');
+const strategyRunner = require("../venue-processing/venue-strategy-runner");
+const strategyFactory = require("../venue-processing/venue-strategy-factory");
+const venueIterationService = require("./venue-iteration-service");
+const venueService = require("./venue-service");
+const venueEventMonitorService = require("./venue-event-monitor-service");
+const venueMonitorService = require("./venue-monitor-service");
 
-describe('venue-service', () => {
-  describe('processNextVenue', () => {
-    afterEach(() => {
-      venueIterationService.getNextVenue.restore &&
-        venueIterationService.getNextVenue.restore();
+describe("venue-service", () => {
+  describe("processNextVenue", () => {
+    it("should handle there being no next venue", async () => {
+      venueIterationService.getNextVenue = jest.fn().mockResolvedValue(null);
+      venueIterationService.invokeNextIteration = jest.fn().mockResolvedValue();
 
-      venueIterationService.invokeNextIteration.restore &&
-        venueIterationService.invokeNextIteration.restore();
+      await venueService.processNextVenue(
+        "almeida-theatre",
+        process.hrtime(),
+        2147483647
+      );
 
-      strategyFactory.create.restore && strategyFactory.create.restore();
+      expect(venueIterationService.getNextVenue).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
 
-      venueIterationService.throttleIteration.restore &&
-        venueIterationService.throttleIteration.restore();
-
-      venueIterationService.addIterationError.restore &&
-        venueIterationService.addIterationError.restore();
-
-      strategyRunner.discoverEvents.restore &&
-        strategyRunner.discoverEvents.restore();
-
-      venueEventMonitorService.save.restore &&
-        venueEventMonitorService.save.restore();
-
-      strategyRunner.getVenueData.restore &&
-        strategyRunner.getVenueData.restore();
-
-      venueMonitorService.save.restore && venueMonitorService.save.restore();
+      expect(venueIterationService.invokeNextIteration).toHaveBeenCalledWith(
+        null
+      );
     });
 
-    it('should handle there being no next venue', done => {
-      const stubGetNextVenue = sinon
-        .stub(venueIterationService, 'getNextVenue')
-        .callsFake(lastId => {
-          expect(lastId).toEqual('almeida-theatre');
-          return Promise.resolve(null);
-        });
+    it("should handle there being a next venue but it does not have a strategy", async () => {
+      venueIterationService.getNextVenue = jest
+        .fn()
+        .mockResolvedValue("tate-modern");
+      strategyFactory.create = jest.fn().mockReturnValue(null);
+      venueIterationService.throttleIteration = jest.fn().mockResolvedValue();
+      venueIterationService.invokeNextIteration = jest.fn().mockResolvedValue();
 
-      const stubInvokeNextIteration = sinon
-        .stub(venueIterationService, 'invokeNextIteration')
-        .callsFake((venueId) => {
-          expect(venueId).toEqual(null);
-          return Promise.resolve();
-        });
+      await venueService.processNextVenue(
+        "almeida-theatre",
+        process.hrtime(),
+        2147483647
+      );
 
-      venueService
-        .processNextVenue('almeida-theatre', process.hrtime(), 2147483647)
-        .then(() => {
-          expect(stubGetNextVenue.called).toEqual(true);
-          expect(stubInvokeNextIteration.called).toEqual(true);
-          done();
-        })
-        .catch(done);
+      expect(venueIterationService.getNextVenue).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
+
+      expect(strategyFactory.create).toHaveBeenCalledWith("tate-modern");
+      expect(venueIterationService.throttleIteration).toHaveBeenCalled();
+
+      expect(venueIterationService.invokeNextIteration).toHaveBeenCalledWith(
+        "tate-modern"
+      );
     });
 
-    it('should handle there being a next venue but it does not have a strategy', done => {
-      const stubGetNextVenue = sinon
-        .stub(venueIterationService, 'getNextVenue')
-        .callsFake(lastId => {
-          expect(lastId).toEqual('almeida-theatre');
-          return Promise.resolve('tate-modern');
-        });
+    it("should handle an exception being thrown when processing the venue", async () => {
+      venueIterationService.getNextVenue = jest
+        .fn()
+        .mockResolvedValue("tate-modern");
+      const err = new Error("deliberately thrown");
+      strategyFactory.create = jest.fn().mockRejectedValue(err);
+      venueIterationService.addIterationError = jest.fn().mockResolvedValue();
+      venueIterationService.throttleIteration = jest.fn().mockResolvedValue();
+      venueIterationService.invokeNextIteration = jest.fn().mockResolvedValue();
 
-      const stubCreate = sinon
-        .stub(strategyFactory, 'create')
-        .callsFake(venueId => {
-          expect(venueId).toEqual('tate-modern');
-          return null;
-        });
+      await venueService.processNextVenue(
+        "almeida-theatre",
+        process.hrtime(),
+        2147483647
+      );
 
-      const stubThrottleIteration = sinon
-        .stub(venueIterationService, 'throttleIteration')
-        .callsFake((startTime, delay) => {
-          expect(startTime[0]).to.be.greaterThan(0);
-          expect(delay).toEqual(1000);
+      expect(venueIterationService.getNextVenue).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
 
-          return Promise.resolve();
-        });
+      expect(strategyFactory.create).toHaveBeenCalledWith("tate-modern");
+      expect(venueIterationService.addIterationError).toHaveBeenCalledWith(
+        err,
+        "tate-modern"
+      );
+      expect(venueIterationService.throttleIteration).toHaveBeenCalled();
 
-      const stubInvokeNextIteration = sinon
-        .stub(venueIterationService, 'invokeNextIteration')
-        .callsFake((venueId) => {
-          expect(venueId).toEqual('tate-modern');
-          return Promise.resolve();
-        });
-
-      venueService
-        .processNextVenue('almeida-theatre', process.hrtime(), 2147483647)
-        .then(() => {
-          expect(stubGetNextVenue.called).toEqual(true);
-          expect(stubCreate.called).toEqual(true);
-          expect(stubThrottleIteration.called).toEqual(true);
-          expect(stubInvokeNextIteration.called).toEqual(true);
-
-          done();
-        })
-        .catch(done);
+      expect(venueIterationService.invokeNextIteration).toHaveBeenCalledWith(
+        "tate-modern"
+      );
     });
 
-    it('should handle an exception being thrown when processing the venue', done => {
-      const stubGetNextVenue = sinon
-        .stub(venueIterationService, 'getNextVenue')
-        .callsFake(lastId => {
-          expect(lastId).toEqual('almeida-theatre');
-          return Promise.resolve('tate-modern');
-        });
-
-      const stubCreate = sinon
-        .stub(strategyFactory, 'create')
-        .callsFake(venueId => {
-          expect(venueId).toEqual('tate-modern');
-          throw new Error('deliberately thrown');
-        });
-
-      const stubAddIterationError = sinon
-        .stub(venueIterationService, 'addIterationError')
-        .callsFake((err, venueId) => {
-          expect(err.message).toEqual('deliberately thrown');
-          expect(venueId).toEqual('tate-modern');
-          return Promise.resolve();
-        });
-
-      const stubThrottleIteration = sinon
-        .stub(venueIterationService, 'throttleIteration')
-        .callsFake((startTime, delay) => {
-          expect(startTime[0]).to.be.greaterThan(0);
-          expect(delay).toEqual(1000);
-
-          return Promise.resolve();
-        });
-
-      const stubInvokeNextIteration = sinon
-        .stub(venueIterationService, 'invokeNextIteration')
-        .callsFake((venueId) => {
-          expect(venueId).toEqual('tate-modern');
-          return Promise.resolve();
-        });
-
-      venueService
-        .processNextVenue('almeida-theatre', process.hrtime(), 2147483647)
-        .then(() => {
-          expect(stubGetNextVenue.called).toEqual(true);
-          expect(stubCreate.called).toEqual(true);
-          expect(stubAddIterationError.called).toEqual(true);
-          expect(stubThrottleIteration.called).toEqual(true);
-          expect(stubInvokeNextIteration.called).toEqual(true);
-
-          done();
-        })
-        .catch(done);
-    });
-
-    it('should handle there being a next venue with a strategy', done => {
+    it("should handle there being a next venue with a strategy", async () => {
+      venueIterationService.getNextVenue = jest
+        .fn()
+        .mockResolvedValue("tate-modern");
       const mockStrategy = {};
+      strategyFactory.create = jest.fn().mockReturnValue(mockStrategy);
+      strategyRunner.discoverEvents = jest
+        .fn()
+        .mockResolvedValue([{ id: "some-event-id" }]);
+      venueEventMonitorService.save = jest.fn().mockResolvedValue();
+      strategyRunner.getVenueData = jest
+        .fn()
+        .mockResolvedValue({ text: "Venue data" });
+      venueMonitorService.save = jest.fn().mockResolvedValue();
+      venueIterationService.throttleIteration = jest.fn().mockResolvedValue();
+      venueIterationService.invokeNextIteration = jest.fn().mockResolvedValue();
 
-      const stubGetNextVenue = sinon
-        .stub(venueIterationService, 'getNextVenue')
-        .callsFake(lastId => {
-          expect(lastId).toEqual('almeida-theatre');
-          return Promise.resolve('tate-modern');
-        });
+      await venueService.processNextVenue(
+        "almeida-theatre",
+        process.hrtime(),
+        2147483647
+      );
 
-      const stubCreate = sinon
-        .stub(strategyFactory, 'create')
-        .callsFake(venueId => {
-          expect(venueId).toEqual('tate-modern');
-          return mockStrategy;
-        });
+      expect(venueIterationService.getNextVenue).toHaveBeenCalledWith(
+        "almeida-theatre"
+      );
 
-      const stubDiscoverEvents = sinon
-        .stub(strategyRunner, 'discoverEvents')
-        .callsFake((venueId, venueStrategy) => {
-          expect(venueId).toEqual('tate-modern');
-          expect(venueStrategy).toEqual(mockStrategy);
+      expect(strategyFactory.create).toHaveBeenCalledWith("tate-modern");
+      expect(strategyRunner.discoverEvents).toHaveBeenCalledWith(
+        "tate-modern",
+        mockStrategy
+      );
+      expect(venueEventMonitorService.save).toHaveBeenCalledWith(
+        "tate-modern",
+        [{ id: "some-event-id" }]
+      );
 
-          return Promise.resolve([{ id: 'some-event-id' }]);
-        });
+      expect(strategyRunner.getVenueData).toHaveBeenCalledWith(mockStrategy);
+      expect(venueMonitorService.save).toHaveBeenCalledWith("tate-modern", {
+        text: "Venue data"
+      });
 
-      const stubSaveEventMonitors = sinon
-        .stub(venueEventMonitorService, 'save')
-        .callsFake((venueId, discoveredEvents) => {
-          expect(venueId).toEqual('tate-modern');
-          expect(discoveredEvents).toEqual([{ id: 'some-event-id' }]);
+      expect(venueIterationService.throttleIteration).toHaveBeenCalled();
 
-          return Promise.resolve();
-        });
-
-      const stubGetVenueData = sinon
-        .stub(strategyRunner, 'getVenueData')
-        .callsFake(venueStrategy => {
-          expect(venueStrategy).toEqual(mockStrategy);
-          return Promise.resolve({ text: 'Venue data' });
-        });
-
-      const stubSaveVenueMonitors = sinon
-        .stub(venueMonitorService, 'save')
-        .callsFake((venueId, venueData) => {
-          expect(venueId).toEqual('tate-modern');
-          expect(venueData).toEqual({ text: 'Venue data' });
-
-          return Promise.resolve();
-        });
-
-      const stubThrottleIteration = sinon
-        .stub(venueIterationService, 'throttleIteration')
-        .callsFake((startTime, delay) => {
-          expect(startTime[0]).to.be.greaterThan(0);
-          expect(delay).toEqual(1000);
-          return Promise.resolve();
-        });
-
-      const stubInvokeNextIteration = sinon
-        .stub(venueIterationService, 'invokeNextIteration')
-        .callsFake((venueId) => {
-          expect(venueId).toEqual('tate-modern');
-          return Promise.resolve();
-        });
-
-      venueService
-        .processNextVenue('almeida-theatre', process.hrtime(), 2147483647)
-        .then(() => {
-          expect(stubGetNextVenue.called).toEqual(true);
-          expect(stubCreate.called).toEqual(true);
-          expect(stubDiscoverEvents.called).toEqual(true);
-          expect(stubSaveEventMonitors.called).toEqual(true);
-          expect(stubGetVenueData.called).toEqual(true);
-          expect(stubSaveVenueMonitors.called).toEqual(true);
-          expect(stubThrottleIteration.called).toEqual(true);
-          expect(stubInvokeNextIteration.called).toEqual(true);
-
-          done();
-        })
-        .catch(done);
-    });
-
-    it('should handle the venue taking too long to be processed', done => {
-      const mockStrategy = {};
-
-      const stubGetNextVenue = sinon
-        .stub(venueIterationService, 'getNextVenue')
-        .callsFake(lastId => {
-          expect(lastId).toEqual('almeida-theatre');
-          return Promise.resolve('tate-modern');
-        });
-
-      const stubCreate = sinon
-        .stub(strategyFactory, 'create')
-        .callsFake(venueId => {
-          expect(venueId).toEqual('tate-modern');
-          return mockStrategy;
-        });
-
-      sinon
-        .stub(strategyRunner, 'discoverEvents')
-        .callsFake(() => new Promise(resolve => setTimeout(() => resolve(), 50000))
-        );
-
-      const stubAddIterationError = sinon
-        .stub(venueIterationService, 'addIterationError')
-        .callsFake((err, venueId, startTimestamp) => {
-          expect(err.message).toEqual('processing venue took too long');
-          expect(venueId).toEqual('tate-modern');
-          expect(startTimestamp).toEqual(12345678);
-
-          return Promise.resolve();
-        });
-
-      const stubInvokeNextIteration = sinon
-        .stub(venueIterationService, 'invokeNextIteration')
-        .callsFake((venueId, startTimestamp) => {
-          expect(venueId).toEqual('tate-modern');
-          expect(startTimestamp).toEqual(12345678);
-
-          return Promise.resolve();
-        });
-
-      venueService
-        .processNextVenue('almeida-theatre', 12345678, 100)
-        .then(() => {
-          expect(stubGetNextVenue.called).toEqual(true);
-          expect(stubCreate.called).toEqual(true);
-          expect(stubAddIterationError.called).toEqual(true);
-          expect(stubInvokeNextIteration.called).toEqual(true);
-
-          done();
-        })
-        .catch(done);
+      expect(venueIterationService.invokeNextIteration).toHaveBeenCalledWith(
+        "tate-modern"
+      );
     });
   });
 });

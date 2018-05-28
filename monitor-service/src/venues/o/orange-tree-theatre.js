@@ -1,13 +1,13 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.orangetreetheatre.co.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  const $ = yield pageLoader(`${BASE_URL}/whats-on`);
+  const $ = await pageLoader(`${BASE_URL}/whats-on`);
 
   $('#project-list a').each(function() {
     const href = $(this).attr('href');
@@ -15,10 +15,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('#project-item .show-item-title').html();
   const data = [$('#project-item .show-item-header').html()];
 
@@ -27,4 +27,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   });
 
   return { title, data };
-});
+};

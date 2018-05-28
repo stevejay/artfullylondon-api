@@ -1,10 +1,10 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageParser = co.wrap(function*() {
-  const $ = yield pageLoader(
+exports.pageParser = async function() {
+  const $ = await pageLoader(
     'http://www.mercerchance.co.uk/exhibitions/4586074953'
   );
   const data = [];
@@ -15,4 +15,4 @@ exports.pageParser = co.wrap(function*() {
   });
 
   return { data };
-});
+};

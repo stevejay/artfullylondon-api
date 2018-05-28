@@ -1,23 +1,23 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.halesgallery.com';
 
-exports.pageParser = co.wrap(function*() {
+exports.pageParser = async function() {
   const data = [];
 
-  let $ = yield pageLoader('http://www.halesgallery.com/exhibitions/current/');
+  let $ = await pageLoader('http://www.halesgallery.com/exhibitions/current/');
   data.push($('#content').html());
 
-  $ = yield pageLoader('http://www.halesgallery.com/exhibitions/forthcoming/');
+  $ = await pageLoader('http://www.halesgallery.com/exhibitions/forthcoming/');
   data.push($('#content').html());
 
   return { data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/about/contact/');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/about/contact/');
   return $('#location1').html();
-});
+};

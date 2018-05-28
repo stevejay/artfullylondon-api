@@ -1,6 +1,5 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 // Note: arebyte have updated their website but they don't seem to have
@@ -8,9 +7,9 @@ const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.arebyte.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  let $ = yield pageLoader(`${BASE_URL}`);
+  let $ = await pageLoader(`${BASE_URL}`);
 
   $('li.menuItem li.subMenuItem a:contains(\'current\')').each(function() {
     const href = $(this).attr('href');
@@ -18,10 +17,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const data = $('.page_current_2.title').html();
   return { data };
-});
+};

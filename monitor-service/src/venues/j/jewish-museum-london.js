@@ -1,12 +1,12 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.jewishmuseum.org.uk';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/exhibitions');
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL + '/exhibitions');
   const result = [];
 
   $('#content1 .events a.event').each(function() {
@@ -15,16 +15,16 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result.slice(0, 12);
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('#contentarea .page_subtitle').html();
   const data = $('#contentarea').html();
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/Plan_your_visit');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/Plan_your_visit');
   return $('.listing:has(h3:contains("Plan Your Visit"))').html();
-});
+};

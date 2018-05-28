@@ -1,12 +1,12 @@
 'use strict';
 
-const co = require('co');
+
 const delay = require('delay');
 const log = require('loglevel');
 const lambda = require('../external-services/lambda');
 const sns = require('../external-services/sns');
 
-exports.startIteration = co.wrap(function*(actionId, topicArn) {
+exports.startIteration = async function(actionId, topicArn) {
   const iterationData = yield lambda.invoke(
     process.env.SERVERLESS_START_ITERATION_LAMBDA_NAME,
     { actionId }
@@ -22,7 +22,7 @@ exports.startIteration = co.wrap(function*(actionId, topicArn) {
   );
 });
 
-exports.addIterationError = co.wrap(function*(
+exports.addIterationError = async function(
   message,
   actionId,
   startTimestamp,
@@ -43,7 +43,7 @@ exports.addIterationError = co.wrap(function*(
   }
 });
 
-exports.throttleIteration = co.wrap(function*(startTime, minMs) {
+exports.throttleIteration = async function(startTime, minMs) {
   if (minMs > 1000) {
     throw new Error('minMs cannot be greater than 1000');
   }
@@ -59,7 +59,7 @@ exports.throttleIteration = co.wrap(function*(startTime, minMs) {
   }
 });
 
-exports.invokeNextIteration = co.wrap(function*(
+exports.invokeNextIteration = async function(
   lastId,
   startTimestamp,
   actionId,

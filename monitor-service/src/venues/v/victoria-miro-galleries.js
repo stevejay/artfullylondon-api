@@ -1,15 +1,15 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.victoria-miro.com';
 
 module.exports = function(venueName) {
   return {
-    pageFinder: co.wrap(function*() {
+    pageFinder: async function() {
       const result = [];
-      const $ = yield pageLoader(`${BASE_URL}/exhibitions/`);
+      const $ = await pageLoader(`${BASE_URL}/exhibitions/`);
 
       function hrefCallback() {
         const href = $(this).attr('href');
@@ -34,14 +34,14 @@ module.exports = function(venueName) {
 
       return result;
     }),
-    pageParser: co.wrap(function*(pageUrl) {
-      const $ = yield pageLoader(pageUrl);
+    pageParser: async function(pageUrl) {
+      const $ = await pageLoader(pageUrl);
       const title = $('.heading_title').html();
       const data = [$('.hero_item').html(), $('.panel_content p').html()];
       return { title, data };
     }),
-    venueOpenings: co.wrap(function*() {
-      const $ = yield pageLoader(BASE_URL + '/contact/');
+    venueOpenings: async function() {
+      const $ = await pageLoader(BASE_URL + '/contact/');
       return $('#contact_general_information').html();
     }),
   };

@@ -1,19 +1,18 @@
-'use strict';
+"use strict";
 
-const co = require('co');
-const ensure = require('ensure-request').ensure;
-const ensureErrorHandler = require('../validation/ensure-error-handler');
-const venueMonitorRepository = require('../persistence/venue-monitor-repository');
-const constraints = require('../validation/constraints');
-const diff = require('../venue-processing/diff');
+const ensure = require("ensure-request").ensure;
+const ensureErrorHandler = require("../validation/ensure-error-handler");
+const venueMonitorRepository = require("../persistence/venue-monitor-repository");
+const constraints = require("../validation/constraints");
+const diff = require("../venue-processing/diff");
 
-exports.getVenueMonitors = co.wrap(function*(venueId) {
-  const dbItem = yield venueMonitorRepository.tryGet(venueId);
+exports.getVenueMonitors = async function(venueId) {
+  const dbItem = await venueMonitorRepository.tryGet(venueId);
   if (!dbItem) {
     return [];
   }
 
-  const changeDiff = yield diff.getDiff(dbItem.oldVenueText, dbItem.venueText);
+  const changeDiff = await diff.getDiff(dbItem.oldVenueText, dbItem.venueText);
 
   if (changeDiff) {
     dbItem.changeDiff = changeDiff;
@@ -23,21 +22,19 @@ exports.getVenueMonitors = co.wrap(function*(venueId) {
   delete dbItem.venueText;
 
   return [dbItem];
-});
-
-exports.updateVenueMonitor = entity => {
-  return new Promise(resolve => {
-    ensure(entity, constraints.venueMonitorConstraint, ensureErrorHandler);
-    resolve();
-  }).then(() => venueMonitorRepository.update(entity));
 };
 
-exports.save = co.wrap(function*(venueId, venueMonitor) {
+exports.updateVenueMonitor = async entity => {
+  ensure(entity, constraints.venueMonitorConstraint, ensureErrorHandler);
+  await venueMonitorRepository.update(entity);
+};
+
+exports.save = async function(venueId, venueMonitor) {
   if (!venueMonitor) {
     return;
   }
 
-  const existingVenueMonitor = yield venueMonitorRepository.tryGet(venueId);
+  const existingVenueMonitor = await venueMonitorRepository.tryGet(venueId);
   const result = {};
 
   if (existingVenueMonitor) {
@@ -66,5 +63,5 @@ exports.save = co.wrap(function*(venueId, venueMonitor) {
   result.venueText = venueMonitor.venueText;
   result.venueId = venueId;
 
-  yield venueMonitorRepository.put(result);
-});
+  await venueMonitorRepository.put(result);
+};

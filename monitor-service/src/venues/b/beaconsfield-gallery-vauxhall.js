@@ -1,12 +1,11 @@
 'use strict';
 
-const co = require('co');
 const qsm = require('qsm');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  const $ = yield pageLoader('http://beaconsfield.ltd.uk/projects/');
+  const $ = await pageLoader('http://beaconsfield.ltd.uk/projects/');
 
   $('#content a:has(img)').each(function() {
     let href = $(this).attr('href');
@@ -14,16 +13,16 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = $('#content-text').html();
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader('http://beaconsfield.ltd.uk/about/visiting/');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader('http://beaconsfield.ltd.uk/about/visiting/');
   return $('.entry-content').html();
-});
+};

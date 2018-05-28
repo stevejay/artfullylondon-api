@@ -1,12 +1,11 @@
 'use strict';
 
-const co = require('co');
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.camdenartscentre.org';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/whats-on/exhibitions');
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL + '/whats-on/exhibitions');
   const result = [];
 
   $('#listing a:has(img)').each(function() {
@@ -15,16 +14,16 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = [$('#event p.dates').html(), $('#event #description').html()];
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL);
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL);
   return $('#times').html();
-});
+};

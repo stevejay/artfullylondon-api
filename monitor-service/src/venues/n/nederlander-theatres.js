@@ -1,14 +1,14 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.nederlander.co.uk';
 
 module.exports = function(venueName) {
   return {
-    pageFinder: co.wrap(function*() {
-      const $ = yield pageLoader(
+    pageFinder: async function() {
+      const $ = await pageLoader(
         BASE_URL + '/whats-on?from=2017-03-01&to=2020-03-31'
       );
       const result = [];
@@ -25,8 +25,8 @@ module.exports = function(venueName) {
 
       return result;
     }),
-    pageParser: co.wrap(function*(pageUrl) {
-      const $ = yield pageLoader(pageUrl);
+    pageParser: async function(pageUrl) {
+      const $ = await pageLoader(pageUrl);
 
       const title = $('.content-area .big-strap').html();
 

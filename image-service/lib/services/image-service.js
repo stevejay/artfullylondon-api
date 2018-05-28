@@ -1,6 +1,6 @@
 'use strict';
 
-const co = require('co');
+
 const ensure = require('ensure-request').ensure;
 const normalise = require('normalise-request');
 const imageRepository = require('../persistence/image-repository');
@@ -12,7 +12,7 @@ const imageProcessor = require('../image/image-processor');
 const mappings = require('../mappings');
 const entityIterationService = require('./entity-iteration-service');
 
-exports.addImageToStore = co.wrap(function*(request) {
+exports.addImageToStore = async function(request) {
   normalise(request, normaliser);
   ensure(request, constraints.image, ensureErrorHandler);
 
@@ -23,7 +23,7 @@ exports.addImageToStore = co.wrap(function*(request) {
   );
 });
 
-exports.getImageData = co.wrap(function*(imageId) {
+exports.getImageData = async function(imageId) {
   const image = yield imageRepository.getImage(imageId);
   return mappings.mapDbItemToResponse(image);
 });
@@ -34,7 +34,7 @@ exports.startReprocessingImages = () =>
     process.env.SERVERLESS_REPROCESS_IMAGES_TOPIC_ARN
   );
 
-exports.reprocessNextImage = co.wrap(function*(
+exports.reprocessNextImage = async function(
   lastId,
   startTimestamp
 ) {

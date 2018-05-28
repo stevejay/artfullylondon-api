@@ -1,13 +1,13 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.pacegallery.com';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
-  const $ = yield pageLoader(`${BASE_URL}/`);
+  const $ = await pageLoader(`${BASE_URL}/`);
 
   $(
     '.media-item.exhibition:has(.item-body:contains(\'London\')) > a'
@@ -17,16 +17,16 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('#exhibition-info h1.exhibition-heading').html();
   const data = $('#exhibition-info').html();
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL);
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL);
   return $('#location-490').html();
-});
+};

@@ -1,12 +1,12 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://cubittartists.org.uk';
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(
+exports.pageFinder = async function() {
+  const $ = await pageLoader(
     BASE_URL + '/category/gallery/gallery-exhibitions/'
   );
   const result = [];
@@ -17,10 +17,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result.slice(0, 6);
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('h1 a').html();
 
   const data = $('#content p').each(function() {
@@ -28,4 +28,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   });
 
   return { title, data };
-});
+};

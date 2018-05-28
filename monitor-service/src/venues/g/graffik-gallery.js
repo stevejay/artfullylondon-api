@@ -1,10 +1,10 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageParser = co.wrap(function*() {
-  const $ = yield pageLoader('https://graffikgallery.co.uk/exhibitions/');
+exports.pageParser = async function() {
+  const $ = await pageLoader('https://graffikgallery.co.uk/exhibitions/');
   const title = $('title').html();
 
   const data = $(
@@ -12,12 +12,12 @@ exports.pageParser = co.wrap(function*() {
   ).html();
 
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader('https://graffikgallery.co.uk/contact/');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader('https://graffikgallery.co.uk/contact/');
   
   return $('.wpb_text_column').each(function() {
     $(this).html();
   });
-});
+};

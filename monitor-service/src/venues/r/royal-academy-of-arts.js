@@ -1,6 +1,6 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'https://www.royalacademy.org.uk';
@@ -14,8 +14,8 @@ const EVENT_TYPES_TO_IGNORE = [
   'Workshops',
 ];
 
-exports.pageFinder = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/exhibitions-and-events');
+exports.pageFinder = async function() {
+  const $ = await pageLoader(BASE_URL + '/exhibitions-and-events');
 
   const currentExhibitionLinks = $('#featured-exhibition')
     .add('#exhibitions')
@@ -42,10 +42,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const isEvent = $('section.event-info').length === 1;
 
   const topInfo = $(isEvent ? 'section.event-info' : 'section.primary-info');
@@ -84,9 +84,9 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   }
 
   return { title, data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader(BASE_URL + '/plan-your-visit');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader(BASE_URL + '/plan-your-visit');
   return $('.main.container:has(h2:contains("Plan your visit"))').html();
-});
+};

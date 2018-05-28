@@ -1,10 +1,10 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').spaLoader;
 
-exports.pageParser = co.wrap(function*() {
-  const $ = yield pageLoader(
+exports.pageParser = async function() {
+  const $ = await pageLoader(
     'http://www.thefoundrygallery.org/futureexhibitions/',
     'article.eventlist-event'
   );
@@ -16,9 +16,9 @@ exports.pageParser = co.wrap(function*() {
   });
 
   return { data };
-});
+};
 
-exports.venueOpenings = co.wrap(function*() {
-  const $ = yield pageLoader('http://www.thefoundrygallery.org/new-page/');
+exports.venueOpenings = async function() {
+  const $ = await pageLoader('http://www.thefoundrygallery.org/new-page/');
   return $('#page').html();
-});
+};

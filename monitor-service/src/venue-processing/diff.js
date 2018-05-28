@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-const diff = require('fast-diff');
+const diff = require("fast-diff");
 
-exports.getDiff = function(oldText, newText) {
+exports.getDiff = async function(oldText, newText) {
   let result = null;
 
   if (!oldText) {
-    result = newText || '';
+    result = newText || "";
   } else {
-    const changes = diff(oldText || '', newText || '');
+    const changes = diff(oldText || "", newText || "");
 
     result = changes
       .map(function(edit) {
@@ -16,16 +16,16 @@ exports.getDiff = function(oldText, newText) {
         const text = edit[1];
 
         if (action > 0) {
-          return '<ins>' + text + '</ins>';
+          return "<ins>" + text + "</ins>";
         } else if (action < 0) {
-          return '<del>' + text + '</del>';
+          return "<del>" + text + "</del>";
         } else {
           return text;
         }
       })
-      .join('')
-      .replace(/\n/g, '<br/>');
+      .join("")
+      .replace(/\n/g, "<br/>");
   }
 
-  return Promise.resolve('<p>' + result + '</p>');
+  return "<p>" + result + "</p>";
 };

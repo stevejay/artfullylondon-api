@@ -1,14 +1,14 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 const BASE_URL = 'http://www.npg.org.uk';
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  let $ = yield pageLoader(
+  let $ = await pageLoader(
     `${BASE_URL}/whatson/events-calendar.php?filterDate=&eventType=Exhibition&eventKeyword=&eventsSubmit.x=44&eventsSubmit.y=7`
   );
 
@@ -17,7 +17,7 @@ exports.pageFinder = co.wrap(function*() {
     result.push(BASE_URL + '/' + href);
   });
 
-  $ = yield pageLoader(
+  $ = await pageLoader(
     `${BASE_URL}/whatson/events-calendar.php?filterDate=&eventType=Display&eventKeyword=&eventsSubmit.x=40&eventsSubmit.y=5`
   );
 
@@ -27,10 +27,10 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('title').html();
   const data = [$('#main-content-box').html()];
 
@@ -39,4 +39,4 @@ exports.pageParser = co.wrap(function*(pageUrl) {
   });
 
   return { title, data };
-});
+};

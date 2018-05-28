@@ -1,18 +1,17 @@
-'use strict';
+"use strict";
 
-const co = require('co');
-const pageLoader = require('../../venue-processing/page-loader').spaLoader;
+const pageLoader = require("../../venue-processing/page-loader").spaLoader;
 
-exports.pageParser = co.wrap(function*() {
-  let $ = yield pageLoader(
-    'http://www.5thbase.co.uk/forthcoming',
-    '#PAGES_CONTAINER'
+exports.pageParser = async function() {
+  let $ = await pageLoader(
+    "http://www.5thbase.co.uk/forthcoming",
+    "#PAGES_CONTAINER"
   );
 
-  const data = [$('#PAGES_CONTAINER').html()];
+  const data = [$("#PAGES_CONTAINER").html()];
 
-  $ = yield pageLoader('http://www.5thbase.co.uk/', '#PAGES_CONTAINER');
-  data.push($('#PAGES_CONTAINER').html());
+  $ = await pageLoader("http://www.5thbase.co.uk/", "#PAGES_CONTAINER");
+  data.push($("#PAGES_CONTAINER").html());
 
   return { data };
-});
+};

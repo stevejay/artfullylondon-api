@@ -1,16 +1,16 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
-exports.pageParser = co.wrap(function*() {
+exports.pageParser = async function() {
   const data = [];
 
-  let $ = yield pageLoader('http://white-rainbow.co.uk/exhibition/current/');
+  let $ = await pageLoader('http://white-rainbow.co.uk/exhibition/current/');
   data.push($('.entry-header').html());
 
-  $ = yield pageLoader('http://white-rainbow.co.uk/exhibition/future/');
+  $ = await pageLoader('http://white-rainbow.co.uk/exhibition/future/');
   data.push($('#content article').html());
 
   return { data };
-});
+};

@@ -1,12 +1,12 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').staticLoader;
 
 module.exports = function(venueName) {
   return {
-    pageParser: co.wrap(function*() {
-      let $ = yield pageLoader(
+    pageParser: async function() {
+      let $ = await pageLoader(
         'http://www.sadiecoles.com/current-exhibitions.html'
       );
 
@@ -16,8 +16,8 @@ module.exports = function(venueName) {
 
       return { data };
     }),
-    venueOpenings: co.wrap(function*() {
-      const $ = yield pageLoader('http://www.sadiecoles.com/contact.html');
+    venueOpenings: async function() {
+      const $ = await pageLoader('http://www.sadiecoles.com/contact.html');
       return $('.content-container').html();
     }),
   };

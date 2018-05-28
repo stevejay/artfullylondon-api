@@ -1,16 +1,16 @@
 'use strict';
 
-const co = require('co');
+
 const pageLoader = require('../../venue-processing/page-loader').spaLoader;
 
 const BASE_URL = 'https://www.thevaults.london';
 
 exports.pageUrlChunks = 1;
 
-exports.pageFinder = co.wrap(function*() {
+exports.pageFinder = async function() {
   const result = [];
 
-  const $ = yield pageLoader(
+  const $ = await pageLoader(
     `${BASE_URL}/whats-on`,
     '#PAGES_CONTAINERcenteredContent'
   );
@@ -24,11 +24,11 @@ exports.pageFinder = co.wrap(function*() {
   });
 
   return result;
-});
+};
 
-exports.pageParser = co.wrap(function*(pageUrl) {
-  const $ = yield pageLoader(pageUrl);
+exports.pageParser = async function(pageUrl) {
+  const $ = await pageLoader(pageUrl);
   const title = $('#PAGES_CONTAINERcenteredContent h2').html();
   const data = $('#PAGES_CONTAINERcenteredContent').html();
   return { title, data };
-});
+};
