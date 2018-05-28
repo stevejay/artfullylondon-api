@@ -5,7 +5,7 @@ const ses = require("../external-services/ses");
 const venueEventMonitorRepository = require("../persistence/venue-event-monitor-repository");
 const venueMonitorRepository = require("../persistence/venue-monitor-repository");
 const lambda = require("../external-services/lambda");
-const constants = require("../../lib/constants");
+const constants = require("../constants");
 
 process.env.SERVERLESS_GET_LATEST_ITERATION_ERRORS_LAMBDA_NAME =
   "GetLatestIterationErrors";

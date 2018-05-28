@@ -2,6 +2,7 @@
 
 const MultiSearchBuilder = require("es-search-builder").MultiSearchBuilder;
 const elasticsearch = require("../external-services/elasticsearch");
+const constants = require("../constants");
 
 exports.findEvents = async function(externalEventIds) {
   const msearchBuilder = new MultiSearchBuilder();
@@ -20,7 +21,7 @@ exports.findEvents = async function(externalEventIds) {
   boolQuery.addFilter().setTerms({ externalEventId: ids });
 
   const msearches = msearchBuilder.build();
-  const results = await msearch.search(msearches);
+  const results = await elasticsearch.search(msearches);
   const hits = results.responses[0].hits;
   return hits.hits.length ? hits.hits.map(hit => hit._source) : [];
 };

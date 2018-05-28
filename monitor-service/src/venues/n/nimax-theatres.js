@@ -1,9 +1,8 @@
-'use strict';
+"use strict";
 
+const pageLoader = require("../../venue-processing/page-loader").staticLoader;
 
-const pageLoader = require('../../venue-processing/page-loader').staticLoader;
-
-const BASE_URL = 'https://www.nimaxtheatres.com';
+const BASE_URL = "https://www.nimaxtheatres.com";
 
 module.exports = function(venueName) {
   return {
@@ -11,23 +10,23 @@ module.exports = function(venueName) {
       const $ = await pageLoader(BASE_URL);
       const result = [];
 
-      $('#content .section a').each(function() {
-        const href = $(this).attr('href');
+      $("#content .section a").each(function() {
+        const href = $(this).attr("href");
 
         if (!href.toLowerCase().startsWith(venueName)) {
           return;
         }
 
-        result.push(BASE_URL + '/' + href);
+        result.push(BASE_URL + "/" + href);
       });
 
       return result;
-    }),
+    },
     pageParser: async function(pageUrl) {
       const $ = await pageLoader(pageUrl);
-      const title = $('title').html();
-      const data = $('#content').html();
+      const title = $("title").html();
+      const data = $("#content").html();
       return { title, data };
-    }),
+    }
   };
 };

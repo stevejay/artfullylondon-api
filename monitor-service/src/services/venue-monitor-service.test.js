@@ -1,7 +1,7 @@
 "use strict";
 
 const diff = require("../venue-processing/diff");
-const venueMonitorRepository = require("./venue-monitor-repository");
+const venueMonitorRepository = require("../persistence/venue-monitor-repository");
 const venueMonitorService = require("./venue-monitor-service");
 
 const sync = fn =>
@@ -113,7 +113,9 @@ describe("venue-monitor-service", () => {
       venueMonitorRepository.tryGet = jest.fn().mockResolvedValue(null);
       venueMonitorRepository.put = jest.fn().mockResolvedValue();
 
-      await venueMonitorService.save("almeida-theatre", venueMonitor);
+      await venueMonitorService.save("almeida-theatre", {
+        venueText: "Foo" // TODO might be wrong
+      });
 
       expect(venueMonitorRepository.tryGet).toHaveBeenCalledWith(
         "almeida-theatre"

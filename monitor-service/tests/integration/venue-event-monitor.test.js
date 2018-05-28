@@ -370,8 +370,8 @@ describe("venue event monitor integration tests", () => {
       const discoveredEvents = results[0];
       const venueData = results[1];
 
-      console.log(discoveredEvents);
-      console.log(venueData);
+      console.log(discoveredEvents); // eslint-disable-line no-console
+      console.log(venueData); // eslint-disable-line no-console
     });
   });
 });

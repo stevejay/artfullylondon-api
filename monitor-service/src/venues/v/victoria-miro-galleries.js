@@ -1,9 +1,8 @@
-'use strict';
+"use strict";
 
+const pageLoader = require("../../venue-processing/page-loader").staticLoader;
 
-const pageLoader = require('../../venue-processing/page-loader').staticLoader;
-
-const BASE_URL = 'https://www.victoria-miro.com';
+const BASE_URL = "https://www.victoria-miro.com";
 
 module.exports = function(venueName) {
   return {
@@ -12,7 +11,7 @@ module.exports = function(venueName) {
       const $ = await pageLoader(`${BASE_URL}/exhibitions/`);
 
       function hrefCallback() {
-        const href = $(this).attr('href');
+        const href = $(this).attr("href");
         result.push(BASE_URL + href);
       }
 
@@ -33,16 +32,16 @@ module.exports = function(venueName) {
       ).each(hrefCallback);
 
       return result;
-    }),
+    },
     pageParser: async function(pageUrl) {
       const $ = await pageLoader(pageUrl);
-      const title = $('.heading_title').html();
-      const data = [$('.hero_item').html(), $('.panel_content p').html()];
+      const title = $(".heading_title").html();
+      const data = [$(".hero_item").html(), $(".panel_content p").html()];
       return { title, data };
-    }),
+    },
     venueOpenings: async function() {
-      const $ = await pageLoader(BASE_URL + '/contact/');
-      return $('#contact_general_information').html();
-    }),
+      const $ = await pageLoader(BASE_URL + "/contact/");
+      return $("#contact_general_information").html();
+    }
   };
 };

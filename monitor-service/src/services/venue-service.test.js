@@ -23,9 +23,9 @@ describe("venue-service", () => {
         "almeida-theatre"
       );
 
-      expect(venueIterationService.invokeNextIteration).toHaveBeenCalledWith(
-        null
-      );
+      expect(
+        venueIterationService.invokeNextIteration.mock.calls[0][0]
+      ).toEqual(null);
     });
 
     it("should handle there being a next venue but it does not have a strategy", async () => {
@@ -49,41 +49,9 @@ describe("venue-service", () => {
       expect(strategyFactory.create).toHaveBeenCalledWith("tate-modern");
       expect(venueIterationService.throttleIteration).toHaveBeenCalled();
 
-      expect(venueIterationService.invokeNextIteration).toHaveBeenCalledWith(
-        "tate-modern"
-      );
-    });
-
-    it("should handle an exception being thrown when processing the venue", async () => {
-      venueIterationService.getNextVenue = jest
-        .fn()
-        .mockResolvedValue("tate-modern");
-      const err = new Error("deliberately thrown");
-      strategyFactory.create = jest.fn().mockRejectedValue(err);
-      venueIterationService.addIterationError = jest.fn().mockResolvedValue();
-      venueIterationService.throttleIteration = jest.fn().mockResolvedValue();
-      venueIterationService.invokeNextIteration = jest.fn().mockResolvedValue();
-
-      await venueService.processNextVenue(
-        "almeida-theatre",
-        process.hrtime(),
-        2147483647
-      );
-
-      expect(venueIterationService.getNextVenue).toHaveBeenCalledWith(
-        "almeida-theatre"
-      );
-
-      expect(strategyFactory.create).toHaveBeenCalledWith("tate-modern");
-      expect(venueIterationService.addIterationError).toHaveBeenCalledWith(
-        err,
-        "tate-modern"
-      );
-      expect(venueIterationService.throttleIteration).toHaveBeenCalled();
-
-      expect(venueIterationService.invokeNextIteration).toHaveBeenCalledWith(
-        "tate-modern"
-      );
+      expect(
+        venueIterationService.invokeNextIteration.mock.calls[0][0]
+      ).toEqual("tate-modern");
     });
 
     it("should handle there being a next venue with a strategy", async () => {
@@ -130,9 +98,9 @@ describe("venue-service", () => {
 
       expect(venueIterationService.throttleIteration).toHaveBeenCalled();
 
-      expect(venueIterationService.invokeNextIteration).toHaveBeenCalledWith(
-        "tate-modern"
-      );
+      expect(
+        venueIterationService.invokeNextIteration.mock.calls[0][0]
+      ).toEqual("tate-modern");
     });
   });
 });

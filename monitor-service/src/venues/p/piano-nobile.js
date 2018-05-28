@@ -1,9 +1,8 @@
-'use strict';
+"use strict";
 
+const pageLoader = require("../../venue-processing/page-loader").staticLoader;
 
-const pageLoader = require('../../venue-processing/page-loader').staticLoader;
-
-const BASE_URL = 'http://www.piano-nobile.com';
+const BASE_URL = "http://www.piano-nobile.com";
 
 module.exports = function(venueName, venueOpeningTimesUrl) {
   return {
@@ -13,7 +12,7 @@ module.exports = function(venueName, venueOpeningTimesUrl) {
       const result = [];
 
       function hrefCallback() {
-        const href = $(this).attr('href');
+        const href = $(this).attr("href");
         result.push(BASE_URL + href);
       }
 
@@ -34,23 +33,25 @@ module.exports = function(venueName, venueOpeningTimesUrl) {
       ).each(hrefCallback);
 
       return result;
-    }),
+    },
     pageParser: async function(pageUrl) {
       const $ = await pageLoader(pageUrl);
-      const title = $('h1').first().html();
+      const title = $("h1")
+        .first()
+        .html();
 
       const data = [
-        $('.exhibition-header').html(),
-        $('.exhibition-full-details .description').html(),
+        $(".exhibition-header").html(),
+        $(".exhibition-full-details .description").html()
       ];
 
       return { title, data };
-    }),
+    },
     venueOpenings: async function() {
       const $ = await pageLoader(
-        BASE_URL + '/contact/' + venueOpeningTimesUrl + '/'
+        BASE_URL + "/contact/" + venueOpeningTimesUrl + "/"
       );
-      return $('#content_module').html();
-    }),
+      return $("#content_module").html();
+    }
   };
 };

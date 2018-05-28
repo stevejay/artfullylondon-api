@@ -1,13 +1,12 @@
-'use strict';
+"use strict";
 
-
-const pageLoader = require('../../venue-processing/page-loader').staticLoader;
+const pageLoader = require("../../venue-processing/page-loader").staticLoader;
 
 module.exports = function(venueName) {
   return {
     pageParser: async function() {
       let $ = await pageLoader(
-        'http://www.sadiecoles.com/current-exhibitions.html'
+        "http://www.sadiecoles.com/current-exhibitions.html"
       );
 
       const data = $(
@@ -15,10 +14,10 @@ module.exports = function(venueName) {
       ).html();
 
       return { data };
-    }),
+    },
     venueOpenings: async function() {
-      const $ = await pageLoader('http://www.sadiecoles.com/contact.html');
-      return $('.content-container').html();
-    }),
+      const $ = await pageLoader("http://www.sadiecoles.com/contact.html");
+      return $(".content-container").html();
+    }
   };
 };

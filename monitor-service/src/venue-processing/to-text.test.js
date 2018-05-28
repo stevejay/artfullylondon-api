@@ -1,6 +1,6 @@
 "use strict";
 
-const toText = require("../../lib/venue-processing/to-text");
+const toText = require("./to-text");
 
 describe("to-text", function() {
   const tests = [

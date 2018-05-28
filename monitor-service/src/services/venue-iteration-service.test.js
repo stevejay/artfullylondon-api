@@ -1,9 +1,9 @@
 "use strict";
 
 const log = require("loglevel");
-const venueIterationService = require("../../lib/services/venue-iteration-service");
-const lambda = require("../../lib/external-services/lambda");
-const sns = require("../../lib/external-services/sns");
+const venueIterationService = require("./venue-iteration-service");
+const lambda = require("../external-services/lambda");
+const sns = require("../external-services/sns");
 
 process.env.SERVERLESS_START_ITERATION_LAMBDA_NAME = "StartIteration";
 process.env.SERVERLESS_ITERATE_VENUES_TOPIC_ARN = "IterateVenuesTopicArn";
@@ -94,11 +94,14 @@ describe("venue-iteration-service", () => {
         123456
       );
 
-      expect(sns.notify).toHaveBeenCalledWith({
-        startTimestamp: 123456,
-        lastId: "almeida-theatre",
-        retry: 0
-      });
+      expect(sns.notify).toHaveBeenCalledWith(
+        {
+          startTimestamp: 123456,
+          lastId: "almeida-theatre",
+          retry: 0
+        },
+        { arn: "IterateVenuesTopicArn" }
+      );
     });
 
     it("should invoke end of iteration lambda when there are no more venues to iterate", async () => {
