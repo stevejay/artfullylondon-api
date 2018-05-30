@@ -3,7 +3,7 @@ service: artfullylondon-iteration-service
 frameworkVersion: ">=1.2.0 <2.0.0"
 
 package:
-    individually: false
+    individually: true
 
 provider:
     name: aws
@@ -70,6 +70,8 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-dynamodb-local
+    - serverless-offline
 
 custom:
     project: artfullylondon
@@ -78,31 +80,39 @@ custom:
     iterationLockTableName: ${self:custom.project}-${self:custom.stage}-iterationlock
     iterationTableName: ${self:custom.project}-${self:custom.stage}-iteration
     iterationErrorTableName: ${self:custom.project}-${self:custom.stage}-iterationerror
-    webpackIncludeModules: true
+    webpack:
+        includeModules: true
+        packager: 'npm'
+    dynamodb:
+        start:
+            port: 8000
+            migrate: true
+            sharedDb: true
+            noStart: true
 
 functions:
     startIteration:
-        handler: handlers/start-iteration.handler
+        handler: src/handlers/start-iteration.handler
         timeout: 10
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_ITERATON_LOCK_TABLE_NAME: ${self:custom.iterationLockTableName}
             SERVERLESS_ITERATON_TABLE_NAME: ${self:custom.iterationTableName}
     endIteration:
-        handler: handlers/end-iteration.handler
+        handler: src/handlers/end-iteration.handler
         timeout: 10
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_ITERATON_LOCK_TABLE_NAME: ${self:custom.iterationLockTableName}
             SERVERLESS_ITERATON_TABLE_NAME: ${self:custom.iterationTableName}
     addIterationError:
-        handler: handlers/add-iteration-error.handler
+        handler: src/handlers/add-iteration-error.handler
         timeout: 10
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_ITERATON_ERROR_TABLE_NAME: ${self:custom.iterationErrorTableName}
     getLatestErrors:
-        handler: handlers/get-latest-iteration-errors.handler
+        handler: src/handlers/get-latest-iteration-errors.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_ITERATON_TABLE_NAME: ${self:custom.iterationTableName}
