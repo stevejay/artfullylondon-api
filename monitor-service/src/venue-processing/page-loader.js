@@ -2,29 +2,21 @@
 
 const cheerio = require("cheerio");
 const Horseman = require("node-horseman");
-const request = require("request");
+const request = require("request-promise-native");
 const constants = require("../constants");
 
 const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
 
-exports.staticLoader = function(url) {
-  return new Promise((resolve, reject) => {
-    var options = {
-      url: url,
-      headers: {
-        "User-Agent": USER_AGENT
-      }
-    };
-
-    request(options, (err, response, body) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(cheerio.load(body));
-      }
-    });
+exports.staticLoader = async function(url) {
+  const body = await request({
+    url: url,
+    headers: {
+      "User-Agent": USER_AGENT
+    }
   });
+
+  return cheerio.load(body);
 };
 
 exports.spaLoader = async function(url, selector, timeout) {

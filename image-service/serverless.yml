@@ -3,7 +3,7 @@ service: artfullylondon-image-service
 frameworkVersion: ">=1.2.0 <2.0.0"
 
 package:
-    individually: false
+    individually: true
 
 provider:
     name: aws
@@ -92,11 +92,15 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-dynamodb-local
+    - serverless-offline-sns
+    - serverless-offline
 
 custom:
     project: artfullylondon
     stage: ${opt:stage, self:provider.stage}
     region: ${opt:region, self:provider.region}
+    env: ${file(./env.yml):${self:custom.stage}}
     adminSiteOrigin: https://www.artfully-admin.site
     publicSiteOrigin: https://www.artfully.london
     imageTableName: ${self:custom.project}-${self:custom.stage}-image
@@ -105,15 +109,29 @@ custom:
     originalImagesBucketName: ${self:custom.project}-${self:custom.stage}-original-images
     resizedImagesBucketName: ${self:custom.project}-${self:custom.stage}-resized-images
     reprocessImagesSnsEndpointName: "ReprocessImages"
-    reprocessImagesTopicArn: ${file(./env.yml):${self:custom.stage}.topicArnPrefix}:${self:custom.reprocessImagesSnsEndpointName}
+    reprocessImagesTopicArn: ${self:custom.env.topicArnPrefix}:${self:custom.reprocessImagesSnsEndpointName}
     startIterationLambdaName: artfullylondon-iteration-service-${self:custom.stage}-startIteration
     endIterationLambdaName: artfullylondon-iteration-service-${self:custom.stage}-endIteration
     addIterationErrorLambdaName: artfullylondon-iteration-service-${self:custom.stage}-addIterationError
-    webpackIncludeModules: true
+    webpack:
+        includeModules: true
+        packager: 'npm'
+    dynamodb:
+        start:
+            port: 8000
+            migrate: true
+            sharedDb: true
+            noStart: true
+    serverless-offline-sns:
+        port: 4002 # a free port for the sns server to run on
+        debug: false
+        # host: 0.0.0.0 # Optional, defaults to 127.0.0.1 if not provided to serverless-offline
+        # sns-endpoint: http://127.0.0.1:4567 # Optional. Only if you want to use a custom endpoint
+        accountId: 1111111111111 # Optional
 
 functions:
     addImage:
-        handler: handlers/add-image.handler
+        handler: src/handlers/add-image.handler
         timeout: 60
         environment:
             SERVERLESS_REGION: ${self:custom.region}
@@ -126,7 +144,7 @@ functions:
                 method: put
                 cors: true
     getImage:
-        handler: handlers/get-image.handler
+        handler: src/handlers/get-image.handler
         timeout: 6
         environment:
             SERVERLESS_REGION: ${self:custom.region}
@@ -139,7 +157,7 @@ functions:
                 method: get
                 cors: true
     reprocessImages:
-        handler: handlers/reprocess-images.handler
+        handler: src/handlers/reprocess-images.handler
         timeout: 6
         environment:
             SERVERLESS_REGION: ${self:custom.region}
@@ -152,7 +170,7 @@ functions:
                 method: post
                 cors: true
     reprocessImagesSns:
-        handler: handlers/reprocess-images-sns.handler
+        handler: src/handlers/reprocess-images-sns.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_IMAGE_TABLE_NAME: ${self:custom.imageTableName}

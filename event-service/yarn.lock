@@ -557,16 +557,6 @@ aws-sign2@~0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/aws-sign2/-/aws-sign2-0.7.0.tgz#b46e890934a9591f2d2f6f86d7e6a9f1b3fe76a8"
 
-aws-sns-publish@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/aws-sns-publish/-/aws-sns-publish-3.2.0.tgz#1567041ba3a64e6948c74ad9ddd2ab256e2d6d22"
-  dependencies:
-    is-aws-account-id "^1.0.0"
-    is-e164-phone-number "^1.0.0"
-    is-obj "^1.0.0"
-    is-sns-topic-arn "^1.0.0"
-    pify "^2.3.0"
-
 aws4@^1.6.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.7.0.tgz#d4d0e9b9dbfca77bf08eeb0a8a471550fe39e289"
@@ -3027,10 +3017,6 @@ is-arrayish@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.2.1.tgz#77c99840527aa8ecb1a8ba697b80645a7a926a9d"
 
-is-aws-account-id@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/is-aws-account-id/-/is-aws-account-id-1.0.0.tgz#3ad0955b6c3972fac1f14cec8c2d8fdff03c425a"
-
 is-binary-path@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/is-binary-path/-/is-binary-path-1.0.1.tgz#75f16642b480f187a711c814161fd3a4a7655898"
@@ -3100,10 +3086,6 @@ is-docker@^1.1.0:
 is-dotfile@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/is-dotfile/-/is-dotfile-1.0.2.tgz#2c132383f39199f8edc268ca01b9b007d205cc4d"
-
-is-e164-phone-number@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/is-e164-phone-number/-/is-e164-phone-number-1.0.0.tgz#7c9dc9af514ae52354958fc6e08ca91255007cd6"
 
 is-equal-shallow@^0.1.3:
   version "0.1.3"
@@ -3265,10 +3247,6 @@ is-resolvable@^1.0.0:
 is-retry-allowed@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-retry-allowed/-/is-retry-allowed-1.1.0.tgz#11a060568b67339444033d0125a61a20d564fb34"
-
-is-sns-topic-arn@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/is-sns-topic-arn/-/is-sns-topic-arn-1.0.0.tgz#539a71aa48f0f90d713e1532b3932a278902fb52"
 
 is-stream@^1.0.0, is-stream@^1.0.1, is-stream@^1.1.0:
   version "1.1.0"

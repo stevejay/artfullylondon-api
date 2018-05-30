@@ -1,5 +1,6 @@
 {
   "name": "artfullylondon-api-monitor-service",
+  "license": "MIT",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest ./src",
     "posttest": "yarn run lint",
@@ -24,7 +25,6 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "aws-sns-publish": "^3.2.0",
     "cheerio": "^1.0.0-rc.2",
     "collapse-white-space": "^1.0.4",
     "delay": "^3.0.0",

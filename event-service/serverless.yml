@@ -201,9 +201,7 @@ custom:
     eventUpdatedSnsEndpointName: "EventUpdated"
     refreshSearchIndexSnsEndpointName: "RefreshSearchIndex"
     eventUpdatedTopicArn: ${self:custom.env.topicArnPrefix}:${self:custom.eventUpdatedSnsEndpointName}
-        # ${file(./env.yml):${self:custom.stage}.topicArnPrefix}:${self:custom.eventUpdatedSnsEndpointName}
     refreshSearchIndexTopicArn: ${self:custom.env.topicArnPrefix}:${self:custom.refreshSearchIndexSnsEndpointName}
-        # ${file(./env.yml):${self:custom.stage}.topicArnPrefix}:${self:custom.refreshSearchIndexSnsEndpointName}
     webpack:
         includeModules: true
         packager: 'npm'

@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "aws-lambda-invoke": "^3.0.0",
-    "aws-sns-publish": "^3.2.0",
     "delay": "^3.0.0",
     "dynamodb-doc-client-wrapper": "^2.0.1",
     "elasticsearch": "^15.0.0",
