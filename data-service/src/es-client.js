@@ -5,6 +5,6 @@ const client = new elasticsearch.Client({
   log: "error"
 });
 
-export function search(params) {
-  return client.search(params);
-}
+export default {
+  search: params => client.search(params)
+};

@@ -1,6 +1,6 @@
 import * as formatter from "./formatter";
 
-class SearchService {
+export default class SearchService {
   constructor(searcher) {
     this._searcher = searcher;
   }
@@ -32,5 +32,3 @@ class SearchService {
     return links;
   }
 }
-
-module.exports = SearchService;

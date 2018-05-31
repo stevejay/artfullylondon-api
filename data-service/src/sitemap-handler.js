@@ -1,6 +1,6 @@
-const elasticsearch = require("./elasticsearch");
-const SearchService = require("./search-service");
-const searchService = new SearchService(elasticsearch);
+import esClient from "./es-client";
+import SearchService from "./search-service";
+const searchService = new SearchService(esClient);
 
 exports.handler = async () => {
   try {
