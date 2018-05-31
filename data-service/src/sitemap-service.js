@@ -1,10 +1,11 @@
-import * as formatter from "./formatter";
+import format from "date-fns/format";
 
-export default class SearchService {
-  constructor(searcher) {
+export default class SitemapService {
+  constructor(searcher, urlPrefix) {
     this._searcher = searcher;
+    this._urlPrefix = urlPrefix;
   }
-  async getSitemapLinks(dateTo) {
+  async getSitemapEventLinks(dateTo) {
     const searchResult = await this._searcher.search({
       index: "event-full",
       type: "doc",
@@ -17,7 +18,13 @@ export default class SearchService {
             filter: [{ term: { status: "Active" } }],
             should: [
               { term: { occurrenceType: "Continuous" } },
-              { range: { dateTo: { gte: formatter.formatDate(dateTo) } } }
+              {
+                range: {
+                  dateTo: {
+                    gte: format(dateTo, "YYYY/MM/DD")
+                  }
+                }
+              }
             ],
             minimum_should_match: 1
           }
@@ -25,10 +32,8 @@ export default class SearchService {
       }
     });
 
-    const links = searchResult.hits.hits.map(
-      hit => process.env.SITEMAP_URL_PREFIX + "/event/" + hit._source.id
+    return searchResult.hits.hits.map(
+      hit => `${this._urlPrefix}/event/${hit._source.id}`
     );
-
-    return links;
   }
 }

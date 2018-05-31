@@ -13,7 +13,8 @@
     "**/npm-debug.log": true,
     "coverage/**": true,
     "**/.serverless": true,
-    "**/.webpack": true
+    "**/.webpack": true,
+    "**/yarn-error.log": true
   },
   "search.exclude": {
     "**/___*": true

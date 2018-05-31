@@ -2,7 +2,7 @@ import elasticsearch from "elasticsearch";
 import jsonfile from "jsonfile";
 import path from "path";
 
-export default class ESSetup {
+export default class ESTestClient {
   constructor(host, pathToMappingsDir) {
     this._client = new elasticsearch.Client({ host, log: "error" });
     this._pathToMappingsDir = pathToMappingsDir;

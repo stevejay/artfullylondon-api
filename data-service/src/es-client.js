@@ -1,10 +1,10 @@
 import elasticsearch from "elasticsearch";
 
-const client = new elasticsearch.Client({
-  host: process.env.ELASTICSEARCH_HOST,
-  log: "error"
-});
-
-export default {
-  search: params => client.search(params)
-};
+export default class ESClient {
+  constructor(host, log = "error") {
+    this._client = new elasticsearch.Client({ host, log });
+  }
+  search(params) {
+    return this._client.search(params);
+  }
+}
