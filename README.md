@@ -17,6 +17,17 @@ This is the back-end code for the Artfully London website. I built it using Node
 
 * Improve the AWS Cognito serverless configuration. (I think serverless
   supports AWS Cognito configuration now.)
+* Try this for localstack: https://store.docker.com/community/images/localstack/localstack
+
+## Issues
+
+* Docker on Windows: https://github.com/docker/for-win/issues/1829
+  Use Git Bash:
+
+```
+set COMPOSE_CONVERT_WINDOWS_PATHS=1
+docker-compose down && docker-compose up -d
+```
 
 ## Info
 

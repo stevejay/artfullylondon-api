@@ -27,8 +27,9 @@ custom:
     region: ${opt:region, self:provider.region}
     sitemapUrlPrefix: 'https://www.artfully.london'
     webpack:
+        webpackConfig: ./webpack.config.js
         includeModules: true
-        packager: 'npm'
+        packager: 'yarn'
 
 functions:
     siteMap:

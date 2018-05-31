@@ -1,15 +1,11 @@
-"use strict";
-
-const dateUtil = require("./date-util");
+import * as formatter from "./formatter";
 
 class SearchService {
   constructor(searcher) {
     this._searcher = searcher;
   }
   async getSitemapLinks(dateTo) {
-    const formattedDate = dateUtil.formatDate(dateTo);
-
-    const searchResult = await this._searcher({
+    const searchResult = await this._searcher.search({
       index: "event-full",
       type: "doc",
       body: {
@@ -21,7 +17,7 @@ class SearchService {
             filter: [{ term: { status: "Active" } }],
             should: [
               { term: { occurrenceType: "Continuous" } },
-              { range: { dateTo: { gte: formattedDate } } }
+              { range: { dateTo: { gte: formatter.formatDate(dateTo) } } }
             ],
             minimum_should_match: 1
           }

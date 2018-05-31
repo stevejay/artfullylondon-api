@@ -1,28 +1,30 @@
-"use strict";
+import request from "request-promise-native";
+import path from "path";
+import ESSetup from "./es-setup";
 
-const request = require("request-promise-native");
-const testUtils = require("./utils");
+jest.setTimeout(30000);
 
 describe("sitemap handler", () => {
   beforeAll(async () => {
-    await testUtils.createElasticsearchIndex("event-full");
-    await testUtils.indexDocument("event-full", {
+    const esSetup = new ESSetup(
+      "http://localhost:4571",
+      path.resolve(__dirname, "../../../elasticsearch")
+    );
+
+    await esSetup.createIndex("event-full");
+    await esSetup.indexDocument("event-full", {
       status: "Active",
       id: "event-one",
       entityType: "event",
       name: "Foo",
       occurrenceType: "Continuous"
     });
-    await testUtils.indexDocument("event-full", {
+    await esSetup.indexDocument("event-full", {
       status: "Active",
       id: "event-two",
       entityType: "event",
       name: "Bar"
     });
-  });
-
-  afterAll(async () => {
-    await testUtils.deleteElasticsearchIndex("event-full");
   });
 
   it("should return a successful result", async () => {

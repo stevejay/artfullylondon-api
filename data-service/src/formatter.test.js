@@ -1,8 +1,6 @@
-"use strict";
+import * as formatter from "./formatter";
 
-const dateUtil = require("./date-util");
-
-describe("dateUtil", () => {
+describe("formatter", () => {
   describe("formatDate", () => {
     const tests = [
       {
@@ -13,7 +11,7 @@ describe("dateUtil", () => {
 
     tests.map(test => {
       it(`should return ${test.expected} for arg ${test.arg}`, () => {
-        const actual = dateUtil.formatDate(new Date(test.arg));
+        const actual = formatter.formatDate(new Date(test.arg));
         expect(actual).toEqual(test.expected);
       });
     });

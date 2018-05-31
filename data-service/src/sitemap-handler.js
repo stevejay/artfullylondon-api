@@ -1,5 +1,3 @@
-"use strict";
-
 const elasticsearch = require("./elasticsearch");
 const SearchService = require("./search-service");
 const searchService = new SearchService(elasticsearch);
