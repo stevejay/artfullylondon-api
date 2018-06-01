@@ -1,16 +1,14 @@
-'use strict';
-
-exports.mapRequestToDbTag = function(id, request) {
+export function mapRequestToDbTag(id, request) {
   return {
     id: id,
     tagType: request.type,
-    label: request.label,
+    label: request.label
   };
-};
+}
 
-exports.mapDbTagToResponse = function(dbTag) {
+export function mapDbTagToResponse(dbTag) {
   return {
     id: dbTag.id,
-    label: dbTag.label,
+    label: dbTag.label
   };
-};
+}

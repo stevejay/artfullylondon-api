@@ -1,20 +1,24 @@
-"use strict";
+import "../aws-cloudwatch-retry";
+import withErrorHandling from "lambda-error-handler";
+import withWriteAuthorization from "../with-write-authorization";
+import * as tagService from "../tag-service";
 
-require("../aws-cloudwatch-retry");
-const withErrorHandling = require("lambda-error-handler");
-const tagService = require("../tag-service");
-const withWriteAuthorization = require("../with-write-authorization");
-
-async function handler(event) {
-  const body = JSON.parse(event.body);
-
+async function handlerImpl(event) {
   const request = {
     type: event.pathParameters.type,
-    label: body.label
+    label: JSON.parse(event.body).label
   };
 
   const result = await tagService.createTag(request);
-  return { body: result };
+
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    },
+    body: JSON.stringify(result)
+  };
 }
 
-exports.handler = withWriteAuthorization(withErrorHandling(handler));
+export const handler = withWriteAuthorization(withErrorHandling(handlerImpl));

@@ -1,4 +1,4 @@
-import dynamodb from "../external-services/dynamodb";
+import dynamodb from "./external-services/dynamodb";
 
 export function saveTag(tag) {
   return dynamodb.put({

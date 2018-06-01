@@ -1,25 +1,23 @@
-'use strict';
-
-const AWS = require('aws-sdk');
+import AWS from "aws-sdk";
 const cloudwatch = new AWS.CloudWatch();
 
-AWS.events.on('retry', function(response) {
+AWS.events.on("retry", response => {
   if (response.error) {
     cloudwatch.putMetricData({
-      Namespace: 'AWSRetry',
+      Namespace: "AWSRetry",
       MetricData: [
         {
-          MetricName: 'Retry',
+          MetricName: "Retry",
           Dimensions: [
             {
-              Name: 'Message',
-              Value: response.error.message,
-            },
+              Name: "Message",
+              Value: response.error.message
+            }
           ],
-          Unit: 'Count',
-          Value: 1,
-        },
-      ],
+          Unit: "Count",
+          Value: 1
+        }
+      ]
     });
   }
 });

@@ -9,4 +9,4 @@ const config = process.env.IS_OFFLINE
     }
   : null;
 
-export const dynamodb = clientWrapper(config);
+export default clientWrapper(config);

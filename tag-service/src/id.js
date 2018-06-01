@@ -1,11 +1,9 @@
-'use strict';
+import slug from "limax";
 
-const slug = require('limax');
+export function createTagIdFromLabel(prefix, label) {
+  return `${prefix}/${slug(label, { maintainCase: false })}`;
+}
 
-exports.createTagIdFromLabel = function(prefix, label) {
-  return prefix + '/' + slug(label, { maintainCase: false });
-};
-
-exports.createTagId = function(/* arguments */) {
-  return Array.from(arguments).join('/');
-};
+export function createTagId(/* arguments */) {
+  return Array.from(arguments).join("/");
+}

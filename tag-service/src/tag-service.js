@@ -1,21 +1,19 @@
-"use strict";
-
-const ensure = require("ensure-request").ensure;
-const normalise = require("normalise-request");
-const groupBy = require("lodash.groupby");
-const tagRepository = require("./tag-repository");
-const id = require("./id");
-const normaliser = require("./domain/normaliser");
-const constraints = require("./domain/constraints");
-const mappings = require("./domain/mappings");
-const ensureErrorHandler = require("./domain/ensure-error-handler");
+import { ensure } from "ensure-request";
+import normalise from "normalise-request";
+import groupBy from "lodash.groupby";
+import * as tagRepository from "./tag-repository";
+import * as id from "./id";
+import normaliser from "./domain/normaliser";
+import constraints from "./domain/constraints";
+import * as mappings from "./domain/mappings";
+import ensureErrorHandler from "./domain/ensure-error-handler";
 
 const createTagConstraint = {
   type: constraints.type,
   label: constraints.label
 };
 
-exports.createTag = async function(request) {
+export async function createTag(request) {
   normalise(request, normaliser);
   ensure(request, createTagConstraint, ensureErrorHandler);
 
@@ -24,26 +22,26 @@ exports.createTag = async function(request) {
 
   await tagRepository.saveTag(tag);
   return { tag: { id: tagId, label: request.label } };
-};
+}
 
-exports.deleteTag = async function(request) {
+export async function deleteTag(request) {
   const tagId = id.createTagId(request.type, request.idPart);
   await tagRepository.deleteTag(request.type, tagId);
-};
+}
 
-exports.getAllTags = async function() {
+export async function getAllTags() {
   const dbResponse = await tagRepository.getAll();
   const items = dbResponse.map(mappings.mapDbTagToResponse);
   const tags = groupBy(items, _extractTagTypeFromId);
   return { tags: tags };
-};
+}
 
-exports.getTagsByType = async function(request) {
+export async function getTagsByType(request) {
   ensure(request, { tagType: constraints.type }, ensureErrorHandler);
   const dbResponse = await tagRepository.getAllByTagType(request.tagType);
   const tags = dbResponse.map(mappings.mapDbTagToResponse);
   return { tags: { [request.tagType]: tags } };
-};
+}
 
 function _extractTagTypeFromId(item) {
   return item.id.substring(0, item.id.indexOf("/"));

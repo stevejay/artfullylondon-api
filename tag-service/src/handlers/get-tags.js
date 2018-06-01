@@ -1,13 +1,19 @@
-"use strict";
+import "../aws-cloudwatch-retry";
+import withErrorHandling from "lambda-error-handler";
+import * as tagService from "../tag-service";
 
-require("../aws-cloudwatch-retry");
-const withErrorHandling = require("lambda-error-handler");
-const tagService = require("../tag-service");
-
-async function handler(event) {
+async function handlerImpl(event) {
   const request = { tagType: event.pathParameters.type };
   const result = await tagService.getTagsByType(request);
-  return { body: result };
+
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    },
+    body: JSON.stringify(result)
+  };
 }
 
-exports.handler = withErrorHandling(handler);
+export const handler = withErrorHandling(handlerImpl);

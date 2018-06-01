@@ -1,21 +1,21 @@
-"use strict";
-
-const request = require("request-promise-native");
-const testUtils = require("./utils");
+import request from "request-promise-native";
+import { sync } from "jest-toolkit";
+import { createId } from "../utils/tag";
+import { EDITOR_AUTH_TOKEN, READONLY_AUTH_TOKEN } from "../utils/cognito-auth";
 jest.setTimeout(60000);
 
 describe("tag write authorization", () => {
-  const id = testUtils.createIdForTag();
+  const id = createId();
   const tag = { id: `audience/${id}`, label: id };
 
   it("should fail to create a tag when the user is the readonly user", async () => {
     expect(
-      await testUtils.sync(
+      await sync(
         request({
           uri: "http://localhost:3011/tag/audience",
           json: true,
           method: "POST",
-          headers: { Authorization: testUtils.READONLY_AUTH_TOKEN },
+          headers: { Authorization: READONLY_AUTH_TOKEN },
           body: { label: id },
           timeout: 30000
         })
@@ -28,7 +28,7 @@ describe("tag write authorization", () => {
       uri: "http://localhost:3011/tag/audience",
       json: true,
       method: "POST",
-      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      headers: { Authorization: EDITOR_AUTH_TOKEN },
       body: { label: id },
       timeout: 30000
     });
@@ -36,12 +36,12 @@ describe("tag write authorization", () => {
     expect(result).toEqual({ tag });
 
     expect(
-      await testUtils.sync(
+      await sync(
         request({
           uri: `http://localhost:3011/tag/audience/${id}`,
           json: true,
           method: "DELETE",
-          headers: { Authorization: testUtils.READONLY_AUTH_TOKEN },
+          headers: { Authorization: READONLY_AUTH_TOKEN },
           timeout: 30000
         })
       )

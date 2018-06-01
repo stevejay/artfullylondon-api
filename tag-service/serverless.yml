@@ -41,7 +41,9 @@ custom:
     tagTableName: ${self:custom.project}-${self:custom.stage}-tag
     webpack:
         webpackConfig: ./webpack.config.js
-        includeModules: true
+        includeModules:
+            forceExclude:
+                - aws-sdk
         packager: 'yarn'
     dynamodb:
         start:
@@ -64,8 +66,6 @@ functions:
                 authorizer:
                     name: authorizer
                     arn: ${self:provider.environment.cognitoUserPoolArn}
-                    claims:
-                        - email
     deleteTag:
         handler: src/handlers/delete-tag.handler
         environment:
@@ -79,8 +79,6 @@ functions:
                 authorizer:
                     name: authorizer
                     arn: ${self:provider.environment.cognitoUserPoolArn}
-                    claims:
-                        - email
     getAllTags:
         handler: src/handlers/get-all-tags.handler
         environment:

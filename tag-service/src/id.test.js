@@ -1,9 +1,7 @@
-"use strict";
+import * as id from "./id";
 
-const id = require("./id");
-
-describe("id", function() {
-  describe("createTagIdFromLabel", function() {
+describe("id", () => {
+  describe("createTagIdFromLabel", () => {
     const tests = [
       {
         args: { prefix: "geo", label: "Furious Five" },
@@ -21,7 +19,7 @@ describe("id", function() {
           JSON.stringify(test.expected) +
           " for args " +
           JSON.stringify(test.args),
-        function() {
+        () => {
           expect(
             id.createTagIdFromLabel(test.args.prefix, test.args.label)
           ).toEqual(test.expected);
@@ -30,8 +28,8 @@ describe("id", function() {
     });
   });
 
-  describe("createTagId", function() {
-    it("should return valid id from id parts", function() {
+  describe("createTagId", () => {
+    it("should return valid id from id parts", () => {
       expect(id.createTagId("medium", "theatre", "immersive")).toEqual(
         "medium/theatre/immersive"
       );

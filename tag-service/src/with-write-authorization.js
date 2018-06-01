@@ -1,8 +1,6 @@
-"use strict";
+import jwtDecode from "jwt-decode";
 
-const jwtDecode = require("jwt-decode");
-
-module.exports = exports = function(handler) {
+export default function(handler) {
   return async function(event, context) {
     const token = jwtDecode(event.headers.Authorization);
 
@@ -21,4 +19,4 @@ module.exports = exports = function(handler) {
 
     return await handler(event, context);
   };
-};
+}

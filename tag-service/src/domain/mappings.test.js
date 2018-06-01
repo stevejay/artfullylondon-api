@@ -1,6 +1,4 @@
-"use strict";
-
-const mappings = require("./mappings");
+import * as mappings from "./mappings";
 
 describe("mappings", () => {
   it("should map a request to a db tag", () => {
