@@ -8,7 +8,6 @@ package:
 provider:
     name: aws
     runtime: nodejs8.10
-    stage: production
     region: eu-west-1
     environment: ${file(env.yml):${self:custom.stage}}
     iamRoleStatements:
@@ -37,15 +36,16 @@ plugins:
 
 custom:
     project: artfullylondon
-    stage: "${opt:stage, self:provider.stage}"
+    stage: "${opt:stage}"
     region: "${opt:region, self:provider.region}"
     tagTableName: ${self:custom.project}-${self:custom.stage}-tag
     webpack:
+        webpackConfig: ./webpack.config.js
         includeModules: true
-        packager: 'npm'
+        packager: 'yarn'
     dynamodb:
         start:
-            port: 8000
+            port: 4569
             migrate: true
             sharedDb: true
             noStart: true
@@ -61,6 +61,11 @@ functions:
                 path: "tag/{type}"
                 method: post
                 cors: true
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    claims:
+                        - email
     deleteTag:
         handler: src/handlers/delete-tag.handler
         environment:
@@ -71,6 +76,11 @@ functions:
                 path: "tag/{type}/{idPart}"
                 method: delete
                 cors: true
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    claims:
+                        - email
     getAllTags:
         handler: src/handlers/get-all-tags.handler
         environment:
@@ -94,14 +104,14 @@ functions:
 
 resources:
     Resources:
-        ApiGatewayMethodTagTypeVarPost:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodTagTypeVarIdpartVarDelete:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        # ApiGatewayMethodTagTypeVarPost:
+        #     Properties:
+        #         AuthorizationType: "COGNITO_USER_POOLS"
+        #         AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
+        # ApiGatewayMethodTagTypeVarIdpartVarDelete:
+        #     Properties:
+        #         AuthorizationType: "COGNITO_USER_POOLS"
+        #         AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
         TagDynamoTable:
             Type: AWS::DynamoDB::Table
             DeletionPolicy: Retain

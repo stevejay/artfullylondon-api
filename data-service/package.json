@@ -7,8 +7,7 @@
     "test:integration": "cross-env NODE_ENV=test jest ./tests/integration",
     "lint": "eslint .",
     "deploy": "yarn test && node ./scripts/build.js && sls deploy -v",
-    "local:service":
-      "sls offline start --stage=development --port 3010 --noTimeout"
+    "local:service": "sls offline start --stage=development --port 3010 --noTimeout"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -16,23 +15,22 @@
     "babel-loader": "^7.1.4",
     "babel-plugin-source-map-support": "^2.0.1",
     "babel-preset-env": "^1.7.0",
-    "cross-env": "^5.1.5",
+    "cross-env": "^5.1.6",
     "eslint": "^4.19.1",
-    "jest": "^22.4.4",
-    "js-yaml": "^3.11.0",
+    "jest": "^23.1.0",
     "jsonfile": "^4.0.0",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
-    "serverless": "^1.27.2",
-    "serverless-offline": "^3.23.0",
+    "serverless": "^1.27.3",
+    "serverless-offline": "^3.25.0",
     "serverless-webpack": "^5.1.5",
-    "webpack": "^4.8.3",
+    "webpack": "^4.10.2",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "date-fns": "^1.29.0",
     "elasticsearch": "^15.0.0",
-    "lambda-error-handler": "^1.0.0",
+    "lambda-error-handler": "^1.1.0",
     "lodash.padstart": "^4.6.1",
     "source-map-support": "^0.5.6"
   }

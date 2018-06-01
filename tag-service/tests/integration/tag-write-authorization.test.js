@@ -2,6 +2,7 @@
 
 const request = require("request-promise-native");
 const testUtils = require("./utils");
+jest.setTimeout(60000);
 
 describe("tag write authorization", () => {
   const id = testUtils.createIdForTag();
@@ -11,12 +12,12 @@ describe("tag write authorization", () => {
     expect(
       await testUtils.sync(
         request({
-          uri: "http://localhost:3020/tag/audience",
+          uri: "http://localhost:3011/tag/audience",
           json: true,
           method: "POST",
           headers: { Authorization: testUtils.READONLY_AUTH_TOKEN },
           body: { label: id },
-          timeout: 4000
+          timeout: 30000
         })
       )
     ).toThrow(/readonly user cannot modify system/);
@@ -24,12 +25,12 @@ describe("tag write authorization", () => {
 
   it("should fail to delete a tag when the user is the readonly user", async () => {
     const result = await request({
-      uri: "http://localhost:3020/tag/audience",
+      uri: "http://localhost:3011/tag/audience",
       json: true,
       method: "POST",
       headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
       body: { label: id },
-      timeout: 4000
+      timeout: 30000
     });
 
     expect(result).toEqual({ tag });
@@ -37,11 +38,11 @@ describe("tag write authorization", () => {
     expect(
       await testUtils.sync(
         request({
-          uri: `http://localhost:3020/tag/audience/${id}`,
+          uri: `http://localhost:3011/tag/audience/${id}`,
           json: true,
           method: "DELETE",
           headers: { Authorization: testUtils.READONLY_AUTH_TOKEN },
-          timeout: 4000
+          timeout: 30000
         })
       )
     ).toThrow(/readonly user cannot modify system/);

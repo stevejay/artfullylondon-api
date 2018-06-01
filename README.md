@@ -13,6 +13,10 @@ This is the back-end code for the Artfully London website. I built it using Node
     director and running the appropriate yarn commands (as listed in
     the `package.json` file for the service).
 
+## Cognito user authentication
+
+[Instructions here.](https://stackoverflow.com/a/45253010)
+
 ## Todo
 
 * Improve the AWS Cognito serverless configuration. (I think serverless
