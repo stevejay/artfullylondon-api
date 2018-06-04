@@ -102,14 +102,6 @@ functions:
 
 resources:
     Resources:
-        # ApiGatewayMethodTagTypeVarPost:
-        #     Properties:
-        #         AuthorizationType: "COGNITO_USER_POOLS"
-        #         AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        # ApiGatewayMethodTagTypeVarIdpartVarDelete:
-        #     Properties:
-        #         AuthorizationType: "COGNITO_USER_POOLS"
-        #         AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
         TagDynamoTable:
             Type: AWS::DynamoDB::Table
             DeletionPolicy: Retain

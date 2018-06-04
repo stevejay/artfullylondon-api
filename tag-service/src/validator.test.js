@@ -2,12 +2,12 @@ import * as validator from "./validator";
 
 describe("validateGetTagsByTypeRequest", () => {
   it("should allow a valid request", () => {
-    const request = { tagType: "audience" };
+    const request = { type: "audience" };
     expect(() => validator.validateGetTagsByTypeRequest(request)).not.toThrow();
   });
 
   it("should throw on an invalid request", () => {
-    const request = { tagType: "invalid" };
+    const request = { type: "invalid" };
     expect(() => validator.validateGetTagsByTypeRequest(request)).toThrow(
       /Bad Request/
     );
