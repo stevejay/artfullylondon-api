@@ -1,12 +1,17 @@
 import request from "request-promise-native";
 import { sync } from "jest-toolkit";
-import { createId } from "../utils/tag";
+import { createTestTagId } from "../utils/id-generator";
 import { EDITOR_AUTH_TOKEN } from "../utils/cognito-auth";
+import { truncateTagTable } from "../utils/dynamodb";
 jest.setTimeout(60000);
 
 describe("tag lifecycle", () => {
-  const id = createId();
+  const id = createTestTagId();
   const tag = { id: `audience/${id}`, label: id };
+
+  beforeAll(async () => {
+    await truncateTagTable("artfullylondon-development-tag");
+  });
 
   it("should create a tag", async () => {
     let result = await request({

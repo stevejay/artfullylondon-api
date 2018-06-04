@@ -1,37 +1,38 @@
 import dynamodb from "./external-services/dynamodb";
 
-export function saveTag(tag) {
+const BASIC_REQUEST = {
+  TableName: process.env.SERVERLESS_TAG_TABLE_NAME,
+  ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+};
+
+export function createTag(tag) {
   return dynamodb.put({
-    TableName: process.env.SERVERLESS_TAG_TABLE_NAME,
+    ...BASIC_REQUEST,
     Item: tag,
     ConditionExpression:
-      "attribute_not_exists(tagType) and attribute_not_exists(id)",
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+      "attribute_not_exists(tagType) and attribute_not_exists(id)"
   });
 }
 
 export function deleteTag(tagType, tagId) {
   return dynamodb.delete({
-    TableName: process.env.SERVERLESS_TAG_TABLE_NAME,
-    Key: { tagType: tagType, id: tagId },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ...BASIC_REQUEST,
+    Key: { tagType: tagType, id: tagId }
   });
 }
 
 export function getAll() {
   return dynamodb.scan({
-    TableName: process.env.SERVERLESS_TAG_TABLE_NAME,
-    ProjectionExpression: "id, label",
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ...BASIC_REQUEST,
+    ProjectionExpression: "id, label"
   });
 }
 
 export function getAllByTagType(tagType) {
   return dynamodb.query({
-    TableName: process.env.SERVERLESS_TAG_TABLE_NAME,
+    ...BASIC_REQUEST,
     KeyConditionExpression: "tagType = :type",
     ExpressionAttributeValues: { ":type": tagType },
-    ProjectionExpression: "id, label",
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ProjectionExpression: "id, label"
   });
 }

@@ -1,19 +1,9 @@
-import "../aws-cloudwatch-retry";
 import withErrorHandling from "lambda-error-handler";
 import * as tagService from "../tag-service";
+import * as mapper from "../mapper";
 
-async function handlerImpl(event) {
-  const request = { tagType: event.pathParameters.type };
+export const handler = withErrorHandling(async function(event) {
+  const request = mapper.mapLambdaRequest(event);
   const result = await tagService.getTagsByType(request);
-
-  return {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    },
-    body: JSON.stringify(result)
-  };
-}
-
-export const handler = withErrorHandling(handlerImpl);
+  return mapper.mapLambdaResponse(result);
+});

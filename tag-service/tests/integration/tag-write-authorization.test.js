@@ -1,11 +1,11 @@
 import request from "request-promise-native";
 import { sync } from "jest-toolkit";
-import { createId } from "../utils/tag";
+import { createTestTagId } from "../utils/id-generator";
 import { EDITOR_AUTH_TOKEN, READONLY_AUTH_TOKEN } from "../utils/cognito-auth";
 jest.setTimeout(60000);
 
 describe("tag write authorization", () => {
-  const id = createId();
+  const id = createTestTagId();
   const tag = { id: `audience/${id}`, label: id };
 
   it("should fail to create a tag when the user is the readonly user", async () => {
