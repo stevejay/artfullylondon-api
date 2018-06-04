@@ -7,7 +7,10 @@
     "test:integration": "cross-env NODE_ENV=test jest ./tests/integration",
     "lint": "eslint .",
     "deploy": "yarn test && sls deploy -v",
-    "local:service": "sls offline start --stage=development --port 3011 --noTimeout --noAuth"
+    "local:service":
+      "sls offline start --stage=development --port 3011 --noTimeout --noAuth",
+    "debug:windows":
+      "SET SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline start --port 3011 --stage=development --noTimeout --noAuth"
   },
   "devDependencies": {
     "aws-sdk": "^2.249.1",

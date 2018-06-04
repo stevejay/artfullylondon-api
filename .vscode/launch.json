@@ -1,24 +1,14 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Mocha Tests",
-            "cwd": "${workspaceRoot}",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha",
-            "windows": {
-                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha.cmd"
-            },
-            "runtimeArgs": [
-                "-u",
-                "tdd",
-                "--timeout",
-                "999999",
-                "--colors",
-                "${workspaceRoot}/event-service/test/event/search.tests.js"
-            ],
-            "internalConsoleOptions": "openOnSessionStart"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Tag Service (Windows)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "debug:windows"],
+      "port": 9229,
+      "cwd": "${workspaceRoot}/tag-service"
+    }
+  ]
 }
