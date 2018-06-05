@@ -1,4 +1,4 @@
-import dynamodb from "./external-services/dynamodb";
+import dynamodb from "./dynamodb";
 
 const BASIC_REQUEST = {
   TableName: process.env.SERVERLESS_TAG_TABLE_NAME,

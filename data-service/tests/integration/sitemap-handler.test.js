@@ -1,31 +1,24 @@
 import request from "request-promise-native";
-import path from "path";
-import ESTestClient from "./es-test-client";
-
+import * as elasticsearch from "../utils/elasticsearch";
 jest.setTimeout(60000);
 
 describe("sitemap handler", () => {
   beforeAll(async () => {
-    const esTestClient = new ESTestClient(
-      "http://localhost:4571",
-      path.resolve(__dirname, "../../../elasticsearch")
-    );
-
-    await esTestClient.createIndex("event-full");
-    await esTestClient.indexDocument("event-full", {
+    await elasticsearch.createIndex("event-full");
+    await elasticsearch.indexDocument("event-full", {
       status: "Active",
       id: "event-one",
       entityType: "event",
       name: "Foo",
       occurrenceType: "Continuous"
     });
-    await esTestClient.indexDocument("event-full", {
+    await elasticsearch.indexDocument("event-full", {
       status: "Active",
       id: "event-two",
       entityType: "event",
       name: "Bar"
     });
-    await esTestClient.indexDocument("event-full", {
+    await elasticsearch.indexDocument("event-full", {
       status: "Deleted",
       id: "event-three",
       entityType: "event",

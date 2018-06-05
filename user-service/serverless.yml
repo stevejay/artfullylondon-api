@@ -8,7 +8,6 @@ package:
 provider:
     name: aws
     runtime: nodejs8.10
-    stage: production
     region: eu-west-1
     environment: ${file(env.yml):${self:custom.stage}}
     iamRoleStatements:
@@ -63,28 +62,31 @@ plugins:
 
 custom:
     project: artfullylondon
-    stage: ${opt:stage, self:provider.stage}
+    stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
     publicUserTableName: ${self:custom.project}-${self:custom.stage}-publicuser
     watchTableName: ${self:custom.project}-${self:custom.stage}-watch
     preferencesTableName: ${self:custom.project}-${self:custom.stage}-preferences
     webpack:
-        includeModules: true
-        packager: 'npm'
+        webpackConfig: ./webpack.config.js
+        includeModules:
+            forceExclude:
+                - aws-sdk
+        packager: 'yarn'
     dynamodb:
         start:
-            port: 8000
+            port: 4569
             migrate: true
             sharedDb: true
             noStart: true
 
 functions:
     auth:
-        handler: src/handlers/auth.handler
+        handler: src/lambda/auth.handler
         environment:
             SERVERLESS_STAGE: ${self:custom.stage}
     getUser:
-        handler: src/handlers/get-user.handler
+        handler: src/lambda/get-user.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
@@ -105,7 +107,7 @@ functions:
                         - X-Api-Key
                         - X-Amz-Security-Token
     deleteUser:
-        handler: src/handlers/delete-user.handler
+        handler: src/lambda/delete-user.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
@@ -126,7 +128,7 @@ functions:
                         - X-Api-Key
                         - X-Amz-Security-Token
     getWatches:
-        handler: src/handlers/get-watches.handler
+        handler: src/lambda/get-watches.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
@@ -146,7 +148,7 @@ functions:
                         - X-Api-Key
                         - X-Amz-Security-Token
     updateWatches:
-        handler: src/handlers/update-watches.handler
+        handler: src/lambda/update-watches.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
@@ -166,7 +168,7 @@ functions:
                         - X-Api-Key
                         - X-Amz-Security-Token
     getPreferences:
-        handler: src/handlers/get-preferences.handler
+        handler: src/lambda/get-preferences.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
@@ -185,7 +187,7 @@ functions:
                         - X-Api-Key
                         - X-Amz-Security-Token
     updatePreferences:
-        handler: src/handlers/update-preferences.handler
+        handler: src/lambda/update-preferences.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}

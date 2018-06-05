@@ -1,20 +1,13 @@
-"use strict";
+import jwt from "jsonwebtoken";
+import * as yaml from "js-yaml";
+import * as fs from "fs";
 
-const jwt = require("jsonwebtoken");
-const yaml = require("js-yaml");
-const fs = require("fs");
-
-exports.sync = fn =>
-  fn.then(res => () => res).catch(err => () => {
-    throw err;
-  });
-
-function readEnvVars() {
+function readDevelopmentEnvVars() {
   const doc = yaml.safeLoad(fs.readFileSync("./env.yml", "utf8"));
   return doc.development;
 }
 
-const ENV_VARS = readEnvVars();
+const ENV_VARS = readDevelopmentEnvVars();
 
 function createJWT(userId = "email|cccccccccccccccccccccccc") {
   return jwt.sign(
@@ -29,6 +22,6 @@ function createJWT(userId = "email|cccccccccccccccccccccccc") {
   );
 }
 
-exports.createAuthValue = function(userId) {
+exports.createAuthorizationHeaderValue = function(userId) {
   return `Bearer ${createJWT(userId)}`;
 };

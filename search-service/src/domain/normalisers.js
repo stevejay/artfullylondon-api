@@ -1,98 +1,99 @@
-'use strict';
+"use strict";
 
-const constants = require('../constants');
+const constants = require("../constants");
+import * as entityType from "../entity-type";
 
 exports.autocompleteSearch = {
   term: {
     trim: true,
-    simplify: true,
+    simplify: true
   },
   entityType: {
-    default: constants.ENTITY_TYPE_ALL,
-  },
+    default: entityType.ALL
+  }
 };
 
 exports.basicSearch = {
   term: {
     trim: true,
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   entityType: {
-    default: constants.ENTITY_TYPE_ALL,
+    default: entityType.ALL
   },
   location: {
     object: {
       north: { toFloat: true },
       west: { toFloat: true },
       south: { toFloat: true },
-      east: { toFloat: true },
-    },
+      east: { toFloat: true }
+    }
   },
   skip: {
     default: 0,
-    toInt: true,
+    toInt: true
   },
   take: {
     default: constants.SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
-    toInt: true,
-  },
+    toInt: true
+  }
 };
 
 exports.eventAdvancedSearch = {
   term: {
     trim: true,
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   dateFrom: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   dateTo: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   timeFrom: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   timeTo: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   area: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   medium: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   style: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   audience: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   cost: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   booking: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   location: {
     object: {
       north: { toFloat: true },
       west: { toFloat: true },
       south: { toFloat: true },
-      east: { toFloat: true },
-    },
+      east: { toFloat: true }
+    }
   },
   venueId: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   talentId: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   skip: {
     default: 0,
-    toInt: true,
+    toInt: true
   },
   take: {
     default: constants.SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
-    toInt: true,
-  },
+    toInt: true
+  }
 };

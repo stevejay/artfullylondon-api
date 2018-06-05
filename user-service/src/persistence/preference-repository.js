@@ -1,26 +1,27 @@
-"use strict";
+import dynamodb from "./dynamodb";
 
-const dynamodbClient = require("./dynamodb-client");
-
-exports.deletePreferencesForUser = userId =>
-  dynamodbClient.delete({
+export function deletePreferencesForUser(userId) {
+  return dynamodb.delete({
     TableName: process.env.SERVERLESS_PREFERENCES_TABLE_NAME,
     Key: { userId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
+}
 
-exports.tryGetPreferencesForUser = userId =>
-  dynamodbClient.tryGet({
+export function tryGetPreferencesForUser(userId) {
+  return dynamodb.tryGet({
     TableName: process.env.SERVERLESS_PREFERENCES_TABLE_NAME,
     Key: { userId },
     ProjectionExpression: "emailFrequency",
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
+}
 
-exports.updatePreferencesForUser = (userId, preferences) =>
-  dynamodbClient.put({
+export function updatePreferencesForUser(userId, preferences) {
+  return dynamodb.put({
     TableName: process.env.SERVERLESS_PREFERENCES_TABLE_NAME,
     Key: { userId },
-    Item: preferences,
+    Item: { ...preferences, userId },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
+}

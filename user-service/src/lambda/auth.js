@@ -1,7 +1,5 @@
-"use strict";
-
-const jwt = require("jsonwebtoken");
-const log = require("loglevel");
+import jwt from "jsonwebtoken";
+import * as log from "loglevel";
 
 function generatePolicy(principalId) {
   const authResponse = {
@@ -39,9 +37,10 @@ function generatePolicyStatement(resource) {
 
 // TODO Hopefully API Gateway will sometime support passing the authorization
 // token as a query string parameter, in order to avoid a preflight request.
-// TODO see if this is what I need: https://aws.amazon.com/blogs/compute/using-enhanced-request-authorizers-in-amazon-api-gateway/
+// TODO Regarding the above, see if this is what I need:
+// https://aws.amazon.com/blogs/compute/using-enhanced-request-authorizers-in-amazon-api-gateway/
 
-exports.handler = function(event, context, cb) {
+export function handler(event, context, cb) {
   try {
     if (event.authorizationToken) {
       // remove "Bearer " from token
@@ -75,4 +74,4 @@ exports.handler = function(event, context, cb) {
     log.error(err.message);
     cb("Unauthorized");
   }
-};
+}

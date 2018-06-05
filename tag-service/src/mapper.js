@@ -1,7 +1,7 @@
 import groupBy from "lodash.groupby";
 import * as idGenerator from "./id-generator";
 
-export function mapLambdaRequest(event) {
+export function mapLambdaEvent(event) {
   const request = {
     type: event.pathParameters.type,
     idPart: event.pathParameters.idPart

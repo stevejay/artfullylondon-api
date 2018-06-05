@@ -1,4 +1,4 @@
-import * as tagRepository from "./tag-repository";
+import * as tagRepository from "./persistence/tag-repository";
 import * as idGenerator from "./id-generator";
 import * as validator from "./validator";
 import * as normaliser from "./normaliser";

@@ -1,18 +1,19 @@
-"use strict";
-
-const request = require("request-promise-native");
-const uuidv4 = require("uuid/v4");
-const testUtils = require("./utils");
+import request from "request-promise-native";
+import uuidv4 from "uuid/v4";
+import * as authUtils from "../utils/auth";
+jest.setTimeout(60000);
 
 describe("user", () => {
   const userId = uuidv4();
 
   it("should get a user", async () => {
     let response = await request({
-      uri: "http://localhost:3020/user/watches/event",
+      uri: "http://localhost:3012/user/watches/event",
       json: true,
       method: "PUT",
-      headers: { Authorization: testUtils.createAuthValue(userId) },
+      headers: {
+        Authorization: authUtils.createAuthorizationHeaderValue(userId)
+      },
       body: {
         newVersion: 1,
         changes: [
@@ -24,17 +25,19 @@ describe("user", () => {
           }
         ]
       },
-      timeout: 4000
+      timeout: 30000
     });
 
     expect(response).toEqual({ acknowledged: true });
 
     response = await request({
-      uri: "http://localhost:3020/user",
+      uri: "http://localhost:3012/user",
       json: true,
       method: "GET",
-      headers: { Authorization: testUtils.createAuthValue(userId) },
-      timeout: 4000
+      headers: {
+        Authorization: authUtils.createAuthorizationHeaderValue(userId)
+      },
+      timeout: 30000
     });
 
     expect(response).toEqual({
@@ -54,21 +57,25 @@ describe("user", () => {
 
   it("should delete a user", async () => {
     let response = await request({
-      uri: "http://localhost:3020/user",
+      uri: "http://localhost:3012/user",
       json: true,
       method: "DELETE",
-      headers: { Authorization: testUtils.createAuthValue(userId) },
-      timeout: 4000
+      headers: {
+        Authorization: authUtils.createAuthorizationHeaderValue(userId)
+      },
+      timeout: 30000
     });
 
     expect(response).toEqual({ acknowledged: true });
 
     response = await request({
-      uri: "http://localhost:3020/user",
+      uri: "http://localhost:3012/user",
       json: true,
       method: "GET",
-      headers: { Authorization: testUtils.createAuthValue(userId) },
-      timeout: 4000
+      headers: {
+        Authorization: authUtils.createAuthorizationHeaderValue(userId)
+      },
+      timeout: 30000
     });
 
     expect(response).toEqual({

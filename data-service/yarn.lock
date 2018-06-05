@@ -2133,6 +2133,20 @@ ecdsa-sig-formatter@1.0.10:
   dependencies:
     safe-buffer "^5.0.1"
 
+elastic-builder@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/elastic-builder/-/elastic-builder-1.2.0.tgz#3a40e1e6ede3e8ff23a6fe943960a7ae927d29b1"
+  dependencies:
+    babel-runtime "^6.26.0"
+    lodash.has "^4.5.2"
+    lodash.hasin "^4.5.2"
+    lodash.head "^4.0.1"
+    lodash.isempty "^4.4.0"
+    lodash.isnil "^4.0.0"
+    lodash.isobject "^3.0.2"
+    lodash.isstring "^4.0.1"
+    lodash.omit "^4.5.0"
+
 elasticsearch@^15.0.0:
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/elasticsearch/-/elasticsearch-15.0.0.tgz#d888ceb858bba30221b68698d72c54bdcfdf2fba"
@@ -4208,6 +4222,18 @@ lodash.difference@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.difference/-/lodash.difference-4.5.0.tgz#9ccb4e505d486b91651345772885a2df27fd017c"
 
+lodash.has@^4.5.2:
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/lodash.has/-/lodash.has-4.5.2.tgz#d19f4dc1095058cccbe2b0cdf4ee0fe4aa37c862"
+
+lodash.hasin@^4.5.2:
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/lodash.hasin/-/lodash.hasin-4.5.2.tgz#f91e352378d21ef7090b9e7687c2ca35c5b4d52a"
+
+lodash.head@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/lodash.head/-/lodash.head-4.0.1.tgz#e2aa322d3ec40cd6aae186082977d993b354ed9c"
+
 lodash.includes@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.includes/-/lodash.includes-4.3.0.tgz#60bb98a87cb923c68ca1e51325483314849f553f"
@@ -4216,13 +4242,25 @@ lodash.isboolean@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz#6c2e171db2a257cd96802fd43b01b20d5f5870f6"
 
+lodash.isempty@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.isempty/-/lodash.isempty-4.4.0.tgz#6f86cbedd8be4ec987be9aaf33c9684db1b31e7e"
+
 lodash.isinteger@^4.0.4:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz#619c0af3d03f8b04c31f5882840b77b11cd68343"
 
+lodash.isnil@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/lodash.isnil/-/lodash.isnil-4.0.0.tgz#49e28cd559013458c814c5479d3c663a21bfaa6c"
+
 lodash.isnumber@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
+
+lodash.isobject@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/lodash.isobject/-/lodash.isobject-3.0.2.tgz#3c8fb8d5b5bf4bf90ae06e14f2a530a4ed935e1d"
 
 lodash.isplainobject@^4.0.6:
   version "4.0.6"
@@ -4231,6 +4269,10 @@ lodash.isplainobject@^4.0.6:
 lodash.isstring@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/lodash.isstring/-/lodash.isstring-4.0.1.tgz#d527dfb5456eca7cc9bb95d5daeaf88ba54a5451"
+
+lodash.omit@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.omit/-/lodash.omit-4.5.0.tgz#6eb19ae5a1ee1dd9df0b969e66ce0b7fa30b5e60"
 
 lodash.once@^4.0.0:
   version "4.1.1"

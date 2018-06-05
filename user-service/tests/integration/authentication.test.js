@@ -1,19 +1,17 @@
-"use strict";
-
-const request = require("request-promise-native");
-const uuidv4 = require("uuid/v4");
-const testUtils = require("./utils");
+import request from "request-promise-native";
+import { sync } from "jest-toolkit";
+jest.setTimeout(60000);
 
 describe("authentication", () => {
   it("should fail to read preferences when authentication fails", async () => {
     expect(
-      await testUtils.sync(
+      await sync(
         request({
-          uri: "http://localhost:3020/user/preferences",
+          uri: "http://localhost:3012/user/preferences",
           json: true,
           method: "GET",
           headers: { Authorization: "Bearer 1234567890" },
-          timeout: 4000
+          timeout: 30000
         })
       )
     ).toThrow(/Unauthorized/);

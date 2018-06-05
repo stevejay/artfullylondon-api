@@ -67,16 +67,16 @@ describe("mapMultiTagsResponse", () => {
   });
 });
 
-describe("mapLambdaRequest", () => {
+describe("mapLambdaEvent", () => {
   it("should map a type only event", () => {
     const event = { pathParameters: { type: "audience" } };
-    const actual = mapper.mapLambdaRequest(event);
+    const actual = mapper.mapLambdaEvent(event);
     expect(actual).toEqual({ type: "audience" });
   });
 
   it("should map a type and idPart event", () => {
     const event = { pathParameters: { type: "audience", idPart: "some-id" } };
-    const actual = mapper.mapLambdaRequest(event);
+    const actual = mapper.mapLambdaEvent(event);
     expect(actual).toEqual({ type: "audience", idPart: "some-id" });
   });
 
@@ -85,7 +85,7 @@ describe("mapLambdaRequest", () => {
       pathParameters: { type: "audience" },
       body: '{"label":"Some Label"}'
     };
-    const actual = mapper.mapLambdaRequest(event);
+    const actual = mapper.mapLambdaEvent(event);
     expect(actual).toEqual({ type: "audience", label: "Some Label" });
   });
 });
