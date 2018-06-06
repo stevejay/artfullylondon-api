@@ -7,13 +7,11 @@
     "test:integration": "cross-env NODE_ENV=test jest ./tests/integration",
     "lint": "eslint .",
     "deploy": "yarn test && sls deploy -v",
-    "local:service":
-      "sls offline start --stage=development --port 3011 --noTimeout --noAuth",
-    "debug:windows":
-      "SET SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline start --port 3011 --stage=development --noTimeout --noAuth"
+    "local:service": "sls offline start --stage=development --port 3011 --noTimeout --noAuth",
+    "debug:windows": "SET SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline start --port 3011 --stage=development --noTimeout --noAuth"
   },
   "devDependencies": {
-    "aws-sdk": "^2.249.1",
+    "aws-sdk": "^2.252.1",
     "babel-core": "^6.26.3",
     "babel-jest": "^23.0.1",
     "babel-loader": "^7.1.4",
@@ -31,9 +29,9 @@
     "request-promise-native": "^1.0.5",
     "serverless": "^1.27.3",
     "serverless-dynamodb-local": "^0.2.30",
-    "serverless-offline": "^3.25.0",
+    "serverless-offline": "^3.25.3",
     "serverless-webpack": "^5.1.5",
-    "webpack": "^4.10.2",
+    "webpack": "^4.11.1",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
