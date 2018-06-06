@@ -103,12 +103,7 @@ function verifyToken(token, signingKeyOrSecret, algorithm, audience) {
   });
 }
 
-// TODO Hopefully API Gateway will sometime support passing the authorization
-// token as a query string parameter, in order to avoid a preflight request.
-// TODO Regarding the above, see if this is what I need:
-// https://aws.amazon.com/blogs/compute/using-enhanced-request-authorizers-in-amazon-api-gateway/
-
-export async function handler(event, context, cb) {
+async function handlerImpl(event) {
   try {
     if (!event.authorizationToken) {
       throw new Error("No authorization token");
@@ -123,9 +118,21 @@ export async function handler(event, context, cb) {
       signatureAlgorithm,
       process.env.AUTH0_CLIENT_ID
     );
-    cb(null, generatePolicy(decoded.sub, event.methodArn));
+    return { policy: generatePolicy(decoded.sub, event.methodArn) };
   } catch (err) {
     log.error(err.message);
-    cb(new Error("Unauthorized"));
+    return { err: new Error("Unauthorized") };
   }
+}
+
+export function handler(event, context, cb) {
+  handlerImpl(event)
+    .then(result => {
+      if (result.err) {
+        cb(result.err);
+      } else {
+        cb(null, result.policy);
+      }
+    })
+    .catch(cb);
 }
