@@ -1,44 +1,25 @@
-"use strict";
+import * as constants from "../constants";
+import * as tag from "./tag";
+import * as time from "./time";
+import * as searchIndexType from "../search-index-type";
 
-const constants = require("../constants");
-const tag = require("./tag");
-const time = require("./time");
-
-exports.buildEntityCountsSearchPreset = function(msearchBuilder) {
-  _buildEntityCountsSearch(
-    msearchBuilder,
-    constants.SEARCH_INDEX_TYPE_EVENT_FULL
-  );
-
-  _buildEntityCountsSearch(
-    msearchBuilder,
-    constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL
-  );
-
-  _buildEntityCountsSearch(
-    msearchBuilder,
-    constants.SEARCH_INDEX_TYPE_TALENT_FULL
-  );
-
-  _buildEntityCountsSearch(
-    msearchBuilder,
-    constants.SEARCH_INDEX_TYPE_VENUE_FULL
-  );
-};
+export function buildEntityCountsSearchPreset(msearchBuilder) {
+  _buildEntityCountsSearch(msearchBuilder, searchIndexType.EVENT_FULL);
+  _buildEntityCountsSearch(msearchBuilder, searchIndexType.EVENT_SERIES_FULL);
+  _buildEntityCountsSearch(msearchBuilder, searchIndexType.TALENT_FULL);
+  _buildEntityCountsSearch(msearchBuilder, searchIndexType.VENUE_FULL);
+}
 
 function _buildEntityCountsSearch(msearchBuilder, index) {
   msearchBuilder.createSearch({ index, type: "doc" }).setSearchTake(0);
 }
 
-exports.buildByExternalEventIdPreset = function(
-  msearchBuilder,
-  externalEventIds
-) {
+export function buildByExternalEventIdPreset(msearchBuilder, externalEventIds) {
   let searchSourceFields = ["externalEventId", "id"];
 
   const search = msearchBuilder
     .createSearch({
-      index: constants.SEARCH_INDEX_TYPE_EVENT_FULL,
+      index: searchIndexType.EVENT_FULL,
       type: "doc"
     })
     .setSearchTake(1000)
@@ -48,9 +29,9 @@ exports.buildByExternalEventIdPreset = function(
 
   const ids = externalEventIds.split(",");
   boolQuery.addFilter().setTerms({ externalEventId: ids });
-};
+}
 
-exports.buildFeaturedEventsSearchPreset = function(msearchBuilder) {
+export function buildFeaturedEventsSearchPreset(msearchBuilder) {
   const now = time.getLondonNow();
 
   const request = {
@@ -63,12 +44,9 @@ exports.buildFeaturedEventsSearchPreset = function(msearchBuilder) {
   };
 
   return exports.buildPublicEventSearch(msearchBuilder, request);
-};
+}
 
-exports.buildTalentRelatedEventsSearchPreset = function(
-  msearchBuilder,
-  talentId
-) {
+export function buildTalentRelatedEventsSearchPreset(msearchBuilder, talentId) {
   const now = time.getLondonNow();
 
   const request = {
@@ -81,12 +59,9 @@ exports.buildTalentRelatedEventsSearchPreset = function(
   };
 
   return exports.buildPublicEventSearch(msearchBuilder, request);
-};
+}
 
-exports.buildVenueRelatedEventsSearchPreset = function(
-  msearchBuilder,
-  venueId
-) {
+export function buildVenueRelatedEventsSearchPreset(msearchBuilder, venueId) {
   const now = time.getLondonNow();
 
   const request = {
@@ -99,9 +74,9 @@ exports.buildVenueRelatedEventsSearchPreset = function(
   };
 
   return exports.buildPublicEventSearch(msearchBuilder, request);
-};
+}
 
-exports.buildEventSeriesRelatedEventsSearchPreset = function(
+export function buildEventSeriesRelatedEventsSearchPreset(
   msearchBuilder,
   eventSeriesId
 ) {
@@ -117,9 +92,9 @@ exports.buildEventSeriesRelatedEventsSearchPreset = function(
   };
 
   return exports.buildPublicEventSearch(msearchBuilder, request);
-};
+}
 
-exports.createPublicEventSearchParamsFromRequest = function(request) {
+export function createPublicEventSearchParamsFromRequest(request) {
   const searchParams = {};
 
   if (request.term) {
@@ -206,9 +181,9 @@ exports.createPublicEventSearchParamsFromRequest = function(request) {
   }
 
   return searchParams;
-};
+}
 
-exports.buildPublicEventSearch = function(msearchBuilder, searchParams) {
+export function buildPublicEventSearch(msearchBuilder, searchParams) {
   let searchSourceFields = constants.SUMMARY_EVENT_SOURCE_FIELDS;
 
   if (searchParams.dateFrom && searchParams.dateTo) {
@@ -217,7 +192,7 @@ exports.buildPublicEventSearch = function(msearchBuilder, searchParams) {
 
   const search = msearchBuilder
     .createSearch({
-      index: constants.SEARCH_INDEX_TYPE_EVENT_FULL,
+      index: searchIndexType.EVENT_FULL,
       type: "doc"
     })
     .setSearchSkip(searchParams.skip)
@@ -379,9 +354,9 @@ exports.buildPublicEventSearch = function(msearchBuilder, searchParams) {
       .addFilter()
       .setTerm({ eventSeriesId: searchParams.eventSeriesId });
   }
-};
+}
 
-exports.buildSuggestSearch = function(msearchBuilder, indexName, term) {
+export function buildSuggestSearch(msearchBuilder, indexName, term) {
   const search = msearchBuilder
     .createSearch({ index: indexName, type: "doc" })
     .setSearchTake(0);
@@ -402,12 +377,12 @@ exports.buildSuggestSearch = function(msearchBuilder, indexName, term) {
       field: "nameSuggest",
       fuzzy: {}
     });
-};
+}
 
-exports.buildTalentSearch = function(msearchBuilder, request, isPublic) {
+export function buildTalentSearch(msearchBuilder, request, isPublic) {
   const search = msearchBuilder
     .createSearch({
-      index: constants.SEARCH_INDEX_TYPE_TALENT_FULL,
+      index: searchIndexType.TALENT_FULL,
       type: "doc"
     })
     .setSearchSkip(request.skip)
@@ -434,12 +409,12 @@ exports.buildTalentSearch = function(msearchBuilder, request, isPublic) {
       fields: ["firstNames", "lastName"]
     });
   }
-};
+}
 
-exports.buildVenueSearch = function(msearchBuilder, request, isPublic) {
+export function buildVenueSearch(msearchBuilder, request, isPublic) {
   const search = msearchBuilder
     .createSearch({
-      index: constants.SEARCH_INDEX_TYPE_VENUE_FULL,
+      index: searchIndexType.VENUE_FULL,
       type: "doc"
     })
     .setSearchSkip(request.skip)
@@ -476,12 +451,12 @@ exports.buildVenueSearch = function(msearchBuilder, request, isPublic) {
       }
     });
   }
-};
+}
 
-exports.buildEventSeriesSearch = function(msearchBuilder, request, isPublic) {
+export function buildEventSeriesSearch(msearchBuilder, request, isPublic) {
   const search = msearchBuilder
     .createSearch({
-      index: constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL,
+      index: searchIndexType.EVENT_SERIES_FULL,
       type: "doc"
     })
     .setSearchSkip(request.skip)
@@ -502,12 +477,12 @@ exports.buildEventSeriesSearch = function(msearchBuilder, request, isPublic) {
   if (request.term) {
     boolQuery.addMust().setMatch({ name: request.term });
   }
-};
+}
 
-exports.buildEventSearch = function(msearchBuilder, request, isPublic) {
+export function buildEventSearch(msearchBuilder, request, isPublic) {
   const search = msearchBuilder
     .createSearch({
-      index: constants.SEARCH_INDEX_TYPE_EVENT_FULL,
+      index: searchIndexType.EVENT_FULL,
       type: "doc"
     })
     .setSearchSkip(request.skip)
@@ -531,4 +506,4 @@ exports.buildEventSearch = function(msearchBuilder, request, isPublic) {
     boolQuery.addShould().setMatch({ venueName: request.term });
     boolQuery.addShould().setMatch({ summary: request.term });
   }
-};
+}

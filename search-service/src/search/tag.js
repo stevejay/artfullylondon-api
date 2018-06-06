@@ -1,6 +1,4 @@
-'use strict';
-
-exports.createTagIdForMediumWithStyleTag = function(mediumTagId, styleTagId) {
+export function createTagIdForMediumWithStyleTag(mediumTagId, styleTagId) {
   const styleId = styleTagId.slice(5); // removes initial 'style' text
   return mediumTagId + styleId;
-};
+}

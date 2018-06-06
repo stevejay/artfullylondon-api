@@ -96,7 +96,11 @@ functions:
             - http:
                 path: "user"
                 method: get
-                authorizer: auth
+                authorizer:
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
                 cors:
                     origins:
                         - "*"
@@ -117,7 +121,11 @@ functions:
             - http:
                 path: "user"
                 method: delete
-                authorizer: auth
+                authorizer:
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
                 cors:
                     origins:
                         - "*"
@@ -137,7 +145,11 @@ functions:
             - http:
                 path: "user/watches/{entityType}"
                 method: get
-                authorizer: auth
+                authorizer:
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
                 cors:
                     origins:
                         - "*"
@@ -157,7 +169,11 @@ functions:
             - http:
                 path: "user/watches/{entityType}"
                 method: put
-                authorizer: auth
+                authorizer:
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
                 cors:
                     origins:
                         - "*"
@@ -176,7 +192,11 @@ functions:
             - http:
                 path: "user/preferences"
                 method: get
-                authorizer: auth
+                authorizer:
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
                 cors:
                     origins:
                         - "*"
@@ -195,7 +215,11 @@ functions:
             - http:
                 path: "user/preferences"
                 method: put
-                authorizer: auth
+                authorizer:
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
                 cors:
                     origins:
                         - "*"

@@ -105,11 +105,15 @@ function verifyToken(token, signingKeyOrSecret, algorithm, audience) {
 
 async function handlerImpl(event) {
   try {
-    if (!event.authorizationToken) {
-      throw new Error("No authorization token");
+    const authHeader = event.headers
+      ? event.headers.Authorization
+      : event.authorizationToken;
+
+    if (!authHeader) {
+      throw new Error("No auth header");
     }
 
-    const token = event.authorizationToken.replace(/^Bearer /, "");
+    const token = authHeader.replace(/^Bearer /, "");
     const signatureAlgorithm = process.env.AUTH0_SIGNATURE_ALGORITHM;
     const signingKeyOrSecret = await getSigningKeyOrSecret(signatureAlgorithm);
     const decoded = await verifyToken(

@@ -1,9 +1,12 @@
-"use strict";
+import normalise from "normalise-request";
+import simplify from "es-simplify";
+import * as constants from "./constants";
+import * as entityType from "./entity-type";
 
-const constants = require("../constants");
-import * as entityType from "../entity-type";
+normalise.normalisers.simplify = param =>
+  typeof param !== "string" ? param : simplify(param);
 
-exports.autocompleteSearch = {
+const AUTOCOMPLETE_SEARCH_NORMALISER = {
   term: {
     trim: true,
     simplify: true
@@ -13,7 +16,7 @@ exports.autocompleteSearch = {
   }
 };
 
-exports.basicSearch = {
+const BASIC_SEARCH_NORMALISER = {
   term: {
     trim: true,
     undefinedIfEmpty: true
@@ -39,7 +42,7 @@ exports.basicSearch = {
   }
 };
 
-exports.eventAdvancedSearch = {
+const EVENT_ADVANCED_SEARCH_NORMALISER = {
   term: {
     trim: true,
     undefinedIfEmpty: true
@@ -97,3 +100,15 @@ exports.eventAdvancedSearch = {
     toInt: true
   }
 };
+
+export function normaliseAutocompleteSearchRequest(request) {
+  return normalise({ ...request }, AUTOCOMPLETE_SEARCH_NORMALISER);
+}
+
+export function normaliseBasicSearchRequest(request) {
+  return normalise({ ...request }, BASIC_SEARCH_NORMALISER);
+}
+
+export function normaliseEventAdvancedSearchRequest(request) {
+  return normalise({ ...request }, EVENT_ADVANCED_SEARCH_NORMALISER);
+}

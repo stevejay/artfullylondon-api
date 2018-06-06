@@ -4,27 +4,33 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test jest ./src",
     "posttest": "yarn run lint",
-    "test:integration":
-      "cross-env NODE_ENV=test jest --no-cache --runInBand ./tests/integration",
+    "test:integration": "cross-env NODE_ENV=test jest --no-cache ./tests/integration",
     "lint": "eslint .",
-    "deploy": "yarn test && node build.js && sls deploy --stage=production -v",
-    "local:service":
-      "sls offline start --stage=development --port 3020 --noTimeout",
-    "temp":
-      "elasticdump --input=https://r7p7otgolh:dz3dcwcdgq@artfullylondon-produ-8750330393.eu-west-1.bonsaisearch.net --output=./settings.json --type=settings"
+    "deploy": "yarn test && sls deploy -v",
+    "local:service": "sls offline start --stage=development --port 3013 --noTimeout --noAuth",
+    "debug:windows": "SET SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline start --port 3013 --stage=development --noTimeout --noAuth"
   },
   "devDependencies": {
-    "aws-sdk": "^2.244.1",
-    "cross-env": "^5.1.5",
+    "aws-sdk": "^2.252.1",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.0.1",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-lodash": "^3.3.2",
+    "babel-plugin-source-map-support": "^2.0.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "cross-env": "^5.1.6",
     "eslint": "^4.19.1",
-    "jest": "^22.4.4",
-    "js-yaml": "^3.11.0",
+    "jest": "^23.1.0",
+    "jest-toolkit": "^0.1.2",
+    "js-yaml": "^3.12.0",
+    "jsonfile": "^4.0.0",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
-    "serverless": "^1.27.2",
-    "serverless-offline": "^3.23.0",
+    "serverless": "^1.27.3",
+    "serverless-offline": "^3.25.3",
     "serverless-webpack": "^5.1.5",
-    "webpack": "^4.8.3",
+    "webpack": "^4.11.1",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
@@ -32,14 +38,15 @@
     "ensure-request": "^4.0.0",
     "es-search-builder": "^1.3.1",
     "es-simplify": "^1.0.3",
-    "lambda-error-handler": "^1.0.0",
+    "lambda-error-handler": "^1.1.0",
     "latinize": "^0.4.0",
-    "lodash.find": "^4.6.0",
-    "lodash.includes": "^4.3.0",
-    "lodash.zip": "^4.2.0",
+    "lodash": "^4.17.10",
     "loglevel": "^1.6.1",
-    "moment": "^2.22.1",
+    "mappr": "^6.1.0",
+    "moment": "^2.22.2",
     "moment-timezone": "^0.5.17",
-    "normalise-request": "^1.4.4"
+    "normalise-request": "^1.4.4",
+    "npm": "^6.1.0",
+    "source-map-support": "^0.5.6"
   }
 }

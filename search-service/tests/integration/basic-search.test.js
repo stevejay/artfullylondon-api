@@ -1,12 +1,11 @@
-"use strict";
-
-const request = require("request-promise-native");
-const testUtils = require("./utils");
+import request from "request-promise-native";
+import * as elasticsearch from "../utils/elasticsearch";
+jest.setTimeout(60000);
 
 describe("basic search", () => {
   beforeAll(async () => {
-    await testUtils.createElasticsearchIndex("talent-full");
-    await testUtils.indexDocument("talent-full", {
+    await elasticsearch.createIndex("talent-full");
+    await elasticsearch.indexDocument("talent-full", {
       status: "Active",
       commonRole: "Director",
       entityType: "talent",
@@ -15,7 +14,7 @@ describe("basic search", () => {
       lastName: "Cracknell",
       lastName_sort: "cracknell"
     });
-    await testUtils.indexDocument("talent-full", {
+    await elasticsearch.indexDocument("talent-full", {
       status: "Active",
       commonRole: "Actor",
       entityType: "talent",
@@ -27,7 +26,7 @@ describe("basic search", () => {
   });
 
   afterAll(async () => {
-    await testUtils.deleteElasticsearchIndex("talent-full");
+    await elasticsearch.deleteIndex("talent-full");
   });
 
   it("should perform a public search of talents", async () => {
@@ -36,7 +35,7 @@ describe("basic search", () => {
         "http://localhost:3020/public/search/basic?term=carrie&entityType=talent",
       json: true,
       method: "GET",
-      timeout: 4000
+      timeout: 30000
     });
 
     expect(result).toEqual({

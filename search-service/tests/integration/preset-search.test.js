@@ -1,16 +1,15 @@
-"use strict";
-
-const request = require("request-promise-native");
-const testUtils = require("./utils");
+import request from "request-promise-native";
+import * as elasticsearch from "../utils/elasticsearch";
+jest.setTimeout(60000);
 
 describe("preset search", () => {
   beforeAll(async () => {
-    await testUtils.createElasticsearchIndex("talent-full");
-    await testUtils.createElasticsearchIndex("venue-full");
-    await testUtils.createElasticsearchIndex("event-full");
-    await testUtils.createElasticsearchIndex("event-series-full");
+    await elasticsearch.createIndex("talent-full");
+    await elasticsearch.createIndex("venue-full");
+    await elasticsearch.createIndex("event-full");
+    await elasticsearch.createIndex("event-series-full");
 
-    await testUtils.indexDocument("talent-full", {
+    await elasticsearch.indexDocument("talent-full", {
       status: "Active",
       commonRole: "Director",
       entityType: "talent",
@@ -22,10 +21,10 @@ describe("preset search", () => {
   });
 
   afterAll(async () => {
-    await testUtils.deleteElasticsearchIndex("talent-full");
-    await testUtils.deleteElasticsearchIndex("venue-full");
-    await testUtils.deleteElasticsearchIndex("event-full");
-    await testUtils.deleteElasticsearchIndex("event-series-full");
+    await elasticsearch.deleteIndex("talent-full");
+    await elasticsearch.deleteIndex("venue-full");
+    await elasticsearch.deleteIndex("event-full");
+    await elasticsearch.deleteIndex("event-series-full");
   });
 
   it("should perform an entity count preset search", async () => {
@@ -33,7 +32,7 @@ describe("preset search", () => {
       uri: "http://localhost:3020/public/search/preset/entity-counts",
       json: true,
       method: "GET",
-      timeout: 4000
+      timeout: 30000
     });
 
     expect(result).toEqual({

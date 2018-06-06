@@ -54,7 +54,7 @@ custom:
 
 functions:
     createTag:
-        handler: src/handlers/create-tag.handler
+        handler: src/lambda/create-tag.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
@@ -67,7 +67,7 @@ functions:
                     name: authorizer
                     arn: ${self:provider.environment.cognitoUserPoolArn}
     deleteTag:
-        handler: src/handlers/delete-tag.handler
+        handler: src/lambda/delete-tag.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
@@ -80,7 +80,7 @@ functions:
                     name: authorizer
                     arn: ${self:provider.environment.cognitoUserPoolArn}
     getAllTags:
-        handler: src/handlers/get-all-tags.handler
+        handler: src/lambda/get-all-tags.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
@@ -90,7 +90,7 @@ functions:
                 method: get
                 cors: true
     getTags:
-        handler: src/handlers/get-tags.handler
+        handler: src/lambda/get-tags.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}

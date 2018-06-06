@@ -8,7 +8,6 @@ package:
 provider:
     name: aws
     runtime: nodejs8.10
-    stage: production
     region: eu-west-1
     environment: ${file(env.yml):${self:custom.stage}}
     iamRoleStatements:
@@ -23,13 +22,18 @@ plugins:
 
 custom:
     project: artfullylondon
-    stage: ${opt:stage, self:provider.stage}
+    stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
-    webpackIncludeModules: true
+    webpack:
+        webpackConfig: ./webpack.config.js
+        includeModules:
+            forceExclude:
+                - aws-sdk
+        packager: 'yarn'
 
 functions:
     autocompleteSearch:
-        handler: src/handlers/autocomplete-search.handler
+        handler: src/lambda/autocomplete-search-handler.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
         events:
@@ -42,7 +46,7 @@ functions:
                 method: get
                 cors: true
     basicSearch:
-        handler: src/handlers/basic-search.handler
+        handler: src/lambda/basic-search-handler.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
         events:
@@ -55,7 +59,7 @@ functions:
                 method: get
                 cors: true
     eventAdvancedSearch:
-        handler: src/handlers/event-advanced-search.handler
+        handler: src/lambda/event-advanced-search-handler.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
         events:
@@ -64,7 +68,7 @@ functions:
                 method: get
                 cors: true
     presetSearch:
-        handler: src/handlers/preset-search.handler
+        handler: src/lambda/preset-search-handler.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
         events:

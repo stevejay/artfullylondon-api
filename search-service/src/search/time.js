@@ -1,12 +1,10 @@
-'use strict';
+import moment from "moment-timezone";
+import * as constants from "../constants";
 
-const moment = require('moment-timezone');
-const constants = require('../constants');
+export function getLondonNow() {
+  return moment().tz("Europe/London");
+}
 
-exports.getLondonNow = function() {
-  return moment().tz('Europe/London');
-};
-
-exports.formatAsStringDate = function(moment) {
+export function formatAsStringDate(moment) {
   return moment.format(constants.DATE_FORMAT);
-};
+}

@@ -1,12 +1,11 @@
-"use strict";
-
-const request = require("request-promise-native");
-const testUtils = require("./utils");
+import request from "request-promise-native";
+import * as elasticsearch from "../utils/elasticsearch";
+jest.setTimeout(60000);
 
 describe("autocomplete search", () => {
   beforeAll(async () => {
-    await testUtils.createElasticsearchIndex("talent-auto");
-    await testUtils.indexDocument("talent-auto", {
+    await elasticsearch.createIndex("talent-auto");
+    await elasticsearch.indexDocument("talent-auto", {
       status: "Active",
       commonRole: "Director",
       entityType: "talent",
@@ -14,7 +13,7 @@ describe("autocomplete search", () => {
       nameSuggest: "Carrie Cracknell",
       output: "Carrie Cracknell"
     });
-    await testUtils.indexDocument("talent-auto", {
+    await elasticsearch.indexDocument("talent-auto", {
       status: "Active",
       commonRole: "Actor",
       entityType: "talent",
@@ -25,7 +24,7 @@ describe("autocomplete search", () => {
   });
 
   afterAll(async () => {
-    await testUtils.deleteElasticsearchIndex("talent-auto");
+    await elasticsearch.deleteIndex("talent-auto");
   });
 
   it("should perform a public search of talents", async () => {
@@ -34,7 +33,7 @@ describe("autocomplete search", () => {
         "http://localhost:3020/public/search/auto?term=car&entityType=talent",
       json: true,
       method: "GET",
-      timeout: 4000
+      timeout: 30000
     });
 
     expect(result).toEqual({

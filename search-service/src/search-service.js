@@ -1,22 +1,19 @@
-"use strict";
+import _ from "lodash";
+import { MultiSearchBuilder } from "es-search-builder";
+import * as msearch from "./es-search";
+import * as constants from "./constants";
+import * as searchBuilders from "./search/search-builders";
+import * as normaliser from "./normaliser";
+import * as validator from "./validator";
+import * as mapper from "./domain/mapper";
+import * as time from "./search/time";
+import * as entityType from "./entity-type";
+import * as searchIndexType from "./search-index-type";
+import * as searchPresetType from "./search-preset-type";
 
-const zip = require("lodash.zip");
-const includes = require("lodash.includes");
-const ensure = require("ensure-request").ensure;
-const MultiSearchBuilder = require("es-search-builder").MultiSearchBuilder;
-const normalise = require("./domain/normalise-request");
-const msearch = require("./es-search");
-const constants = require("./constants");
-const searchBuilders = require("./search/search-builders");
-const normalisers = require("./domain/normalisers");
-const constraints = require("./domain/constraints");
-const ensureErrorHandler = require("./domain/ensure-error-handler");
-const mappings = require("./domain/mappings");
-const time = require("./search/time");
-
-exports.autocompleteSearch = async function(request) {
-  normalise(request, normalisers.autocompleteSearch);
-  ensure(request, constraints.autocompleteSearch, ensureErrorHandler);
+export async function autocompleteSearch(request) {
+  request = normaliser.normaliseAutocompleteSearchRequest(request);
+  validator.validateAutocompleteSearchRequest(request);
 
   const msearchBuilder = new MultiSearchBuilder();
   const indexNames = _getAutocompleteIndexesForEntity(request.entityType);
@@ -28,56 +25,56 @@ exports.autocompleteSearch = async function(request) {
   const msearches = msearchBuilder.build();
   const responses = await msearch.search(msearches);
 
-  const searchResults = mappings.mapAutocompleteSearchResults(
+  const searchResults = mapper.mapAutocompleteSearchResults(
     responses,
     indexNames
   );
 
-  const items = mappings.getTakeFromSearchResults(
+  const items = mapper.getTakeFromSearchResults(
     constants.AUTOCOMPLETE_COMBINED_MAX_RESULTS,
     searchResults
   );
 
-  return items;
-};
+  return { items, params: request };
+}
 
-exports.basicSearch = async function(request, isPublic) {
-  normalise(request, normalisers.basicSearch);
-  ensure(request, constraints.basicSearch, ensureErrorHandler);
+export async function basicSearch(request) {
+  request = normaliser.normaliseBasicSearchRequest(request);
+  validator.validateBasicSearchRequest(request);
 
   const msearchBuilder = new MultiSearchBuilder();
   const indexNames = _getBasicSearchIndexesForEntity(request.entityType);
 
   indexNames.forEach(indexName => {
     const searchBuilder = _getBasicSearchSearchBuilderForIndex(indexName);
-    searchBuilder(msearchBuilder, request, isPublic);
+    searchBuilder(msearchBuilder, request, request.isPublic);
   });
 
   const msearches = msearchBuilder.build();
   const responses = await msearch.search(msearches);
 
   const searchResults = indexNames.map((indexName, i) => {
-    return mappings.mapSearchResultHitsToItems(responses.responses[i]);
+    return mapper.mapSearchResultHitsToItems(responses.responses[i]);
   });
 
   const hasSingleEntityType = searchResults.length === 1;
 
   const items = hasSingleEntityType
     ? searchResults[0].items
-    : mappings.getTakeFromSearchResults(request.take, searchResults);
+    : mapper.getTakeFromSearchResults(request.take, searchResults);
 
   return {
     total: hasSingleEntityType ? searchResults[0].total : items.length,
     items,
     params: request
   };
-};
+}
 
-exports.eventAdvancedSearch = async function(request) {
-  normalise(request, normalisers.eventAdvancedSearch);
-  ensure(request, constraints.eventAdvancedSearch, ensureErrorHandler);
+export async function eventAdvancedSearch(request) {
+  request = normaliser.normaliseEventAdvancedSearchRequest(request);
+  validator.validateEventAdvancedSearchRequest(request);
 
-  request.entityType = constants.ENTITY_TYPE_EVENT;
+  request.entityType = entityType.EVENT;
 
   const msearchBuilder = new MultiSearchBuilder();
   const searchParams = searchBuilders.createPublicEventSearchParamsFromRequest(
@@ -88,12 +85,11 @@ exports.eventAdvancedSearch = async function(request) {
 
   const responses = await msearch.search(msearches);
 
-  const searchResult = mappings.mapSearchResultHitsToItems(
+  const searchResult = mapper.mapSearchResultHitsToItems(
     responses.responses[0]
   );
 
   // TODO should be able to remove this when ES v5 available on Bonsai.
-  // Also see if can uninstall lodash.includes from this service.
   if (request.dateFrom && request.dateTo) {
     searchResult.items.forEach(item => {
       if (!item.dates) {
@@ -109,7 +105,7 @@ exports.eventAdvancedSearch = async function(request) {
   // TODO should be able to remove this when ES v5 available on Bonsai.
   if (request.audience) {
     searchResult.items.forEach(item => {
-      if (includes(item.tags, request.audience)) {
+      if (_.includes(item.tags, request.audience)) {
         return;
       }
 
@@ -118,7 +114,7 @@ exports.eventAdvancedSearch = async function(request) {
       }
 
       item.dates = item.dates.filter(date =>
-        includes(date.tags, request.audience)
+        _.includes(date.tags, request.audience)
       );
     });
   }
@@ -128,10 +124,10 @@ exports.eventAdvancedSearch = async function(request) {
     items: searchResult.items,
     params: request
   };
-};
+}
 
-exports.presetSearch = async function(request) {
-  ensure(request, constraints.presetSearch, ensureErrorHandler);
+export async function presetSearch(request) {
+  validator.validatePresetSearch(request);
   const presetParams = _getPresetSearchParameters(request.name);
 
   const now = time.getLondonNow();
@@ -143,36 +139,36 @@ exports.presetSearch = async function(request) {
   const results = await msearch.search(msearches);
   const items = presetParams.mapper(results);
   return { items: items, params: request };
-};
+}
 
 function _getPresetSearchParameters(presetName) {
   switch (presetName) {
-    case constants.FEATURED_EVENTS_SEARCH_PRESET:
+    case searchPresetType.FEATURED_EVENTS:
       return {
         builder: searchBuilders.buildFeaturedEventsSearchPreset,
         mapper: _hitsListItemsMapper
       };
-    case constants.TALENT_RELATED_EVENTS_SEARCH_PRESET:
+    case searchPresetType.TALENT_RELATED_EVENTS:
       return {
         builder: searchBuilders.buildTalentRelatedEventsSearchPreset,
         mapper: _hitsListItemsMapper
       };
-    case constants.VENUE_RELATED_EVENTS_SEARCH_PRESET:
+    case searchPresetType.VENUE_RELATED_EVENTS:
       return {
         builder: searchBuilders.buildVenueRelatedEventsSearchPreset,
         mapper: _hitsListItemsMapper
       };
-    case constants.EVENT_SERIES_RELATED_EVENTS_SEARCH_PRESET:
+    case searchPresetType.EVENT_SERIES_RELATED_EVENTS:
       return {
         builder: searchBuilders.buildEventSeriesRelatedEventsSearchPreset,
         mapper: _hitsListItemsMapper
       };
-    case constants.ENTITY_COUNTS_SEARCH_PRESET:
+    case searchPresetType.ENTITY_COUNTS:
       return {
         builder: searchBuilders.buildEntityCountsSearchPreset,
         mapper: _entityCountsMapper
       };
-    case constants.BY_EXTERNALEVENTID_PRESET:
+    case searchPresetType.BY_EXTERNALEVENTID:
       return {
         builder: searchBuilders.buildByExternalEventIdPreset,
         mapper: _hitsListItemsMapper
@@ -189,69 +185,70 @@ function _hitsListItemsMapper(results) {
 }
 
 function _entityCountsMapper(results) {
-  return zip(
-    [
-      constants.ENTITY_TYPE_EVENT,
-      constants.ENTITY_TYPE_EVENT_SERIES,
-      constants.ENTITY_TYPE_TALENT,
-      constants.ENTITY_TYPE_VENUE
-    ],
-    results.responses
-  ).map(element => {
-    const entityType = element[0];
-    const count = element[1].hits.total;
-    return { entityType, count };
-  });
+  return _
+    .zip(
+      [
+        entityType.EVENT,
+        entityType.EVENT_SERIES,
+        entityType.TALENT,
+        entityType.VENUE
+      ],
+      results.responses
+    )
+    .map(element => {
+      const count = element[1].hits.total;
+      return { entityType: element[0], count };
+    });
 }
 
-function _getAutocompleteIndexesForEntity(entityType) {
-  switch (entityType) {
-    case constants.ENTITY_TYPE_TALENT:
-      return [constants.SEARCH_INDEX_TYPE_TALENT_AUTO];
-    case constants.ENTITY_TYPE_VENUE:
-      return [constants.SEARCH_INDEX_TYPE_VENUE_AUTO];
-    case constants.ENTITY_TYPE_EVENT:
-      return [constants.SEARCH_INDEX_TYPE_COMBINED_EVENT_AUTO];
-    case constants.ENTITY_TYPE_EVENT_SERIES:
-      return [constants.SEARCH_INDEX_TYPE_EVENT_SERIES_AUTO];
+function _getAutocompleteIndexesForEntity(entity) {
+  switch (entity) {
+    case entityType.TALENT:
+      return [searchIndexType.TALENT_AUTO];
+    case entityType.VENUE:
+      return [searchIndexType.VENUE_AUTO];
+    case entityType.EVENT:
+      return [searchIndexType.COMBINED_EVENT_AUTO];
+    case entityType.EVENT_SERIES:
+      return [searchIndexType.EVENT_SERIES_AUTO];
     default:
       return [
-        constants.SEARCH_INDEX_TYPE_TALENT_AUTO,
-        constants.SEARCH_INDEX_TYPE_VENUE_AUTO,
-        constants.SEARCH_INDEX_TYPE_COMBINED_EVENT_AUTO
+        searchIndexType.TALENT_AUTO,
+        searchIndexType.VENUE_AUTO,
+        searchIndexType.COMBINED_EVENT_AUTO
       ];
   }
 }
 
-function _getBasicSearchIndexesForEntity(entityType) {
-  switch (entityType) {
-    case constants.ENTITY_TYPE_TALENT:
-      return [constants.SEARCH_INDEX_TYPE_TALENT_FULL];
-    case constants.ENTITY_TYPE_VENUE:
-      return [constants.SEARCH_INDEX_TYPE_VENUE_FULL];
-    case constants.ENTITY_TYPE_EVENT:
-      return [constants.SEARCH_INDEX_TYPE_EVENT_FULL];
-    case constants.ENTITY_TYPE_EVENT_SERIES:
-      return [constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL];
+function _getBasicSearchIndexesForEntity(entity) {
+  switch (entity) {
+    case entityType.TALENT:
+      return [searchIndexType.TALENT_FULL];
+    case entityType.VENUE:
+      return [searchIndexType.VENUE_FULL];
+    case entityType.EVENT:
+      return [searchIndexType.EVENT_FULL];
+    case entityType.EVENT_SERIES:
+      return [searchIndexType.EVENT_SERIES_FULL];
     default:
       return [
-        constants.SEARCH_INDEX_TYPE_TALENT_FULL,
-        constants.SEARCH_INDEX_TYPE_VENUE_FULL,
-        constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL,
-        constants.SEARCH_INDEX_TYPE_EVENT_FULL
+        searchIndexType.TALENT_FULL,
+        searchIndexType.VENUE_FULL,
+        searchIndexType.EVENT_SERIES_FULL,
+        searchIndexType.EVENT_FULL
       ];
   }
 }
 
 function _getBasicSearchSearchBuilderForIndex(indexName) {
   switch (indexName) {
-    case constants.SEARCH_INDEX_TYPE_TALENT_FULL:
+    case searchIndexType.TALENT_FULL:
       return searchBuilders.buildTalentSearch;
-    case constants.SEARCH_INDEX_TYPE_VENUE_FULL:
+    case searchIndexType.VENUE_FULL:
       return searchBuilders.buildVenueSearch;
-    case constants.SEARCH_INDEX_TYPE_EVENT_FULL:
+    case searchIndexType.EVENT_FULL:
       return searchBuilders.buildEventSearch;
-    case constants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL:
+    case searchIndexType.EVENT_SERIES_FULL:
       return searchBuilders.buildEventSeriesSearch;
     default:
       throw new Error(`indexName value out of range: ${indexName}`);

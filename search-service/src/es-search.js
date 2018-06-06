@@ -1,13 +1,11 @@
-"use strict";
-
-const elasticsearch = require("elasticsearch");
+import elasticsearch from "elasticsearch";
 
 const client = new elasticsearch.Client({
   host: process.env.ELASTICSEARCH_HOST,
   log: "error"
 });
 
-exports.search = async (searches, options) => {
+export async function search(searches, options) {
   options = options || {};
 
   const results = await client.msearch({
@@ -31,13 +29,13 @@ exports.search = async (searches, options) => {
   }
 
   return results;
-};
+}
 
-exports.mget = async (index, type, ids, source) => {
+export async function mget(index, type, ids, source) {
   return await client.mget({
     index,
     type,
     body: { ids },
     _source: source
   });
-};
+}

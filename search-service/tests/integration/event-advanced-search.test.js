@@ -1,18 +1,17 @@
-"use strict";
-
-const request = require("request-promise-native");
-const testUtils = require("./utils");
+import request from "request-promise-native";
+import * as elasticsearch from "../utils/elasticsearch";
+jest.setTimeout(60000);
 
 describe("event advanced search", () => {
   beforeAll(async () => {
-    await testUtils.createElasticsearchIndex("event-full");
-    await testUtils.indexDocument("event-full", {
+    await elasticsearch.createIndex("event-full");
+    await elasticsearch.indexDocument("event-full", {
       status: "Active",
       id: 1,
       entityType: "event",
       name: "Foo"
     });
-    await testUtils.indexDocument("event-full", {
+    await elasticsearch.indexDocument("event-full", {
       status: "Active",
       id: 2,
       entityType: "event",
@@ -21,7 +20,7 @@ describe("event advanced search", () => {
   });
 
   afterAll(async () => {
-    await testUtils.deleteElasticsearchIndex("event-full");
+    await elasticsearch.deleteIndex("event-full");
   });
 
   it("should perform a public search", async () => {
@@ -29,7 +28,7 @@ describe("event advanced search", () => {
       uri: "http://localhost:3020/public/search/event?term=foo",
       json: true,
       method: "GET",
-      timeout: 4000
+      timeout: 30000
     });
 
     expect(result).toEqual({
