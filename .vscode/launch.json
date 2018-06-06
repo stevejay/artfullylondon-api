@@ -2,13 +2,24 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Tag Service (Windows)",
+
       "type": "node",
       "request": "launch",
-      "name": "Debug Tag Service (Windows)",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run-script", "debug:windows"],
       "port": 9229,
       "cwd": "${workspaceRoot}/tag-service"
+    },
+    {
+      "name": "Debug User Service (Windows)",
+
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "debug:windows"],
+      "port": 9229,
+      "cwd": "${workspaceRoot}/user-service"
     }
   ]
 }

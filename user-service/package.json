@@ -35,10 +35,11 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "auth0": "^2.7.0",
+    "auth0": "^2.9.1",
     "dynamodb-doc-client-wrapper": "^2.0.1",
     "ensure-request": "^4.0.0",
     "jsonwebtoken": "^8.2.1",
+    "jwks-rsa": "^1.2.1",
     "lambda-error-handler": "^1.0.0",
     "loglevel": "^1.6.1",
     "normalise-request": "^1.4.4",

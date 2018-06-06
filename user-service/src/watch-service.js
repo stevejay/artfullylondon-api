@@ -47,6 +47,6 @@ export async function updateWatches(request) {
   return { acknowledged: true };
 }
 
-export async function deleteAllWatches(userId) {
-  await watchRepository.deleteWatchesForUser(userId);
+export async function deleteAllWatches(request) {
+  await watchRepository.deleteWatchesForUser(request.userId);
 }

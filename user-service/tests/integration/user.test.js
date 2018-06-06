@@ -51,7 +51,8 @@ describe("user", () => {
         { entityType: "talent", items: [], version: 0 },
         { entityType: "venue", items: [], version: 0 },
         { entityType: "event-series", items: [], version: 0 }
-      ]
+      ],
+      preferences: { emailFrequency: "Daily" }
     });
   });
 
@@ -85,7 +86,8 @@ describe("user", () => {
         { entityType: "venue", items: [], version: 0 },
         { entityType: "event", items: [], version: 0 },
         { entityType: "event-series", items: [], version: 0 }
-      ]
+      ],
+      preferences: { emailFrequency: "Daily" }
     });
   });
 });

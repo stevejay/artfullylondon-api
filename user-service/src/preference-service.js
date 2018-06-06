@@ -4,9 +4,9 @@ import * as validator from "./validator";
 
 const DEFAULT_PREFERENCES = { emailFrequency: emailFrequencyType.DAILY };
 
-export async function deletePreferences(userId) {
+export async function deletePreferences(request) {
   // Note: Preferences might not exist for the user.
-  await preferenceRepository.deletePreferencesForUser(userId);
+  await preferenceRepository.deletePreferencesForUser(request.userId);
   return { acknowledged: true };
 }
 
