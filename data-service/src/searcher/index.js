@@ -1,6 +1,6 @@
 import elasticsearch from "elasticsearch";
 import * as queryFactory from "./query-factory";
-import * as responseMapper from "./response-mapper";
+import * as mapper from "./mapper";
 
 const esClient = new elasticsearch.Client({
   host: process.env.ELASTICSEARCH_HOST,
@@ -10,5 +10,5 @@ const esClient = new elasticsearch.Client({
 export async function getSitemapEventIds(dateTo) {
   const query = queryFactory.createSitemapEventIdsQuery(dateTo);
   const result = await esClient.search(query);
-  return responseMapper.mapIdsQueryResponse(result);
+  return mapper.mapIdsQueryResponse(result);
 }

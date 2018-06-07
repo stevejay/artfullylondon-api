@@ -25,7 +25,7 @@ describe("event advanced search", () => {
 
   it("should perform a public search", async () => {
     const result = await request({
-      uri: "http://localhost:3020/public/search/event?term=foo",
+      uri: "http://localhost:3013/public/search/event?term=foo",
       json: true,
       method: "GET",
       timeout: 30000
@@ -33,7 +33,7 @@ describe("event advanced search", () => {
 
     expect(result).toEqual({
       items: [{ entityType: "event", id: 1, name: "Foo", status: "Active" }],
-      params: { entityType: "event", skip: 0, take: 12, term: "foo" },
+      params: { skip: 0, take: 12, term: "foo" },
       total: 1
     });
   });

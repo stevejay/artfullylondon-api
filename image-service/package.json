@@ -7,7 +7,7 @@
     "test:integration": "cross-env NODE_ENV=test jest ./tests/integration",
     "lint": "eslint .",
     "deploy": "yarn test && sls deploy --stage=production -v",
-    "local:service":
+    "local":
       "cross-env sls offline start --stage=development --port 3020 --noTimeout",
     "local:install": "sls dynamodb install",
     "local:dynamodb": "node ./scripts/start-dynamodb-local.js"

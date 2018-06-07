@@ -29,7 +29,7 @@ describe("preset search", () => {
 
   it("should perform an entity count preset search", async () => {
     const result = await request({
-      uri: "http://localhost:3020/public/search/preset/entity-counts",
+      uri: "http://localhost:3013/public/search/preset/entity-counts",
       json: true,
       method: "GET",
       timeout: 30000
@@ -42,7 +42,7 @@ describe("preset search", () => {
         { count: 1, entityType: "talent" },
         { count: 0, entityType: "venue" }
       ],
-      params: { id: null, name: "entity-counts" }
+      params: { name: "entity-counts" }
     });
   });
 });

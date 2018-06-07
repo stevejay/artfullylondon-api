@@ -32,7 +32,7 @@ describe("basic search", () => {
   it("should perform a public search of talents", async () => {
     const result = await request({
       uri:
-        "http://localhost:3020/public/search/basic?term=carrie&entityType=talent",
+        "http://localhost:3013/public/search/basic?term=carrie&entityType=talent",
       json: true,
       method: "GET",
       timeout: 30000
@@ -49,7 +49,13 @@ describe("basic search", () => {
           status: "Active"
         }
       ],
-      params: { entityType: "talent", skip: 0, take: 12, term: "carrie" },
+      params: {
+        entityType: "talent",
+        skip: 0,
+        take: 12,
+        term: "carrie",
+        isPublic: true
+      },
       total: 1
     });
   });

@@ -5,7 +5,11 @@ const client = new elasticsearch.Client({
   log: "error"
 });
 
-export async function search(searches, options) {
+export function search(query) {
+  return client.search(query);
+}
+
+export async function multiSearch(searches, options) {
   options = options || {};
 
   const results = await client.msearch({
@@ -25,17 +29,8 @@ export async function search(searches, options) {
       error.root_cause.forEach(rootCause => rootCauses.push(rootCause.reason))
     );
 
-    throw new Error("[500] " + rootCauses.join("; "));
+    throw new Error("[500] msearch failed: " + rootCauses.join("; "));
   }
 
   return results;
-}
-
-export async function mget(index, type, ids, source) {
-  return await client.mget({
-    index,
-    type,
-    body: { ids },
-    _source: source
-  });
 }

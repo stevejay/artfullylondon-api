@@ -1,5 +1,5 @@
 import moment from "moment-timezone";
-import * as constants from "../constants";
+import * as constants from "./constants";
 
 export function getLondonNow() {
   return moment().tz("Europe/London");

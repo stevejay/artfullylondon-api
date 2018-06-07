@@ -143,172 +143,172 @@ describe("getTakeFromSearchResults", () => {
   });
 });
 
-describe("mapAutocompleteSearchResults", () => {
-  it("should map responses where there are no duplicates", () => {
-    const responses = {
-      responses: [
-        {
-          // venue-auto index
-          suggest: {
-            autocomplete: [
-              {
-                options: [
-                  {
-                    text: "Venue 1",
-                    _source: {
-                      id: "venue-1"
-                    }
-                  }
-                ]
-              }
-            ],
-            fuzzyAutocomplete: [
-              {
-                options: [
-                  {
-                    text: "Venue 2",
-                    _source: {
-                      id: "venue-2"
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          // talent-auto index
-          suggest: {
-            autocomplete: [
-              {
-                options: [
-                  {
-                    text: "Talent 1",
-                    _source: {
-                      id: "talent-1"
-                    }
-                  }
-                ]
-              }
-            ],
-            fuzzyAutocomplete: [
-              {
-                options: [
-                  {
-                    text: "Talent 2",
-                    _source: {
-                      id: "talent-2"
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    };
+// describe("mapAutocompleteSearchResults", () => {
+//   it("should map responses where there are no duplicates", () => {
+//     const responses = {
+//       responses: [
+//         {
+//           // venue-auto index
+//           suggest: {
+//             autocomplete: [
+//               {
+//                 options: [
+//                   {
+//                     text: "Venue 1",
+//                     _source: {
+//                       id: "venue-1"
+//                     }
+//                   }
+//                 ]
+//               }
+//             ],
+//             fuzzyAutocomplete: [
+//               {
+//                 options: [
+//                   {
+//                     text: "Venue 2",
+//                     _source: {
+//                       id: "venue-2"
+//                     }
+//                   }
+//                 ]
+//               }
+//             ]
+//           }
+//         },
+//         {
+//           // talent-auto index
+//           suggest: {
+//             autocomplete: [
+//               {
+//                 options: [
+//                   {
+//                     text: "Talent 1",
+//                     _source: {
+//                       id: "talent-1"
+//                     }
+//                   }
+//                 ]
+//               }
+//             ],
+//             fuzzyAutocomplete: [
+//               {
+//                 options: [
+//                   {
+//                     text: "Talent 2",
+//                     _source: {
+//                       id: "talent-2"
+//                     }
+//                   }
+//                 ]
+//               }
+//             ]
+//           }
+//         }
+//       ]
+//     };
 
-    const result = mapper.mapAutocompleteSearchResults(responses, [
-      "venue-auto",
-      "talent-auto"
-    ]);
+//     const result = mapper.mapAutocompleteSearchResults(responses, [
+//       "venue-auto",
+//       "talent-auto"
+//     ]);
 
-    expect(result).toEqual([
-      {
-        entityType: "venue",
-        items: [
-          { name: "Venue 1", id: "venue-1" },
-          { name: "Venue 2", id: "venue-2" }
-        ]
-      },
-      {
-        entityType: "talent",
-        items: [
-          { name: "Talent 1", id: "talent-1" },
-          { name: "Talent 2", id: "talent-2" }
-        ]
-      }
-    ]);
-  });
+//     expect(result).toEqual([
+//       {
+//         entityType: "venue",
+//         items: [
+//           { name: "Venue 1", id: "venue-1" },
+//           { name: "Venue 2", id: "venue-2" }
+//         ]
+//       },
+//       {
+//         entityType: "talent",
+//         items: [
+//           { name: "Talent 1", id: "talent-1" },
+//           { name: "Talent 2", id: "talent-2" }
+//         ]
+//       }
+//     ]);
+//   });
 
-  it("should map responses where there are duplicates", () => {
-    const responses = {
-      responses: [
-        {
-          // venue-auto index
-          suggest: {
-            autocomplete: [
-              {
-                options: [
-                  {
-                    text: "Venue 1",
-                    _source: {
-                      id: "venue-1"
-                    }
-                  }
-                ]
-              }
-            ],
-            fuzzyAutocomplete: [
-              {
-                options: [
-                  {
-                    text: "Venue 1",
-                    _source: {
-                      id: "venue-1"
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          // talent-auto index
-          suggest: {
-            autocomplete: [
-              {
-                options: [
-                  {
-                    text: "Talent 1",
-                    _source: {
-                      id: "talent-1"
-                    }
-                  }
-                ]
-              }
-            ],
-            fuzzyAutocomplete: [
-              {
-                options: [
-                  {
-                    text: "Talent 1",
-                    _source: {
-                      id: "talent-1"
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    };
+//   it("should map responses where there are duplicates", () => {
+//     const responses = {
+//       responses: [
+//         {
+//           // venue-auto index
+//           suggest: {
+//             autocomplete: [
+//               {
+//                 options: [
+//                   {
+//                     text: "Venue 1",
+//                     _source: {
+//                       id: "venue-1"
+//                     }
+//                   }
+//                 ]
+//               }
+//             ],
+//             fuzzyAutocomplete: [
+//               {
+//                 options: [
+//                   {
+//                     text: "Venue 1",
+//                     _source: {
+//                       id: "venue-1"
+//                     }
+//                   }
+//                 ]
+//               }
+//             ]
+//           }
+//         },
+//         {
+//           // talent-auto index
+//           suggest: {
+//             autocomplete: [
+//               {
+//                 options: [
+//                   {
+//                     text: "Talent 1",
+//                     _source: {
+//                       id: "talent-1"
+//                     }
+//                   }
+//                 ]
+//               }
+//             ],
+//             fuzzyAutocomplete: [
+//               {
+//                 options: [
+//                   {
+//                     text: "Talent 1",
+//                     _source: {
+//                       id: "talent-1"
+//                     }
+//                   }
+//                 ]
+//               }
+//             ]
+//           }
+//         }
+//       ]
+//     };
 
-    const result = mapper.mapAutocompleteSearchResults(responses, [
-      "venue-auto",
-      "talent-auto"
-    ]);
+//     const result = mapper.mapAutocompleteSearchResults(responses, [
+//       "venue-auto",
+//       "talent-auto"
+//     ]);
 
-    expect(result).toEqual([
-      {
-        entityType: "venue",
-        items: [{ name: "Venue 1", id: "venue-1" }]
-      },
-      {
-        entityType: "talent",
-        items: [{ name: "Talent 1", id: "talent-1" }]
-      }
-    ]);
-  });
-});
+//     expect(result).toEqual([
+//       {
+//         entityType: "venue",
+//         items: [{ name: "Venue 1", id: "venue-1" }]
+//       },
+//       {
+//         entityType: "talent",
+//         items: [{ name: "Talent 1", id: "talent-1" }]
+//       }
+//     ]);
+//   });
+// });

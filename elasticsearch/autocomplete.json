@@ -1,0 +1,71 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "doc": {
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "nameSuggest": {
+          "type": "completion",
+          "analyzer": "simple",
+          "search_analyzer": "simple",
+          "contexts": [
+            {
+              "name": "entityType",
+              "type": "category",
+              "path": "entityType"
+            }
+          ]
+        },
+        "output": {
+          "type": "text",
+          "index": false
+        },
+        "entityType": {
+          "type": "keyword",
+          "index": true
+        },
+        "id": {
+          "type": "keyword",
+          "index": false
+        },
+        "status": {
+          "type": "keyword",
+          "index": false
+        },
+        "version": {
+          "type": "short",
+          "index": false
+        },
+        "venueType": {
+          "type": "keyword",
+          "index": false
+        },
+        "address": {
+          "type": "text",
+          "index": false
+        },
+        "postcode": {
+          "type": "text",
+          "index": false
+        },
+        "talentType": {
+          "type": "keyword",
+          "index": false
+        },
+        "commonRole": {
+          "type": "text",
+          "index": false
+        },
+        "eventType": {
+          "type": "keyword",
+          "index": false
+        }
+      }
+    }
+  }
+}

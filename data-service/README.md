@@ -15,7 +15,7 @@ The file `env.yml` must exist in the service's root directory and be populated. 
 To run the service locally:
 
 1.  Have [localstack](https://github.com/localstack/localstack) running.
-1.  Start the service using the command `yarn run local:service`.
+1.  Start the service using the command `yarn run local`.
 
 You can then use the command `yarn run test:integration` to run the service's integration tests.
 

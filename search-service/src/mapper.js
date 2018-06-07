@@ -1,5 +1,5 @@
-import * as entityType from "../entity-type";
-import * as searchIndexType from "../search-index-type";
+import * as entityType from "./entity-type";
+import * as searchIndexType from "./search-index-type";
 
 export function mapAutocompleteSearchResults(responses, indexNames) {
   return indexNames.map((indexName, i) => {
