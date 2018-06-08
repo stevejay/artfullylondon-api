@@ -1,18 +1,19 @@
 import esb from "elastic-builder/src";
-import * as constants from "./constants";
+import * as sourceFields from "./source-fields";
 import * as entityType from "../entity-type";
 import * as searchPresetType from "../search-preset-type";
 import * as searchIndexType from "../search-index-type";
 import * as time from "./time";
 
 const DOC_TYPE_NAME = "doc";
+// const AUTOCOMPLETE_MAX_RESULTS = 5;
 
-export function createPresetSearches(params) {
+export function createPresetSearch(params) {
   switch (params.name) {
-    case searchPresetType.FEATURED_EVENTS:
-      return createFeaturedEventsSearchPreset(params);
     case searchPresetType.ENTITY_COUNTS:
       return createEntityCountsSearchPreset();
+    case searchPresetType.FEATURED_EVENTS:
+      return createFeaturedEventsSearchPreset(params);
     case searchPresetType.VENUE_RELATED_EVENTS:
       return createVenueRelatedEventsSearchPreset(params);
     case searchPresetType.TALENT_RELATED_EVENTS:
@@ -33,7 +34,7 @@ function createEventSeriesRelatedEventsSearchPreset(params) {
     eventSeriesId: params.id,
     dateFrom: time.formatAsStringDate(now),
     dateTo: time.formatAsStringDate(now.add(366, "days")),
-    source: constants.SUMMARY_EVENT_SOURCE_FIELDS
+    source: sourceFields.SUMMARY_EVENT
   };
 
   return createEventAdvancedSearch(advancedSearchParams);
@@ -48,7 +49,7 @@ function createVenueRelatedEventsSearchPreset(params) {
     venueId: params.id,
     dateFrom: time.formatAsStringDate(now),
     dateTo: time.formatAsStringDate(now.add(366, "days")),
-    source: constants.SUMMARY_EVENT_SOURCE_FIELDS
+    source: sourceFields.SUMMARY_EVENT
   };
 
   return createEventAdvancedSearch(advancedSearchParams);
@@ -63,7 +64,7 @@ function createTalentRelatedEventsSearchPreset(params) {
     talentId: params.id,
     dateFrom: time.formatAsStringDate(now),
     dateTo: time.formatAsStringDate(now.add(366, "days")),
-    source: constants.SUMMARY_EVENT_SOURCE_FIELDS
+    source: sourceFields.SUMMARY_EVENT
   };
 
   return createEventAdvancedSearch(advancedSearchParams);
@@ -99,7 +100,7 @@ function createFeaturedEventsSearchPreset() {
     area: "Central",
     dateFrom: time.formatAsStringDate(now),
     dateTo: time.formatAsStringDate(now.add(14, "days")),
-    source: constants.SUMMARY_EVENT_SOURCE_FIELDS
+    source: sourceFields.SUMMARY_EVENT
   };
 
   return createEventAdvancedSearch(advancedSearchParams);
@@ -213,7 +214,7 @@ export function createEventAdvancedSearch(params) {
     );
   }
 
-  let defaultSource = constants.SUMMARY_EVENT_SOURCE_FIELDS;
+  let defaultSource = sourceFields.SUMMARY_EVENT;
 
   if (params.dateFrom && params.dateTo) {
     defaultSource = [...defaultSource, "dates"];
@@ -233,34 +234,34 @@ export function createEventAdvancedSearch(params) {
   };
 }
 
-export function createAutocompleteSearchQuery(params) {
-  const completionSuggester = esb
-    .completionSuggester("autocomplete", "nameSuggest")
-    .prefix(params.term)
-    .size(constants.AUTOCOMPLETE_MAX_RESULTS);
+// export function createAutocompleteSearchQuery(params) {
+//   const completionSuggester = esb
+//     .completionSuggester("autocomplete", "nameSuggest")
+//     .prefix(params.term)
+//     .size(AUTOCOMPLETE_MAX_RESULTS);
 
-  const fuzzyCompletionSuggester = esb
-    .completionSuggester("fuzzyAutocomplete", "nameSuggest")
-    .prefix(params.term)
-    .size(constants.AUTOCOMPLETE_MAX_RESULTS)
-    .fuzzy(true);
+//   const fuzzyCompletionSuggester = esb
+//     .completionSuggester("fuzzyAutocomplete", "nameSuggest")
+//     .prefix(params.term)
+//     .size(AUTOCOMPLETE_MAX_RESULTS)
+//     .fuzzy(true);
 
-  if (params.entityType !== entityType.ALL) {
-    completionSuggester.contexts("entityType", [params.entityType]);
-    fuzzyCompletionSuggester.contexts("entityType", [params.entityType]);
-  }
+//   if (params.entityType !== entityType.ALL) {
+//     completionSuggester.contexts("entityType", [params.entityType]);
+//     fuzzyCompletionSuggester.contexts("entityType", [params.entityType]);
+//   }
 
-  return {
-    index: searchIndexType.AUTOCOMPLETE,
-    type: DOC_TYPE_NAME,
-    body: esb
-      .requestBodySearch()
-      .size(0)
-      .suggest(completionSuggester)
-      .suggest(fuzzyCompletionSuggester)
-      .toJSON()
-  };
-}
+//   return {
+//     index: searchIndexType.AUTOCOMPLETE,
+//     type: DOC_TYPE_NAME,
+//     body: esb
+//       .requestBodySearch()
+//       .size(0)
+//       .suggest(completionSuggester)
+//       .suggest(fuzzyCompletionSuggester)
+//       .toJSON()
+//   };
+// }
 
 export function createBasicSearchSearches(params) {
   const indexes = getBasicSearchIndexesForEntity(params);
@@ -322,7 +323,7 @@ function createBasicSearchQueryForEntity(params) {
         }
 
         body
-          .source(constants.SUMMARY_EVENT_SOURCE_FIELDS)
+          .source(sourceFields.SUMMARY_EVENT)
           .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")]);
       }
       break;
@@ -333,7 +334,7 @@ function createBasicSearchQueryForEntity(params) {
         }
 
         body
-          .source(constants.SUMMARY_EVENT_SERIES_SOURCE_FIELDS)
+          .source(sourceFields.SUMMARY_EVENT_SERIES)
           .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")]);
       }
       break;
@@ -348,7 +349,7 @@ function createBasicSearchQueryForEntity(params) {
         }
 
         body
-          .source(constants.SUMMARY_TALENT_SOURCE_FIELDS)
+          .source(sourceFields.SUMMARY_TALENT)
           .sorts([
             esb.sort("_score", "desc"),
             esb.sort("lastName_sort"),
@@ -383,7 +384,7 @@ function createBasicSearchQueryForEntity(params) {
         }
 
         body
-          .source(constants.SUMMARY_VENUE_SOURCE_FIELDS)
+          .source(sourceFields.SUMMARY_VENUE)
           .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")]);
       }
       break;

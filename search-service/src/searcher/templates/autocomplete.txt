@@ -1,0 +1,36 @@
+{
+  "size": 0,
+  "suggest": {
+    "autocomplete": {
+      "completion": {
+        "field": "nameSuggest",
+        "size": 5
+        {{#singleEntitySearch}}
+        ,
+        "contexts": {
+          "entityType": [
+            "{{entityType}}"
+          ]
+        }
+        {{/singleEntitySearch}}
+      },
+      "prefix": "{{term}}"
+    },
+    "fuzzyAutocomplete": {
+      "completion": {
+        "field": "nameSuggest",
+        "size": 5,
+        "fuzzy": true
+        {{#singleEntitySearch}}
+        ,
+        "contexts": {
+          "entityType": [
+            "{{entityType}}"
+          ]
+        }
+        {{/singleEntitySearch}}
+      },
+      "prefix": "{{term}}"
+    }
+  }
+}

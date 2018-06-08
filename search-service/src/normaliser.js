@@ -1,7 +1,8 @@
 import normalise from "normalise-request";
 import simplify from "es-simplify";
-import * as constants from "./constants";
 import * as entityType from "./entity-type";
+
+const SEARCH_RESULTS_DEFAULT_PAGE_SIZE = 12;
 
 normalise.normalisers.simplify = param =>
   typeof param !== "string" ? param : simplify(param);
@@ -37,7 +38,7 @@ const BASIC_SEARCH_NORMALISER = {
     toInt: true
   },
   take: {
-    default: constants.SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
+    default: SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
     toInt: true
   }
 };
@@ -96,7 +97,7 @@ const EVENT_ADVANCED_SEARCH_NORMALISER = {
     toInt: true
   },
   take: {
-    default: constants.SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
+    default: SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
     toInt: true
   }
 };

@@ -24,16 +24,49 @@ const LONGITUDE_NUMERICALITY = {
   lessThanOrEqualTo: 180
 };
 
-const SKIP_NUMERICALITY = { onlyInteger: true, greaterThanOrEqualTo: 0 };
-
-const LATITUDE_DEPENDENCY = {
-  ensure: (value, attrs) => value < attrs.north,
-  message: "south value must be less than north value"
+const LOCATION_CONSTRAINT = {
+  object: {
+    north: {
+      presence: true,
+      numericality: LATITUDE_NUMERICALITY
+    },
+    west: {
+      presence: true,
+      numericality: LONGITUDE_NUMERICALITY
+    },
+    south: {
+      presence: true,
+      numericality: LATITUDE_NUMERICALITY,
+      dependency: {
+        ensure: (value, attrs) => value < attrs.north,
+        message: "south value must be less than north value"
+      }
+    },
+    east: {
+      presence: true,
+      numericality: LONGITUDE_NUMERICALITY,
+      dependency: {
+        ensure: (value, attrs) => value > attrs.west,
+        message: "east value must be greater than west value"
+      }
+    }
+  }
 };
 
-const LONGITUDE_DEPENDENCY = {
-  ensure: (value, attrs) => value > attrs.west,
-  message: "east value must be greater than west value"
+const SKIP_CONSTRAINT = {
+  presence: true,
+  number: true,
+  numericality: { onlyInteger: true, greaterThanOrEqualTo: 0 }
+};
+
+const TAKE_CONSTRAINT = {
+  presence: true,
+  number: true,
+  numericality: {
+    onlyInteger: true,
+    greaterThanOrEqualTo: 1,
+    lessThanOrEqualTo: 300
+  }
 };
 
 const AUTOCOMPLETE_SEARCH_CONSTRAINT = {
@@ -71,42 +104,9 @@ const BASIC_SEARCH_CONSTRAINT = {
       }
     ]
   },
-  location: {
-    object: {
-      north: {
-        presence: true,
-        numericality: LATITUDE_NUMERICALITY
-      },
-      west: {
-        presence: true,
-        numericality: LONGITUDE_NUMERICALITY
-      },
-      south: {
-        presence: true,
-        numericality: LATITUDE_NUMERICALITY,
-        dependency: LATITUDE_DEPENDENCY
-      },
-      east: {
-        presence: true,
-        numericality: LONGITUDE_NUMERICALITY,
-        dependency: LONGITUDE_DEPENDENCY
-      }
-    }
-  },
-  skip: {
-    presence: true,
-    number: true,
-    numericality: SKIP_NUMERICALITY
-  },
-  take: {
-    presence: true,
-    number: true,
-    numericality: {
-      onlyInteger: true,
-      greaterThanOrEqualTo: 1,
-      lessThanOrEqualTo: 300
-    }
-  }
+  location: LOCATION_CONSTRAINT,
+  skip: SKIP_CONSTRAINT,
+  take: TAKE_CONSTRAINT
 };
 
 const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
@@ -169,28 +169,7 @@ const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
     string: true,
     inclusion: areaType.ALLOWED_VALUES
   },
-  location: {
-    object: {
-      north: {
-        presence: true,
-        numericality: LATITUDE_NUMERICALITY
-      },
-      west: {
-        presence: true,
-        numericality: LONGITUDE_NUMERICALITY
-      },
-      south: {
-        presence: true,
-        numericality: LATITUDE_NUMERICALITY,
-        dependency: LATITUDE_DEPENDENCY
-      },
-      east: {
-        presence: true,
-        numericality: LONGITUDE_NUMERICALITY,
-        dependency: LONGITUDE_DEPENDENCY
-      }
-    }
-  },
+  location: LOCATION_CONSTRAINT,
   venueId: {
     string: true,
     length: ID_LENGTH
@@ -199,20 +178,8 @@ const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
     string: true,
     length: ID_LENGTH
   },
-  skip: {
-    presence: true,
-    number: true,
-    numericality: SKIP_NUMERICALITY
-  },
-  take: {
-    presence: true,
-    number: true,
-    numericality: {
-      onlyInteger: true,
-      greaterThanOrEqualTo: 1,
-      lessThanOrEqualTo: 300
-    }
-  }
+  skip: SKIP_CONSTRAINT,
+  take: TAKE_CONSTRAINT
 };
 
 const PRESET_SEARCH_CONSTRAINT = {

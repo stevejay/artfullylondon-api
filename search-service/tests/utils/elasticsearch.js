@@ -11,6 +11,9 @@ const esClient = new elasticsearch.Client({
   log: "error"
 });
 
+const MAPPINGS_DIR = path.resolve(__dirname, "../../../elasticsearch");
+const TEMPLATES_DIR = path.resolve(__dirname, "../../src/searcher/templates");
+
 export async function deleteIndex(index) {
   if (await esClient.indices.exists({ index })) {
     await esClient.indices.delete({ index });
@@ -19,8 +22,7 @@ export async function deleteIndex(index) {
 
 export async function createIndex(index) {
   await deleteIndex(index);
-  const mappingsDir = path.resolve(__dirname, "../../../elasticsearch");
-  const body = jsonfile.readFileSync(path.join(mappingsDir, `${index}.json`));
+  const body = jsonfile.readFileSync(path.join(MAPPINGS_DIR, `${index}.json`));
   await esClient.indices.create({ index, body });
 }
 
@@ -31,5 +33,21 @@ export async function indexDocument(index, document) {
     id: document.id,
     body: document,
     refresh: "true"
+  });
+}
+
+export async function createTemplate(name) {
+  const text = fs.readFileSync(
+    path.resolve(TEMPLATES_DIR, `${name}.txt`),
+    "utf8"
+  );
+  await esClient.putScript({
+    id: name,
+    body: {
+      script: {
+        lang: "mustache",
+        source: text.replace(/\s/gm, "")
+      }
+    }
   });
 }

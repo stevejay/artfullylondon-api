@@ -14,10 +14,9 @@ const mapLocation = mappr(
       west: "queryStringParameters.west"
     })
   },
-  result => {
-    _.isEmpty(result.location) && _.unset(result, "location");
-    return result;
-  }
+  result => ({
+    location: _.isEmpty(result.location) ? undefined : result.location
+  })
 );
 
 export const mapAutocompleteSearchEvent = mappr({

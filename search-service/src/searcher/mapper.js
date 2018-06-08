@@ -5,16 +5,23 @@ import looseInterleave from "loose-interleave";
 import * as entityType from "../entity-type";
 import * as searchPresetType from "../search-preset-type";
 
-export function mapAutocompleteSearchResult(result) {
-  const items = _
-    .unionBy(
-      result.suggest.autocomplete[0].options,
-      result.suggest.fuzzyAutocomplete[0].options,
-      "_source.id"
-    )
-    .map(option => ({ ...option._source, name: option.text }));
+export function mapAutocompleteSearchParams(params) {
+  return {
+    ...params,
+    singleEntitySearch: params.entityType !== entityType.ALL
+  };
+}
 
-  return { items };
+export function mapAutocompleteSearchResult(result) {
+  return {
+    items: _
+      .unionBy(
+        result.suggest.autocomplete[0].options,
+        result.suggest.fuzzyAutocomplete[0].options,
+        "_source.id"
+      )
+      .map(option => ({ ...option._source, name: option.text }))
+  };
 }
 
 export function mapBasicSearchResults(results, take) {
@@ -63,7 +70,7 @@ export function mapPresetSearchResults(results, presetName) {
           }))
       };
     default:
-      return { items: results.responses[0].hits.hits.map(hit => hit._source) };
+      return { items: results.hits.hits.map(hit => hit._source) };
   }
 }
 

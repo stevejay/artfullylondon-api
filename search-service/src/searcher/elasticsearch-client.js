@@ -9,6 +9,14 @@ export function search(query) {
   return client.search(query);
 }
 
+export function searchUsingTemplate(name, index, params) {
+  return client.searchTemplate({
+    index,
+    type: "doc",
+    body: { id: name, params }
+  });
+}
+
 export async function multiSearch(searches, options) {
   options = options || {};
 

@@ -4,6 +4,7 @@ jest.setTimeout(60000);
 
 describe("autocomplete search", () => {
   beforeAll(async () => {
+    await elasticsearch.createTemplate("autocomplete");
     await elasticsearch.createIndex("autocomplete");
     await elasticsearch.indexDocument("autocomplete", {
       status: "Active",
