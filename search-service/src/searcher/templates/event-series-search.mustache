@@ -1,0 +1,39 @@
+{
+  "size": {{take}},
+  "from": {{skip}},
+  "_source": [
+    "entityType",
+    "id",
+    "status",
+    "image",
+    "imageCopyright",
+    "imageRatio",
+    "imageColor",
+    "name",
+    "eventSeriesType",
+    "occurrence",
+    "summary"
+  ],
+  "sort": [
+    {
+      "_score": "desc"
+    },
+    "name_sort"
+  ],
+  "query": {
+    "bool": {
+      "must": [
+        { "match_all": {} }
+        {{#hasTerm}}
+        , { "match": { "name": "{{term}}" } }
+        {{/hasTerm}}
+      ],
+      "filter": [
+        { "match_all": {} }
+        {{#isPublic}}
+        , { "term": { "status": "Active" } }
+        {{/isPublic}}
+      ]
+    }
+  }
+}

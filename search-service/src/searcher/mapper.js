@@ -1,9 +1,8 @@
 import _ from "lodash";
-import fp from "lodash/fp";
-import mappr from "mappr";
 import looseInterleave from "loose-interleave";
 import * as entityType from "../entity-type";
 import * as searchPresetType from "../search-preset-type";
+import * as time from "./time";
 
 export function mapAutocompleteSearchParams(params) {
   return {
@@ -12,7 +11,90 @@ export function mapAutocompleteSearchParams(params) {
   };
 }
 
-export function mapAutocompleteSearchResult(result) {
+export function mapBasicSearchParams(params) {
+  return {
+    ...params,
+    hasTerm: !!params.term
+  };
+}
+
+export function mapEventAdvancedSearchParams(params) {
+  const mapped = {
+    ...params,
+    costType: params.cost,
+    bookingType: params.booking,
+    tags: mapTagsForEventSearch(params),
+    artsType: mapMediumToCategoryForEventSearch(params)
+  };
+
+  return {
+    ...mapped,
+    hasTerm: !!mapped.term,
+    hasArea: !!mapped.area,
+    hasArtsType: !!mapped.artsType,
+    hasCostType: !!mapped.cost,
+    hasBookingType: !!mapped.booking,
+    hasVenueId: !!mapped.venueId,
+    hasTalentId: !!mapped.talentId,
+    hasEventSeriesId: !!mapped.eventSeriesId,
+    hasTags: !_.isEmpty(mapped.tags),
+    hasDates: !!mapped.dateFrom || !!mapped.dateTo,
+    hasNestedQuery:
+      !!mapped.dateFrom ||
+      !!mapped.dateTo ||
+      !!mapped.timeFrom ||
+      !!mapped.timeTo ||
+      !!mapped.audience,
+    hasDateFrom: !!mapped.dateFrom,
+    hasDateTo: !!mapped.dateTo,
+    hasTimeFrom: !!mapped.timeFrom,
+    hasTimeTo: !!mapped.timeTo,
+    hasAudience: !!mapped.audience
+  };
+}
+
+export function mapPresetEventAdvancedSearchParams(params) {
+  const now = time.getLondonNow();
+
+  switch (params.name) {
+    case searchPresetType.FEATURED_EVENTS:
+      return {
+        skip: 0,
+        take: 24,
+        area: "Central",
+        dateFrom: time.formatAsStringDate(now),
+        dateTo: time.formatAsStringDate(now.add(14, "days"))
+      };
+    case searchPresetType.VENUE_RELATED_EVENTS:
+      return {
+        skip: 0,
+        take: 300,
+        venueId: params.id,
+        dateFrom: time.formatAsStringDate(now),
+        dateTo: time.formatAsStringDate(now.add(366, "days"))
+      };
+    case searchPresetType.TALENT_RELATED_EVENTS:
+      return {
+        skip: 0,
+        take: 300,
+        talentId: params.id,
+        dateFrom: time.formatAsStringDate(now),
+        dateTo: time.formatAsStringDate(now.add(366, "days"))
+      };
+    case searchPresetType.EVENT_SERIES_RELATED_EVENTS:
+      return {
+        skip: 0,
+        take: 300,
+        eventSeriesId: params.id,
+        dateFrom: time.formatAsStringDate(now),
+        dateTo: time.formatAsStringDate(now.add(366, "days"))
+      };
+    default:
+      throw new Error(`Unsupported preset search ${params.name}`);
+  }
+}
+
+export function mapAutocompleteSearchResults(result) {
   return {
     items: _
       .unionBy(
@@ -50,49 +132,24 @@ export function mapEventAdvancedSearchResults(result) {
   };
 }
 
-export function mapPresetSearchResults(results, presetName) {
-  switch (presetName) {
-    case searchPresetType.ENTITY_COUNTS:
-      return {
-        items: _
-          .zip(
-            [
-              entityType.EVENT,
-              entityType.EVENT_SERIES,
-              entityType.TALENT,
-              entityType.VENUE
-            ],
-            results.responses
-          )
-          .map(element => ({
-            entityType: element[0],
-            count: element[1].hits.total
-          }))
-      };
-    default:
-      return { items: results.hits.hits.map(hit => hit._source) };
-  }
+export function mapEntityCountsSearchResults(results) {
+  return {
+    items: _
+      .zip(
+        [
+          entityType.EVENT,
+          entityType.EVENT_SERIES,
+          entityType.TALENT,
+          entityType.VENUE
+        ],
+        results.responses
+      )
+      .map(element => ({
+        entityType: element[0],
+        count: element[1].hits.total
+      }))
+  };
 }
-
-export const mapEventSearchParams = mappr.compose(
-  fp.pick([
-    "term",
-    "dateFrom",
-    "dateTo",
-    "timeFrom",
-    "timeTo",
-    "area",
-    "location",
-    "audience",
-    "venueId",
-    "talentId",
-    "skip",
-    "take"
-  ]),
-  { costType: "cost", bookingType: "booking" },
-  mappr({ artsType: mapMediumToCategoryForEventSearch }),
-  mappr({ tags: mapTagsForEventSearch })
-);
 
 function mapTagsForEventSearch(src) {
   if (!src.medium || src.medium.startsWith(":")) {

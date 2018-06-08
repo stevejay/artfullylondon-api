@@ -4,6 +4,8 @@ jest.setTimeout(60000);
 
 describe("preset search", () => {
   beforeAll(async () => {
+    await elasticsearch.createTemplate("preset-entity-count");
+
     await elasticsearch.createIndex("talent-full");
     await elasticsearch.createIndex("venue-full");
     await elasticsearch.createIndex("event-full");

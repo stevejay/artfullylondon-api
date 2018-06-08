@@ -9,7 +9,11 @@ export function search(query) {
   return client.search(query);
 }
 
-export function searchUsingTemplate(name, index, params) {
+export function multiSearch(searches, options) {
+  return client.msearch(createMsearchParams(searches, options));
+}
+
+export function templateSearch(name, index, params) {
   return client.searchTemplate({
     index,
     type: "doc",
@@ -17,28 +21,14 @@ export function searchUsingTemplate(name, index, params) {
   });
 }
 
-export async function multiSearch(searches, options) {
-  options = options || {};
+export async function templateMultiSearch(searches, options) {
+  return client.msearchTemplate(createMsearchParams(searches, options));
+}
 
-  const results = await client.msearch({
+function createMsearchParams(searches, options = {}) {
+  return {
     body: searches,
     maxConcurrentSearches: options.maxConcurrentSearches || undefined,
     searchType: options.searchType || "query_then_fetch"
-  });
-
-  const errors = results.responses
-    .filter(response => !!response.error)
-    .map(response => response.error);
-
-  if (errors.length) {
-    const rootCauses = [];
-
-    errors.forEach(error =>
-      error.root_cause.forEach(rootCause => rootCauses.push(rootCause.reason))
-    );
-
-    throw new Error("[500] msearch failed: " + rootCauses.join("; "));
-  }
-
-  return results;
+  };
 }

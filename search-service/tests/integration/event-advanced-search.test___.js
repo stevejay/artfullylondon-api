@@ -4,6 +4,7 @@ jest.setTimeout(60000);
 
 describe("event advanced search", () => {
   beforeAll(async () => {
+    await elasticsearch.createTemplate("event-advanced-search");
     await elasticsearch.createIndex("event-full");
     await elasticsearch.indexDocument("event-full", {
       status: "Active",

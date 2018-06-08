@@ -38,15 +38,16 @@ export async function indexDocument(index, document) {
 
 export async function createTemplate(name) {
   const text = fs.readFileSync(
-    path.resolve(TEMPLATES_DIR, `${name}.txt`),
+    path.resolve(TEMPLATES_DIR, `${name}.mustache`),
     "utf8"
   );
+
   await esClient.putScript({
     id: name,
     body: {
       script: {
         lang: "mustache",
-        source: text.replace(/\s/gm, "")
+        source: text.replace(/\s+/gm, " ")
       }
     }
   });
