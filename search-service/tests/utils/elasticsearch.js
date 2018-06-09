@@ -11,8 +11,8 @@ const esClient = new elasticsearch.Client({
   log: "error"
 });
 
-const MAPPINGS_DIR = path.resolve(__dirname, "../../../elasticsearch");
-const TEMPLATES_DIR = path.resolve(__dirname, "../../src/searcher/templates");
+const INDEXES_DIR = path.resolve(__dirname, "../../elasticsearch/indexes");
+const TEMPLATES_DIR = path.resolve(__dirname, "../../elasticsearch/templates");
 
 export async function deleteIndex(index) {
   if (await esClient.indices.exists({ index })) {
@@ -22,7 +22,7 @@ export async function deleteIndex(index) {
 
 export async function createIndex(index) {
   await deleteIndex(index);
-  const body = jsonfile.readFileSync(path.join(MAPPINGS_DIR, `${index}.json`));
+  const body = jsonfile.readFileSync(path.join(INDEXES_DIR, `${index}.json`));
   await esClient.indices.create({ index, body });
 }
 
