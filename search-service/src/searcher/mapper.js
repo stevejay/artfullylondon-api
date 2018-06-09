@@ -94,6 +94,17 @@ export function mapPresetEventAdvancedSearchParams(params) {
   }
 }
 
+export function mapSitemapEventIdsSearchParams() {
+  const now = time.getLondonNow();
+
+  return {
+    dateTo: time.formatAsStringDate(now)
+  };
+}
+
+// TODO make sure autocomplete docs get indexed with ids that
+// are prefixed with their entity type
+
 export function mapAutocompleteSearchResults(result) {
   return {
     items: _
@@ -107,11 +118,7 @@ export function mapAutocompleteSearchResults(result) {
 }
 
 export function mapBasicSearchResults(results, take) {
-  const mapped = results.responses.map(response => ({
-    items: response.hits.hits.map(hit => hit._source),
-    total: response.hits.total
-  }));
-
+  const mapped = results.responses.map(mapSimpleQuerySearchResults);
   const hasSingleEntityType = mapped.length === 1;
 
   const items = hasSingleEntityType
@@ -125,7 +132,7 @@ export function mapBasicSearchResults(results, take) {
   return { items, total };
 }
 
-export function mapEventAdvancedSearchResults(result) {
+export function mapSimpleQuerySearchResults(result) {
   return {
     items: result.hits.hits.map(hit => hit._source),
     total: result.hits.total

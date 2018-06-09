@@ -1,5 +1,5 @@
+import * as searchIndexType from "./search-index-type";
 import * as entityType from "../entity-type";
-import * as searchIndexType from "../search-index-type";
 import * as searchTemplateType from "./search-template-type";
 
 export function createEntityCountsSearches() {
@@ -12,7 +12,7 @@ export function createEntityCountsSearches() {
     searchIndexType.VENUE
   ].forEach(index => {
     searches.push({ index, type: "doc" });
-    searches.push({ size: 0 });
+    searches.push({ query: { match_all: {} }, from: 0, size: 0 });
   });
 
   return searches;
