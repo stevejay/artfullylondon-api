@@ -1,34 +1,38 @@
 import request from "request-promise-native";
-import * as elasticsearch from "../utils/elasticsearch";
+import http from "http";
+import path from "path";
+import mockserver from "mockserver";
 jest.setTimeout(60000);
 
-describe("sitemap handler", () => {
-  beforeAll(async () => {
-    await elasticsearch.createIndex("event-full");
-    await elasticsearch.indexDocument("event-full", {
-      status: "Active",
-      id: "event-one",
-      entityType: "event",
-      name: "Foo",
-      occurrenceType: "Continuous"
-    });
-    await elasticsearch.indexDocument("event-full", {
-      status: "Active",
-      id: "event-two",
-      entityType: "event",
-      name: "Bar"
-    });
-    await elasticsearch.indexDocument("event-full", {
-      status: "Deleted",
-      id: "event-three",
-      entityType: "event",
-      name: "Bat",
-      occurrenceType: "Continuous"
-    });
-  });
+const MOCK_SEARCH_SERVICE_DIR = path.resolve(
+  __dirname,
+  "../mock-search-service"
+);
 
-  it("should return a successful result", async () => {
-    const result = await request("http://localhost:3010/public/sitemap.txt");
-    expect(result).toEqual("https://www.artfully.london/event/event-one");
+let server = null;
+
+beforeAll(async () => {
+  await new Promise((resolve, reject) => {
+    server = http.createServer(mockserver(MOCK_SEARCH_SERVICE_DIR));
+    server.listen(
+      { port: 3013, exclusive: true },
+      err => (err ? reject(err) : resolve())
+    );
   });
+});
+
+afterAll(async () => {
+  if (server) {
+    await new Promise((resolve, reject) => {
+      server.close(err => (err ? reject(err) : resolve()));
+    });
+  }
+});
+
+it("should return a sitemap", async () => {
+  const result = await request("http://localhost:3010/public/sitemap.txt");
+  expect(result).toEqual(
+    "https://www.artfully.london/event/almeida/2018/some-event\n" +
+      "https://www.artfully.london/event/arcola/2017/some-event"
+  );
 });

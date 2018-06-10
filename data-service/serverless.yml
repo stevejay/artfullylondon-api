@@ -32,7 +32,7 @@ custom:
 
 functions:
     siteMap:
-        handler: src/sitemap-handler.handler
+        handler: src/lambda/sitemap-handler.handler
         environment:
             SITEMAP_URL_PREFIX: ${self:custom.sitemapUrlPrefix}
         events:
