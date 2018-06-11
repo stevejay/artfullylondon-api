@@ -1,4 +1,4 @@
-import * as searchIndexType from "./search-index-type";
+import * as searchIndexType from "../search-index-type";
 import * as entityType from "../entity-type";
 import * as searchTemplateType from "./search-template-type";
 

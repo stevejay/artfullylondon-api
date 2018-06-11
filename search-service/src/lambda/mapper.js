@@ -61,6 +61,10 @@ export const mapPresetSearchEvent = mappr({
   id: "queryStringParameters.id"
 });
 
+export function mapIndexDocumentEvent(event) {
+  return JSON.parse(event.body);
+}
+
 export function mapResponse(response, statusCode = 200) {
   return {
     statusCode,

@@ -5833,6 +5833,10 @@ serverless-offline@^3.25.3:
     uuid "^3.2.1"
     velocityjs "^0.9.3"
 
+serverless-pseudo-parameters@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/serverless-pseudo-parameters/-/serverless-pseudo-parameters-1.6.0.tgz#0a2532e56f04f95f6d0c17490de42c4c498c65f6"
+
 serverless-webpack@^5.1.5:
   version "5.1.5"
   resolved "https://registry.yarnpkg.com/serverless-webpack/-/serverless-webpack-5.1.5.tgz#00ecefc91ed2339319fe3df3e6b02f9d3df7c517"

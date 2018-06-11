@@ -10,3 +10,13 @@ export function get(path) {
     timeout: 30000
   });
 }
+
+export function post(path, body) {
+  return request({
+    uri: `${API_HOST}${path}`,
+    body,
+    json: true,
+    method: "POST",
+    timeout: 30000
+  });
+}

@@ -1,5 +1,5 @@
-import * as mapper from "../mapper";
-import * as auth from "../auth";
+import * as mapper from "./mapper";
+import * as auth from "./auth";
 
 export default function(handler) {
   return async function(event, context) {

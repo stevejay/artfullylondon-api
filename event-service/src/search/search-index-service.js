@@ -16,6 +16,7 @@ const talentMappings = require("../talent/mappings");
 const venueMappings = require("../venue/mappings");
 const eventPopulate = require("../event/populate");
 const etag = require("../lambda/etag");
+const sns = require("../external-services/sns");
 
 exports.updateEventSearchIndex = async function(message) {
   if (!message || !message.eventId) {
@@ -32,27 +33,14 @@ exports.updateEventSearchIndex = async function(message) {
     ConsistentRead: true
   });
 
-  const fullSearchItem = eventMappings.mapDbItemToFullSearchIndex(
-    dbItem,
-    referencedEntities
+  await sns.notify(
+    {
+      entityType: globalConstants.ENTITY_TYPE_EVENT,
+      entity: dbItem,
+      referencedEntities
+    },
+    { arn: process.env.SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN }
   );
-
-  const autocompleteItem = eventMappings.mapDbItemToAutocompleteSearchIndex(
-    dbItem,
-    referencedEntities
-  );
-
-  const builder = new EntityBulkUpdateBuilder()
-    .addFullSearchUpdate(
-      fullSearchItem,
-      globalConstants.SEARCH_INDEX_TYPE_EVENT_FULL
-    )
-    .addAutocompleteSearchUpdate(
-      autocompleteItem,
-      globalConstants.SEARCH_INDEX_TYPE_COMBINED_EVENT_AUTO
-    );
-
-  await elasticsearch.bulk({ body: builder.build() });
 
   const publicResponse = eventMappings.mapDbItemToPublicResponse(
     dbItem,

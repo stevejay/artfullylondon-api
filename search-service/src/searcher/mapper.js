@@ -1,8 +1,8 @@
 import _ from "lodash";
 import looseInterleave from "loose-interleave";
 import * as entityType from "../entity-type";
-import * as searchPresetType from "../search-preset-type";
-import * as time from "./time";
+import * as presetSearchType from "../preset-search-type";
+import * as time from "../time";
 
 export function mapAutocompleteSearchParams(params) {
   return {
@@ -57,7 +57,7 @@ export function mapPresetEventAdvancedSearchParams(params) {
   const now = time.getLondonNow();
 
   switch (params.name) {
-    case searchPresetType.FEATURED_EVENTS:
+    case presetSearchType.FEATURED_EVENTS:
       return {
         skip: 0,
         take: 24,
@@ -65,7 +65,7 @@ export function mapPresetEventAdvancedSearchParams(params) {
         dateFrom: time.formatAsStringDate(now),
         dateTo: time.formatAsStringDate(now.add(14, "days"))
       };
-    case searchPresetType.VENUE_RELATED_EVENTS:
+    case presetSearchType.VENUE_RELATED_EVENTS:
       return {
         skip: 0,
         take: 300,
@@ -73,7 +73,7 @@ export function mapPresetEventAdvancedSearchParams(params) {
         dateFrom: time.formatAsStringDate(now),
         dateTo: time.formatAsStringDate(now.add(366, "days"))
       };
-    case searchPresetType.TALENT_RELATED_EVENTS:
+    case presetSearchType.TALENT_RELATED_EVENTS:
       return {
         skip: 0,
         take: 300,
@@ -81,7 +81,7 @@ export function mapPresetEventAdvancedSearchParams(params) {
         dateFrom: time.formatAsStringDate(now),
         dateTo: time.formatAsStringDate(now.add(366, "days"))
       };
-    case searchPresetType.EVENT_SERIES_RELATED_EVENTS:
+    case presetSearchType.EVENT_SERIES_RELATED_EVENTS:
       return {
         skip: 0,
         take: 300,
@@ -99,6 +99,12 @@ export function mapSitemapEventIdsSearchParams() {
 
   return {
     dateTo: time.formatAsStringDate(now)
+  };
+}
+
+export function mapEventsByExternalIdsSearchParams(params) {
+  return {
+    ids: params.id.split(",")
   };
 }
 

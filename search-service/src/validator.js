@@ -3,7 +3,7 @@ import * as entityType from "./entity-type";
 import * as costType from "./cost-type";
 import * as areaType from "./area-type";
 import * as bookingType from "./booking-type";
-import * as searchPresetType from "./search-preset-type";
+import * as presetSearchType from "./preset-search-type";
 
 const DATE_REGEX = /^[12]\d\d\d\/[01]\d\/[0123]\d$/;
 const TIME_REGEX = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
@@ -185,10 +185,21 @@ const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
 const PRESET_SEARCH_CONSTRAINT = {
   name: {
     presence: true,
-    inclusion: searchPresetType.ALLOWED_VALUES
+    inclusion: presetSearchType.ALLOWED_VALUES
   },
   id: {
     string: true
+  }
+};
+
+const INDEX_DOCUMENT_CONSTRAINT = {
+  entityType: {
+    string: true,
+    presence: true,
+    inclusion: entityType.ALLOWED_VALUES
+  },
+  entity: {
+    presence: true
   }
 };
 
@@ -210,4 +221,8 @@ export function validateEventAdvancedSearchRequest(request) {
 
 export function validatePresetSearch(request) {
   ensure(request, PRESET_SEARCH_CONSTRAINT, errorHandler);
+}
+
+export function validateIndexDocumentRequest(request) {
+  ensure(request, INDEX_DOCUMENT_CONSTRAINT, errorHandler);
 }

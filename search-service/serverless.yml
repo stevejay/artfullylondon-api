@@ -15,9 +15,24 @@ provider:
             Effect: "Allow"
             Action: "cloudwatch:PutMetricData"
             Resource: "*"
+        -
+            Effect: "Allow"
+            Action: "sns:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:sns:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":IndexDocument-"
+                        - ${self:custom.stage}
 
 plugins:
     - serverless-webpack
+    - serverless-pseudo-parameters
+    - serverless-offline-sns
     - serverless-offline
 
 custom:
@@ -30,12 +45,16 @@ custom:
             forceExclude:
                 - aws-sdk
         packager: 'yarn'
+    serverless-offline-sns:
+        port: 4002 # a free port for the sns server to run on
+        debug: false
+        # host: 0.0.0.0 # Optional, defaults to 127.0.0.1 if not provided to serverless-offline
+        # sns-endpoint: http://127.0.0.1:4567 # Optional. Only if you want to use a custom endpoint
+        accountId: 1111111111111 # Optional
 
 functions:
     autocompleteSearch:
         handler: src/lambda/autocomplete-search-handler.handler
-        environment:
-            SERVERLESS_REGION: ${self:custom.region}
         events:
             - http:
                 path: "admin/search/auto"
@@ -47,8 +66,6 @@ functions:
                 cors: true
     basicSearch:
         handler: src/lambda/basic-search-handler.handler
-        environment:
-            SERVERLESS_REGION: ${self:custom.region}
         events:
             - http:
                 path: "admin/search/basic"
@@ -60,8 +77,6 @@ functions:
                 cors: true
     eventAdvancedSearch:
         handler: src/lambda/event-advanced-search-handler.handler
-        environment:
-            SERVERLESS_REGION: ${self:custom.region}
         events:
             - http:
                 path: "public/search/event"
@@ -69,8 +84,6 @@ functions:
                 cors: true
     presetSearch:
         handler: src/lambda/preset-search-handler.handler
-        environment:
-            SERVERLESS_REGION: ${self:custom.region}
         events:
             - http:
                 path: "public/search/preset/{name}"
@@ -80,3 +93,9 @@ functions:
                 path: "admin/search/preset/{name}"
                 method: get
                 cors: true
+    indexDocument:
+        handler: src/lambda/index-document-handler.handler
+        timeout: 300
+        events:
+            - sns: 
+                arn: arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:IndexDocument-${self:custom.stage}

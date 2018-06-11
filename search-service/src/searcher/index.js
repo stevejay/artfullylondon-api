@@ -1,9 +1,9 @@
-import * as esClient from "./elasticsearch-client";
+import * as esClient from "../elasticsearch-client";
 import * as mapper from "./mapper";
 import * as queryFactory from "./query-factory";
-import * as searchIndexType from "./search-index-type";
+import * as searchIndexType from "../search-index-type";
 import * as searchTemplateType from "./search-template-type";
-import * as searchPresetType from "../search-preset-type";
+import * as presetSearchType from "../preset-search-type";
 
 export async function autocompleteSearch(params) {
   const templateParams = mapper.mapAutocompleteSearchParams(params);
@@ -36,10 +36,12 @@ export async function eventAdvancedSearch(params) {
 
 export async function presetSearch(params) {
   switch (params.name) {
-    case searchPresetType.ENTITY_COUNTS:
+    case presetSearchType.ENTITY_COUNTS:
       return await presetEntityCountsSearch();
-    case searchPresetType.SITEMAP_EVENT_IDS:
+    case presetSearchType.SITEMAP_EVENT_IDS:
       return await presetSitemapEventIdsSearch(params);
+    case presetSearchType.EVENTS_BY_EXTERNAL_IDS:
+      return await presetEventsByExternalIds(params);
     default:
       return await presetEventAdvancedSearch(params);
   }
@@ -60,6 +62,16 @@ async function presetSitemapEventIdsSearch(params) {
   const templateParams = mapper.mapSitemapEventIdsSearchParams(params);
   const results = await esClient.templateSearch(
     searchTemplateType.SITEMAP_EVENT_IDS,
+    searchIndexType.EVENT,
+    templateParams
+  );
+  return mapper.mapSimpleQuerySearchResults(results);
+}
+
+async function presetEventsByExternalIds(params) {
+  const templateParams = mapper.mapEventsByExternalIdsSearchParams(params);
+  const results = await esClient.templateSearch(
+    searchTemplateType.EVENTS_BY_EXTERNAL_IDS,
     searchIndexType.EVENT,
     templateParams
   );

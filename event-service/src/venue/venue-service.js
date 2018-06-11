@@ -11,13 +11,12 @@ const constants = require("./constants");
 const normalisers = require("./normalisers");
 const constraints = require("./constraints");
 const globalConstants = require("../constants");
-const EntityBulkUpdateBuilder = require("../entity/entity-bulk-update-builder");
-const elasticsearch = require("../external-services/elasticsearch");
 const dynamodb = require("../external-services/dynamodb");
 const eventMessaging = require("../event/messaging");
 const etag = require("../lambda/etag");
 const addressNormaliser = require("./address-normaliser");
 normalise.normalisers.address = addressNormaliser;
+const sns = require("../external-services/sns");
 
 exports.getVenue = async function(venueId) {
   const dbItem = await entity.get(
@@ -88,20 +87,11 @@ exports.createOrUpdateVenue = async function(existingVenueId, params) {
     await eventMessaging.notifyEventsForVenue(dbItem.id);
   }
 
-  const fullSearchItem = mappings.mapDbItemToFullSearchIndex(dbItem);
-  const autocompleteItem = mappings.mapDbItemToAutocompleteSearchIndex(dbItem);
+  await sns.notify(
+    { entityType: globalConstants.ENTITY_TYPE_VENUE, entity: dbItem },
+    { arn: process.env.SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN }
+  );
 
-  const builder = new EntityBulkUpdateBuilder()
-    .addFullSearchUpdate(
-      fullSearchItem,
-      globalConstants.SEARCH_INDEX_TYPE_VENUE_FULL
-    )
-    .addAutocompleteSearchUpdate(
-      autocompleteItem,
-      globalConstants.SEARCH_INDEX_TYPE_VENUE_AUTO
-    );
-
-  await elasticsearch.bulk({ body: builder.build() });
   const publicResponse = mappings.mapDbItemToPublicResponse(dbItem);
 
   await etag.writeETagToRedis(

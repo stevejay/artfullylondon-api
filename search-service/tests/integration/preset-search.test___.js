@@ -2,14 +2,15 @@ import * as service from "../utils/service";
 import * as elasticsearch from "../utils/elasticsearch";
 import * as testData from "./test-data";
 import * as searchTemplateType from "../../src/searcher/search-template-type";
-import * as searchIndexType from "../../src/searcher/search-index-type";
-import * as searchPresetType from "../../src/search-preset-type";
+import * as searchIndexType from "../../src/search-index-type";
+import * as presetSearchType from "../../src/preset-search-type";
 import * as entityType from "../../src/entity-type";
 jest.setTimeout(60000);
 
 beforeAll(async () => {
   await elasticsearch.createTemplate(searchTemplateType.EVENT_ADVANCED);
   await elasticsearch.createTemplate(searchTemplateType.SITEMAP_EVENT_IDS);
+  await elasticsearch.createTemplate(searchTemplateType.EVENTS_BY_EXTERNAL_IDS);
 
   await elasticsearch.createIndex(searchIndexType.TALENT);
   await elasticsearch.createIndex(searchIndexType.VENUE);
@@ -61,7 +62,7 @@ afterAll(async () => {
 
 it("should perform an entity count preset search", async () => {
   const result = await service.get(
-    `/public/search/preset/${searchPresetType.ENTITY_COUNTS}`
+    `/public/search/preset/${presetSearchType.ENTITY_COUNTS}`
   );
 
   expect(result).toEqual({
@@ -71,13 +72,13 @@ it("should perform an entity count preset search", async () => {
       { count: 2, entityType: entityType.TALENT },
       { count: 2, entityType: entityType.VENUE }
     ],
-    params: { name: searchPresetType.ENTITY_COUNTS }
+    params: { name: presetSearchType.ENTITY_COUNTS }
   });
 });
 
 it("should perform a sitemap event ids preset search", async () => {
   const result = await service.get(
-    `/public/search/preset/${searchPresetType.SITEMAP_EVENT_IDS}`
+    `/public/search/preset/${presetSearchType.SITEMAP_EVENT_IDS}`
   );
 
   expect(result).toEqual({
@@ -86,25 +87,25 @@ it("should perform a sitemap event ids preset search", async () => {
       { id: testData.EVENT_ACTIVE_BRITISH_MUSEUM_PERM_COLL.id }
     ],
     total: 2,
-    params: { name: searchPresetType.SITEMAP_EVENT_IDS }
+    params: { name: presetSearchType.SITEMAP_EVENT_IDS }
   });
 });
 
 it("should perform a featured events preset search", async () => {
   const result = await service.get(
-    `/public/search/preset/${searchPresetType.FEATURED_EVENTS}`
+    `/public/search/preset/${presetSearchType.FEATURED_EVENTS}`
   );
 
   expect(result).toEqual({
     items: [],
     total: 0,
-    params: { name: searchPresetType.FEATURED_EVENTS }
+    params: { name: presetSearchType.FEATURED_EVENTS }
   });
 });
 
 it("should perform a venue related events preset search", async () => {
   const result = await service.get(
-    `/public/search/preset/${searchPresetType.VENUE_RELATED_EVENTS}?id=${
+    `/public/search/preset/${presetSearchType.VENUE_RELATED_EVENTS}?id=${
       testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id
     }`
   );
@@ -113,8 +114,20 @@ it("should perform a venue related events preset search", async () => {
     items: [testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION],
     total: 1,
     params: {
-      name: searchPresetType.VENUE_RELATED_EVENTS,
+      name: presetSearchType.VENUE_RELATED_EVENTS,
       id: testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id
     }
+  });
+});
+
+it("should perform an events by external ids preset search", async () => {
+  const result = await service.get(
+    `/admin/search/preset/${presetSearchType.EVENTS_BY_EXTERNAL_IDS}?id=foo,bar`
+  );
+
+  expect(result).toEqual({
+    items: [],
+    total: 0,
+    params: { name: presetSearchType.EVENTS_BY_EXTERNAL_IDS, id: "foo,bar" }
   });
 });

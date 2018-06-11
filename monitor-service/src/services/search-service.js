@@ -1,27 +1,18 @@
 "use strict";
 
-const MultiSearchBuilder = require("es-search-builder").MultiSearchBuilder;
-const elasticsearch = require("../external-services/elasticsearch");
 const constants = require("../constants");
 
 exports.findEvents = async function(externalEventIds) {
-  const msearchBuilder = new MultiSearchBuilder();
-  const searchSourceFields = ["externalEventId", "id"];
+  const results = await request({
+    uri: `${
+      process.env.SEARCH_SERVICE_HOST
+    }/admin/search/preset/events-by-external-ids?id=${externalEventIds.join(
+      ","
+    )}`,
+    json: true,
+    method: "GET",
+    timeout: 30000
+  });
 
-  const search = msearchBuilder
-    .createSearch({
-      index: constants.SEARCH_INDEX_TYPE_EVENT_FULL,
-      type: "doc"
-    })
-    .setSearchTake(1000)
-    .setSearchSource(searchSourceFields);
-
-  const boolQuery = search.createQuery().createBoolQuery();
-  const ids = externalEventIds.split(",");
-  boolQuery.addFilter().setTerms({ externalEventId: ids });
-
-  const msearches = msearchBuilder.build();
-  const results = await elasticsearch.search(msearches);
-  const hits = results.responses[0].hits;
-  return hits.hits.length ? hits.hits.map(hit => hit._source) : [];
+  return results.items;
 };

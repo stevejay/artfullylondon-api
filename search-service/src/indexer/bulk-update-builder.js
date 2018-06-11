@@ -1,13 +1,12 @@
 "use strict";
 
-const BulkUpdateBuilder = require("es-bulk-update-builder");
-const globalConstants = require("../constants");
+import ESBulkUpdateBuilder from "es-bulk-update-builder";
+import * as statusType from "../status-type";
 
-class EntityBulkUpdateBuilder {
+export default class BulkUpdateBuilder {
   constructor() {
-    this.builder = new BulkUpdateBuilder();
+    this.builder = new ESBulkUpdateBuilder();
   }
-
   addFullSearchUpdate(document, indexName) {
     this.builder.index(
       document,
@@ -20,9 +19,8 @@ class EntityBulkUpdateBuilder {
 
     return this;
   }
-
   addAutocompleteSearchUpdate(document, indexName) {
-    if (document.status === globalConstants.STATUS_TYPE_ACTIVE) {
+    if (document.status === statusType.ACTIVE) {
       this.builder.index(
         document,
         indexName,
@@ -37,10 +35,7 @@ class EntityBulkUpdateBuilder {
 
     return this;
   }
-
   build() {
     return this.builder.build();
   }
 }
-
-module.exports = exports = EntityBulkUpdateBuilder;

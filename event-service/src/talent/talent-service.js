@@ -11,10 +11,9 @@ const constants = require("./constants");
 const normalisers = require("./normalisers");
 const constraints = require("./constraints");
 const globalConstants = require("../constants");
-const EntityBulkUpdateBuilder = require("../entity/entity-bulk-update-builder");
-const elasticsearch = require("../external-services/elasticsearch");
 const dynamodb = require("../external-services/dynamodb");
 const etag = require("../lambda/etag");
+const sns = require("../external-services/sns");
 
 exports.getTalent = async function(talentId) {
   const dbItem = await entity.get(
@@ -68,25 +67,15 @@ exports.createOrUpdateTalent = async function(existingTalentId, params) {
 
   const dbItem = mappings.mapRequestToDbItem(id, params, description);
   await entity.write(process.env.SERVERLESS_TALENT_TABLE_NAME, dbItem);
-  const adminResponse = mappings.mapDbItemToAdminResponse(dbItem);
-
-  const builder = new EntityBulkUpdateBuilder()
-    .addFullSearchUpdate(
-      mappings.mapDbItemToFullSearchIndex(dbItem),
-      globalConstants.SEARCH_INDEX_TYPE_TALENT_FULL
-    )
-    .addAutocompleteSearchUpdate(
-      mappings.mapDbItemToAutocompleteSearchIndex(dbItem),
-      globalConstants.SEARCH_INDEX_TYPE_TALENT_AUTO
-    );
-
-  await elasticsearch.bulk({ body: builder.build() });
+  await sns.notify(
+    { entityType: globalConstants.ENTITY_TYPE_TALENT, entity: dbItem },
+    { arn: process.env.SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN }
+  );
   const publicResponse = mappings.mapDbItemToPublicResponse(dbItem);
-
+  const adminResponse = mappings.mapDbItemToAdminResponse(dbItem);
   await etag.writeETagToRedis(
     "talent/" + id,
     JSON.stringify({ entity: publicResponse })
   );
-
   return adminResponse;
 };

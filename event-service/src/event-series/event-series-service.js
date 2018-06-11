@@ -10,11 +10,10 @@ const mappings = require("./mappings");
 const constants = require("./constants");
 const normalisers = require("./normalisers");
 const constraints = require("./constraints");
-const EntityBulkUpdateBuilder = require("../entity/entity-bulk-update-builder");
-const elasticsearch = require("../external-services/elasticsearch");
 const dynamodb = require("../external-services/dynamodb");
 const eventMessaging = require("../event/messaging");
 const etag = require("../lambda/etag");
+const sns = require("../external-services/sns");
 
 exports.getEventSeries = async function(eventSeriesId) {
   const dbItem = await entity.get(
@@ -77,24 +76,11 @@ exports.createOrUpdateEventSeries = async function(
     await eventMessaging.notifyEventsForEventSeries(dbItem.id);
   }
 
-  const fullSearchItem = mappings.mapDbItemToFullSearchIndex(dbItem);
-  const autocompleteItem = mappings.mapDbItemToAutocompleteSearchIndex(dbItem);
+  await sns.notify(
+    { entityType: globalConstants.ENTITY_TYPE_EVENT_SERIES, entity: dbItem },
+    { arn: process.env.SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN }
+  );
 
-  const builder = new EntityBulkUpdateBuilder()
-    .addFullSearchUpdate(
-      fullSearchItem,
-      globalConstants.SEARCH_INDEX_TYPE_EVENT_SERIES_FULL
-    )
-    .addAutocompleteSearchUpdate(
-      autocompleteItem,
-      globalConstants.SEARCH_INDEX_TYPE_EVENT_SERIES_AUTO
-    )
-    .addAutocompleteSearchUpdate(
-      autocompleteItem,
-      globalConstants.SEARCH_INDEX_TYPE_COMBINED_EVENT_AUTO
-    );
-
-  await elasticsearch.bulk({ body: builder.build() });
   const publicResponse = mappings.mapDbItemToPublicResponse(dbItem);
 
   await etag.writeETagToRedis(

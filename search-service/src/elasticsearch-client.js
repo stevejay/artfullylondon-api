@@ -5,6 +5,20 @@ const client = new elasticsearch.Client({
   log: "error"
 });
 
+export function bulk(params) {
+  return new Promise((resolve, reject) => {
+    client.bulk(params, (err, response) => {
+      if (err) {
+        reject(err);
+      } else if (response.errors) {
+        reject(new Error(JSON.stringify(response)));
+      } else {
+        resolve(response);
+      }
+    });
+  });
+}
+
 export function search(query) {
   return client.search(query);
 }
