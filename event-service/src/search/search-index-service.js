@@ -1,5 +1,6 @@
 "use strict";
 
+const _ = require("lodash");
 const delay = require("delay");
 const log = require("loglevel");
 const ensure = require("ensure-request").ensure;
@@ -36,8 +37,12 @@ exports.updateEventSearchIndex = async function(message) {
   await sns.notify(
     {
       entityType: globalConstants.ENTITY_TYPE_EVENT,
-      entity: dbItem,
-      referencedEntities
+      entity: {
+        ...dbItem,
+        venue: _.pick(referencedEntities, "venue[0]"),
+        eventSeries: _.pick(referencedEntities, "eventSeries[0]"),
+        talent: _.pick(referencedEntities, "talent")
+      }
     },
     { arn: process.env.SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN }
   );

@@ -42,8 +42,8 @@ describe("mapEventFullSearchEvent", () => {
     },
     {
       arg: {
-        dateFrom: "2017/08/14",
-        dateTo: "2017/08/15",
+        dateFrom: "2017-08-14",
+        dateTo: "2017-08-15",
         timeFrom: "13:00",
         timeTo: "14:00",
         area: "Central",
@@ -58,8 +58,8 @@ describe("mapEventFullSearchEvent", () => {
         take: 10
       },
       expected: {
-        dateFrom: "2017/08/14",
-        dateTo: "2017/08/15",
+        dateFrom: "2017-08-14",
+        dateTo: "2017-08-15",
         timeFrom: "13:00",
         timeTo: "14:00",
         area: "Central",

@@ -1,9 +1,9 @@
 import * as esClient from "../elasticsearch-client";
 import * as mapper from "./mapper";
 import * as queryFactory from "./query-factory";
-import * as searchIndexType from "../search-index-type";
+import * as searchIndexType from "../types/search-index-type";
 import * as searchTemplateType from "./search-template-type";
-import * as presetSearchType from "../preset-search-type";
+import * as presetSearchType from "../types/preset-search-type";
 
 export async function autocompleteSearch(params) {
   const templateParams = mapper.mapAutocompleteSearchParams(params);

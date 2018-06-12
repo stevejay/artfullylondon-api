@@ -1,6 +1,6 @@
 import moment from "moment-timezone";
 
-export const DATE_FORMAT = "YYYY/MM/DD";
+export const DATE_FORMAT = "YYYY-MM-DD";
 
 export function getLondonNow() {
   return moment().tz("Europe/London");
@@ -27,6 +27,5 @@ export function createStringDateFromMoment(momentDate) {
 }
 
 export function getDayNumberFromMoment(momentDate) {
-  const dateDay = momentDate.day();
-  return dateDay - 1 + (dateDay === 0 ? 7 : 0);
+  return momentDate.isoWeekday();
 }

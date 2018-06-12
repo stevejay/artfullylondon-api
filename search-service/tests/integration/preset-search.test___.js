@@ -2,9 +2,9 @@ import * as service from "../utils/service";
 import * as elasticsearch from "../utils/elasticsearch";
 import * as testData from "./test-data";
 import * as searchTemplateType from "../../src/searcher/search-template-type";
-import * as searchIndexType from "../../src/search-index-type";
-import * as presetSearchType from "../../src/preset-search-type";
-import * as entityType from "../../src/entity-type";
+import * as searchIndexType from "../../src/types/search-index-type";
+import * as presetSearchType from "../../src/types/preset-search-type";
+import * as entityType from "../../src/types/entity-type";
 jest.setTimeout(60000);
 
 beforeAll(async () => {

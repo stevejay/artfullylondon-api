@@ -1,11 +1,11 @@
 import { ensure } from "ensure-request";
-import * as entityType from "./entity-type";
-import * as costType from "./cost-type";
-import * as areaType from "./area-type";
-import * as bookingType from "./booking-type";
-import * as presetSearchType from "./preset-search-type";
+import * as entityType from "./types/entity-type";
+import * as costType from "./types/cost-type";
+import * as areaType from "./types/area-type";
+import * as bookingType from "./types/booking-type";
+import * as presetSearchType from "./types/preset-search-type";
 
-const DATE_REGEX = /^[12]\d\d\d\/[01]\d\/[0123]\d$/;
+const DATE_REGEX = /^[12]\d\d\d-[01]\d-[0123]\d$/;
 const TIME_REGEX = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 const MEDIUM_TAG_REGEX = /^(?:medium\/[^/\s]+|:all-visual|:all-performing|:all-creative-writing)$/;
 const STYLE_TAG_REGEX = /^style\/[^/\s]+$/;
@@ -199,7 +199,20 @@ const INDEX_DOCUMENT_CONSTRAINT = {
     inclusion: entityType.ALLOWED_VALUES
   },
   entity: {
-    presence: true
+    presence: true,
+    object: {
+      id: {
+        string: true,
+        presence: true
+      },
+      entityType: {
+        string: true,
+        presence: true
+      },
+      venue: { object: true },
+      eventSeries: { object: true },
+      talents: { array: true }
+    }
   }
 };
 

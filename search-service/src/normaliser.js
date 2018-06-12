@@ -1,6 +1,6 @@
 import normalise from "normalise-request";
 import simplify from "es-simplify";
-import * as entityType from "./entity-type";
+import * as entityType from "./types/entity-type";
 
 const SEARCH_RESULTS_DEFAULT_PAGE_SIZE = 12;
 

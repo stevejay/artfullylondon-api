@@ -1,14 +1,12 @@
-"use strict";
-
 import ESBulkUpdateBuilder from "es-bulk-update-builder";
-import * as statusType from "../status-type";
+import * as statusType from "../types/status-type";
 
 export default class BulkUpdateBuilder {
   constructor() {
-    this.builder = new ESBulkUpdateBuilder();
+    this._builder = new ESBulkUpdateBuilder();
   }
   addFullSearchUpdate(document, indexName) {
-    this.builder.index(
+    this._builder.index(
       document,
       indexName,
       "doc",
@@ -20,22 +18,24 @@ export default class BulkUpdateBuilder {
     return this;
   }
   addAutocompleteSearchUpdate(document, indexName) {
+    const autocompleteId = `${document.entityType}_${document.id}`;
+
     if (document.status === statusType.ACTIVE) {
-      this.builder.index(
+      this._builder.index(
         document,
         indexName,
         "doc",
-        document.id,
+        autocompleteId,
         document.version,
         "external_gte"
       );
     } else {
-      this.builder.delete(indexName, "doc", document.id);
+      this._builder.delete(indexName, "doc", autocompleteId);
     }
 
     return this;
   }
   build() {
-    return this.builder.build();
+    return this._builder.build();
   }
 }

@@ -77,7 +77,7 @@ describe("addAutocompleteSearchUpdate", () => {
         index: {
           _index: "some-auto-index",
           _type: "doc",
-          _id: "some-id",
+          _id: "talent_some-id",
           _version: 4,
           _version_type: "external_gte"
         }
@@ -106,7 +106,7 @@ describe("addAutocompleteSearchUpdate", () => {
         delete: {
           _index: "some-auto-index",
           _type: "doc",
-          _id: "some-id"
+          _id: "talent_some-id"
         }
       }
     ]);

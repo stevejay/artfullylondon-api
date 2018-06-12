@@ -55,15 +55,15 @@ export const EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION = {
   venueId: VENUE_ACTIVE_ALMEIDA_THEATRE.id,
   dateFrom: moment()
     .add(-2, "days")
-    .format("YYYY/MM/DD"),
+    .format("YYYY-MM-DD"),
   dateTo: moment()
     .add(300, "days")
-    .format("YYYY/MM/DD"),
+    .format("YYYY-MM-DD"),
   dates: [
     {
       date: moment()
         .add(10, "days")
-        .format("YYYY/MM/DD"),
+        .format("YYYY-MM-DD"),
       from: "10:00",
       to: "18:00"
     }

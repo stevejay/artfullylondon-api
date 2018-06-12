@@ -1,6 +1,6 @@
 import * as elasticsearch from "../utils/elasticsearch";
 import * as searchIndexType from "../../src/search-index-type";
-import * as entityType from "../../src/entity-type";
+import * as entityType from "../../src/types/entity-type";
 import * as testData from "./test-data";
 import * as sns from "../utils/sns";
 jest.setTimeout(60000);

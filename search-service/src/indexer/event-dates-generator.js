@@ -1,18 +1,15 @@
 import _ from "lodash";
+import moment from "moment";
 import * as time from "../time";
-import * as eventType from "../event-type";
+import * as eventType from "../types/event-type";
+import * as occurrenceType from "../types/occurrence-type";
 
-export function createSearchDateObjects(
-  event,
-  dateTodayStr,
-  dateMaxStr,
-  namedClosuresLookup
-) {
+export function generate(event, dateToday, dateMax, namedClosuresLookup) {
   if (event.soldOut) {
     return [];
   }
 
-  const dateRange = getEventDateRange(event, dateTodayStr, dateMaxStr);
+  const dateRange = getEventDateRange(event, dateToday, dateMax);
   if (!dateRange) {
     return [];
   }
@@ -29,25 +26,25 @@ export function createSearchDateObjects(
   dates = removePartDayClosureDates(event, dates);
   dates = addSpecialDatesTags(event, dates);
   dates = removeSoldOutPerformances(event, dates);
-
-  return convertDatesToList(dates);
+  return convertToList(dates);
 }
 
 // Calculates the range of dates we will be creating search dates objects for
-export function getEventDateRange(event, dateTodayStr, dateMaxStr) {
-  const eventHasRange = event.occurrenceType !== "Continuous"; // TODO replace
-
+export function getEventDateRange(event, dateToday, dateMax) {
+  const eventHasRange = event.occurrenceType !== occurrenceType.CONTINUOUS;
   if (!eventHasRange) {
-    return { from: dateTodayStr, to: dateMaxStr };
+    return { from: dateToday, to: dateMax };
   }
 
-  if (event.dateFrom > dateMaxStr || event.dateTo < dateTodayStr) {
+  const eventDateFrom = moment(event.dateFrom);
+  const eventDateTo = moment(event.dateTo);
+
+  if (eventDateFrom > dateMax || eventDateTo < dateToday) {
     return null;
   }
 
-  const from = event.dateFrom > dateTodayStr ? event.dateFrom : dateTodayStr;
-  const to = event.dateTo < dateMaxStr ? event.dateTo : dateMaxStr;
-
+  const from = eventDateFrom > dateToday ? eventDateFrom : dateToday;
+  const to = eventDateTo < dateMax ? eventDateTo : dateMax;
   return { from, to };
 }
 
@@ -56,50 +53,40 @@ export function createInitialDatesLookup(dateRange) {
     return null;
   }
 
-  const loopMoment = time.createMomentFromStringDate(dateRange.from);
-  let loopDateStr = null;
   const result = {};
+  const loopDate = dateRange.from;
 
   do {
-    loopDateStr = time.createStringDateFromMoment(loopMoment);
-
-    result[loopDateStr] = {
-      day: time.getDayNumberFromMoment(loopMoment),
+    result[loopDate.format(time.DATE_FORMAT)] = {
+      day: loopDate.isoWeekday(),
       times: []
     };
 
-    loopMoment.add(1, "days");
-  } while (loopDateStr < dateRange.to);
+    loopDate.add(1, "days");
+  } while (loopDate <= dateRange.to);
 
   return result;
 }
 
 export function removeNamedClosuresDates(event, dates, namedClosuresLookup) {
   const isExhibition = isExhibitionEvent(event);
-
   if (!isExhibition || !event.useVenueOpeningTimes) {
     return dates;
   }
 
   const namedClosures = event.venue.namedClosures;
-
   if (!namedClosures || namedClosures.length === 0) {
     return dates;
   }
 
-  const result = Object.assign({}, dates);
+  const result = { ...dates };
 
   namedClosures.forEach(namedClosure => {
-    const namedClosureYears = namedClosuresLookup[namedClosure];
-
-    Object.keys(namedClosureYears).forEach(yearKey => {
-      const yearDates = namedClosureYears[yearKey];
-
-      yearDates.forEach(date => {
-        if (result[date]) {
-          delete result[date];
-        }
-      });
+    const closureDates = namedClosuresLookup[namedClosure];
+    closureDates.forEach(date => {
+      if (result[date]) {
+        delete result[date];
+      }
     });
   });
 
@@ -107,17 +94,17 @@ export function removeNamedClosuresDates(event, dates, namedClosuresLookup) {
 }
 
 export function removeFullDayClosureDates(event, dates) {
-  const wholeDayClosures = getClosures(event).filter(
+  const fullDayClosures = getClosures(event).filter(
     closure => _.isNil(closure.from) && _.isNil(closure.at)
   );
 
-  if (wholeDayClosures.length === 0) {
+  if (fullDayClosures.length === 0) {
     return dates;
   }
 
-  const result = Object.assign({}, dates);
+  const result = { ...dates };
 
-  wholeDayClosures.forEach(closure => {
+  fullDayClosures.forEach(closure => {
     if (result[closure.date]) {
       delete result[closure.date];
     }
@@ -164,23 +151,21 @@ export function addRegularTimes(event, dates) {
     dayLookup[time.day].push(entry);
   });
 
-  const result = Object.assign({}, dates);
+  const result = { ...dates };
 
   Object.keys(dates).forEach(dateKey => {
     const dateEntry = dates[dateKey];
     const dayTimes = dayLookup[dateEntry.day];
-
     const activeDayTimes = getActiveDayTimes(dayTimes, dateKey, timesRanges);
 
     if (!activeDayTimes || activeDayTimes.length === 0) {
       return;
     }
 
-    const newDateEntry = Object.assign({}, dateEntry, {
+    result[dateKey] = {
+      ...dateEntry,
       times: activeDayTimes.map(x => ({ from: x.from, to: x.to }))
-    });
-
-    result[dateKey] = newDateEntry;
+    };
   });
 
   return result;
@@ -249,15 +234,13 @@ export function addAdditionalTimes(event, dates) {
       dateLookup[time.date] = [];
     }
 
-    const entry = {
+    dateLookup[time.date].push({
       from: time.from || time.at,
       to: time.to || time.at
-    };
-
-    dateLookup[time.date].push(entry);
+    });
   });
 
-  const result = Object.assign({}, dates);
+  const result = { ...dates };
 
   Object.keys(dates).forEach(dateKey => {
     const dateEntry = dates[dateKey];
@@ -270,8 +253,10 @@ export function addAdditionalTimes(event, dates) {
     let newTimes = _.concat(dateEntry.times, dateTimes);
     newTimes = _.sortBy(newTimes, value => value.from);
 
-    const newDateEntry = Object.assign({}, dateEntry, { times: newTimes });
-    result[dateKey] = newDateEntry;
+    result[dateKey] = {
+      ...dateEntry,
+      times: newTimes
+    };
   });
 
   return result;
@@ -288,7 +273,7 @@ export function removePartDayClosureDates(event, dates) {
     return dates;
   }
 
-  const result = Object.assign({}, dates);
+  const result = { ...dates };
 
   partDayClosures.forEach(closure => {
     const dateEntry = result[closure.date];
@@ -308,7 +293,7 @@ export function removePartDayClosureDates(event, dates) {
       );
 
       newTimes = newTimes.map(time => {
-        const newTime = Object.assign({}, time);
+        const newTime = { ...time };
 
         if (closure.from <= time.from && closure.to > time.from) {
           newTime.from = closure.to;
@@ -324,8 +309,10 @@ export function removePartDayClosureDates(event, dates) {
       newTimes = dateEntry.times.filter(time => time.from !== closure.at);
     }
 
-    const newDateEntry = Object.assign({}, dateEntry, { times: newTimes });
-    result[closure.date] = newDateEntry;
+    result[closure.date] = {
+      ...dateEntry,
+      times: newTimes
+    };
   });
 
   return result;
@@ -342,7 +329,7 @@ export function addSpecialDatesTags(event, dates) {
     return dates;
   }
 
-  const result = Object.assign({}, dates);
+  const result = { ...dates };
 
   specialDates.forEach(specialDate => {
     const dateResult = result[specialDate.date];
@@ -361,12 +348,13 @@ export function addSpecialDatesTags(event, dates) {
       return;
     }
 
-    const newDate = Object.assign({}, dateResult);
+    const newDate = { ...dateResult };
     newDate.times = newDate.times.slice();
 
-    const newTime = Object.assign({}, newDate.times[timesIndex], {
+    const newTime = {
+      ...newDate.times[timesIndex],
       tags: specialDate.audienceTags.map(tag => tag.id)
-    });
+    };
 
     newDate.times.splice(timesIndex, 1, newTime);
     result[specialDate.date] = newDate;
@@ -384,7 +372,7 @@ export function removeSoldOutPerformances(event, dates) {
   let result = dates;
 
   if (isPerformance && hasSoldOutPerformances) {
-    result = Object.assign({}, dates);
+    result = { ...dates };
 
     // TODO make this more efficient (do all date's times at once):
 
@@ -409,8 +397,10 @@ export function removeSoldOutPerformances(event, dates) {
         const newTimes = dateMatch.times.slice();
         newTimes.splice(timeIndex, 1);
 
-        const newDate = Object.assign({}, dateMatch, { times: newTimes });
-        result[soldOut.date] = newDate;
+        result[soldOut.date] = {
+          ...dateMatch,
+          times: newTimes
+        };
       }
     });
   }
@@ -418,7 +408,7 @@ export function removeSoldOutPerformances(event, dates) {
   return result;
 }
 
-export function convertDatesToList(dates) {
+export function convertToList(dates) {
   const result = [];
 
   Object.keys(dates).forEach(dateKey => {

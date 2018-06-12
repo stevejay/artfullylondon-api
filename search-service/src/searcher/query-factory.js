@@ -1,5 +1,5 @@
-import * as searchIndexType from "../search-index-type";
-import * as entityType from "../entity-type";
+import * as searchIndexType from "../types/search-index-type";
+import * as entityType from "../types/entity-type";
 import * as searchTemplateType from "./search-template-type";
 
 export function createEntityCountsSearches() {

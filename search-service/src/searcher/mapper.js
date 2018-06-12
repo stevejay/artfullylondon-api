@@ -1,7 +1,7 @@
 import _ from "lodash";
 import looseInterleave from "loose-interleave";
-import * as entityType from "../entity-type";
-import * as presetSearchType from "../preset-search-type";
+import * as entityType from "../types/entity-type";
+import * as presetSearchType from "../types/preset-search-type";
 import * as time from "../time";
 
 export function mapAutocompleteSearchParams(params) {
