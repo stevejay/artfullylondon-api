@@ -1,6 +1,6 @@
-import * as geoUtils from "./geo-utils";
+import * as geoMappings from "./geo-mappings";
 
-describe("getLondonAreaFromPostcode", () => {
+describe("mapLondonArea", () => {
   const tests = [
     { postcode: "W1S 1AA", expected: "Central" },
     { postcode: "W1 1AA", expected: "Central" },
@@ -16,12 +16,16 @@ describe("getLondonAreaFromPostcode", () => {
 
   tests.map(test => {
     it(`should return ${test.expected} for postcode ${test.postcode}`, () => {
-      const actual = geoUtils.getLondonAreaFromPostcode(test.postcode);
+      const actual = geoMappings.mapLondonArea({
+        venue: { postcode: test.postcode }
+      });
       expect(actual).toEqual(test.expected);
     });
   });
 
   it("should throw if the postcode was not matched", () => {
-    expect(() => geoUtils.getLondonAreaFromPostcode("foo bar")).toThrow();
+    expect(() =>
+      geoMappings.mapLondonArea({ venue: { postcode: "foo bar" } })
+    ).toThrow();
   });
 });

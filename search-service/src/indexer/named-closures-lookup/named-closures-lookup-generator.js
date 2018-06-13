@@ -1,7 +1,7 @@
 import _ from "lodash";
 import moment from "moment";
-import * as namedClosureType from "../types/named-closure-type";
-import * as time from "../time";
+import * as namedClosureType from "../../types/named-closure-type";
+import * as time from "../../time";
 
 const MONDAY = 1;
 const SATURDAY = 6;

@@ -1,6 +1,6 @@
 import moment from "moment";
 import * as generator from "./named-closures-lookup-generator";
-import * as namedClosureType from "../types/named-closure-type";
+import * as namedClosureType from "../../types/named-closure-type";
 
 const SEED_DATA = {
   [namedClosureType.BANK_HOLIDAYS]: [

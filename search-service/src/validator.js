@@ -208,10 +208,7 @@ const INDEX_DOCUMENT_CONSTRAINT = {
       entityType: {
         string: true,
         presence: true
-      },
-      venue: { object: true },
-      eventSeries: { object: true },
-      talents: { array: true }
+      }
     }
   }
 };

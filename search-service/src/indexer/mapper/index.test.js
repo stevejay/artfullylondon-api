@@ -1,5 +1,5 @@
-import * as mapper from "./mapper";
-import * as entityType from "../types/entity-type";
+import * as mapper from "./index";
+import * as entityType from "../../types/entity-type";
 
 describe("mapTalentForTalentIndex", () => {
   it("should map a talent with an image", () => {

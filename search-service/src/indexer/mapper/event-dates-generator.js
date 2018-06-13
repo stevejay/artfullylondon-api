@@ -1,8 +1,8 @@
 import _ from "lodash";
 import moment from "moment";
-import * as time from "../time";
-import * as eventType from "../types/event-type";
-import * as occurrenceType from "../types/occurrence-type";
+import * as time from "../../time";
+import * as eventType from "../../types/event-type";
+import * as occurrenceType from "../../types/occurrence-type";
 
 export function generate(event, dateToday, dateMax, namedClosuresLookup) {
   if (event.soldOut) {

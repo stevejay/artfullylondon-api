@@ -1,5 +1,6 @@
 import _ from "lodash";
-import * as locationAreaType from "../types/location-area-type";
+import mappr from "mappr";
+import * as locationAreaType from "../../types/location-area-type";
 
 const AREA_DATA = [
   {
@@ -32,8 +33,13 @@ const AREA_DATA = [
   }
 ];
 
-export function getLondonAreaFromPostcode(postcode) {
-  const postcodeDistrict = getPostcodeDistrict(postcode);
+export const mapLocation = mappr({
+  lat: "latitude",
+  lon: "longitude"
+});
+
+export function mapLondonArea(event) {
+  const postcodeDistrict = getPostcodeDistrict(event.venue.postcode);
   const match = _.find(AREA_DATA, area => area.regex.test(postcodeDistrict));
   if (match) {
     return match.type;
