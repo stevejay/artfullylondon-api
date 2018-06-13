@@ -3,12 +3,14 @@ import * as mapper from "./mapper";
 import * as esClient from "../elasticsearch-client";
 import * as searchIndexType from "../types/search-index-type";
 import * as entityType from "../types/entity-type";
+import * as validator from "./validator";
 
 export async function index(request) {
   const builder = new BulkUpdateBuilder();
 
   switch (request.entityType) {
     case entityType.TALENT:
+      validator.validateTalent(request.entity);
       builder
         .addFullSearchUpdate(
           mapper.mapTalentForTalentIndex(request.entity),
@@ -20,6 +22,7 @@ export async function index(request) {
         );
       break;
     case entityType.VENUE:
+      validator.validateVenue(request.entity);
       builder
         .addFullSearchUpdate(
           mapper.mapVenueForVenueIndex(request.entity),
@@ -31,6 +34,7 @@ export async function index(request) {
         );
       break;
     case entityType.EVENT_SERIES:
+      validator.validateEventSeries(request.entity);
       builder
         .addFullSearchUpdate(
           mapper.mapEventSeriesForEventSeriesIndex(request.entity),
@@ -42,6 +46,7 @@ export async function index(request) {
         );
       break;
     case entityType.EVENT:
+      validator.validateEvent(request.entity);
       builder
         .addFullSearchUpdate(
           mapper.mapEventForEventIndex(request.entity),

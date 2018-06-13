@@ -1,169 +1,98 @@
+import { ensure } from "ensure-request";
+
 const DATE_REGEX = /^[12]\d\d\d-[01]\d-[0123]\d$/;
 const TIME_REGEX = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
-const DAY_NUMBER_NUMERICALITY = {
-  onlyInteger: true,
-  greaterThanOrEqualTo: 1,
-  lessThanOrEqualTo: 7
+const OPTIONAL_BOOL = { bool: true };
+const REQUIRED_BOOL = { ...OPTIONAL_BOOL, presence: true };
+const OPTIONAL_STRING = { string: true };
+const REQUIRED_STRING = { ...OPTIONAL_STRING, presence: true };
+const OPTIONAL_DATE = { string: true, format: DATE_REGEX };
+const REQUIRED_DATE = { ...OPTIONAL_DATE, presence: true };
+const OPTIONAL_TIME = { string: true, format: TIME_REGEX };
+const REQUIRED_TIME = { ...OPTIONAL_TIME, presence: true };
+const OPTIONAL_NUMBER = { number: true };
+const REQUIRED_NUMBER = { ...OPTIONAL_NUMBER, presence: true };
+
+const REQUIRED_DAY_NUMBER = {
+  presence: true,
+  number: true,
+  numericality: {
+    onlyInteger: true,
+    greaterThanOrEqualTo: 1,
+    lessThanOrEqualTo: 7
+  }
 };
 
 const TAGS_ARRAY_CONSTRAINT = {
   array: true,
   each: {
     object: {
-      id: {
-        presence: true,
-        string: true
-      },
-      label: {
-        presence: true,
-        string: true
-      }
+      id: REQUIRED_STRING,
+      label: REQUIRED_STRING
     }
   }
 };
 
 const EACH_DAY_RANGE_CONSTRAINT = {
   object: {
-    day: {
-      presence: true,
-      number: true,
-      numericality: DAY_NUMBER_NUMERICALITY
-    },
-    from: {
-      presence: true,
-      string: true,
-      format: TIME_REGEX
-    },
-    to: {
-      presence: true,
-      string: true,
-      format: TIME_REGEX
-    },
-    timesRangeId: {
-      string: true
-    }
+    day: REQUIRED_DAY_NUMBER,
+    from: REQUIRED_TIME,
+    to: REQUIRED_TIME,
+    timesRangeId: OPTIONAL_STRING
   }
 };
 
 const EACH_DAY_AT_CONSTRAINT = {
   object: {
-    day: {
-      presence: true,
-      number: true,
-      numericality: DAY_NUMBER_NUMERICALITY
-    },
-    at: {
-      presence: true,
-      string: true,
-      format: TIME_REGEX
-    },
-    timesRangeId: {
-      string: true
-    }
+    day: REQUIRED_DAY_NUMBER,
+    at: REQUIRED_TIME,
+    timesRangeId: OPTIONAL_STRING
   }
 };
 
 const EACH_DATE_RANGE_CONSTRAINT = {
   object: {
-    date: {
-      presence: true,
-      string: true,
-      format: DATE_REGEX
-    },
-    from: {
-      presence: true,
-      string: true,
-      format: TIME_REGEX
-    },
-    to: {
-      presence: true,
-      string: true,
-      format: TIME_REGEX
-    }
+    date: REQUIRED_DATE,
+    from: REQUIRED_TIME,
+    to: REQUIRED_TIME
   }
 };
 
 const EACH_DATE_OPTIONAL_RANGE_CONSTRAINT = {
   object: {
-    date: {
-      presence: true,
-      string: true,
-      format: DATE_REGEX
-    },
-    from: {
-      string: true,
-      format: TIME_REGEX
-    },
-    to: {
-      string: true,
-      format: TIME_REGEX
-    }
+    date: REQUIRED_DATE,
+    from: OPTIONAL_TIME,
+    to: OPTIONAL_TIME
   }
 };
 
 const EACH_DATE_AT_CONSTRAINT = {
   object: {
-    date: {
-      presence: true,
-      string: true,
-      format: DATE_REGEX
-    },
-    at: {
-      presence: true,
-      string: true,
-      format: TIME_REGEX
-    }
+    date: REQUIRED_DATE,
+    at: REQUIRED_TIME
   }
 };
 
 const EACH_DATE_OPTIONAL_AT_CONSTRAINT = {
   object: {
-    date: {
-      presence: true,
-      string: true,
-      format: DATE_REGEX
-    },
-    at: {
-      string: true,
-      format: TIME_REGEX
-    }
+    date: REQUIRED_DATE,
+    at: OPTIONAL_TIME
   }
 };
 
 const ENTITY_BASIC_CONSTRAINT = {
-  entityType: {
-    string: true,
-    presence: true
-  },
-  id: {
-    string: true,
-    presence: true
-  },
-  status: {
-    string: true,
-    presence: true
-  },
-  version: {
-    number: true,
-    presence: true
-  },
+  entityType: REQUIRED_STRING,
+  id: REQUIRED_STRING,
+  status: REQUIRED_STRING,
+  version: REQUIRED_NUMBER,
   images: {
     array: true,
     each: {
       object: {
-        id: {
-          presence: true
-        },
-        ratio: {
-          number: true,
-          presence: true
-        },
-        copyright: {
-          string: true
-        },
-        dominantColor: {
-          string: true
-        }
+        id: REQUIRED_STRING,
+        ratio: REQUIRED_NUMBER,
+        copyright: OPTIONAL_STRING,
+        dominantColor: OPTIONAL_STRING
       }
     }
   }
@@ -171,143 +100,52 @@ const ENTITY_BASIC_CONSTRAINT = {
 
 const TALENT_CONSTRAINT = {
   ...ENTITY_BASIC_CONSTRAINT,
-  talentType: {
-    string: true,
-    presence: true
-  },
-  firstNames: {
-    string: true
-  },
-  lastName: {
-    string: true,
-    presence: true
-  },
-  commonRole: {
-    string: true,
-    presence: true
-  }
+  talentType: REQUIRED_STRING,
+  firstNames: OPTIONAL_STRING,
+  lastName: REQUIRED_STRING,
+  commonRole: REQUIRED_STRING
 };
 
 const VENUE_CONSTRAINT = {
   ...ENTITY_BASIC_CONSTRAINT,
-  name: {
-    string: true,
-    presence: true
-  },
-  address: {
-    string: true,
-    presence: true
-  },
-  postcode: {
-    string: true,
-    presence: true
-  },
-  latitude: {
-    number: true,
-    presence: true
-  },
-  longitude: {
-    number: true,
-    presence: true
-  },
-  venueType: {
-    string: true,
-    presence: true
-  }
+  name: REQUIRED_STRING,
+  address: REQUIRED_STRING,
+  postcode: REQUIRED_STRING,
+  latitude: REQUIRED_NUMBER,
+  longitude: REQUIRED_NUMBER,
+  venueType: REQUIRED_STRING
 };
 
 const EVENT_SERIES_CONSTRAINT = {
   ...ENTITY_BASIC_CONSTRAINT,
-  name: {
-    string: true,
-    presence: true
-  },
-  eventSeriesType: {
-    string: true,
-    presence: true
-  },
-  occurrence: {
-    string: true,
-    presence: true
-  },
-  summary: {
-    string: true,
-    presence: true
-  }
+  name: REQUIRED_STRING,
+  eventSeriesType: REQUIRED_STRING,
+  occurrence: REQUIRED_STRING,
+  summary: REQUIRED_STRING
 };
 
 const EVENT_CONSTRAINT = {
   ...ENTITY_BASIC_CONSTRAINT,
-  name: {
-    string: true,
-    presence: true
-  },
-  summary: {
-    string: true,
-    presence: true
-  },
-  eventType: {
-    string: true,
-    presence: true
-  },
-  occurrenceType: {
-    string: true,
-    presence: true
-  },
-  costType: {
-    string: true,
-    presence: true
-  },
-  bookingType: {
-    string: true,
-    presence: true
-  },
-  soldOut: {
-    bool: true
-  },
-  dateFrom: {
-    string: true,
-    format: DATE_REGEX
-  },
-  dateTo: {
-    string: true,
-    format: DATE_REGEX
-  },
-  rating: {
-    number: true,
-    presence: true
-  },
-  minAge: {
-    number: true
-  },
-  maxAge: {
-    number: true
-  },
-  costFrom: {
-    number: true
-  },
+  name: REQUIRED_STRING,
+  summary: REQUIRED_STRING,
+  eventType: REQUIRED_STRING,
+  occurrenceType: REQUIRED_STRING,
+  costType: REQUIRED_STRING,
+  bookingType: REQUIRED_STRING,
+  soldOut: OPTIONAL_BOOL,
+  dateFrom: OPTIONAL_DATE,
+  dateTo: OPTIONAL_DATE,
+  rating: REQUIRED_NUMBER,
+  minAge: OPTIONAL_NUMBER,
+  maxAge: OPTIONAL_NUMBER,
+  costFrom: OPTIONAL_NUMBER,
   venue: {
     object: {
-      id: {
-        string: true,
-        presence: true
-      },
-      name: {
-        string: true,
-        presence: true
-      },
-      postcode: {
-        string: true,
-        presence: true
-      },
-      latitude: {
-        number: true,
-        presence: true
-      },
-      longitude: {
-        number: true,
-        presence: true
-      },
+      id: REQUIRED_STRING,
+      name: REQUIRED_STRING,
+      postcode: REQUIRED_STRING,
+      latitude: REQUIRED_NUMBER,
+      longitude: REQUIRED_NUMBER,
       openingTimes: {
         array: true,
         each: EACH_DAY_RANGE_CONSTRAINT
@@ -322,19 +160,14 @@ const EVENT_CONSTRAINT = {
       },
       namedClosures: {
         array: true,
-        each: {
-          string: true
-        }
+        each: REQUIRED_STRING
       }
     },
     presence: true
   },
   eventSeries: {
     object: {
-      id: {
-        string: true,
-        presence: true
-      }
+      id: REQUIRED_STRING
     }
   },
   audienceTags: TAGS_ARRAY_CONSTRAINT,
@@ -345,8 +178,7 @@ const EVENT_CONSTRAINT = {
     array: true,
     each: {
       object: {
-        string: true,
-        presence: true
+        id: REQUIRED_STRING
       }
     }
   },
@@ -354,37 +186,19 @@ const EVENT_CONSTRAINT = {
     array: true,
     each: {
       object: {
-        url: {
-          string: true,
-          presence: true
-        }
+        url: REQUIRED_STRING
       }
     }
   },
-  useVenueOpeningTimes: {
-    bool: true,
-    presence: true
-  },
+  useVenueOpeningTimes: REQUIRED_BOOL,
   timesRanges: {
     array: true,
     each: {
       object: {
-        id: {
-          presence: true,
-          string: true
-        },
-        dateFrom: {
-          presence: true,
-          format: DATE_REGEX
-        },
-        dateTo: {
-          presence: true,
-          format: DATE_REGEX
-        },
-        label: {
-          presence: true,
-          string: true
-        }
+        id: REQUIRED_STRING,
+        dateFrom: REQUIRED_DATE,
+        dateTo: REQUIRED_DATE,
+        label: REQUIRED_STRING
       }
     }
   },
@@ -430,17 +244,29 @@ const EVENT_CONSTRAINT = {
     array: true,
     each: {
       object: {
-        date: {
-          string: true,
-          presence: true,
-          format: DATE_REGEX
-        },
-        at: {
-          string: true,
-          presence: true,
-          format: TIME_REGEX
-        }
+        date: REQUIRED_DATE,
+        at: REQUIRED_TIME
       }
     }
   }
 };
+
+function errorHandler(errors) {
+  throw new Error("[400] Bad Request: " + errors.join("; "));
+}
+
+export function validateTalent(talent) {
+  ensure(talent, TALENT_CONSTRAINT, errorHandler);
+}
+
+export function validateVenue(venue) {
+  ensure(venue, VENUE_CONSTRAINT, errorHandler);
+}
+
+export function validateEventSeries(eventSeries) {
+  ensure(eventSeries, EVENT_SERIES_CONSTRAINT, errorHandler);
+}
+
+export function validateEvent(event) {
+  ensure(event, EVENT_CONSTRAINT, errorHandler);
+}

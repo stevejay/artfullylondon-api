@@ -1,4 +1,5 @@
+import "./tracing";
 import * as searchService from "../search-service";
-import handleSnsMessage from "./handle-sns-message";
+import withSnsMessageHandling from "./with-sns-message-handling";
 
-export const handler = handleSnsMessage(searchService.indexDocument);
+export const handler = withSnsMessageHandling(searchService.indexDocument);

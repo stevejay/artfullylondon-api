@@ -4,7 +4,6 @@ import mappr from "mappr";
 import latinize from "latinize";
 import simplify from "es-simplify";
 import * as bookingType from "../../types/booking-type";
-import * as linkType from "../../types/link-type";
 import * as geoMappings from "./geo-mappings";
 import * as tagMappings from "./tag-mappings";
 import * as datesMappings from "./dates-mappings";

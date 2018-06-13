@@ -1,9 +1,12 @@
 import elasticsearch from "elasticsearch";
+import XRay from "aws-xray-sdk";
 
 const client = new elasticsearch.Client({
   host: process.env.ELASTICSEARCH_HOST,
   log: "error"
 });
+
+// TODO XRay for all es client funcs.
 
 export function bulk(params) {
   return new Promise((resolve, reject) => {
@@ -20,7 +23,20 @@ export function bulk(params) {
 }
 
 export function search(query) {
-  return client.search(query);
+  return new Promise((resolve, reject) => {
+    XRay.captureAsyncFunc("es search", subsegment => {
+      client
+        .search(query)
+        .then(response => {
+          subsegment.close();
+          resolve(response);
+        })
+        .catch(err => {
+          subsegment.close(err);
+          reject(err);
+        });
+    });
+  });
 }
 
 export function multiSearch(searches, options) {

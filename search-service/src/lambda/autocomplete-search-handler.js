@@ -1,3 +1,4 @@
+import "./tracing";
 import withErrorHandling from "lambda-error-handler";
 import withCacheControl from "./with-cache-control";
 import * as searchService from "../search-service";

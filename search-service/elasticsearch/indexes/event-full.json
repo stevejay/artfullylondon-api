@@ -123,12 +123,12 @@
         },
         "dateFrom": {
           "type": "date",
-          "format": "yyyy/MM/dd",
+          "format": "yyyy-MM-dd",
           "index": true
         },
         "dateTo": {
           "type": "date",
-          "format": "yyyy/MM/dd",
+          "format": "yyyy-MM-dd",
           "index": true
         },
         "summary": {
@@ -199,7 +199,7 @@
           "properties": {
             "date": {
               "type": "date",
-              "format": "yyyy/MM/dd",
+              "format": "yyyy-MM-dd",
               "index": true
             },
             "from": {

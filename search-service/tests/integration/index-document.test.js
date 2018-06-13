@@ -1,9 +1,10 @@
 import * as elasticsearch from "../utils/elasticsearch";
-import * as searchIndexType from "../../src/search-index-type";
+import * as searchIndexType from "../../src/types/search-index-type";
 import * as entityType from "../../src/types/entity-type";
-import * as testData from "./test-data";
 import * as sns from "../utils/sns";
 jest.setTimeout(60000);
+
+const INDEX_DOCUMENT_TOPIC_NAME = "IndexDocument";
 
 beforeAll(async () => {
   await elasticsearch.createIndex(searchIndexType.TALENT);
@@ -22,43 +23,55 @@ afterAll(async () => {
 });
 
 it("should index a talent", async () => {
-  await sns.send("IndexDocument", {
+  const talentToIndex = {
+    status: "Active",
+    commonRole: "Director",
+    entityType: "talent",
+    talentType: "Individual",
+    firstNames: "Carrie",
+    id: "carrie-cracknell",
+    lastName: "Cracknell",
+    version: 2
+  };
+
+  await sns.send(INDEX_DOCUMENT_TOPIC_NAME, {
     entityType: entityType.TALENT,
-    entity: testData.TALENT_ACTIVE_CARRIE_CRACKNELL
+    entity: talentToIndex
   });
 
   const talent = await elasticsearch.getDocumentWithRetry(
     searchIndexType.TALENT,
-    testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id
+    talentToIndex.id
   );
 
   expect(talent).toEqual(
     expect.objectContaining({
       _index: searchIndexType.TALENT,
       _type: "doc",
-      _id: testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id,
-      _version: 1,
+      _id: talentToIndex.id,
+      _version: 2,
       _source: expect.objectContaining({
         entityType: entityType.TALENT,
-        id: testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id
+        id: talentToIndex.id
       })
     })
   );
 
+  const autocompleteId = `talent_${talentToIndex.id}`;
   const autocomplete = await elasticsearch.getDocumentWithRetry(
     searchIndexType.AUTOCOMPLETE,
-    testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id
+    autocompleteId
   );
 
   expect(autocomplete).toEqual(
     expect.objectContaining({
       _index: searchIndexType.AUTOCOMPLETE,
       _type: "doc",
-      _id: testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id,
-      _version: 1,
+      _id: autocompleteId,
+      _version: 2,
       _source: expect.objectContaining({
         entityType: entityType.TALENT,
-        id: testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id
+        id: talentToIndex.id
       })
     })
   );
