@@ -2,6 +2,18 @@
 
 This is the back-end code for the Artfully London website. I built it using Node.js AWS Lambdas, grouped as logical microservices and deployed using the Serverless framework.
 
+## LocalStack
+
+1.  Clone
+1.  CD into the cloned repo
+1.  If on Windows, run `export COMPOSE_CONVERT_WINDOWS_PATHS=1` (because of [this issue](https://github.com/docker/for-win/issues/1829))
+1.  Run `docker-compose up`
+
+### Port Conflicts on Windows
+
+1.  `netstat -a -n -o`
+1.  Get PID from last column and check for it in the Details section in Task Manager.
+
 ## Prerequisites
 
 1.  Install `yarn` globally.
@@ -19,13 +31,13 @@ This is the back-end code for the Artfully London website. I built it using Node
 
 ## Todo
 
-* Improve the AWS Cognito serverless configuration. (I think serverless
+- Improve the AWS Cognito serverless configuration. (I think serverless
   supports AWS Cognito configuration now.)
-* Try this for localstack: https://store.docker.com/community/images/localstack/localstack
+- Try this for localstack: https://store.docker.com/community/images/localstack/localstack
 
 ## Issues
 
-* Docker on Windows: https://github.com/docker/for-win/issues/1829
+- Docker on Windows: https://github.com/docker/for-win/issues/1829
   Use Git Bash:
 
 ```
@@ -35,8 +47,8 @@ docker-compose down && docker-compose up -d
 
 ## Info
 
-* [nvm on Windows](https://github.com/coreybutler/nvm-windows)
-* [Git creds manager on Windows](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
+- [nvm on Windows](https://github.com/coreybutler/nvm-windows)
+- [Git creds manager on Windows](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
 
 ## License
 

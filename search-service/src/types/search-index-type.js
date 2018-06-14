@@ -1,7 +1,7 @@
-export const TALENT = "talent-full";
-export const VENUE = "venue-full";
-export const EVENT_SERIES = "event-series-full";
-export const EVENT = "event-full";
+export const TALENT = "talent";
+export const VENUE = "venue";
+export const EVENT_SERIES = "event-series";
+export const EVENT = "event";
 export const AUTOCOMPLETE = "autocomplete";
 
 export const ALLOWED_VALUES = [

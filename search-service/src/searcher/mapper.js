@@ -108,17 +108,13 @@ export function mapEventsByExternalIdsSearchParams(params) {
   };
 }
 
-// TODO make sure autocomplete docs get indexed with ids that
-// are prefixed with their entity type
-
 export function mapAutocompleteSearchResults(result) {
+  const options = _.get(result, "suggest.autocomplete[0].options");
+  const fuzzyOptions = _.get(result, "suggest.fuzzyAutocomplete[0].options");
+
   return {
     items: _
-      .unionBy(
-        result.suggest.autocomplete[0].options,
-        result.suggest.fuzzyAutocomplete[0].options,
-        "_source.id"
-      )
+      .unionBy(options, fuzzyOptions, "_source.id")
       .map(option => ({ ...option._source, name: option.text }))
   };
 }

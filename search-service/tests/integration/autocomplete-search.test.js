@@ -1,12 +1,10 @@
 import * as service from "../utils/service";
 import * as elasticsearch from "../utils/elasticsearch";
-import * as searchTemplateType from "../../src/searcher/search-template-type";
 import * as searchIndexType from "../../src/types/search-index-type";
 import * as entityType from "../../src/types/entity-type";
 jest.setTimeout(60000);
 
 beforeAll(async () => {
-  await elasticsearch.createTemplate(searchTemplateType.AUTOCOMPLETE);
   await elasticsearch.createIndex(searchIndexType.AUTOCOMPLETE);
   await elasticsearch.indexDocument(searchIndexType.AUTOCOMPLETE, {
     status: "Active",
@@ -58,6 +56,17 @@ it("should perform a public search of talents", async () => {
       }
     ],
     params: { entityType: entityType.TALENT, term: "car" }
+  });
+});
+
+it("should perform a public search of talents when there are no matches", async () => {
+  const result = await service.get(
+    `/public/search/auto?term=foo&entityType=${entityType.TALENT}`
+  );
+
+  expect(result).toEqual({
+    items: [],
+    params: { entityType: entityType.TALENT, term: "foo" }
   });
 });
 

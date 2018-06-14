@@ -1,36 +1,26 @@
-import * as esClient from "../elasticsearch-client";
+import * as esClient from "./elasticsearch-client";
 import * as mapper from "./mapper";
 import * as queryFactory from "./query-factory";
-import * as searchIndexType from "../types/search-index-type";
-import * as searchTemplateType from "./search-template-type";
 import * as presetSearchType from "../types/preset-search-type";
 
 export async function autocompleteSearch(params) {
-  const templateParams = mapper.mapAutocompleteSearchParams(params);
-  const results = await esClient.templateSearch(
-    searchTemplateType.AUTOCOMPLETE,
-    searchIndexType.AUTOCOMPLETE,
-    templateParams
-  );
+  const searchParams = mapper.mapAutocompleteSearchParams(params);
+  const search = queryFactory.createAutocompleteSearch(searchParams);
+  const results = await esClient.search(search);
   return mapper.mapAutocompleteSearchResults(results);
 }
 
 export async function basicSearch(params) {
-  const templateParams = mapper.mapBasicSearchParams(params);
-  const searches = queryFactory.createBasicSearchTemplateSearches(
-    templateParams
-  );
-  const results = await esClient.templateMultiSearch(searches);
+  const searchParams = mapper.mapBasicSearchParams(params);
+  const searches = queryFactory.createBasicSearchSearches(searchParams);
+  const results = await esClient.multiSearch(searches);
   return mapper.mapBasicSearchResults(results, params.take);
 }
 
 export async function eventAdvancedSearch(params) {
-  const templateParams = mapper.mapEventAdvancedSearchParams(params);
-  const results = await esClient.templateSearch(
-    searchTemplateType.EVENT_ADVANCED,
-    searchIndexType.EVENT,
-    templateParams
-  );
+  const searchParams = mapper.mapEventAdvancedSearchParams(params);
+  const search = queryFactory.createEventAdvancedSearch(searchParams);
+  const results = await esClient.search(search);
   return mapper.mapSimpleQuerySearchResults(results);
 }
 
@@ -47,11 +37,6 @@ export async function presetSearch(params) {
   }
 }
 
-async function presetEventAdvancedSearch(params) {
-  const presetParams = mapper.mapPresetEventAdvancedSearchParams(params);
-  return await eventAdvancedSearch(presetParams);
-}
-
 async function presetEntityCountsSearch() {
   const searches = queryFactory.createEntityCountsSearches();
   const results = await esClient.multiSearch(searches);
@@ -59,21 +44,20 @@ async function presetEntityCountsSearch() {
 }
 
 async function presetSitemapEventIdsSearch(params) {
-  const templateParams = mapper.mapSitemapEventIdsSearchParams(params);
-  const results = await esClient.templateSearch(
-    searchTemplateType.SITEMAP_EVENT_IDS,
-    searchIndexType.EVENT,
-    templateParams
-  );
+  const searchParams = mapper.mapSitemapEventIdsSearchParams(params);
+  const search = queryFactory.createSitemapEventIdsSearch(searchParams);
+  const results = await esClient.search(search);
   return mapper.mapSimpleQuerySearchResults(results);
 }
 
 async function presetEventsByExternalIds(params) {
-  const templateParams = mapper.mapEventsByExternalIdsSearchParams(params);
-  const results = await esClient.templateSearch(
-    searchTemplateType.EVENTS_BY_EXTERNAL_IDS,
-    searchIndexType.EVENT,
-    templateParams
-  );
+  const searchParams = mapper.mapEventsByExternalIdsSearchParams(params);
+  const search = queryFactory.createEventsByExternalIdsSearch(searchParams);
+  const results = await esClient.search(search);
   return mapper.mapSimpleQuerySearchResults(results);
+}
+
+async function presetEventAdvancedSearch(params) {
+  const presetParams = mapper.mapPresetEventAdvancedSearchParams(params);
+  return await eventAdvancedSearch(presetParams);
 }

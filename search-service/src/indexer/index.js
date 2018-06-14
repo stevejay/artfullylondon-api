@@ -1,6 +1,6 @@
 import BulkUpdateBuilder from "./bulk-update-builder";
 import * as mapper from "./mapper";
-import * as esClient from "../elasticsearch-client";
+import * as esClient from "../searcher/elasticsearch-client";
 import * as searchIndexType from "../types/search-index-type";
 import * as entityType from "../types/entity-type";
 import * as validator from "./validator";
