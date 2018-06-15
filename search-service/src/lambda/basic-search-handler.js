@@ -1,16 +1,12 @@
 import "./xray-setup";
-import withErrorHandling from "lambda-error-handler";
-import withCacheControl from "./with-cache-control";
+import withErrorHandling from "./with-error-handling";
 import * as searchService from "../search-service";
 import * as mapper from "./mapper";
 import convertAsyncToCallback from "./convert-async-to-callback";
 
 export const handler = convertAsyncToCallback(
-  withErrorHandling(
-    withCacheControl(async function(event) {
-      const request = mapper.mapBasicSearchEvent(event);
-      const result = await searchService.basicSearch(request);
-      return mapper.mapResponse(result);
-    })
-  )
+  withErrorHandling(async function(event) {
+    const response = await searchService.basicSearch(event);
+    return mapper.mapResponse(response, event);
+  })
 );

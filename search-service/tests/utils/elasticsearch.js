@@ -13,7 +13,6 @@ const esClient = new elasticsearch.Client({
 });
 
 const INDEXES_DIR = path.resolve(__dirname, "../../elasticsearch/indexes");
-const TEMPLATES_DIR = path.resolve(__dirname, "../../elasticsearch/templates");
 
 export async function deleteIndex(index) {
   if (await esClient.indices.exists({ index })) {
@@ -34,23 +33,6 @@ export async function indexDocument(index, document) {
     id: document.id,
     body: document,
     refresh: "true"
-  });
-}
-
-export async function createTemplate(name) {
-  const text = fs.readFileSync(
-    path.resolve(TEMPLATES_DIR, `${name}.mustache`),
-    "utf8"
-  );
-
-  await esClient.putScript({
-    id: name,
-    body: {
-      script: {
-        lang: "mustache",
-        source: text.replace(/\s+/gm, " ")
-      }
-    }
   });
 }
 

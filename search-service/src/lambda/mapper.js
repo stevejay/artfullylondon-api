@@ -1,10 +1,6 @@
 import mappr from "mappr";
 import _ from "lodash";
 
-export const mapRouteType = mappr({
-  isPublic: event => event.resource.startsWith("/public/")
-});
-
 const mapLocation = mappr(
   {
     location: mappr({
@@ -17,22 +13,6 @@ const mapLocation = mappr(
   result => ({
     location: _.isEmpty(result.location) ? undefined : result.location
   })
-);
-
-export const mapAutocompleteSearchEvent = mappr({
-  term: "queryStringParameters.term",
-  entityType: "queryStringParameters.entityType"
-});
-
-export const mapBasicSearchEvent = mappr.compose(
-  {
-    term: "queryStringParameters.term",
-    entityType: "queryStringParameters.entityType",
-    skip: "queryStringParameters.skip",
-    take: "queryStringParameters.take"
-  },
-  mapLocation,
-  mapRouteType
 );
 
 export const mapEventFullSearchEvent = mappr.compose(
@@ -56,23 +36,15 @@ export const mapEventFullSearchEvent = mappr.compose(
   mapLocation
 );
 
-export const mapPresetSearchEvent = mappr({
-  name: "pathParameters.name",
-  id: "queryStringParameters.id"
-});
-
 export function mapIndexDocumentEvent(event) {
   return JSON.parse(event.body);
 }
 
-export function mapResponse(response, statusCode = 200) {
+export function mapResponse(response, event) {
   return {
-    statusCode,
+    body: JSON.stringify(response),
     headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true
-    },
-    body: JSON.stringify(response)
+      "Cache-Control": event.admin ? "no-cache" : "public, max-age=1800"
+    }
   };
 }

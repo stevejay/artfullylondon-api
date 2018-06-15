@@ -48,47 +48,25 @@ export function multiSearch(searches, options) {
     xrayWrapper.captureAsyncFunc("es search", subsegment => {
       client
         .msearch(createMsearchParams(searches, options))
-        .then(response => {
-          subsegment.close();
-          resolve(response);
-        })
-        .catch(err => {
-          subsegment.close(err);
-          reject(err);
-        });
-    });
-  });
-}
+        .then(results => {
+          const errors = results.responses
+            .filter(response => !!response.error)
+            .map(response => response.error);
 
-export function templateSearch(name, index, params) {
-  return new Promise((resolve, reject) => {
-    xrayWrapper.captureAsyncFunc("es search", subsegment => {
-      client
-        .searchTemplate({
-          index,
-          type: "doc",
-          body: { id: name, params }
-        })
-        .then(response => {
-          subsegment.close();
-          resolve(response);
-        })
-        .catch(err => {
-          subsegment.close(err);
-          reject(err);
-        });
-    });
-  });
-}
+          if (errors.length) {
+            const rootCauses = [];
 
-export async function templateMultiSearch(searches, options) {
-  return new Promise((resolve, reject) => {
-    xrayWrapper.captureAsyncFunc("es search", subsegment => {
-      client
-        .msearchTemplate(createMsearchParams(searches, options))
-        .then(response => {
+            errors.forEach(error =>
+              error.root_cause.forEach(rootCause =>
+                rootCauses.push(rootCause.reason)
+              )
+            );
+
+            throw new Error("[500] " + rootCauses.join("; "));
+          }
+
           subsegment.close();
-          resolve(response);
+          resolve(results);
         })
         .catch(err => {
           subsegment.close(err);

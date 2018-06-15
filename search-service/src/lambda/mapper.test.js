@@ -1,35 +1,5 @@
 import * as mapper from "./mapper";
 
-describe("mapAutocompleteSearchEvent", () => {
-  const tests = [
-    {
-      arg: {
-        term: "foo",
-        entityType: "venue"
-      },
-      expected: {
-        term: "foo",
-        entityType: "venue"
-      }
-    },
-    {
-      arg: {},
-      expected: {}
-    }
-  ];
-
-  tests.map(test => {
-    it(`should return ${JSON.stringify(
-      test.expected
-    )} when passed ${JSON.stringify(test.arg)}`, () => {
-      const result = mapper.mapAutocompleteSearchEvent({
-        queryStringParameters: test.arg
-      });
-      expect(result).toEqual(test.expected);
-    });
-  });
-});
-
 describe("mapEventFullSearchEvent", () => {
   const tests = [
     {
@@ -118,131 +88,19 @@ describe("mapEventFullSearchEvent", () => {
   });
 });
 
-describe("mapBasicSearchEvent", () => {
-  const tests = [
-    {
-      queryStringParameters: {
-        term: "foo",
-        north: 1,
-        south: 0,
-        east: 3,
-        west: 4
-      },
-      resource: "/admin/foo",
-      expected: {
-        term: "foo",
-        location: {
-          north: 1,
-          south: 0,
-          east: 3,
-          west: 4
-        },
-        isPublic: false
-      }
-    },
-    {
-      queryStringParameters: {
-        entityType: "event",
-        skip: 20,
-        take: 10
-      },
-      resource: "/admin/foo",
-      expected: {
-        entityType: "event",
-        skip: 20,
-        take: 10,
-        isPublic: false
-      }
-    },
-    {
-      queryStringParameters: {
-        entityType: "event",
-        skip: 20,
-        take: 10
-      },
-      resource: "/public/foo",
-      expected: {
-        entityType: "event",
-        skip: 20,
-        take: 10,
-        isPublic: true
-      }
-    }
-  ];
-
-  tests.map(test => {
-    it(`should return ${JSON.stringify(
-      test.expected
-    )} when passed ${JSON.stringify(
-      test.queryStringParameters
-    )} and ${JSON.stringify(test.resource)}`, () => {
-      const result = mapper.mapBasicSearchEvent({
-        queryStringParameters: test.queryStringParameters,
-        resource: test.resource
-      });
-
-      expect(result).toEqual(test.expected);
-    });
-  });
-});
-
-describe("mapPresetSearchEvent", () => {
-  it("should map a valid event", () => {
-    const event = {
-      pathParameters: { name: "Some name" },
-      queryStringParameters: { id: "some-id" }
-    };
-
-    const result = mapper.mapPresetSearchEvent(event);
-    expect(result).toEqual({ name: "Some name", id: "some-id" });
-  });
-
-  it("should map an empty event", () => {
-    const event = {
-      pathParameters: {},
-      queryStringParameters: {}
-    };
-
-    const result = mapper.mapPresetSearchEvent(event);
-    expect(result).toEqual({});
-  });
-});
-
-describe("mapRouteType", () => {
-  const tests = [
-    {
-      resource: "/admin/foo",
-      expected: { isPublic: false }
-    },
-    {
-      resource: "/public/foo",
-      expected: { isPublic: true }
-    }
-  ];
-
-  tests.map(test => {
-    it(`should return ${JSON.stringify(
-      test.expected
-    )} when passed ${JSON.stringify(test.resource)}`, () => {
-      const result = mapper.mapBasicSearchEvent({
-        resource: test.resource
-      });
-
-      expect(result).toEqual(test.expected);
-    });
-  });
-});
-
 describe("mapResponse", () => {
-  it("should map a response", () => {
-    const result = mapper.mapResponse({ foo: "bar" });
+  it("should map an admin response", () => {
+    const result = mapper.mapResponse({ foo: "bar" }, { admin: true });
     expect(result).toEqual({
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": true
-      },
+      headers: { "Cache-Control": "no-cache" },
+      body: '{"foo":"bar"}'
+    });
+  });
+
+  it("should map a non-admin response", () => {
+    const result = mapper.mapResponse({ foo: "bar" }, { admin: false });
+    expect(result).toEqual({
+      headers: { "Cache-Control": "public, max-age=1800" },
       body: '{"foo":"bar"}'
     });
   });

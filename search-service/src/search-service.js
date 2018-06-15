@@ -24,6 +24,7 @@ export async function eventAdvancedSearch(request) {
 }
 
 export async function presetSearch(request) {
+  request = normaliser.normalisePresetSearchRequest(request);
   validator.validatePresetSearch(request);
   const result = await searcher.presetSearch(request);
   return { ...result, params: request };

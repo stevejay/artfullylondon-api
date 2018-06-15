@@ -40,62 +40,28 @@ afterAll(async () => {
 
 it("should perform a public search of talents", async () => {
   const result = await service.get(
-    `/public/search/auto?term=car&entityType=${entityType.TALENT}`
+    `/search/auto?term=car&entityType=${entityType.TALENT}`
   );
 
-  expect(result).toEqual({
-    items: [
-      {
-        commonRole: "Director",
-        entityType: entityType.TALENT,
-        id: 1,
-        name: "Carrie Cracknell",
-        nameSuggest: "Carrie Cracknell",
-        output: "Carrie Cracknell",
-        status: "Active"
-      }
-    ],
-    params: { entityType: entityType.TALENT, term: "car" }
-  });
+  expect(result).toEqual(
+    '{body={"items":[{"status":"Active","commonRole":"Director","entityType":"talent","id":1,"nameSuggest":"Carrie Cracknell","output":"Carrie Cracknell","name":"Carrie Cracknell"}],"params":{"term":"car","entityType":"talent","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
+  );
 });
 
 it("should perform a public search of talents when there are no matches", async () => {
   const result = await service.get(
-    `/public/search/auto?term=foo&entityType=${entityType.TALENT}`
+    `/search/auto?term=foo&entityType=${entityType.TALENT}`
   );
 
-  expect(result).toEqual({
-    items: [],
-    params: { entityType: entityType.TALENT, term: "foo" }
-  });
+  expect(result).toEqual(
+    '{body={"items":[],"params":{"term":"foo","entityType":"talent","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
+  );
 });
 
-it("should perform a public search of everything", async () => {
-  const result = await service.get("/public/search/auto?term=car");
+it("should perform an admin search of everything", async () => {
+  const result = await service.get("/search/auto?term=car&admin=true");
 
-  expect(result).toEqual({
-    items: [
-      {
-        commonRole: "Director",
-        entityType: entityType.TALENT,
-        id: 1,
-        name: "Carrie Cracknell",
-        nameSuggest: "Carrie Cracknell",
-        output: "Carrie Cracknell",
-        status: "Active"
-      },
-      {
-        status: "Active",
-        entityType: entityType.VENUE,
-        venueType: "Theatre",
-        address: "59 Some St",
-        postcode: "N6 2AA",
-        id: 3,
-        name: "Carrillion Theatre",
-        nameSuggest: "Carrillion Theatre",
-        output: "Carrillion Theatre"
-      }
-    ],
-    params: { entityType: entityType.ALL, term: "car" }
-  });
+  expect(result).toEqual(
+    '{body={"items":[{"status":"Active","commonRole":"Director","entityType":"talent","id":1,"nameSuggest":"Carrie Cracknell","output":"Carrie Cracknell","name":"Carrie Cracknell"},{"status":"Active","entityType":"venue","venueType":"Theatre","address":"59 Some St","postcode":"N6 2AA","id":3,"nameSuggest":"Carrillion Theatre","output":"Carrillion Theatre","name":"Carrillion Theatre"}],"params":{"admin":true,"term":"car","entityType":"all","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=no-cache}}'
+  );
 });

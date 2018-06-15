@@ -8,42 +8,66 @@ normalise.normalisers.simplify = param =>
   typeof param !== "string" ? param : simplify(param);
 
 const AUTOCOMPLETE_SEARCH_NORMALISER = {
+  admin: {
+    undefinedIfEmpty: true,
+    toBool: true
+  },
   term: {
     trim: true,
     simplify: true
   },
   entityType: {
+    undefinedIfEmpty: true,
     default: entityType.ALL
   }
 };
 
 const BASIC_SEARCH_NORMALISER = {
+  admin: {
+    undefinedIfEmpty: true,
+    toBool: true
+  },
   term: {
     trim: true,
     undefinedIfEmpty: true
   },
   entityType: {
+    undefinedIfEmpty: true,
     default: entityType.ALL
   },
-  location: {
-    object: {
-      north: { toFloat: true },
-      west: { toFloat: true },
-      south: { toFloat: true },
-      east: { toFloat: true }
-    }
+  north: {
+    undefinedIfEmpty: true,
+    toFloat: true
+  },
+  west: {
+    undefinedIfEmpty: true,
+    toFloat: true
+  },
+  south: {
+    undefinedIfEmpty: true,
+    toFloat: true
+  },
+  east: {
+    undefinedIfEmpty: true,
+    toFloat: true
   },
   skip: {
+    undefinedIfEmpty: true,
     default: 0,
     toInt: true
   },
   take: {
+    undefinedIfEmpty: true,
     default: SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
     toInt: true
   }
 };
 
 const EVENT_ADVANCED_SEARCH_NORMALISER = {
+  admin: {
+    undefinedIfEmpty: true,
+    toBool: true
+  },
   term: {
     trim: true,
     undefinedIfEmpty: true
@@ -102,6 +126,13 @@ const EVENT_ADVANCED_SEARCH_NORMALISER = {
   }
 };
 
+const PRESET_SEARCH_NORMALISER = {
+  admin: {
+    undefinedIfEmpty: true,
+    toBool: true
+  }
+};
+
 export function normaliseAutocompleteSearchRequest(request) {
   return normalise({ ...request }, AUTOCOMPLETE_SEARCH_NORMALISER);
 }
@@ -112,4 +143,8 @@ export function normaliseBasicSearchRequest(request) {
 
 export function normaliseEventAdvancedSearchRequest(request) {
   return normalise({ ...request }, EVENT_ADVANCED_SEARCH_NORMALISER);
+}
+
+export function normalisePresetSearchRequest(request) {
+  return normalise({ ...request }, PRESET_SEARCH_NORMALISER);
 }

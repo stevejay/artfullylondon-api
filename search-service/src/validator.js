@@ -25,31 +25,17 @@ const LONGITUDE_NUMERICALITY = {
 };
 
 const LOCATION_CONSTRAINT = {
-  object: {
-    north: {
-      presence: true,
-      numericality: LATITUDE_NUMERICALITY
-    },
-    west: {
-      presence: true,
-      numericality: LONGITUDE_NUMERICALITY
-    },
-    south: {
-      presence: true,
-      numericality: LATITUDE_NUMERICALITY,
-      dependency: {
-        ensure: (value, attrs) => value < attrs.north,
-        message: "south value must be less than north value"
-      }
-    },
-    east: {
-      presence: true,
-      numericality: LONGITUDE_NUMERICALITY,
-      dependency: {
-        ensure: (value, attrs) => value > attrs.west,
-        message: "east value must be greater than west value"
-      }
-    }
+  north: {
+    numericality: LATITUDE_NUMERICALITY
+  },
+  west: {
+    numericality: LONGITUDE_NUMERICALITY
+  },
+  south: {
+    numericality: LATITUDE_NUMERICALITY
+  },
+  east: {
+    numericality: LONGITUDE_NUMERICALITY
   }
 };
 
@@ -70,6 +56,9 @@ const TAKE_CONSTRAINT = {
 };
 
 const AUTOCOMPLETE_SEARCH_CONSTRAINT = {
+  admin: {
+    bool: true
+  },
   term: {
     string: true,
     presence: true,
@@ -82,6 +71,9 @@ const AUTOCOMPLETE_SEARCH_CONSTRAINT = {
 };
 
 const BASIC_SEARCH_CONSTRAINT = {
+  admin: {
+    bool: true
+  },
   term: {
     string: true,
     length: TERM_LENGTH
@@ -92,19 +84,13 @@ const BASIC_SEARCH_CONSTRAINT = {
     inclusion: entityType.ALLOWED_VALUES,
     dependency: [
       {
-        test: value => !value || value === entityType.ALL,
+        test: value => value === entityType.ALL,
         ensure: (_, attrs) => attrs.skip === 0,
         message: "Skip must be zero or not included when searching all entities"
-      },
-      {
-        test: value => value !== entityType.VENUE,
-        ensure: (_, attrs) =>
-          !attrs.north && !attrs.south && !attrs.east && !attrs.west,
-        message: "location can only be included when entityType value is venue"
       }
     ]
   },
-  location: LOCATION_CONSTRAINT,
+  ...LOCATION_CONSTRAINT,
   skip: SKIP_CONSTRAINT,
   take: TAKE_CONSTRAINT
 };
@@ -169,7 +155,7 @@ const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
     string: true,
     inclusion: areaType.ALLOWED_VALUES
   },
-  location: LOCATION_CONSTRAINT,
+  ...LOCATION_CONSTRAINT,
   venueId: {
     string: true,
     length: ID_LENGTH

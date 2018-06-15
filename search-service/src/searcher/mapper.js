@@ -14,6 +14,11 @@ export function mapAutocompleteSearchParams(params) {
 export function mapBasicSearchParams(params) {
   return {
     ...params,
+    hasLocation:
+      _.isFinite(params.north) &&
+      _.isFinite(params.south) &&
+      _.isFinite(params.east) &&
+      _.isFinite(params.west),
     hasTerm: !!params.term
   };
 }

@@ -127,21 +127,21 @@ function createVenueSearch(params) {
   params.hasTerm && query.must(esb.matchQuery("name", params.term));
   params.isPublic && query.filter(esb.termQuery("status", "Active"));
 
-  params.location &&
+  params.hasLocation &&
     query.filter(
       esb
         .geoBoundingBoxQuery("locationOptimized")
         .topLeft(
           esb
             .geoPoint()
-            .lat(params.location.north)
-            .lon(params.location.west)
+            .lat(params.north)
+            .lon(params.west)
         )
         .bottomRight(
           esb
             .geoPoint()
-            .lat(params.location.south)
-            .lon(params.location.east)
+            .lat(params.south)
+            .lon(params.east)
         )
         .type("indexed")
     );

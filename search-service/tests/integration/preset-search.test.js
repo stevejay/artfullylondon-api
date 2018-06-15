@@ -1,17 +1,12 @@
 import * as service from "../utils/service";
 import * as elasticsearch from "../utils/elasticsearch";
 import * as testData from "./test-data";
-import * as searchTemplateType from "../../src/searcher/search-template-type";
 import * as searchIndexType from "../../src/types/search-index-type";
 import * as presetSearchType from "../../src/types/preset-search-type";
 import * as entityType from "../../src/types/entity-type";
 jest.setTimeout(60000);
 
 beforeAll(async () => {
-  await elasticsearch.createTemplate(searchTemplateType.EVENT_ADVANCED);
-  await elasticsearch.createTemplate(searchTemplateType.SITEMAP_EVENT_IDS);
-  await elasticsearch.createTemplate(searchTemplateType.EVENTS_BY_EXTERNAL_IDS);
-
   await elasticsearch.createIndex(searchIndexType.TALENT);
   await elasticsearch.createIndex(searchIndexType.VENUE);
   await elasticsearch.createIndex(searchIndexType.EVENT);
@@ -62,7 +57,7 @@ afterAll(async () => {
 
 it("should perform an entity count preset search", async () => {
   const result = await service.get(
-    `/public/search/preset/${presetSearchType.ENTITY_COUNTS}`
+    `/search/preset/${presetSearchType.ENTITY_COUNTS}`
   );
 
   expect(result).toEqual({
@@ -78,7 +73,7 @@ it("should perform an entity count preset search", async () => {
 
 it("should perform a sitemap event ids preset search", async () => {
   const result = await service.get(
-    `/public/search/preset/${presetSearchType.SITEMAP_EVENT_IDS}`
+    `/search/preset/${presetSearchType.SITEMAP_EVENT_IDS}`
   );
 
   expect(result).toEqual({
@@ -93,7 +88,7 @@ it("should perform a sitemap event ids preset search", async () => {
 
 it("should perform a featured events preset search", async () => {
   const result = await service.get(
-    `/public/search/preset/${presetSearchType.FEATURED_EVENTS}`
+    `/search/preset/${presetSearchType.FEATURED_EVENTS}`
   );
 
   expect(result).toEqual({
@@ -105,7 +100,7 @@ it("should perform a featured events preset search", async () => {
 
 it("should perform a venue related events preset search", async () => {
   const result = await service.get(
-    `/public/search/preset/${presetSearchType.VENUE_RELATED_EVENTS}?id=${
+    `/search/preset/${presetSearchType.VENUE_RELATED_EVENTS}?id=${
       testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id
     }`
   );
@@ -122,7 +117,9 @@ it("should perform a venue related events preset search", async () => {
 
 it("should perform an events by external ids preset search", async () => {
   const result = await service.get(
-    `/admin/search/preset/${presetSearchType.EVENTS_BY_EXTERNAL_IDS}?id=foo,bar`
+    `/search/preset/${
+      presetSearchType.EVENTS_BY_EXTERNAL_IDS
+    }?id=foo,bar&admin=true`
   );
 
   expect(result).toEqual({

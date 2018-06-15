@@ -1,12 +1,10 @@
 import * as service from "../utils/service";
 import * as elasticsearch from "../utils/elasticsearch";
-import * as searchTemplateType from "../../src/searcher/search-template-type";
 import * as searchIndexType from "../../src/types/search-index-type";
 import * as entityType from "../../src/types/entity-type";
 jest.setTimeout(60000);
 
 beforeAll(async () => {
-  await elasticsearch.createTemplate(searchTemplateType.EVENT_ADVANCED);
   await elasticsearch.createIndex(searchIndexType.EVENT);
   await elasticsearch.indexDocument(searchIndexType.EVENT, {
     status: "Active",

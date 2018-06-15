@@ -26,6 +26,38 @@ custom:
     stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
     indexDocumentTopicName: IndexDocument
+    errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
+    standardResponses:
+        headers:
+            Access-Control-Allow-Credentials : "'true'"
+        template: $input.path('$')
+        statusCodes:
+            200:
+                pattern: ''
+                template:
+                    application/json: $input.path("$.body")
+                headers:
+                    Cache-Control: integration.response.body.headers.Cache-Control
+            400:
+                pattern: '^\[400\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            401:
+                pattern: '^\[401\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            403:
+                pattern: '^\[403\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            404:
+                pattern: '^\[404\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            500:
+                pattern: '^\[500\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -42,46 +74,82 @@ functions:
         handler: src/lambda/autocomplete-search-handler.handler
         events:
             - http:
-                path: "admin/search/auto"
+                path: "search/auto"
                 method: get
                 cors: true
-            - http:
-                path: "public/search/auto"
-                method: get
-                cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                            "admin": "$input.params('admin')",
+                            "term" : "$input.params('term')",
+                            "entityType" : "$input.params('entityType')"
+                            }
+                response: ${self:custom.standardResponses}
     basicSearch:
         handler: src/lambda/basic-search-handler.handler
         events:
             - http:
-                path: "admin/search/basic"
+                path: "search/basic"
                 method: get
                 cors: true
-            - http:
-                path: "public/search/basic"
-                method: get
-                cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                            "admin": "$input.params('admin')",
+                            "term" : "$input.params('term')",
+                            "entityType" : "$input.params('entityType')",
+                            "north" : "$input.params('north')",
+                            "west" : "$input.params('west')",
+                            "south" : "$input.params('south')",
+                            "east" : "$input.params('east')",
+                            "skip" : "$input.params('skip')",
+                            "take" : "$input.params('take')"
+                            }
+                response: ${self:custom.standardResponses}
     eventAdvancedSearch:
         handler: src/lambda/event-advanced-search-handler.handler
         events:
             - http:
-                path: "public/search/event"
+                path: "search/event"
                 method: get
                 cors: true
-            - http:
-                path: "admin/search/event"
-                method: get
-                cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                            "admin": "$input.params('admin')",
+                            "term" : "$input.params('term')",
+                            "entityType" : "$input.params('entityType')",
+                            "north" : "$input.params('north')",
+                            "west" : "$input.params('west')",
+                            "south" : "$input.params('south')",
+                            "east" : "$input.params('east')",
+                            "skip" : "$input.params('skip')",
+                            "take" : "$input.params('take')"
+                            }
+                response: ${self:custom.standardResponses}
     presetSearch:
         handler: src/lambda/preset-search-handler.handler
         events:
             - http:
-                path: "public/search/preset/{name}"
+                path: "search/preset/{name}"
                 method: get
                 cors: true
-            - http:
-                path: "admin/search/preset/{name}"
-                method: get
-                cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                            "admin": "$input.params('admin')",
+                            "id" : "$input.params('id')",
+                            "name" : "$input.params('name')"
+                            }
+                response: ${self:custom.standardResponses}
     indexDocument:
         handler: src/lambda/index-document-handler.handler
         timeout: 300
