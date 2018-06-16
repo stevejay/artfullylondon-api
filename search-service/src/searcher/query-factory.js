@@ -48,10 +48,10 @@ export function createEntityCountsSearches() {
 }
 
 export function createBasicSearchSearches(params) {
-  const data = getBasicSearchDataForEntityType(params.entityType);
+  const creationData = getBasicSearchCreationData(params.entityType);
   const searches = [];
 
-  data.forEach(datum => {
+  creationData.forEach(datum => {
     searches.push({ index: datum.index, type: "doc" });
     searches.push(datum.builder(params));
   });
@@ -59,26 +59,39 @@ export function createBasicSearchSearches(params) {
   return searches;
 }
 
-function getBasicSearchDataForEntityType(type) {
-  const talent = { index: searchIndexType.TALENT, builder: createTalentSearch };
-  const venue = { index: searchIndexType.VENUE, builder: createVenueSearch };
-  const eventSeries = {
+const BASIC_SEARCH_DATA = {
+  [entityType.TALENT]: {
+    index: searchIndexType.TALENT,
+    builder: createTalentSearch
+  },
+  [entityType.VENUE]: {
+    index: searchIndexType.VENUE,
+    builder: createVenueSearch
+  },
+  [entityType.EVENT_SERIES]: {
     index: searchIndexType.EVENT_SERIES,
     builder: createEventSeriesSearch
-  };
-  const event = { index: searchIndexType.EVENT, builder: createEventSearch };
+  },
+  [entityType.EVENT]: {
+    index: searchIndexType.EVENT,
+    builder: createEventSearch
+  }
+};
 
+function getBasicSearchCreationData(type) {
   switch (type) {
     case entityType.TALENT:
-      return [talent];
     case entityType.VENUE:
-      return [venue];
     case entityType.EVENT:
-      return [event];
     case entityType.EVENT_SERIES:
-      return [eventSeries];
+      return BASIC_SEARCH_DATA[type];
     case entityType.ALL:
-      return [talent, venue, eventSeries, event];
+      return [
+        BASIC_SEARCH_DATA[entityType.TALENT],
+        BASIC_SEARCH_DATA[entityType.VENUE],
+        BASIC_SEARCH_DATA[entityType.EVENT_SERIES],
+        BASIC_SEARCH_DATA[entityType.EVENT]
+      ];
     default:
       throw new Error(`entity type value out of range: ${type}`);
   }
@@ -285,21 +298,21 @@ export function createEventAdvancedSearch(params) {
     );
   }
 
-  params.location &&
+  params.hasLocation &&
     query.filter(
       esb
         .geoBoundingBoxQuery("locationOptimized")
         .topLeft(
           esb
             .geoPoint()
-            .lat(params.location.north)
-            .lon(params.location.west)
+            .lat(params.north)
+            .lon(params.west)
         )
         .bottomRight(
           esb
             .geoPoint()
-            .lat(params.location.south)
-            .lon(params.location.east)
+            .lat(params.south)
+            .lon(params.east)
         )
         .type("indexed")
     );

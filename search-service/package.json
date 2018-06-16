@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "aws-xray-sdk": "^1.2.0",
+    "date-fns": "^2.0.0-alpha.10",
     "elastic-builder": "^1.2.0",
     "elasticsearch": "^15.0.0",
     "ensure-request": "^4.0.0",
@@ -51,8 +52,6 @@
     "loglevel": "^1.6.1",
     "loose-interleave": "^1.0.0",
     "mappr": "^6.1.0",
-    "moment": "^2.22.2",
-    "moment-timezone": "^0.5.17",
     "normalise-request": "^1.4.4",
     "source-map-support": "^0.5.6"
   }

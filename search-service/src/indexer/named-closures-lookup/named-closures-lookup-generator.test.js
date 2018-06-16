@@ -1,4 +1,3 @@
-import moment from "moment";
 import * as generator from "./named-closures-lookup-generator";
 import * as namedClosureType from "../../types/named-closure-type";
 
@@ -36,8 +35,8 @@ it("should generate the correct lookup data", () => {
 
   const result = generator.generate(
     seedData,
-    moment("2018-01-10"),
-    moment("2019-01-12")
+    new Date("2018-01-10"),
+    new Date("2019-01-12")
   );
 
   expect(result).toEqual({

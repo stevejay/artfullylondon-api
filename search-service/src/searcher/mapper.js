@@ -1,8 +1,9 @@
 import _ from "lodash";
+import addDays from "date-fns/addDays";
 import looseInterleave from "loose-interleave";
 import * as entityType from "../types/entity-type";
 import * as presetSearchType from "../types/preset-search-type";
-import * as time from "../time";
+import * as timeUtils from "../time-utils";
 
 export function mapAutocompleteSearchParams(params) {
   return {
@@ -14,11 +15,7 @@ export function mapAutocompleteSearchParams(params) {
 export function mapBasicSearchParams(params) {
   return {
     ...params,
-    hasLocation:
-      _.isFinite(params.north) &&
-      _.isFinite(params.south) &&
-      _.isFinite(params.east) &&
-      _.isFinite(params.west),
+    hasLocation: mapHasLocation(params),
     hasTerm: !!params.term
   };
 }
@@ -54,12 +51,13 @@ export function mapEventAdvancedSearchParams(params) {
     hasDateTo: !!mapped.dateTo,
     hasTimeFrom: !!mapped.timeFrom,
     hasTimeTo: !!mapped.timeTo,
-    hasAudience: !!mapped.audience
+    hasAudience: !!mapped.audience,
+    hasLocation: mapHasLocation(mapped)
   };
 }
 
 export function mapPresetEventAdvancedSearchParams(params) {
-  const now = time.getLondonNow();
+  const now = timeUtils.getUtcNow();
 
   switch (params.name) {
     case presetSearchType.FEATURED_EVENTS:
@@ -67,32 +65,32 @@ export function mapPresetEventAdvancedSearchParams(params) {
         skip: 0,
         take: 24,
         area: "Central",
-        dateFrom: time.formatAsStringDate(now),
-        dateTo: time.formatAsStringDate(now.add(14, "days"))
+        dateFrom: timeUtils.formatAsISODateString(now),
+        dateTo: timeUtils.formatAsISODateString(addDays(now, 14))
       };
     case presetSearchType.VENUE_RELATED_EVENTS:
       return {
         skip: 0,
         take: 300,
         venueId: params.id,
-        dateFrom: time.formatAsStringDate(now),
-        dateTo: time.formatAsStringDate(now.add(366, "days"))
+        dateFrom: timeUtils.formatAsISODateString(now),
+        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
       };
     case presetSearchType.TALENT_RELATED_EVENTS:
       return {
         skip: 0,
         take: 300,
         talentId: params.id,
-        dateFrom: time.formatAsStringDate(now),
-        dateTo: time.formatAsStringDate(now.add(366, "days"))
+        dateFrom: timeUtils.formatAsISODateString(now),
+        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
       };
     case presetSearchType.EVENT_SERIES_RELATED_EVENTS:
       return {
         skip: 0,
         take: 300,
         eventSeriesId: params.id,
-        dateFrom: time.formatAsStringDate(now),
-        dateTo: time.formatAsStringDate(now.add(366, "days"))
+        dateFrom: timeUtils.formatAsISODateString(now),
+        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
       };
     default:
       throw new Error(`Unsupported preset search ${params.name}`);
@@ -100,10 +98,10 @@ export function mapPresetEventAdvancedSearchParams(params) {
 }
 
 export function mapSitemapEventIdsSearchParams() {
-  const now = time.getLondonNow();
+  const now = timeUtils.getUtcNow();
 
   return {
-    dateTo: time.formatAsStringDate(now)
+    dateTo: timeUtils.formatAsISODateString(now)
   };
 }
 
@@ -193,4 +191,13 @@ function mapMediumToCategoryForEventSearch(src) {
     default:
       throw new Error(`Unknown medium ${src.medium}`);
   }
+}
+
+function mapHasLocation(params) {
+  return (
+    _.isFinite(params.north) &&
+    _.isFinite(params.south) &&
+    _.isFinite(params.east) &&
+    _.isFinite(params.west)
+  );
 }

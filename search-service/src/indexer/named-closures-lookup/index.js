@@ -1,6 +1,7 @@
-import moment from "moment";
+import addYears from "date-fns/addYears";
 import * as generator from "./named-closures-lookup-generator";
 import * as namedClosureType from "../../types/named-closure-type";
+import * as timeUtils from "../../time-utils";
 
 const SEED_DATA = {
   [namedClosureType.BANK_HOLIDAYS]: [
@@ -37,8 +38,8 @@ let lookup = null;
 
 export function get() {
   if (!lookup) {
-    const now = moment();
-    lookup = generator.generate(SEED_DATA, now, moment(now).add(1, "years"));
+    const now = timeUtils.getUtcNow();
+    lookup = generator.generate(SEED_DATA, now, addYears(now, 1));
   }
 
   return lookup;

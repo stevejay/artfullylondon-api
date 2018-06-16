@@ -25,33 +25,26 @@ const LONGITUDE_NUMERICALITY = {
 };
 
 const LOCATION_CONSTRAINT = {
-  north: {
-    numericality: LATITUDE_NUMERICALITY
-  },
-  west: {
-    numericality: LONGITUDE_NUMERICALITY
-  },
-  south: {
-    numericality: LATITUDE_NUMERICALITY
-  },
-  east: {
-    numericality: LONGITUDE_NUMERICALITY
-  }
+  north: { number: true, numericality: LATITUDE_NUMERICALITY },
+  west: { number: true, numericality: LONGITUDE_NUMERICALITY },
+  south: { number: true, numericality: LATITUDE_NUMERICALITY },
+  east: { number: true, numericality: LONGITUDE_NUMERICALITY }
 };
 
-const SKIP_CONSTRAINT = {
-  presence: true,
-  number: true,
-  numericality: { onlyInteger: true, greaterThanOrEqualTo: 0 }
-};
-
-const TAKE_CONSTRAINT = {
-  presence: true,
-  number: true,
-  numericality: {
-    onlyInteger: true,
-    greaterThanOrEqualTo: 1,
-    lessThanOrEqualTo: 300
+const SKIP_TAKE_CONSTRAINT = {
+  skip: {
+    presence: true,
+    number: true,
+    numericality: { onlyInteger: true, greaterThanOrEqualTo: 0 }
+  },
+  take: {
+    presence: true,
+    number: true,
+    numericality: {
+      onlyInteger: true,
+      greaterThanOrEqualTo: 1,
+      lessThanOrEqualTo: 300
+    }
   }
 };
 
@@ -65,7 +58,7 @@ const AUTOCOMPLETE_SEARCH_CONSTRAINT = {
     length: TERM_LENGTH
   },
   entityType: {
-    string: true,
+    presence: true,
     inclusion: entityType.ALLOWED_VALUES
   }
 };
@@ -80,7 +73,6 @@ const BASIC_SEARCH_CONSTRAINT = {
   },
   entityType: {
     presence: true,
-    string: true,
     inclusion: entityType.ALLOWED_VALUES,
     dependency: [
       {
@@ -91,8 +83,7 @@ const BASIC_SEARCH_CONSTRAINT = {
     ]
   },
   ...LOCATION_CONSTRAINT,
-  skip: SKIP_CONSTRAINT,
-  take: TAKE_CONSTRAINT
+  ...SKIP_TAKE_CONSTRAINT
 };
 
 const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
@@ -155,7 +146,6 @@ const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
     string: true,
     inclusion: areaType.ALLOWED_VALUES
   },
-  ...LOCATION_CONSTRAINT,
   venueId: {
     string: true,
     length: ID_LENGTH
@@ -164,8 +154,8 @@ const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
     string: true,
     length: ID_LENGTH
   },
-  skip: SKIP_CONSTRAINT,
-  take: TAKE_CONSTRAINT
+  ...LOCATION_CONSTRAINT,
+  ...SKIP_TAKE_CONSTRAINT
 };
 
 const PRESET_SEARCH_CONSTRAINT = {
@@ -180,7 +170,6 @@ const PRESET_SEARCH_CONSTRAINT = {
 
 const INDEX_DOCUMENT_CONSTRAINT = {
   entityType: {
-    string: true,
     presence: true,
     inclusion: entityType.ALLOWED_VALUES
   },
@@ -192,8 +181,8 @@ const INDEX_DOCUMENT_CONSTRAINT = {
         presence: true
       },
       entityType: {
-        string: true,
-        presence: true
+        presence: true,
+        inclusion: entityType.ALLOWED_VALUES
       }
     }
   }

@@ -1,13 +1,16 @@
 import _ from "lodash";
-import moment from "moment";
+import getISODay from "date-fns/getIsoDay";
+import subDays from "date-fns/subDays";
+import addDays from "date-fns/addDays";
+import getYear from "date-fns/getYear";
 import * as namedClosureType from "../../types/named-closure-type";
-import * as time from "../../time";
+import * as timeUtils from "../../time-utils";
 
 const MONDAY = 1;
 const SATURDAY = 6;
 
 export function generate(seedData, dateFrom, dateTo) {
-  const years = _.range(dateFrom.year(), dateTo.year() + 1);
+  const years = _.range(getYear(dateFrom), getYear(dateTo) + 1);
   const augustDayStrs = _.range(1, 32).map(day => _.padStart(day, 2, "0"));
 
   return {
@@ -22,16 +25,13 @@ export function generate(seedData, dateFrom, dateTo) {
           .flatten(
             seedData[namedClosureType.BANK_HOLIDAYS].map(bankHoliday => {
               const result = [bankHoliday];
-              if (moment(bankHoliday).isoWeekday() === MONDAY) {
+              const bankHolidayDate = new Date(bankHoliday);
+              if (getISODay(bankHolidayDate) === MONDAY) {
                 result.push(
-                  moment(bankHoliday)
-                    .add(-2, "days")
-                    .format(time.DATE_FORMAT)
+                  timeUtils.formatAsISODateString(subDays(bankHolidayDate, 2))
                 );
                 result.push(
-                  moment(bankHoliday)
-                    .add(-1, "days")
-                    .format(time.DATE_FORMAT)
+                  timeUtils.formatAsISODateString(subDays(bankHolidayDate, 1))
                 );
               }
               return result;
@@ -83,18 +83,15 @@ export function generate(seedData, dateFrom, dateTo) {
     ...createEntryForType(
       namedClosureType.EASTER_HOLIDAY_PERIOD,
       _.flatten(
-        seedData[namedClosureType.EASTER_SUNDAY].map(sunday => [
-          moment(sunday)
-            .add(-2, "days")
-            .format(time.DATE_FORMAT),
-          moment(sunday)
-            .add(-1, "days")
-            .format(time.DATE_FORMAT),
-          moment(sunday).format(time.DATE_FORMAT),
-          moment(sunday)
-            .add(1, "days")
-            .format(time.DATE_FORMAT)
-        ])
+        seedData[namedClosureType.EASTER_SUNDAY].map(sunday => {
+          const sundayDate = new Date(sunday);
+          return [
+            timeUtils.formatAsISODateString(subDays(sundayDate, 2)),
+            timeUtils.formatAsISODateString(subDays(sundayDate, 1)),
+            timeUtils.formatAsISODateString(sundayDate),
+            timeUtils.formatAsISODateString(addDays(sundayDate, 1))
+          ];
+        })
       )
     ),
     ...createEntryForType(
@@ -103,7 +100,7 @@ export function generate(seedData, dateFrom, dateTo) {
         years.map(year =>
           augustDayStrs
             .map(day => `${year}-08-${day}`)
-            .filter(date => moment(date).isoWeekday() === SATURDAY)
+            .filter(date => getISODay(new Date(date)) === SATURDAY)
         )
       )
     ),

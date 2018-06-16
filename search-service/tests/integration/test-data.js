@@ -1,4 +1,6 @@
-import moment from "moment-timezone";
+import subDays from "date-fns/subDays";
+import addDays from "date-fns/addDays";
+import format from "date-fns/format";
 
 export const TALENT_ACTIVE_CARRIE_CRACKNELL = {
   status: "Active",
@@ -55,17 +57,11 @@ export const EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION = {
   entityType: "event",
   name: "Andy Warhol: New York Start",
   venueId: VENUE_ACTIVE_ALMEIDA_THEATRE.id,
-  dateFrom: moment()
-    .add(-2, "days")
-    .format("YYYY-MM-DD"),
-  dateTo: moment()
-    .add(300, "days")
-    .format("YYYY-MM-DD"),
+  dateFrom: format(subDays(new Date(Date.now()), 2), "yyyy-MM-dd"),
+  dateTo: format(addDays(new Date(Date.now()), 300), "yyyy-MM-dd"),
   dates: [
     {
-      date: moment()
-        .add(10, "days")
-        .format("YYYY-MM-DD"),
+      date: format(addDays(new Date(Date.now()), 10), "yyyy-MM-dd"),
       from: "10:00",
       to: "18:00"
     }

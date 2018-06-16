@@ -1,8 +1,9 @@
 import _ from "lodash";
-import moment from "moment";
-import * as time from "../../time";
+import getISODay from "date-fns/getIsoDay";
+import addDays from "date-fns/addDays";
 import * as eventType from "../../types/event-type";
 import * as occurrenceType from "../../types/occurrence-type";
+import * as timeUtils from "../../time-utils";
 
 export function generate(event, dateToday, dateMax, namedClosuresLookup) {
   if (event.soldOut) {
@@ -36,8 +37,8 @@ export function getEventDateRange(event, dateToday, dateMax) {
     return { from: dateToday, to: dateMax };
   }
 
-  const eventDateFrom = moment(event.dateFrom);
-  const eventDateTo = moment(event.dateTo);
+  const eventDateFrom = new Date(event.dateFrom);
+  const eventDateTo = new Date(event.dateTo);
 
   if (eventDateFrom > dateMax || eventDateTo < dateToday) {
     return null;
@@ -54,15 +55,15 @@ export function createInitialDatesLookup(dateRange) {
   }
 
   const result = {};
-  const loopDate = dateRange.from;
+  let loopDate = dateRange.from;
 
   do {
-    result[loopDate.format(time.DATE_FORMAT)] = {
-      day: loopDate.isoWeekday(),
+    result[timeUtils.formatAsISODateString(loopDate)] = {
+      day: getISODay(loopDate),
       times: []
     };
 
-    loopDate.add(1, "days");
+    loopDate = addDays(loopDate, 1);
   } while (loopDate <= dateRange.to);
 
   return result;

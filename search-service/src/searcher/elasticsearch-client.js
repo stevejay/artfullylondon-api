@@ -8,7 +8,7 @@ const client = new elasticsearch.Client({
 
 export function bulk(params) {
   return new Promise((resolve, reject) => {
-    xrayWrapper.captureAsyncFunc("es search", subsegment => {
+    xrayWrapper.captureAsyncFunc("es bulk update", subsegment => {
       client.bulk(params, (err, response) => {
         if (err) {
           subsegment.close(err);
@@ -45,7 +45,7 @@ export function search(query) {
 
 export function multiSearch(searches, options) {
   return new Promise((resolve, reject) => {
-    xrayWrapper.captureAsyncFunc("es search", subsegment => {
+    xrayWrapper.captureAsyncFunc("es multi search", subsegment => {
       client
         .msearch(createMsearchParams(searches, options))
         .then(results => {

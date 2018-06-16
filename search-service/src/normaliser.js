@@ -7,34 +7,25 @@ const SEARCH_RESULTS_DEFAULT_PAGE_SIZE = 12;
 normalise.normalisers.simplify = param =>
   typeof param !== "string" ? param : simplify(param);
 
-const AUTOCOMPLETE_SEARCH_NORMALISER = {
-  admin: {
+const ADMIN_FLAG_NORMALISER = {
+  undefinedIfEmpty: true,
+  toBool: true
+};
+
+const SKIP_TAKE_NORMALISER = {
+  skip: {
     undefinedIfEmpty: true,
-    toBool: true
+    default: 0,
+    toInt: true
   },
-  term: {
-    trim: true,
-    simplify: true
-  },
-  entityType: {
+  take: {
     undefinedIfEmpty: true,
-    default: entityType.ALL
+    default: SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
+    toInt: true
   }
 };
 
-const BASIC_SEARCH_NORMALISER = {
-  admin: {
-    undefinedIfEmpty: true,
-    toBool: true
-  },
-  term: {
-    trim: true,
-    undefinedIfEmpty: true
-  },
-  entityType: {
-    undefinedIfEmpty: true,
-    default: entityType.ALL
-  },
+const LOCATION_NORMALISER = {
   north: {
     undefinedIfEmpty: true,
     toFloat: true
@@ -50,24 +41,37 @@ const BASIC_SEARCH_NORMALISER = {
   east: {
     undefinedIfEmpty: true,
     toFloat: true
-  },
-  skip: {
-    undefinedIfEmpty: true,
-    default: 0,
-    toInt: true
-  },
-  take: {
-    undefinedIfEmpty: true,
-    default: SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
-    toInt: true
   }
 };
 
-const EVENT_ADVANCED_SEARCH_NORMALISER = {
-  admin: {
-    undefinedIfEmpty: true,
-    toBool: true
+const AUTOCOMPLETE_SEARCH_NORMALISER = {
+  admin: ADMIN_FLAG_NORMALISER,
+  term: {
+    trim: true,
+    simplify: true
   },
+  entityType: {
+    undefinedIfEmpty: true,
+    default: entityType.ALL
+  }
+};
+
+const BASIC_SEARCH_NORMALISER = {
+  admin: ADMIN_FLAG_NORMALISER,
+  term: {
+    trim: true,
+    undefinedIfEmpty: true
+  },
+  entityType: {
+    undefinedIfEmpty: true,
+    default: entityType.ALL
+  },
+  ...LOCATION_NORMALISER,
+  ...SKIP_TAKE_NORMALISER
+};
+
+const EVENT_ADVANCED_SEARCH_NORMALISER = {
+  admin: ADMIN_FLAG_NORMALISER,
   term: {
     trim: true,
     undefinedIfEmpty: true
@@ -102,35 +106,18 @@ const EVENT_ADVANCED_SEARCH_NORMALISER = {
   booking: {
     undefinedIfEmpty: true
   },
-  location: {
-    object: {
-      north: { toFloat: true },
-      west: { toFloat: true },
-      south: { toFloat: true },
-      east: { toFloat: true }
-    }
-  },
   venueId: {
     undefinedIfEmpty: true
   },
   talentId: {
     undefinedIfEmpty: true
   },
-  skip: {
-    default: 0,
-    toInt: true
-  },
-  take: {
-    default: SEARCH_RESULTS_DEFAULT_PAGE_SIZE,
-    toInt: true
-  }
+  ...LOCATION_NORMALISER,
+  ...SKIP_TAKE_NORMALISER
 };
 
 const PRESET_SEARCH_NORMALISER = {
-  admin: {
-    undefinedIfEmpty: true,
-    toBool: true
-  }
+  admin: ADMIN_FLAG_NORMALISER
 };
 
 export function normaliseAutocompleteSearchRequest(request) {

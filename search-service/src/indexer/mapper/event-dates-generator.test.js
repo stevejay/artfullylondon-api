@@ -1,5 +1,4 @@
 import deepFreeze from "deep-freeze";
-import moment from "moment";
 import * as eventDatesGenerator from "./event-dates-generator";
 
 describe("getEventDateRange", () => {
@@ -154,13 +153,13 @@ describe("getEventDateRange", () => {
     it(test.it, () => {
       const actual = eventDatesGenerator.getEventDateRange(
         test.args.event,
-        moment(test.args.dateTodayStr),
-        moment(test.args.dateMaxStr)
+        new Date(test.args.dateTodayStr),
+        new Date(test.args.dateMaxStr)
       );
 
       if (test.expected) {
-        expect(actual.from).toEqual(moment(test.expected.from));
-        expect(actual.to).toEqual(moment(test.expected.to));
+        expect(actual.from).toEqual(new Date(test.expected.from));
+        expect(actual.to).toEqual(new Date(test.expected.to));
       } else {
         expect(actual).toEqual(null);
       }
@@ -196,8 +195,8 @@ describe("createInitialDatesLookup", () => {
   tests.forEach(test => {
     it(test.it, () => {
       const actual = eventDatesGenerator.createInitialDatesLookup({
-        from: moment(test.args.range.from),
-        to: moment(test.args.range.to)
+        from: new Date(test.args.range.from),
+        to: new Date(test.args.range.to)
       });
       expect(actual).toEqual(test.expected);
     });
@@ -1982,8 +1981,8 @@ describe("generate", () => {
       it(test.it, () => {
         const result = eventDatesGenerator.generate(
           test.args.event,
-          moment(test.args.dateToday),
-          moment(test.args.dateMax),
+          new Date(test.args.dateToday),
+          new Date(test.args.dateMax),
           {}
         );
 
@@ -2208,8 +2207,8 @@ describe("generate", () => {
       it(test.it, () => {
         const result = eventDatesGenerator.generate(
           test.args.event,
-          moment(test.args.dateToday),
-          moment(test.args.dateMax),
+          new Date(test.args.dateToday),
+          new Date(test.args.dateMax),
           {}
         );
 
@@ -2365,8 +2364,8 @@ describe("generate", () => {
       it(test.it, () => {
         const result = eventDatesGenerator.generate(
           test.args.event,
-          moment(test.args.dateToday),
-          moment(test.args.dateMax),
+          new Date(test.args.dateToday),
+          new Date(test.args.dateMax),
           { BoxingDay: ["2016-12-26", "2017-12-26"] }
         );
 
