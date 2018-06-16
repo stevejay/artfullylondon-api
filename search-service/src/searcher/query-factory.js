@@ -84,7 +84,7 @@ function getBasicSearchCreationData(type) {
     case entityType.VENUE:
     case entityType.EVENT:
     case entityType.EVENT_SERIES:
-      return BASIC_SEARCH_DATA[type];
+      return [BASIC_SEARCH_DATA[type]];
     case entityType.ALL:
       return [
         BASIC_SEARCH_DATA[entityType.TALENT],

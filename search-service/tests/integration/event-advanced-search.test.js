@@ -25,13 +25,9 @@ afterAll(async () => {
 });
 
 it("should perform a public search", async () => {
-  const result = await service.get("/public/search/event?term=foo");
+  const result = await service.get("/search/event?term=foo");
 
-  expect(result).toEqual({
-    items: [
-      { entityType: entityType.EVENT, id: "1", name: "Foo", status: "Active" }
-    ],
-    params: { skip: 0, take: 12, term: "foo" },
-    total: 1
-  });
+  expect(result).toEqual(
+    '{body={"items":[{"entityType":"event","name":"Foo","id":"1","status":"Active"}],"total":1,"params":{"term":"foo","skip":0,"take":12,"isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
+  );
 });

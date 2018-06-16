@@ -3,7 +3,6 @@ import * as elasticsearch from "../utils/elasticsearch";
 import * as testData from "./test-data";
 import * as searchIndexType from "../../src/types/search-index-type";
 import * as presetSearchType from "../../src/types/preset-search-type";
-import * as entityType from "../../src/types/entity-type";
 jest.setTimeout(60000);
 
 beforeAll(async () => {
@@ -60,15 +59,9 @@ it("should perform an entity count preset search", async () => {
     `/search/preset/${presetSearchType.ENTITY_COUNTS}`
   );
 
-  expect(result).toEqual({
-    items: [
-      { count: 2, entityType: entityType.EVENT },
-      { count: 1, entityType: entityType.EVENT_SERIES },
-      { count: 2, entityType: entityType.TALENT },
-      { count: 2, entityType: entityType.VENUE }
-    ],
-    params: { name: presetSearchType.ENTITY_COUNTS }
-  });
+  expect(result).toEqual(
+    '{body={"items":[{"entityType":"event","count":2},{"entityType":"event-series","count":1},{"entityType":"talent","count":2},{"entityType":"venue","count":2}],"params":{"id":"","name":"entity-counts","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
+  );
 });
 
 it("should perform a sitemap event ids preset search", async () => {
@@ -76,14 +69,9 @@ it("should perform a sitemap event ids preset search", async () => {
     `/search/preset/${presetSearchType.SITEMAP_EVENT_IDS}`
   );
 
-  expect(result).toEqual({
-    items: [
-      { id: testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION.id },
-      { id: testData.EVENT_ACTIVE_BRITISH_MUSEUM_PERM_COLL.id }
-    ],
-    total: 2,
-    params: { name: presetSearchType.SITEMAP_EVENT_IDS }
-  });
+  expect(result).toEqual(
+    '{body={"items":[{"id":"andy-warhol-exhibition"},{"id":"british-museum-perm"}],"total":2,"params":{"id":"","name":"sitemap-event-ids","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
+  );
 });
 
 it("should perform a featured events preset search", async () => {
@@ -91,11 +79,9 @@ it("should perform a featured events preset search", async () => {
     `/search/preset/${presetSearchType.FEATURED_EVENTS}`
   );
 
-  expect(result).toEqual({
-    items: [],
-    total: 0,
-    params: { name: presetSearchType.FEATURED_EVENTS }
-  });
+  expect(result).toEqual(
+    '{body={"items":[],"total":0,"params":{"id":"","name":"featured-events","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
+  );
 });
 
 it("should perform a venue related events preset search", async () => {
@@ -105,14 +91,9 @@ it("should perform a venue related events preset search", async () => {
     }`
   );
 
-  expect(result).toEqual({
-    items: [testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION],
-    total: 1,
-    params: {
-      name: presetSearchType.VENUE_RELATED_EVENTS,
-      id: testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id
-    }
-  });
+  expect(result).toEqual(
+    '{body={"items":[{"entityType":"event","venueId":"almeida-theatre","name":"Andy Warhol: New York Start","dateTo":"2019-04-12","dates":[{"date":"2018-06-26","from":"10:00","to":"18:00"}],"id":"andy-warhol-exhibition","dateFrom":"2018-06-14","status":"Active"}],"total":1,"params":{"id":"almeida-theatre","name":"venue-related-events","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
+  );
 });
 
 it("should perform an events by external ids preset search", async () => {
@@ -122,9 +103,7 @@ it("should perform an events by external ids preset search", async () => {
     }?id=foo,bar&admin=true`
   );
 
-  expect(result).toEqual({
-    items: [],
-    total: 0,
-    params: { name: presetSearchType.EVENTS_BY_EXTERNAL_IDS, id: "foo,bar" }
-  });
+  expect(result).toEqual(
+    '{body={"items":[],"total":0,"params":{"admin":true,"id":"foo,bar","name":"events-by-external-ids","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=no-cache}}'
+  );
 });

@@ -82,9 +82,9 @@ functions:
                     template:
                         application/json: >
                             {
-                            "admin": "$input.params('admin')",
-                            "term" : "$input.params('term')",
-                            "entityType" : "$input.params('entityType')"
+                                "admin": "$input.params('admin')",
+                                "term" : "$input.params('term')",
+                                "entityType" : "$input.params('entityType')"
                             }
                 response: ${self:custom.standardResponses}
     basicSearch:
@@ -99,15 +99,15 @@ functions:
                     template:
                         application/json: >
                             {
-                            "admin": "$input.params('admin')",
-                            "term" : "$input.params('term')",
-                            "entityType" : "$input.params('entityType')",
-                            "north" : "$input.params('north')",
-                            "west" : "$input.params('west')",
-                            "south" : "$input.params('south')",
-                            "east" : "$input.params('east')",
-                            "skip" : "$input.params('skip')",
-                            "take" : "$input.params('take')"
+                                "admin": "$input.params('admin')",
+                                "term" : "$input.params('term')",
+                                "entityType" : "$input.params('entityType')",
+                                "north" : "$input.params('north')",
+                                "west" : "$input.params('west')",
+                                "south" : "$input.params('south')",
+                                "east" : "$input.params('east')",
+                                "skip" : "$input.params('skip')",
+                                "take" : "$input.params('take')"
                             }
                 response: ${self:custom.standardResponses}
     eventAdvancedSearch:
@@ -122,15 +122,26 @@ functions:
                     template:
                         application/json: >
                             {
-                            "admin": "$input.params('admin')",
-                            "term" : "$input.params('term')",
-                            "entityType" : "$input.params('entityType')",
-                            "north" : "$input.params('north')",
-                            "west" : "$input.params('west')",
-                            "south" : "$input.params('south')",
-                            "east" : "$input.params('east')",
-                            "skip" : "$input.params('skip')",
-                            "take" : "$input.params('take')"
+                                "admin": "$input.params('admin')",
+                                "term" : "$input.params('term')",
+                                "dateFrom" : "$input.params('dateFrom')",
+                                "dateTo" : "$input.params('dateTo')",
+                                "timeFrom" : "$input.params('timeFrom')",
+                                "timeTo" : "$input.params('timeTo')",
+                                "area" : "$input.params('area')",
+                                "medium" : "$input.params('medium')",
+                                "style" : "$input.params('style')",
+                                "audience" : "$input.params('audience')",
+                                "cost" : "$input.params('cost')",
+                                "booking" : "$input.params('booking')",
+                                "venueId" : "$input.params('venueId')",
+                                "talentId" : "$input.params('talentId')",
+                                "north" : "$input.params('north')",
+                                "west" : "$input.params('west')",
+                                "south" : "$input.params('south')",
+                                "east" : "$input.params('east')",
+                                "skip" : "$input.params('skip')",
+                                "take" : "$input.params('take')"
                             }
                 response: ${self:custom.standardResponses}
     presetSearch:
@@ -145,9 +156,9 @@ functions:
                     template:
                         application/json: >
                             {
-                            "admin": "$input.params('admin')",
-                            "id" : "$input.params('id')",
-                            "name" : "$input.params('name')"
+                                "admin": "$input.params('admin')",
+                                "id" : "$input.params('id')",
+                                "name" : "$input.params('name')"
                             }
                 response: ${self:custom.standardResponses}
     indexDocument:

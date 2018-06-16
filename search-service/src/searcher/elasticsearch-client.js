@@ -9,19 +9,22 @@ const client = new elasticsearch.Client({
 export function bulk(params) {
   return new Promise((resolve, reject) => {
     xrayWrapper.captureAsyncFunc("es bulk update", subsegment => {
-      client.bulk(params, (err, response) => {
-        if (err) {
-          subsegment.close(err);
-          reject(err);
-        } else if (response.errors) {
-          err = new Error(JSON.stringify(response));
-          subsegment.close(err);
-          reject(err);
-        } else {
+      client
+        .bulk(params)
+        .then(response => {
+          if (response.errors) {
+            throw new Error(
+              "[500] ES Bulk update failed: " + JSON.stringify(response)
+            );
+          }
+
           subsegment.close();
           resolve(response);
-        }
-      });
+        })
+        .catch(err => {
+          subsegment.close(err);
+          reject(err);
+        });
     });
   });
 }

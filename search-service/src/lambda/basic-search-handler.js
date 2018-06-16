@@ -1,4 +1,3 @@
-import "./xray-setup";
 import withErrorHandling from "./with-error-handling";
 import * as searchService from "../search-service";
 import * as mapper from "./mapper";

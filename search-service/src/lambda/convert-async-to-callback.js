@@ -1,5 +1,4 @@
-// temporarily required until AWS XRay node.js
-// client library bug is fixed
+// temporarily required until AWS XRay node.js client library bug is fixed
 export default function(handler) {
   return (event, context, cb) => {
     Promise.resolve(handler(event, context))

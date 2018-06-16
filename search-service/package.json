@@ -6,12 +6,12 @@
     "posttest": "yarn run lint",
     "test:integration": "cross-env NODE_ENV=test jest --runInBand --no-cache ./tests/integration",
     "lint": "eslint .",
-    "deploy": "sls deploy -v",
+    "deploy": "yarn test && sls deploy -v",
     "local": "sls offline start --stage=development --port 3013 --noTimeout --noAuth",
     "debug:windows": "SET SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline start --port 3013 --stage=development --noTimeout --noAuth"
   },
   "devDependencies": {
-    "aws-sdk": "^2.256.1",
+    "aws-sdk": "^2.259.1",
     "babel-core": "^6.26.3",
     "babel-jest": "^23.0.1",
     "babel-loader": "^7.1.4",
