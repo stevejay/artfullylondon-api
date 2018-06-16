@@ -46,7 +46,6 @@
     "ensure-request": "^4.0.0",
     "es-bulk-update-builder": "^1.0.0",
     "es-simplify": "^1.0.6",
-    "lambda-error-handler": "^1.1.0",
     "latinize": "^0.4.0",
     "lodash": "^4.17.10",
     "loglevel": "^1.6.1",

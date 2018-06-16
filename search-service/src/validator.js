@@ -134,11 +134,11 @@ const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
     string: true,
     format: AUDIENCE_TAG_REGEX
   },
-  cost: {
+  costType: {
     string: true,
     inclusion: costType.ALLOWED_VALUES
   },
-  booking: {
+  bookingType: {
     string: true,
     inclusion: bookingType.ALLOWED_VALUES
   },
@@ -151,6 +151,10 @@ const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
     length: ID_LENGTH
   },
   talentId: {
+    string: true,
+    length: ID_LENGTH
+  },
+  eventSeriesId: {
     string: true,
     length: ID_LENGTH
   },

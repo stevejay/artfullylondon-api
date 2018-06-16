@@ -31,6 +31,8 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-pseudo-parameters
+    - serverless-plugin-tracing
     - serverless-dynamodb-local
     - serverless-offline
 

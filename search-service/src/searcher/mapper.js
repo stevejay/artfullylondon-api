@@ -3,6 +3,7 @@ import addDays from "date-fns/addDays";
 import looseInterleave from "loose-interleave";
 import * as entityType from "../types/entity-type";
 import * as presetSearchType from "../types/preset-search-type";
+import * as artsType from "../types/arts-type";
 import * as timeUtils from "../time-utils";
 
 export function mapAutocompleteSearchParams(params) {
@@ -23,8 +24,8 @@ export function mapBasicSearchParams(params) {
 export function mapEventAdvancedSearchParams(params) {
   const mapped = {
     ...params,
-    costType: params.cost,
-    bookingType: params.booking,
+    costType: params.costType,
+    bookingType: params.bookingType,
     tags: mapTagsForEventSearch(params),
     artsType: mapMediumToCategoryForEventSearch(params)
   };
@@ -34,8 +35,8 @@ export function mapEventAdvancedSearchParams(params) {
     hasTerm: !!mapped.term,
     hasArea: !!mapped.area,
     hasArtsType: !!mapped.artsType,
-    hasCostType: !!mapped.cost,
-    hasBookingType: !!mapped.booking,
+    hasCostType: !!mapped.costType,
+    hasBookingType: !!mapped.bookingType,
     hasVenueId: !!mapped.venueId,
     hasTalentId: !!mapped.talentId,
     hasEventSeriesId: !!mapped.eventSeriesId,
@@ -107,7 +108,7 @@ export function mapSitemapEventIdsSearchParams() {
 
 export function mapEventsByExternalIdsSearchParams(params) {
   return {
-    ids: params.id.split(",")
+    ids: _.without(params.id.split(","), "")
   };
 }
 
@@ -183,11 +184,11 @@ function mapMediumToCategoryForEventSearch(src) {
 
   switch (src.medium) {
     case ":all-visual":
-      return "Visual";
+      return artsType.VISUAL;
     case ":all-performing":
-      return "Performing";
+      return artsType.PERFORMING;
     case ":all-creative-writing":
-      return "CreativeWriting";
+      return artsType.CREATIVE_WRITING;
     default:
       throw new Error(`Unknown medium ${src.medium}`);
   }

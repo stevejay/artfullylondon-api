@@ -107,7 +107,7 @@ function createTalentSearch(params) {
         .type("cross_fields")
     );
 
-  params.isPublic && query.filter(esb.termQuery("status", "Active"));
+  params.isPublic && query.filter(createPublicFilter());
 
   return esb
     .requestBodySearch()
@@ -138,7 +138,7 @@ function createTalentSearch(params) {
 function createVenueSearch(params) {
   const query = esb.boolQuery();
   params.hasTerm && query.must(esb.matchQuery("name", params.term));
-  params.isPublic && query.filter(esb.termQuery("status", "Active"));
+  params.isPublic && query.filter(createPublicFilter());
 
   params.hasLocation &&
     query.filter(
@@ -186,7 +186,7 @@ function createVenueSearch(params) {
 function createEventSeriesSearch(params) {
   const query = esb.boolQuery();
   params.hasTerm && query.must(esb.matchQuery("name", params.term));
-  params.isPublic && query.filter(esb.termQuery("status", "Active"));
+  params.isPublic && query.filter(createPublicFilter());
 
   return esb
     .requestBodySearch()
@@ -220,7 +220,7 @@ function createEventSearch(params) {
     query.minimumShouldMatch(1);
   }
 
-  params.isPublic && query.filter(esb.termQuery("status", "Active"));
+  params.isPublic && query.filter(createPublicFilter());
 
   return esb
     .requestBodySearch()
@@ -262,7 +262,7 @@ export function createEventAdvancedSearch(params) {
     query.minimumShouldMatch(1);
   }
 
-  params.isPublic && query.filter(esb.termQuery("status", "Active"));
+  params.isPublic && query.filter(createPublicFilter());
   params.hasArea && query.filter(esb.termQuery("area", params.area));
   params.hasArtsType &&
     query.filter(esb.termQuery("artsType", params.artsType));
@@ -364,7 +364,7 @@ export function createSitemapEventIdsSearch(params) {
       .query(
         esb
           .boolQuery()
-          .filter(esb.termQuery("status", "Active"))
+          .filter(createPublicFilter())
           .should(esb.termQuery("occurrenceType", "Continuous"))
           .should(esb.rangeQuery("dateTo").gte(params.dateTo))
           .minimumShouldMatch(1)
@@ -390,4 +390,8 @@ export function createEventsByExternalIdsSearch(params) {
       .source(["id", "externalEventId"])
       .toJSON()
   };
+}
+
+function createPublicFilter() {
+  return esb.termQuery("status", "Active");
 }

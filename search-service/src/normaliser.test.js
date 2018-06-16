@@ -108,14 +108,15 @@ describe("normaliseEventAdvancedSearchRequest", () => {
         medium: "",
         style: "",
         audience: "",
-        cost: "",
-        booking: "",
+        costType: "",
+        bookingType: "",
         north: "",
         west: "",
         south: "",
         east: "",
         venueId: "",
         talentId: "",
+        eventSeriesId: "",
         skip: "",
         take: ""
       },
@@ -133,8 +134,8 @@ describe("normaliseEventAdvancedSearchRequest", () => {
         medium: "medium/painting",
         style: "style/contemporary",
         audience: "audience/families",
-        cost: costType.FREE,
-        booking: bookingType.REQUIRED,
+        costType: costType.FREE,
+        bookingType: bookingType.REQUIRED,
         north: "1.5",
         west: "2.5",
         south: "3.5",
@@ -142,7 +143,8 @@ describe("normaliseEventAdvancedSearchRequest", () => {
         skip: "100",
         take: "50",
         venueId: "venue1",
-        talentId: "talent1"
+        talentId: "talent1",
+        eventSeriesId: "eventseries1"
       },
       {
         admin: true,
@@ -155,8 +157,8 @@ describe("normaliseEventAdvancedSearchRequest", () => {
         medium: "medium/painting",
         style: "style/contemporary",
         audience: "audience/families",
-        cost: costType.FREE,
-        booking: bookingType.REQUIRED,
+        costType: costType.FREE,
+        bookingType: bookingType.REQUIRED,
         north: 1.5,
         west: 2.5,
         south: 3.5,
@@ -164,7 +166,8 @@ describe("normaliseEventAdvancedSearchRequest", () => {
         skip: 100,
         take: 50,
         venueId: "venue1",
-        talentId: "talent1"
+        talentId: "talent1",
+        eventSeriesId: "eventseries1"
       }
     ]
   ])("%o should normalise to %o", (arg, expected) => {

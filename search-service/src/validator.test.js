@@ -111,8 +111,8 @@ describe("validateEventAdvancedSearchRequest", () => {
         medium: "medium/painting",
         style: "style/contemporary",
         audience: "audience/families",
-        cost: costType.FREE,
-        booking: bookingType.REQUIRED,
+        costType: costType.FREE,
+        bookingType: bookingType.REQUIRED,
         north: 1.5,
         west: 2.5,
         south: 3.5,
@@ -120,7 +120,8 @@ describe("validateEventAdvancedSearchRequest", () => {
         skip: 100,
         take: 50,
         venueId: "venue1",
-        talentId: "talent1"
+        talentId: "talent1",
+        eventSeriesId: "eventseries1"
       }
     ]
   ])("%o should validate", arg => {
@@ -142,8 +143,8 @@ describe("validateEventAdvancedSearchRequest", () => {
         medium: "painting",
         style: "style/contemporary",
         audience: "audience/families",
-        cost: costType.FREE,
-        booking: bookingType.REQUIRED,
+        costType: costType.FREE,
+        bookingType: bookingType.REQUIRED,
         north: 1.5,
         west: 2.5,
         south: 3.5,

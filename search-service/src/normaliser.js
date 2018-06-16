@@ -100,16 +100,19 @@ const EVENT_ADVANCED_SEARCH_NORMALISER = {
   audience: {
     undefinedIfEmpty: true
   },
-  cost: {
+  costType: {
     undefinedIfEmpty: true
   },
-  booking: {
+  bookingType: {
     undefinedIfEmpty: true
   },
   venueId: {
     undefinedIfEmpty: true
   },
   talentId: {
+    undefinedIfEmpty: true
+  },
+  eventSeriesId: {
     undefinedIfEmpty: true
   },
   ...LOCATION_NORMALISER,
