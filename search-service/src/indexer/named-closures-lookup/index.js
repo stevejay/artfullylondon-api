@@ -37,6 +37,8 @@ const SEED_DATA = {
 let lookup = null;
 
 export function get() {
+  // TODO update lookup when now is different day
+
   if (!lookup) {
     const now = timeUtils.getUtcNow();
     lookup = generator.generate(SEED_DATA, now, addYears(now, 1));

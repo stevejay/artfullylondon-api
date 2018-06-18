@@ -18,6 +18,7 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-plugin-tracing
     - serverless-offline
 
 custom:
@@ -25,6 +26,39 @@ custom:
     stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
     sitemapUrlPrefix: 'https://www.artfully.london'
+    errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
+    standardResponses:
+        headers:
+            Access-Control-Allow-Credentials : "'true'"
+        template: $input.path('$')
+        statusCodes:
+            200:
+                pattern: ''
+                template:
+                    text/plain: $input.path("$.body")
+                headers:
+                    Cache-Control: 'no-cache'
+                    "Content-Type": "text/plain; charset=utf-8"
+            400:
+                pattern: '^\[400\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            401:
+                pattern: '^\[401\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            403:
+                pattern: '^\[403\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            404:
+                pattern: '^\[404\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            500:
+                pattern: '^\[500\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules: true
@@ -39,6 +73,8 @@ functions:
             - http:
                 path: "public/sitemap.txt"
                 method: get
+                integration: lambda
+                response: ${self:custom.standardResponses}
 
 resources:
     Resources:

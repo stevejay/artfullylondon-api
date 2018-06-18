@@ -5,7 +5,7 @@ export async function getSitemapFileText() {
   const results = await request({
     uri: `${
       process.env.SEARCH_SERVICE_HOST
-    }/admin/search/preset/sitemap-event-ids`,
+    }/search/preset/sitemap-event-ids?admin=true`,
     json: true,
     method: "GET",
     timeout: 30000

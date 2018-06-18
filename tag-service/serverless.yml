@@ -10,11 +10,9 @@ provider:
     runtime: nodejs8.10
     region: eu-west-1
     environment: ${file(env.yml):${self:custom.stage}}
+    iamManagedPolicies:
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
     iamRoleStatements:
-        -
-            Effect: "Allow"
-            Action: "cloudwatch:PutMetricData"
-            Resource: "*"
         -
             Effect: "Allow"
             Action: "dynamodb:*"
@@ -41,6 +39,38 @@ custom:
     stage: "${opt:stage}"
     region: "${opt:region, self:provider.region}"
     tagTableName: ${self:custom.project}-${self:custom.stage}-tag
+    errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
+    standardResponses:
+        headers:
+            Access-Control-Allow-Credentials : "'true'"
+        template: $input.path('$')
+        statusCodes:
+            200:
+                pattern: ''
+                template:
+                    application/json: $input.path("$.body")
+                headers:
+                    Cache-Control: integration.response.body.headers.Cache-Control
+            400:
+                pattern: '^\[400\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            401:
+                pattern: '^\[401\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            403:
+                pattern: '^\[403\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            404:
+                pattern: '^\[404\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            500:
+                pattern: '^\[500\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -58,49 +88,75 @@ functions:
     createTag:
         handler: src/lambda/create-tag.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
         events:
             - http:
                 path: "tag/{type}"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "type": "$input.params('type')",
+                                "body": $input.json('$'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
                     arn: ${self:provider.environment.cognitoUserPoolArn}
     deleteTag:
         handler: src/lambda/delete-tag.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
         events:
             - http:
                 path: "tag/{type}/{idPart}"
                 method: delete
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "type": "$input.params('type')",
+                                "idPart": "$input.params('idPart')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
                     arn: ${self:provider.environment.cognitoUserPoolArn}
     getAllTags:
         handler: src/lambda/get-all-tags.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
         events:
             - http:
                 path: tags
                 method: get
                 cors: true
+                integration: lambda
+                response: ${self:custom.standardResponses}
     getTags:
         handler: src/lambda/get-tags.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
         events:
             - http:
                 path: "tags/{type}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "type": "$input.params('type')"
+                            }
+                response: ${self:custom.standardResponses}
 
 resources:
     Resources:

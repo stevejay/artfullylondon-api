@@ -1,8 +1,11 @@
-import withErrorHandling from "lambda-error-handler";
+import "./xray-setup";
+import withErrorHandling from "./with-error-handling";
 import * as tagService from "../tag-service";
-import * as mapper from "./mapper";
+import convertAsyncToCallback from "./convert-async-to-callback";
 
-export const handler = withErrorHandling(async function() {
-  const result = await tagService.getAllTags();
-  return mapper.mapLambdaResponse(result);
-});
+export const handler = convertAsyncToCallback(
+  withErrorHandling(async function() {
+    const result = await tagService.getAllTags();
+    return { body: JSON.stringify(result) };
+  })
+);

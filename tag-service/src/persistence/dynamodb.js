@@ -4,7 +4,7 @@ const config = process.env.IS_OFFLINE
   ? {
       connection: {
         region: "localhost",
-        endpoint: "http://localhost:4569"
+        endpoint: process.env.DYNAMODB_HOST
       }
     }
   : null;

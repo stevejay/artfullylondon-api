@@ -1,8 +1,11 @@
-import withErrorHandling from "lambda-error-handler";
+import "./xray-setup";
+import withErrorHandling from "./with-error-handling";
 import * as sitemapService from "../sitemap-service";
-import * as mapper from "./mapper";
+import convertAsyncToCallback from "./convert-async-to-callback";
 
-export const handler = withErrorHandling(async function() {
-  const text = await sitemapService.getSitemapFileText();
-  return mapper.mapToPlainTextLambdaResponse(text);
-});
+export const handler = convertAsyncToCallback(
+  withErrorHandling(async function() {
+    const text = await sitemapService.getSitemapFileText();
+    return { body: text };
+  })
+);

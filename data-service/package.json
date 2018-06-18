@@ -22,11 +22,13 @@
     "mockserver": "^1.9.0",
     "serverless": "^1.27.3",
     "serverless-offline": "^3.25.0",
+    "serverless-plugin-tracing": "^2.0.0",
     "serverless-webpack": "^5.1.5",
     "webpack": "^4.10.2",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "aws-xray-sdk": "^1.2.0",
     "lambda-error-handler": "^1.1.0",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
