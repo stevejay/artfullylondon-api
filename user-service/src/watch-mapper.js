@@ -5,8 +5,8 @@ export const INITIAL_VERSION_NUMBER = 0;
 function createInitialWatches(entityType) {
   return {
     entityType,
-    version: INITIAL_VERSION_NUMBER,
-    items: []
+    items: [],
+    version: INITIAL_VERSION_NUMBER
   };
 }
 

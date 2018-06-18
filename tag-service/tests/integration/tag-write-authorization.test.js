@@ -33,7 +33,7 @@ describe("tag write authorization", () => {
       timeout: 30000
     });
 
-    expect(result).toEqual({ tag });
+    expect(result).toEqual(`{body=${JSON.stringify({ tag })}}`);
 
     expect(
       await sync(

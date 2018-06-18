@@ -2373,9 +2373,9 @@ ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
-elastic-builder@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/elastic-builder/-/elastic-builder-1.2.0.tgz#3a40e1e6ede3e8ff23a6fe943960a7ae927d29b1"
+elastic-builder@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/elastic-builder/-/elastic-builder-1.3.0.tgz#9949b89651f22788201f776fe1fc0c750743e342"
   dependencies:
     babel-runtime "^6.26.0"
     lodash.has "^4.5.2"

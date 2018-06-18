@@ -34,7 +34,9 @@ describe("watches", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({ acknowledged: true });
+    expect(response).toEqual(
+      expect.stringContaining(JSON.stringify({ acknowledged: true }))
+    );
   });
 
   it("should get the event watches", async () => {
@@ -48,14 +50,18 @@ describe("watches", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({
-      entityType: "event",
-      items: [
-        { created: 1111, id: "1111", label: "Label 1111" },
-        { created: 2222, id: "2222", label: "Label 2222" }
-      ],
-      version: 1
-    });
+    expect(response).toEqual(
+      expect.stringContaining(
+        JSON.stringify({
+          items: [
+            { created: 1111, id: "1111", label: "Label 1111" },
+            { created: 2222, id: "2222", label: "Label 2222" }
+          ],
+          version: 1,
+          entityType: "event"
+        })
+      )
+    );
   });
 
   it("should delete an event watch", async () => {
@@ -80,7 +86,9 @@ describe("watches", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({ acknowledged: true });
+    expect(response).toEqual(
+      expect.stringContaining(JSON.stringify({ acknowledged: true }))
+    );
 
     response = await request({
       uri: "http://localhost:3012/user/watches/event",
@@ -92,10 +100,14 @@ describe("watches", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({
-      entityType: "event",
-      items: [{ created: 2222, id: "2222", label: "Label 2222" }],
-      version: 2
-    });
+    expect(response).toEqual(
+      expect.stringContaining(
+        JSON.stringify({
+          items: [{ created: 2222, id: "2222", label: "Label 2222" }],
+          version: 2,
+          entityType: "event"
+        })
+      )
+    );
   });
 });

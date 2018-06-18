@@ -19,7 +19,9 @@ describe("preferences", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({ acknowledged: true });
+    expect(response).toEqual(
+      expect.stringContaining(JSON.stringify({ acknowledged: true }))
+    );
   });
 
   it("should fail to update preferences when body is incomplete", async () => {
@@ -50,6 +52,10 @@ describe("preferences", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({ preferences: { emailFrequency: "Weekly" } });
+    expect(response).toEqual(
+      expect.stringContaining(
+        JSON.stringify({ preferences: { emailFrequency: "Weekly" } })
+      )
+    );
   });
 });

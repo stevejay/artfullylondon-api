@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "aws-xray-sdk": "^1.2.0",
-    "lambda-error-handler": "^1.1.0",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
     "source-map-support": "^0.5.6"

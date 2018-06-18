@@ -32,7 +32,9 @@ describe("tag lifecycle", () => {
       timeout: 30000
     });
 
-    expect(result.tags.audience).toEqual(expect.arrayContaining([tag]));
+    expect(result).toEqual(
+      expect.stringContaining(JSON.stringify({ tags: { audience: [tag] } }))
+    );
   });
 
   it("should fail to create a duplicate tag", async () => {
@@ -68,7 +70,8 @@ describe("tag lifecycle", () => {
       timeout: 30000
     });
 
-    expect(result).toEqual(expect.stringContaining("foo"));
-    //expect(result).not.toEqual(expect.stringContaining([tag]));
+    expect(result).toEqual(
+      expect.stringContaining(JSON.stringify({ tags: {} }))
+    );
   });
 });

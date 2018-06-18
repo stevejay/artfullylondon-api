@@ -28,7 +28,9 @@ describe("user", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({ acknowledged: true });
+    expect(response).toEqual(
+      expect.stringContaining(JSON.stringify({ acknowledged: true }))
+    );
 
     response = await request({
       uri: "http://localhost:3012/user",
@@ -40,20 +42,24 @@ describe("user", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({
-      watches: [
-        {
-          entityType: "event",
-          items: [{ created: 1111, id: "1111", label: "Label 1111" }],
-          version: 1
-        },
-        { entityType: "tag", items: [], version: 0 },
-        { entityType: "talent", items: [], version: 0 },
-        { entityType: "venue", items: [], version: 0 },
-        { entityType: "event-series", items: [], version: 0 }
-      ],
-      preferences: { emailFrequency: "Daily" }
-    });
+    expect(response).toEqual(
+      expect.stringContaining(
+        JSON.stringify({
+          watches: [
+            {
+              items: [{ created: 1111, id: "1111", label: "Label 1111" }],
+              version: 1,
+              entityType: "event"
+            },
+            { entityType: "tag", items: [], version: 0 },
+            { entityType: "talent", items: [], version: 0 },
+            { entityType: "venue", items: [], version: 0 },
+            { entityType: "event-series", items: [], version: 0 }
+          ],
+          preferences: { emailFrequency: "Daily" }
+        })
+      )
+    );
   });
 
   it("should delete a user", async () => {
@@ -67,7 +73,9 @@ describe("user", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({ acknowledged: true });
+    expect(response).toEqual(
+      expect.stringContaining(JSON.stringify({ acknowledged: true }))
+    );
 
     response = await request({
       uri: "http://localhost:3012/user",
@@ -79,15 +87,19 @@ describe("user", () => {
       timeout: 30000
     });
 
-    expect(response).toEqual({
-      watches: [
-        { entityType: "tag", items: [], version: 0 },
-        { entityType: "talent", items: [], version: 0 },
-        { entityType: "venue", items: [], version: 0 },
-        { entityType: "event", items: [], version: 0 },
-        { entityType: "event-series", items: [], version: 0 }
-      ],
-      preferences: { emailFrequency: "Daily" }
-    });
+    expect(response).toEqual(
+      expect.stringContaining(
+        JSON.stringify({
+          watches: [
+            { entityType: "tag", items: [], version: 0 },
+            { entityType: "talent", items: [], version: 0 },
+            { entityType: "venue", items: [], version: 0 },
+            { entityType: "event", items: [], version: 0 },
+            { entityType: "event-series", items: [], version: 0 }
+          ],
+          preferences: { emailFrequency: "Daily" }
+        })
+      )
+    );
   });
 });

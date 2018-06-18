@@ -1,4 +1,4 @@
-import groupBy from "lodash.groupby";
+import _ from "lodash";
 import * as idGenerator from "./id-generator";
 
 export function mapCreateTagRequest(request) {
@@ -17,7 +17,7 @@ export function mapSingleTagResponse(dbTag) {
 
 export function mapMultiTagsResponse(dbResponse) {
   const items = dbResponse.map(mapTagResponse);
-  const tags = groupBy(items, extractTagTypeFromId);
+  const tags = _.groupBy(items, extractTagTypeFromId);
   return { tags };
 }
 

@@ -5,7 +5,7 @@ export function tryGetWatchesByTypeForUser(userId, entityType) {
   return dynamodb.tryGet({
     TableName: process.env.SERVERLESS_WATCH_TABLE_NAME,
     Key: { userId, entityType },
-    ProjectionExpression: "entityType, version, #items",
+    ProjectionExpression: "entityType, #items, version",
     ExpressionAttributeNames: { "#items": "items" },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
@@ -16,7 +16,7 @@ export function getAllWatchesForUser(userId) {
     TableName: process.env.SERVERLESS_WATCH_TABLE_NAME,
     KeyConditionExpression: "userId = :userId",
     ExpressionAttributeValues: { ":userId": userId },
-    ProjectionExpression: "entityType, version, #items",
+    ProjectionExpression: "entityType, #items, version",
     ExpressionAttributeNames: { "#items": "items" },
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
@@ -41,8 +41,8 @@ export async function createWatches(newVersion, userId, entityType, items) {
   const item = {
     userId,
     entityType,
-    version: newVersion,
-    items
+    items,
+    version: newVersion
   };
 
   await dynamodb.put({
@@ -58,8 +58,8 @@ export async function updateWatches(newVersion, userId, entityType, items) {
   const item = {
     userId,
     entityType,
-    version: newVersion,
-    items
+    items,
+    version: newVersion
   };
 
   await dynamodb.put({
