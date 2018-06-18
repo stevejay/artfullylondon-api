@@ -5,7 +5,6 @@ import convertAsyncToCallback from "./convert-async-to-callback";
 
 export const handler = convertAsyncToCallback(
   withErrorHandling(async function() {
-    const text = await sitemapService.getSitemapFileText();
-    return { body: text };
+    return await sitemapService.getSitemapFileText();
   })
 );

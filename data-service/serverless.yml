@@ -10,11 +10,8 @@ provider:
     runtime: nodejs8.10
     region: eu-west-1
     environment: ${file(env.yml):${self:custom.stage}}
-    iamRoleStatements:
-        -
-            Effect: "Allow"
-            Action: "cloudwatch:PutMetricData"
-            Resource: "*"
+    iamManagedPolicies:
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
 
 plugins:
     - serverless-webpack
@@ -35,26 +32,10 @@ custom:
             200:
                 pattern: ''
                 template:
-                    text/plain: $input.path("$.body")
+                    text/plain: $input.path('$')
                 headers:
-                    Cache-Control: 'no-cache'
-                    "Content-Type": "text/plain; charset=utf-8"
-            400:
-                pattern: '^\[400\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            401:
-                pattern: '^\[401\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            403:
-                pattern: '^\[403\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            404:
-                pattern: '^\[404\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
+                    Cache-Control: "'no-cache'"
+                    Content-Type: "'text/plain; charset=utf-8'"
             500:
                 pattern: '^\[500\].*'
                 template:
@@ -121,6 +102,7 @@ resources:
                             method.response.header.Access-Control-Allow-Headers: false
                             method.response.header.Access-Control-Allow-Methods: false
                             method.response.header.Access-Control-Allow-Origin: false
+                            method.response.header.Cache-Control: false
         ApiGatewayResourcePublicSiteData:
             Type: AWS::ApiGateway::Resource
             Properties:

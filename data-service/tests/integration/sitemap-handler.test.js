@@ -32,9 +32,7 @@ afterAll(async () => {
 it("should return a sitemap", async () => {
   const result = await request("http://localhost:3010/public/sitemap.txt");
   expect(result).toEqual(
-    "{body=" +
-      "https://www.artfully.london/event/almeida/2018/some-event\n" +
-      "https://www.artfully.london/event/arcola/2017/some-event" +
-      "}"
+    "https://www.artfully.london/event/almeida/2018/some-event\n" +
+      "https://www.artfully.london/event/arcola/2017/some-event"
   );
 });
