@@ -1,6 +1,6 @@
 "use strict";
 
-const uniq = require("lodash.uniq");
+const _ = require("lodash");
 const dynamodb = require("../external-services/dynamodb");
 
 exports.getReferencedEntities = async function(dbItem, options) {
@@ -49,7 +49,7 @@ exports.getReferencedEntitiesForSearch = async function(dbItems, options) {
   };
 
   params.RequestItems[process.env.SERVERLESS_VENUE_TABLE_NAME] = {
-    Keys: uniq(dbItems.map(event => event.venueId)).map(venueId => ({
+    Keys: _.uniq(dbItems.map(event => event.venueId)).map(venueId => ({
       id: venueId
     })),
     ConsistentRead: consistentRead
@@ -61,7 +61,7 @@ exports.getReferencedEntitiesForSearch = async function(dbItems, options) {
 
   if (allEventSeriesIds.length) {
     params.RequestItems[process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME] = {
-      Keys: uniq(allEventSeriesIds).map(eventSeriesId => ({
+      Keys: _.uniq(allEventSeriesIds).map(eventSeriesId => ({
         id: eventSeriesId
       })),
       ConsistentRead: consistentRead

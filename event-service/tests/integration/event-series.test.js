@@ -74,53 +74,6 @@ describe("event series", () => {
     testEventSeriesId = response.entity.id;
   });
 
-  it("should put the created event series in elasticsearch", async () => {
-    let response = await testUtils.getDocument(
-      "event-series-full",
-      testEventSeriesId
-    );
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventSeriesId,
-        _index: "event-series-full",
-        _type: "doc",
-        _version: 1,
-        found: true
-      })
-    );
-
-    response = await testUtils.getDocument(
-      "event-series-auto",
-      testEventSeriesId
-    );
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventSeriesId,
-        _index: "event-series-auto",
-        _type: "doc",
-        _version: 1,
-        found: true
-      })
-    );
-
-    response = await testUtils.getDocument(
-      "combined-event-auto",
-      testEventSeriesId
-    );
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventSeriesId,
-        _index: "combined-event-auto",
-        _type: "doc",
-        _version: 1,
-        found: true
-      })
-    );
-  });
-
   it("should get the event series without cache control headers when using the admin api", async () => {
     const response = await request({
       uri: "http://localhost:3030/admin/event-series/" + testEventSeriesId,
@@ -237,53 +190,6 @@ describe("event series", () => {
         summary: "Stand-up poetry New",
         status: "Active",
         version: 2
-      })
-    );
-  });
-
-  it("should put the updated event series in elasticsearch", async () => {
-    let response = await testUtils.getDocument(
-      "event-series-full",
-      testEventSeriesId
-    );
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventSeriesId,
-        _index: "event-series-full",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
-
-    response = await testUtils.getDocument(
-      "event-series-auto",
-      testEventSeriesId
-    );
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventSeriesId,
-        _index: "event-series-auto",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
-
-    response = await testUtils.getDocument(
-      "combined-event-auto",
-      testEventSeriesId
-    );
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventSeriesId,
-        _index: "combined-event-auto",
-        _type: "doc",
-        _version: 2,
-        found: true
       })
     );
   });

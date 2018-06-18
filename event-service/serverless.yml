@@ -8,16 +8,17 @@ package:
 provider:
     name: aws
     runtime: nodejs8.10
-    stage: production
     region: eu-west-1
-    environment: ${file(env.yml):${self:custom.stage}}
+    refreshSearchIndexTopicNamePrefix: RefreshSearchIndex
+    eventUpdatedTopicNamePrefix: EventUpdated
+    indexDocumentTopicNamePrefix: IndexDocument
+    tracing: true
     apiKeys:
         - apiKey
+    environment: ${file(env.yml):${self:custom.stage}}
+    iamManagedPolicies:
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
     iamRoleStatements:
-        -
-            Effect: "Allow"
-            Action: "cloudwatch:PutMetricData"
-            Resource: "*"
         -
             Effect: "Allow"
             Action: "lambda:InvokeFunction"
@@ -187,18 +188,20 @@ provider:
                         - Ref: "AWS::Region"
                         - ":"
                         - Ref: "AWS::AccountId"
-                        - ":IndexDocument-"
-                        - ${self:custom.stage}
+                        - ":"
+                        - ${self.custom.indexDocumentTopicName}
 
 plugins:
     - serverless-webpack
+    - serverless-pseudo-parameters
+    - serverless-plugin-tracing
     - serverless-dynamodb-local
     - serverless-offline-sns
     - serverless-offline
 
 custom:
     project: artfullylondon
-    stage: ${opt:stage, self:provider.stage}
+    stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
     env: ${file(./env.yml):${self:custom.stage}}
     venueTableName: ${self:custom.project}-${self:custom.stage}-venue
@@ -211,31 +214,64 @@ custom:
     eventSeriesBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-eventseries-by-scheme
     talentTableName: ${self:custom.project}-${self:custom.stage}-talent
     talentBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-talent-by-scheme
-    eventUpdatedSnsEndpointName: "EventUpdated"
-    refreshSearchIndexSnsEndpointName: "RefreshSearchIndex"
-    indexDocumentSnsEndpointName: IndexDocument-${self:custom.stage}
-    eventUpdatedTopicArn: ${self:custom.env.topicArnPrefix}:${self:custom.eventUpdatedSnsEndpointName}
-    refreshSearchIndexTopicArn: ${self:custom.env.topicArnPrefix}:${self:custom.refreshSearchIndexSnsEndpointName}
-    indexDocumentTopicArn: ${self:custom.env.topicArnPrefix}:${self:custom.indexDocumentSnsEndpointName}
+    eventUpdatedTopicName: ${self:custom.eventUpdatedTopicNamePrefix}-${self:custom.stage}
+    refreshSearchIndexTopicName: ${self:custom.refreshSearchIndexTopicNamePrefix}-${self:custom.stage}
+    indexDocumentTopicName: ${self:custom.indexDocumentTopicNamePrefix}-${self:custom.stage}
+    eventUpdatedTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self.custom.eventUpdatedTopicName}"
+    refreshSearchIndexTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self.custom.refreshSearchIndexTopicName}"
+    indexDocumentTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self.custom.indexDocumentTopicName}"
+    errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
+    standardResponses:
+        headers:
+            Access-Control-Allow-Credentials : "'true'"
+        template: $input.path('$')
+        statusCodes:
+            200:
+                pattern: ''
+                template:
+                    application/json: $input.path("$.body")
+                headers:
+                    Cache-Control: integration.response.body.headers.Cache-Control
+            400:
+                pattern: '^\[400\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            401:
+                pattern: '^\[401\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            403:
+                pattern: '^\[403\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            404:
+                pattern: '^\[404\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            500:
+                pattern: '^\[500\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
     webpack:
-        includeModules: true
-        packager: 'npm'
+        webpackConfig: ./webpack.config.js
+        includeModules:
+            forceExclude:
+                - aws-sdk
+        packager: 'yarn'
     dynamodb:
         start:
-            port: 8000
+            port: 4569
             migrate: true
             sharedDb: true
             noStart: true
     serverless-offline-sns:
-        port: 4002 # a free port for the sns server to run on
+        port: 4002
         debug: false
-        # host: 0.0.0.0 # Optional, defaults to 127.0.0.1 if not provided to serverless-offline
-        # sns-endpoint: http://127.0.0.1:4567 # Optional. Only if you want to use a custom endpoint
-        accountId: 1111111111111 # Optional
+        accountId: 1111111111111
 
 functions:
     createUpdateVenue:
-        handler: src/handlers/venue/create-or-update-venue.handler
+        handler: src/lambda/venue/create-or-update-venue.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -256,12 +292,37 @@ functions:
                 path: "admin/venue"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "body": $input.json('$'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "admin/venue/{id+}"
                 method: put
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "body": $input.json('$'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getVenue:
-        handler: src/handlers/venue/get-venue.handler
+        handler: src/lambda/venue/get-venue.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -281,8 +342,20 @@ functions:
                 path: "public/venue/{id+}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getNextVenue:
-        handler: src/handlers/venue/get-next-venue.handler
+        handler: src/lambda/venue/get-next-venue.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -293,7 +366,7 @@ functions:
                 cors: true
                 private: true
     getVenueForEdit:
-        handler: src/handlers/venue/get-venue-for-edit.handler
+        handler: src/lambda/venue/get-venue-for-edit.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -313,8 +386,20 @@ functions:
                 path: "admin/venue/{id+}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getVenueMulti:
-        handler: src/handlers/venue/get-venue-multi.handler
+        handler: src/lambda/venue/get-venue-multi.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -334,12 +419,36 @@ functions:
                 path: "public/venue"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "ids": $input.json('$.ids'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "public/venue"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "ids": "$input.params('ids')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     createUpdateTalent:
-        handler: src/handlers/talent/create-or-update-talent.handler
+        handler: src/lambda/talent/create-or-update-talent.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -360,12 +469,37 @@ functions:
                 path: "admin/talent"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "body": $input.json('$'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "admin/talent/{id+}"
                 method: put
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "body": $input.json('$'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getTalent:
-        handler: src/handlers/talent/get-talent.handler
+        handler: src/lambda/talent/get-talent.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -385,8 +519,20 @@ functions:
                 path: "public/talent/{id+}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getTalentForEdit:
-        handler: src/handlers/talent/get-talent-for-edit.handler
+        handler: src/lambda/talent/get-talent-for-edit.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -406,8 +552,20 @@ functions:
                 path: "admin/talent/{id+}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getTalentMulti:
-        handler: src/handlers/talent/get-talent-multi.handler
+        handler: src/lambda/talent/get-talent-multi.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -427,12 +585,36 @@ functions:
                 path: "public/talent"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "ids": $input.json('$.ids'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "public/talent"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "ids": "$input.params('ids')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     createUpdateEvent:
-        handler: src/handlers/event/create-or-update-event.handler
+        handler: src/lambda/event/create-or-update-event.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -453,12 +635,37 @@ functions:
                 path: "admin/event"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "body": $input.json('$'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "admin/event/{id+}"
                 method: put
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "body": $input.json('$'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getEvent:
-        handler: src/handlers/event/get-event.handler
+        handler: src/lambda/event/get-event.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -478,8 +685,20 @@ functions:
                 path: "public/event/{id+}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getEventForEdit:
-        handler: src/handlers/event/get-event-for-edit.handler
+        handler: src/lambda/event/get-event-for-edit.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -499,8 +718,20 @@ functions:
                 path: "admin/event/{id+}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getEventMulti:
-        handler: src/handlers/event/get-event-multi.handler
+        handler: src/lambda/event/get-event-multi.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -520,12 +751,36 @@ functions:
                 path: "public/event"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "ids": $input.json('$.ids'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "public/event"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "ids": "$input.params('ids')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     createUpdateEventSeries:
-        handler: src/handlers/event-series/create-or-update-event-series.handler
+        handler: src/lambda/event-series/create-or-update-event-series.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -546,12 +801,37 @@ functions:
                 path: "admin/event-series"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "body": $input.json('$'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "admin/event-series/{id+}"
                 method: put
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "body": $input.json('$'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getEventSeries:
-        handler: src/handlers/event-series/get-event-series.handler
+        handler: src/lambda/event-series/get-event-series.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -571,8 +851,20 @@ functions:
                 path: "public/event-series/{id+}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getEventSeriesForEdit:
-        handler: src/handlers/event-series/get-event-series-for-edit.handler
+        handler: src/lambda/event-series/get-event-series-for-edit.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -592,8 +884,20 @@ functions:
                 path: "admin/event-series/{id+}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getEventSeriesMulti:
-        handler: src/handlers/event-series/get-event-series-multi.handler
+        handler: src/lambda/event-series/get-event-series-multi.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -613,12 +917,36 @@ functions:
                 path: "public/event-series"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "ids": $input.json('$.ids'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "public/event-series"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "ids": "$input.params('ids')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     updateEventSearchIndex:
-        handler: src/handlers/search/update-event-search-index-sns.handler
+        handler: src/lambda/search/update-event-search-index-sns.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -634,9 +962,11 @@ functions:
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
-            - sns: "${self:custom.eventUpdatedSnsEndpointName}"
+            - sns:
+                topicName: ${self:custom.eventUpdatedTopicName}
+                displayName: Notify the service that an event has been updated
     refreshSearchIndex:
-        handler: src/handlers/search/refresh-search-index.handler
+        handler: src/lambda/search/refresh-search-index.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
@@ -645,8 +975,21 @@ functions:
                 path: "admin/search/{index}/{version}/refresh"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "index": "$input.params('index')",
+                                "version": "$input.params('version')",
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     refreshSearchIndexSns:
-        handler: src/handlers/search/refresh-search-index-sns.handler
+        handler: src/lambda/search/refresh-search-index-sns.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
@@ -664,9 +1007,11 @@ functions:
             SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN: ${self:custom.indexDocumentTopicArn}
         timeout: 300
         events:
-            - sns: "${self:custom.refreshSearchIndexSnsEndpointName}"
+            - sns:
+                topicName: ${self:custom.refreshSearchIndexTopicName}
+                displayName: Refreshing of a search index
     refreshEventFullSearch:
-        handler: src/handlers/search/refresh-event-full-search.handler
+        handler: src/lambda/search/refresh-event-full-search.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
@@ -678,63 +1023,6 @@ functions:
 
 resources:
     Resources:
-        ApiGatewayMethodAdminVenuePost:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminVenueIdVarPut:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminVenueIdVarGet:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-
-        ApiGatewayMethodAdminTalentPost:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminTalentIdVarPut:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminTalentIdVarGet:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-
-        ApiGatewayMethodAdminEventPost:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminEventIdVarPut:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminEventIdVarGet:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-
-        ApiGatewayMethodAdminEventDashseriesPost:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminEventDashseriesIdVarPut:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-        ApiGatewayMethodAdminEventDashseriesIdVarGet:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-
-        ApiGatewayMethodAdminSearchIndexVarVersionVarRefreshPost:
-            Properties:
-                AuthorizationType: "COGNITO_USER_POOLS"
-                AuthorizerId: ${file(./env.yml):${self:custom.stage}.cognitoUserPoolsAuthorizerId}
-
         VenueDynamoTable:
             Type: AWS::DynamoDB::Table
             DeletionPolicy: Retain

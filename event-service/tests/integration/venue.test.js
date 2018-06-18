@@ -73,32 +73,6 @@ describe("venue", () => {
     testVenueId = response.entity.id;
   });
 
-  it("should put the created venue in elasticsearch", async () => {
-    let response = await testUtils.getDocument("venue-full", testVenueId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testVenueId,
-        _index: "venue-full",
-        _type: "doc",
-        _version: 1,
-        found: true
-      })
-    );
-
-    response = await testUtils.getDocument("venue-auto", testVenueId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testVenueId,
-        _index: "venue-auto",
-        _type: "doc",
-        _version: 1,
-        found: true
-      })
-    );
-  });
-
   it("should get the venue without cache control headers when using the admin api", async () => {
     const response = await request({
       uri: "http://localhost:3030/admin/venue/" + testVenueId,
@@ -212,32 +186,6 @@ describe("venue", () => {
         postcode: "N8 0KL",
         status: "Active",
         version: 2
-      })
-    );
-  });
-
-  it("should put the updated venue in elasticsearch", async () => {
-    let response = await testUtils.getDocument("venue-full", testVenueId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testVenueId,
-        _index: "venue-full",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
-
-    response = await testUtils.getDocument("venue-auto", testVenueId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testVenueId,
-        _index: "venue-auto",
-        _type: "doc",
-        _version: 2,
-        found: true
       })
     );
   });

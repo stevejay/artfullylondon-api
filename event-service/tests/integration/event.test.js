@@ -231,48 +231,6 @@ describe("event", () => {
     expect(response.entities[0].venueId).toEqual(testVenueId);
   });
 
-  it("should have put the created event in elasticsearch", async () => {
-    let response = await testUtils.getDocument("event-full", testEventId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventId,
-        _index: "event-full",
-        _type: "doc",
-        _version: 1,
-        found: true
-      })
-    );
-
-    expect(response._source).toEqual(
-      expect.objectContaining({
-        postcode: "N1 1TA",
-        venueId: testVenueId,
-        eventSeriesId: testEventSeriesId,
-        talents: [testTalentId]
-      })
-    );
-
-    response = await testUtils.getDocument("combined-event-auto", testEventId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventId,
-        _index: "combined-event-auto",
-        _type: "doc",
-        _version: 1,
-        found: true
-      })
-    );
-
-    expect(response._source).toEqual(
-      expect.objectContaining({
-        id: testEventId,
-        eventType: "Exhibition"
-      })
-    );
-  });
-
   it("should reject a stale update to the event", async () => {
     expect(
       await testUtils.sync(
@@ -317,47 +275,6 @@ describe("event", () => {
 
     // Allow time for the SNS search index update message to be processed.
     await delay(5000);
-  });
-
-  it("should put the updated event in elasticsearch", async () => {
-    let response = await testUtils.getDocument("event-full", testEventId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventId,
-        _index: "event-full",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
-
-    expect(response._source).toEqual(
-      expect.objectContaining({
-        venueId: testVenueId,
-        eventSeriesId: testEventSeriesId,
-        talents: [testTalentId]
-      })
-    );
-
-    response = await testUtils.getDocument("combined-event-auto", testEventId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventId,
-        _index: "combined-event-auto",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
-
-    expect(response._source).toEqual(
-      expect.objectContaining({
-        id: testEventId,
-        eventType: "Exhibition"
-      })
-    );
   });
 
   it("should fail to get a non-existent event", async () => {

@@ -76,32 +76,6 @@ describe("talent", () => {
     testTalentId = response.entity.id;
   });
 
-  it("should put the created talent in elasticsearch", async () => {
-    let response = await testUtils.getDocument("talent-full", testTalentId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testTalentId,
-        _index: "talent-full",
-        _type: "doc",
-        _version: 1,
-        found: true
-      })
-    );
-
-    response = await testUtils.getDocument("talent-auto", testTalentId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testTalentId,
-        _index: "talent-auto",
-        _type: "doc",
-        _version: 1,
-        found: true
-      })
-    );
-  });
-
   it("should get the talent without cache control headers when using the admin api", async () => {
     const response = await request({
       uri: "http://localhost:3030/admin/talent/" + testTalentId,
@@ -219,32 +193,6 @@ describe("talent", () => {
         firstNames: "Byron New",
         status: "Active",
         version: 2
-      })
-    );
-  });
-
-  it("should put the updated talent in elasticsearch", async () => {
-    let response = await testUtils.getDocument("talent-full", testTalentId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testTalentId,
-        _index: "talent-full",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
-
-    response = await testUtils.getDocument("talent-auto", testTalentId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testTalentId,
-        _index: "talent-auto",
-        _type: "doc",
-        _version: 2,
-        found: true
       })
     );
   });

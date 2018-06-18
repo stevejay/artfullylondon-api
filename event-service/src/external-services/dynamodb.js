@@ -1,9 +1,12 @@
-"use strict";
+import clientWrapper from "dynamodb-doc-client-wrapper";
 
-const dynamodb = require("serverless-dynamodb-client");
+const config = process.env.IS_OFFLINE
+  ? {
+      connection: {
+        region: "localhost",
+        endpoint: process.env.DYNAMODB_HOST
+      }
+    }
+  : null;
 
-const dynamodbClient = require("dynamodb-doc-client-wrapper")({
-  documentClient: dynamodb.doc
-});
-
-module.exports = exports = dynamodbClient;
+export default clientWrapper(config);

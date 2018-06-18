@@ -1,28 +1,27 @@
-'use strict';
+"use strict";
 
-const concat = require('lodash.concat');
-const sortBy = require('lodash.sortby');
-const unionBy = require('lodash.unionby');
-const find = require('lodash.find');
-const isNil = require('lodash.isnil');
-const intersection = require('lodash.intersection');
-const tag = require('../entity/tag');
-const constants = require('./constants');
-const date = require('./date');
+const _ = require("lodash");
+const tag = require("../entity/tag");
+const constants = require("./constants");
+const date = require("./date");
 
 exports.mapMediumTagsToArtsType = (mediumTags, eventType) => {
   if (mediumTags && mediumTags.length) {
     const mediumTagIds = mediumTags.map(tag => tag.id);
 
-    if (intersection(mediumTagIds, constants.VISUAL_ARTS_MEDIUMS).length) {
+    if (_.intersection(mediumTagIds, constants.VISUAL_ARTS_MEDIUMS).length) {
       return constants.ARTS_TYPE_VISUAL;
     }
 
-    if (intersection(mediumTagIds, constants.PERFORMING_ARTS_MEDIUMS).length) {
+    if (
+      _.intersection(mediumTagIds, constants.PERFORMING_ARTS_MEDIUMS).length
+    ) {
       return constants.ARTS_TYPE_PERFORMING;
     }
 
-    if (intersection(mediumTagIds, constants.CREATIVE_WRITING_MEDIUMS).length) {
+    if (
+      _.intersection(mediumTagIds, constants.CREATIVE_WRITING_MEDIUMS).length
+    ) {
       return constants.ARTS_TYPE_CREATIVE_WRITING;
     }
   }
@@ -85,8 +84,8 @@ exports.createSearchDateObjects = (
 
 // Calculates the range of dates we will be creating search dates objects for
 exports.getEventDateRange = (event, dateTodayStr, dateMaxStr) => {
-  const eventHasRange = event.occurrenceType !==
-    constants.OCCURRENCE_TYPE_CONTINUOUS;
+  const eventHasRange =
+    event.occurrenceType !== constants.OCCURRENCE_TYPE_CONTINUOUS;
 
   if (!eventHasRange) {
     return { from: dateTodayStr, to: dateMaxStr };
@@ -103,7 +102,7 @@ exports.getEventDateRange = (event, dateTodayStr, dateMaxStr) => {
 };
 
 exports.createInitialDatesLookup = dateRange => {
-  if (isNil(dateRange) || dateRange.to < dateRange.from) {
+  if (_.isNil(dateRange) || dateRange.to < dateRange.from) {
     return null;
   }
 
@@ -116,10 +115,10 @@ exports.createInitialDatesLookup = dateRange => {
 
     result[loopDateStr] = {
       day: date.getDayNumberFromMoment(loopMoment),
-      times: [],
+      times: []
     };
 
-    loopMoment.add(1, 'days');
+    loopMoment.add(1, "days");
   } while (loopDateStr < dateRange.to);
 
   return result;
@@ -159,7 +158,7 @@ exports.removeNamedClosuresDates = (event, dates, namedClosuresLookup) => {
 
 exports.removeFullDayClosureDates = (event, dates) => {
   const wholeDayClosures = _getClosures(event).filter(
-    closure => isNil(closure.from) && isNil(closure.at)
+    closure => _.isNil(closure.from) && _.isNil(closure.at)
   );
 
   if (wholeDayClosures.length === 0) {
@@ -209,7 +208,7 @@ exports.addRegularTimes = (event, dates) => {
     const entry = {
       from: time.from || time.at,
       to: time.to || time.at,
-      timesRangeId: time.timesRangeId,
+      timesRangeId: time.timesRangeId
     };
 
     dayLookup[time.day].push(entry);
@@ -232,7 +231,7 @@ exports.addRegularTimes = (event, dates) => {
     }
 
     const newDateEntry = Object.assign({}, dateEntry, {
-      times: activeDayTimes.map(x => ({ from: x.from, to: x.to })),
+      times: activeDayTimes.map(x => ({ from: x.from, to: x.to }))
     });
 
     result[dateKey] = newDateEntry;
@@ -246,7 +245,7 @@ exports.getActiveDayTimes = (dayTimes, date, timesRanges) => {
     return dayTimes;
   }
 
-  const activeTimesRange = find(
+  const activeTimesRange = _.find(
     timesRanges,
     timesRange => date >= timesRange.dateFrom && date <= timesRange.dateTo
   );
@@ -274,13 +273,13 @@ exports.addAdditionalTimes = (event, dates) => {
         additionalTimes = _addDateTimeKey(additionalTimes);
         venueAdditionalTimes = _addDateTimeKey(venueAdditionalTimes);
 
-        additionalTimes = unionBy(
+        additionalTimes = _.unionBy(
           additionalTimes,
           venueAdditionalTimes,
           value => value.key
         );
 
-        additionalTimes = sortBy(additionalTimes, value => value.key);
+        additionalTimes = _.sortBy(additionalTimes, value => value.key);
       }
     }
   } else if (
@@ -306,7 +305,7 @@ exports.addAdditionalTimes = (event, dates) => {
 
     const entry = {
       from: time.from || time.at,
-      to: time.to || time.at,
+      to: time.to || time.at
     };
 
     dateLookup[time.date].push(entry);
@@ -322,8 +321,8 @@ exports.addAdditionalTimes = (event, dates) => {
       return;
     }
 
-    let newTimes = concat(dateEntry.times, dateTimes);
-    newTimes = sortBy(newTimes, value => value.from);
+    let newTimes = _.concat(dateEntry.times, dateTimes);
+    newTimes = _.sortBy(newTimes, value => value.from);
 
     const newDateEntry = Object.assign({}, dateEntry, { times: newTimes });
     result[dateKey] = newDateEntry;
@@ -336,7 +335,7 @@ exports.removePartDayClosureDates = (event, dates) => {
   const isExhibition = _isExhibitionEvent(event);
 
   const partDayClosures = _getClosures(event).filter(
-    closure => !isNil(closure.from) || !isNil(closure.at)
+    closure => !_.isNil(closure.from) || !_.isNil(closure.at)
   );
 
   if (partDayClosures.length === 0) {
@@ -420,7 +419,7 @@ exports.addSpecialDatesTags = (event, dates) => {
     newDate.times = newDate.times.slice();
 
     const newTime = Object.assign({}, newDate.times[timesIndex], {
-      tags: specialDate.audienceTags.map(tag => tag.id),
+      tags: specialDate.audienceTags.map(tag => tag.id)
     });
 
     newDate.times.splice(timesIndex, 1, newTime);
@@ -433,8 +432,8 @@ exports.addSpecialDatesTags = (event, dates) => {
 exports.removeSoldOutPerformances = (event, dates) => {
   const isPerformance = _isPerformanceEvent(event);
 
-  const hasSoldOutPerformances = event.soldOutPerformances &&
-    event.soldOutPerformances.length;
+  const hasSoldOutPerformances =
+    event.soldOutPerformances && event.soldOutPerformances.length;
 
   let result = dates;
 
@@ -483,7 +482,7 @@ exports.convertDatesToList = dates => {
       const resultEntry = {
         date: dateKey,
         from: time.from,
-        to: time.to,
+        to: time.to
       };
 
       if (time.tags && time.tags.length) {
@@ -494,7 +493,7 @@ exports.convertDatesToList = dates => {
     });
   });
 
-  return sortBy(result, value => value.date + '.' + value.from);
+  return _.sortBy(result, value => value.date + "." + value.from);
 };
 
 function _isExhibitionEvent(event) {
@@ -513,7 +512,7 @@ function _getClosures(event) {
     closures = event.openingTimesClosures || [];
 
     if (event.useVenueOpeningTimes) {
-      closures = concat(closures, event.venue.openingTimesClosures || []);
+      closures = _.concat(closures, event.venue.openingTimesClosures || []);
     }
   } else {
     closures = event.performancesClosures || [];

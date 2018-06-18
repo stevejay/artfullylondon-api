@@ -1,6 +1,6 @@
 "use strict";
 
-const isNil = require("lodash.isnil");
+const _ = require("lodash");
 const constants = require("./constants");
 const globalConstants = require("../constants");
 const constraints = require("../data/constraints");
@@ -15,7 +15,7 @@ module.exports = {
     inclusion: constants.ALLOWED_TALENT_TYPES,
     dependency: {
       test: value => value === constants.TALENT_TYPE_GROUP,
-      ensure: (_, attrs) => isNil(attrs.firstNames),
+      ensure: (__, attrs) => _.isNil(attrs.firstNames),
       message: "first names should be blank for group talent"
     }
   },

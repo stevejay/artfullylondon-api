@@ -1,9 +1,6 @@
 "use strict";
 
-const isNil = require("lodash.isnil");
-const includes = require("lodash.includes");
-const every = require("lodash.every");
-const find = require("lodash.find");
+const _ = require("lodash");
 const constants = require("./constants");
 const globalConstants = require("../constants");
 const globalConstraints = require("../data/constraints");
@@ -24,8 +21,8 @@ module.exports = {
     dependency: [
       {
         test: value => value === constants.EVENT_TYPE_PERFORMANCE,
-        ensure: (_, attrs) =>
-          includes(
+        ensure: (__, attrs) =>
+          _.includes(
             constants.ALLOWED_PERFORMANCE_OCCURRENCE_TYPES,
             attrs.occurrenceType
           ),
@@ -33,8 +30,8 @@ module.exports = {
       },
       {
         test: value => value === constants.EVENT_TYPE_COURSE,
-        ensure: (_, attrs) =>
-          includes(
+        ensure: (__, attrs) =>
+          _.includes(
             constants.ALLOWED_COURSE_OCCURRENCE_TYPES,
             attrs.occurrenceType
           ),
@@ -42,8 +39,8 @@ module.exports = {
       },
       {
         test: value => value === constants.EVENT_TYPE_EXHIBITION,
-        ensure: (_, attrs) =>
-          includes(
+        ensure: (__, attrs) =>
+          _.includes(
             constants.ALLOWED_EXHIBITION_OCCURRENCE_TYPES,
             attrs.occurrenceType
           ),
@@ -57,18 +54,19 @@ module.exports = {
     dependency: [
       {
         test: value => value === constants.OCCURRENCE_TYPE_ONETIME,
-        ensure: (_, attrs) => attrs.dateFrom && attrs.dateFrom === attrs.dateTo,
+        ensure: (__, attrs) =>
+          attrs.dateFrom && attrs.dateFrom === attrs.dateTo,
         message: "Date from must equal date to and both must be given"
       },
       {
         test: value => value === constants.OCCURRENCE_TYPE_BOUNDED,
-        ensure: (_, attrs) => attrs.dateFrom && attrs.dateTo >= attrs.dateFrom,
+        ensure: (__, attrs) => attrs.dateFrom && attrs.dateTo >= attrs.dateFrom,
         message:
           "Date to must be greater than or equal to date from and both must be given"
       },
       {
         test: value => value === constants.OCCURRENCE_TYPE_CONTINUOUS,
-        ensure: (_, attrs) => isNil(attrs.dateFrom) && isNil(attrs.dateTo),
+        ensure: (__, attrs) => _.isNil(attrs.dateFrom) && _.isNil(attrs.dateTo),
         message: "Date from and date to must be null"
       }
     ]
@@ -110,7 +108,7 @@ module.exports = {
     number: true,
     numericality: globalConstraints.AGE_NUMERICALITY,
     dependency: {
-      test: (value, attrs) => !isNil(value) && !isNil(attrs.minAge),
+      test: (value, attrs) => !_.isNil(value) && !_.isNil(attrs.minAge),
       ensure: (value, attrs) => value >= attrs.minAge,
       message: "Max age must be greater than or equal to Min age"
     }
@@ -121,12 +119,12 @@ module.exports = {
     dependency: [
       {
         test: value => value === constants.COST_TYPE_FREE,
-        ensure: (_, attrs) => isNil(attrs.costFrom) && isNil(attrs.costTo),
+        ensure: (__, attrs) => _.isNil(attrs.costFrom) && _.isNil(attrs.costTo),
         message: "Cost from and cost to must be null"
       },
       {
         test: value => value === constants.COST_TYPE_PAID,
-        ensure: (_, attrs) =>
+        ensure: (__, attrs) =>
           attrs.costFrom >= 0 && attrs.costTo >= attrs.costFrom,
         message:
           "Cost to must be greater than or equal to cost from and both must be given"
@@ -146,7 +144,7 @@ module.exports = {
     inclusion: constants.ALLOWED_BOOKING_TYPES,
     dependency: {
       test: value => value === constants.BOOKING_TYPE_NOT_REQUIRED,
-      ensure: (_, attrs) => isNil(attrs.bookingOpens),
+      ensure: (__, attrs) => _.isNil(attrs.bookingOpens),
       message: "Booking opens must be null"
     }
   },
@@ -158,7 +156,8 @@ module.exports = {
     bool: true,
     dependency: {
       test: value => !!value,
-      ensure: (_, attrs) => attrs.eventType === constants.EVENT_TYPE_EXHIBITION,
+      ensure: (__, attrs) =>
+        attrs.eventType === constants.EVENT_TYPE_EXHIBITION,
       message: "Only exhibition events can have the timed entry flag set"
     }
   },
@@ -184,7 +183,8 @@ module.exports = {
     presence: true,
     dependency: {
       test: value => value === true,
-      ensure: (_, attrs) => attrs.eventType === constants.EVENT_TYPE_EXHIBITION,
+      ensure: (__, attrs) =>
+        attrs.eventType === constants.EVENT_TYPE_EXHIBITION,
       message:
         "Cannot use venue opening times if event is a performance or a course"
     }
@@ -221,7 +221,7 @@ module.exports = {
     dependency: [
       {
         test: value => value && value.length > 0,
-        ensure: (_, attrs) =>
+        ensure: (__, attrs) =>
           attrs.occurrenceType === constants.OCCURRENCE_TYPE_BOUNDED,
         message: "Can only have Times Ranges if event is bounded"
       },
@@ -241,12 +241,12 @@ module.exports = {
         ensure: (value, attrs) =>
           (attrs.eventType === constants.EVENT_TYPE_EXHIBITION &&
             (attrs.useVenueOpeningTimes ||
-              every(attrs.openingTimes, x =>
-                find(value, y => y.id === x.timesRangeId)
+              _.every(attrs.openingTimes, x =>
+                _.find(value, y => y.id === x.timesRangeId)
               ))) ||
           (attrs.eventType === constants.EVENT_TYPE_PERFORMANCE &&
-            every(attrs.performances, x =>
-              find(value, y => y.id === x.timesRangeId)
+            _.every(attrs.performances, x =>
+              _.find(value, y => y.id === x.timesRangeId)
             )),
         message:
           "All Opening Times / Performances must have a recognized Times Range Id"
@@ -420,7 +420,7 @@ module.exports = {
     },
     dependency: {
       test: value => value && value.length > 0,
-      ensure: (_, attrs) =>
+      ensure: (__, attrs) =>
         attrs.eventType === constants.EVENT_TYPE_PERFORMANCE,
       message: "Can only have sold out performances if event is a performance"
     }

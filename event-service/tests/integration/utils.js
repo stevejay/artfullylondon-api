@@ -1,8 +1,5 @@
 "use strict";
 
-const elasticsearch = require("elasticsearch");
-const yaml = require("js-yaml");
-const fs = require("fs");
 const uuidv4 = require("uuid/v4");
 
 const dynamodb = require("dynamodb-doc-client-wrapper")({
@@ -24,43 +21,6 @@ exports.sync = fn =>
   fn.then(res => () => res).catch(err => () => {
     throw err;
   });
-
-const envVars = yaml.safeLoad(fs.readFileSync("./env.yml", "utf8")).development;
-
-const esClient = new elasticsearch.Client({
-  host: envVars.ELASTICSEARCH_HOST,
-  log: "error"
-});
-
-exports.deleteElasticsearchIndex = async function(index) {
-  if (await esClient.indices.exists({ index })) {
-    await esClient.indices.delete({ index });
-  }
-};
-
-exports.createElasticsearchIndex = async function(index) {
-  const mappingJson = require(`../../../elasticsearch/${index}.json`);
-  await exports.deleteElasticsearchIndex(index);
-  await esClient.indices.create({ index, body: mappingJson });
-};
-
-exports.indexDocument = async function(index, doc) {
-  await esClient.create({
-    index,
-    type: "doc",
-    id: doc.id,
-    body: doc,
-    refresh: "true"
-  });
-};
-
-exports.getDocument = async function(index, id) {
-  return await esClient.get({
-    index,
-    type: "doc",
-    id
-  });
-};
 
 exports.truncateTable = async function(tableName) {
   const items = await dynamodb.scan({

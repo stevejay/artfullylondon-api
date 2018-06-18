@@ -1,6 +1,6 @@
 'use strict';
 
-const isNil = require('lodash.isnil');
+const _ = require('lodash');
 const globalConstants = require('../constants');
 
 const LONDON_LAT = 51.5074;
@@ -112,7 +112,7 @@ exports.TO_OPENING_TIME_DEPENDENCY_ON_FROM_OPENING_TIME = {
 
 exports.OPTIONAL_TO_OPENING_TIME_DEPENDENCY_ON_FROM_OPENING_TIME = {
   ensure: (value, attrs) =>
-    (isNil(attrs.from) && isNil(value)) || value > attrs.from,
+    (_.isNil(attrs.from) && _.isNil(value)) || value > attrs.from,
   message: 'To time is not greater than from time',
 };
 

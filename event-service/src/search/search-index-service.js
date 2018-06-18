@@ -2,13 +2,11 @@
 
 const _ = require("lodash");
 const delay = require("delay");
-const log = require("loglevel");
+// const log = require("loglevel");
 const ensure = require("ensure-request").ensure;
 const sns = require("../external-services/sns");
 const dynamodb = require("../external-services/dynamodb");
 const entity = require("../entity/entity");
-const elasticsearch = require("../external-services/elasticsearch");
-const EntityBulkUpdateBuilder = require("../entity/entity-bulk-update-builder");
 const globalConstants = require("../constants");
 const ensureErrorHandler = require("../data/ensure-error-handler");
 const eventMappings = require("../event/mappings");
@@ -17,7 +15,6 @@ const talentMappings = require("../talent/mappings");
 const venueMappings = require("../venue/mappings");
 const eventPopulate = require("../event/populate");
 const etag = require("../lambda/etag");
-const sns = require("../external-services/sns");
 
 exports.updateEventSearchIndex = async function(message) {
   if (!message || !message.eventId) {
@@ -110,49 +107,49 @@ exports.processRefreshSearchIndexMessage = async function(message) {
     ConsistentRead: false
   });
 
-  let entities = null;
+  // let entities = null;
 
-  if (entityParams.refsGetter) {
-    entities = await entityParams.refsGetter(scanResult.Items);
-  } else {
-    entities = scanResult.Items;
-  }
+  // if (entityParams.refsGetter) {
+  //   entities = await entityParams.refsGetter(scanResult.Items);
+  // } else {
+  //   entities = scanResult.Items;
+  // }
 
-  const isAutocomplete = message.index.endsWith("-auto");
-  const builder = new EntityBulkUpdateBuilder();
+  // const isAutocomplete = message.index.endsWith("-auto");
+  // const builder = new EntityBulkUpdateBuilder();
 
-  entities.forEach(entity => {
-    const indexName =
-      message.version && message.version !== "latest"
-        ? `${message.index}_v${message.version}`
-        : message.index;
+  // entities.forEach(entity => {
+  //   const indexName =
+  //     message.version && message.version !== "latest"
+  //       ? `${message.index}_v${message.version}`
+  //       : message.index;
 
-    if (isAutocomplete) {
-      const autocompleteItem = entityParams.mappings.mapDbItemToAutocompleteSearchIndex(
-        entity.entity || entity,
-        entity.referencedEntities
-      );
+  //   if (isAutocomplete) {
+  //     const autocompleteItem = entityParams.mappings.mapDbItemToAutocompleteSearchIndex(
+  //       entity.entity || entity,
+  //       entity.referencedEntities
+  //     );
 
-      builder.addAutocompleteSearchUpdate(autocompleteItem, indexName);
-    } else {
-      const fullSearchItem = entityParams.mappings.mapDbItemToFullSearchIndex(
-        entity.entity || entity,
-        entity.referencedEntities
-      );
+  //     builder.addAutocompleteSearchUpdate(autocompleteItem, indexName);
+  //   } else {
+  //     const fullSearchItem = entityParams.mappings.mapDbItemToFullSearchIndex(
+  //       entity.entity || entity,
+  //       entity.referencedEntities
+  //     );
 
-      builder.addFullSearchUpdate(fullSearchItem, indexName);
-    }
-  });
+  //     builder.addFullSearchUpdate(fullSearchItem, indexName);
+  //   }
+  // });
 
-  try {
-    const body = builder.build();
-    if (body.length) {
-      await elasticsearch.bulk({ body });
-    }
-  } catch (err) {
-    log.error("elasticsearch errors: " + err.message);
-    // swallow exception to allow process to continue.
-  }
+  // try {
+  //   const body = builder.build();
+  //   if (body.length) {
+  //     await elasticsearch.bulk({ body });
+  //   }
+  // } catch (err) {
+  //   log.error("elasticsearch errors: " + err.message);
+  //   // swallow exception to allow process to continue.
+  // }
 
   const lastEvaluatedKey = scanResult.LastEvaluatedKey;
   if (lastEvaluatedKey) {

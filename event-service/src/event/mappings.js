@@ -1,6 +1,6 @@
 "use strict";
 
-const isNil = require("lodash.isnil");
+const _ = require("lodash");
 const simplify = require("es-simplify");
 const eventSeriesMappings = require("../event-series/mappings");
 const venueMappings = require("../venue/mappings");
@@ -43,10 +43,10 @@ exports.mapRequestToDbItem = (id, request) => {
   if (request.dateTo) {
     result.dateTo = request.dateTo;
   }
-  if (!isNil(request.costFrom)) {
+  if (!_.isNil(request.costFrom)) {
     result.costFrom = request.costFrom;
   }
-  if (!isNil(request.costTo)) {
+  if (!_.isNil(request.costTo)) {
     result.costTo = request.costTo;
   }
   if (request.bookingOpens) {
@@ -70,10 +70,10 @@ exports.mapRequestToDbItem = (id, request) => {
   if (request.weSay) {
     result.weSay = request.weSay;
   }
-  if (!isNil(request.minAge)) {
+  if (!_.isNil(request.minAge)) {
     result.minAge = request.minAge;
   }
-  if (!isNil(request.maxAge)) {
+  if (!_.isNil(request.maxAge)) {
     result.maxAge = request.maxAge;
   }
   if (request.soldOut) {
@@ -213,10 +213,10 @@ exports.mapDbItemToPublicResponse = (dbItem, referencedEntities) => {
   if (dbItem.timedEntry) {
     result.timedEntry = dbItem.timedEntry;
   }
-  if (!isNil(dbItem.costFrom)) {
+  if (!_.isNil(dbItem.costFrom)) {
     result.costFrom = dbItem.costFrom;
   }
-  if (!isNil(dbItem.costTo)) {
+  if (!_.isNil(dbItem.costTo)) {
     result.costTo = dbItem.costTo;
   }
   if (dbItem.bookingOpens) {
@@ -240,10 +240,10 @@ exports.mapDbItemToPublicResponse = (dbItem, referencedEntities) => {
   if (dbItem.weSay) {
     result.weSay = dbItem.weSay;
   }
-  if (!isNil(dbItem.minAge)) {
+  if (!_.isNil(dbItem.minAge)) {
     result.minAge = dbItem.minAge;
   }
-  if (!isNil(dbItem.maxAge)) {
+  if (!_.isNil(dbItem.maxAge)) {
     result.maxAge = dbItem.maxAge;
   }
 
@@ -382,13 +382,13 @@ exports.mapDbItemToFullSearchIndex = (dbItem, referencedEntities) => {
   if (fullResult.dateTo) {
     result.dateTo = fullResult.dateTo;
   }
-  if (!isNil(fullResult.costFrom)) {
+  if (!_.isNil(fullResult.costFrom)) {
     result.costFrom = fullResult.costFrom;
   }
-  if (!isNil(fullResult.minAge)) {
+  if (!_.isNil(fullResult.minAge)) {
     result.minAge = fullResult.minAge;
   }
-  if (!isNil(fullResult.maxAge)) {
+  if (!_.isNil(fullResult.maxAge)) {
     result.maxAge = fullResult.maxAge;
   }
 
