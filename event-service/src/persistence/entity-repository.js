@@ -1,9 +1,7 @@
-"use strict";
+import * as dynamodb from "./dynamodb";
 
-const dynamodb = require("../external-services/dynamodb");
-
-exports.write = (tableName, entity) =>
-  entity.version === 1
+export function write(tableName, entity) {
+  return entity.version === 1
     ? dynamodb.put({
         TableName: tableName,
         Item: entity,
@@ -17,16 +15,19 @@ exports.write = (tableName, entity) =>
         ExpressionAttributeValues: { ":oldVersion": entity.version - 1 },
         ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
       });
+}
 
-exports.get = (tableName, id, consistentRead) =>
-  dynamodb.get({
+export function get(tableName, id, consistentRead) {
+  return dynamodb.get({
     TableName: tableName,
     Key: { id: id },
     ConsistentRead: !!consistentRead,
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   });
+}
 
 const PUBLIC_RESOURCE_REGEX = /^\/public\//i;
 
-exports.isPublicRequest = event =>
-  !!event.resource.match(PUBLIC_RESOURCE_REGEX);
+export function isPublicRequest(event) {
+  return !!event.resource.match(PUBLIC_RESOURCE_REGEX);
+}

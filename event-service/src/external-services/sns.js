@@ -1,6 +1,4 @@
-"use strict";
-
-const AWS = require("aws-sdk");
+import AWS from "aws-sdk";
 
 const config = process.env.IS_OFFLINE
   ? {
@@ -11,12 +9,12 @@ const config = process.env.IS_OFFLINE
 
 const sns = new AWS.SNS(config);
 
-exports.notify = async (body, headers) => {
-  await sns
+export function notify(body, headers) {
+  return sns
     .publish({
       Message: JSON.stringify(body),
       MessageStructure: "json",
       TopicArn: headers.arn
     })
     .promise();
-};
+}

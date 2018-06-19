@@ -1,40 +1,87 @@
-"use strict";
-"use strict";
+import * as redis from "redis";
+import * as xrayWrapper from "./xray-wrapper";
 
-module.exports = () => {
-  const redis = require("redis");
-
-  const redisOptions = {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    password: process.env.REDIS_PASSWORD
-  };
-
-  const client = redis.createClient(redisOptions);
-
-  return {
-    waitForReady: () =>
-      new Promise(resolve => client.on("ready", () => resolve())),
-    get: key =>
-      new Promise(resolve => {
-        client.get(key, (err, response) => {
-          if (err) {
-            resolve(err);
-          } else {
-            resolve(response ? response.toString() : null);
-          }
-        });
-      }),
-    set: (key, value) =>
-      new Promise(resolve => {
-        client.set(key, value, err => {
-          if (err) {
-            resolve(err);
-          } else {
-            resolve();
-          }
-        });
-      }),
-    quit: () => client.quit()
-  };
+const CLIENT_OPTIONS = {
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD
 };
+
+let client = null;
+
+function connect() {
+  return new Promise((resolve, reject) => {
+    if (client) {
+      resolve();
+    } else {
+      client = redis.createClient(CLIENT_OPTIONS);
+      client.on("ready", () => resolve());
+      client.on("error", reject);
+    }
+  });
+}
+
+function disconnect() {
+  if (client) {
+    client.quit();
+    client = null;
+  }
+}
+
+export async function get(key) {
+  return new Promise((resolve, reject) => {
+    xrayWrapper.captureAsyncFunc("redis get", subsegment => {
+      connect()
+        .then(
+          () =>
+            new Promise((resolve, reject) => {
+              client.get(key, (err, response) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  resolve(response ? response.toString() : null);
+                }
+              });
+            })
+        )
+        .then(response => {
+          disconnect();
+          subsegment.close();
+          resolve(response);
+        })
+        .catch(err => {
+          subsegment.close(err);
+          reject(err);
+        });
+    });
+  });
+}
+
+export async function set(key, value) {
+  return new Promise((resolve, reject) => {
+    xrayWrapper.captureAsyncFunc("redis set", subsegment => {
+      connect()
+        .then(
+          () =>
+            new Promise((resolve, reject) => {
+              client.set(key, value, err => {
+                if (err) {
+                  reject(err);
+                } else {
+                  resolve();
+                }
+              });
+            })
+        )
+        .then(() => {
+          disconnect();
+          subsegment.close();
+          resolve();
+        })
+        .catch(err => {
+          subsegment.close(err);
+          reject(err);
+        });
+    });
+  });
+}

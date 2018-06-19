@@ -1,44 +1,32 @@
-"use strict";
+import * as request from "request-promise-native";
+import * as linkType from "../types/link-type";
 
-const request = require("request-promise-native");
-const globalConstants = require("../constants");
-
-exports.getDescription = async (description, credit, links) => {
-  if (description) {
+export async function getDescription(params) {
+  if (params.description) {
     // don't replace an existing description
-    return {
-      content: description,
-      credit: credit
-    };
+    return null;
   }
 
-  const wikipediaLink = _getLinkByType(
-    links,
-    globalConstants.LINK_TYPE_WIKIPEDIA
-  );
+  const wikipediaLink = getLinkByType(params.links, linkType.WIKIPEDIA);
 
   if (!wikipediaLink) {
     // no wikipedia link given
-    return {};
+    return null;
   }
 
   const lastSlashIndex = wikipediaLink.url.lastIndexOf("/");
   if (lastSlashIndex === -1 || lastSlashIndex >= wikipediaLink.url.length - 1) {
     // no final component in url
-    return {};
+    return null;
   }
 
   let title = wikipediaLink.url.substring(lastSlashIndex + 1);
-
   const path = `/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${title}&exchars=4000`;
-
-  const body = await request.get("https://en.wikipedia.org" + path, {
-    json: true
-  });
+  const body = await getUrl("https://en.wikipedia.org" + path);
 
   const keys = Object.keys(body.query.pages);
   if (keys.length !== 1) {
-    return {};
+    return null;
   }
 
   let extract = body.query.pages[keys[0]].extract || "";
@@ -51,11 +39,29 @@ exports.getDescription = async (description, credit, links) => {
   extract = extract.replace(/\.\.\.\.?$/, ".");
 
   return {
-    content: extract.length > 10 ? "<p>" + extract + "</p>" : null
+    description: extract.length > 10 ? "<p>" + extract + "</p>" : null,
+    descriptionCredit: "Wikipedia"
   };
-};
+}
 
-function _getLinkByType(links, linkType) {
+function getLinkByType(links, linkType) {
   const matches = (links || []).filter(link => link.type === linkType);
   return matches.length ? matches[0] : null;
+}
+
+function getUrl(url) {
+  return new Promise((resolve, reject) => {
+    xrayWrapper.captureAsyncFunc("wikipedia get", subsegment => {
+      request
+        .get(url, { json: true })
+        .then(response => {
+          subsegment.close();
+          resolve(response);
+        })
+        .catch(err => {
+          subsegment.close(err);
+          reject(err);
+        });
+    });
+  });
 }

@@ -1,5 +1,3 @@
-"use strict";
-
 require("aws-sdk");
 const lambda = require("aws-lambda-invoke");
 

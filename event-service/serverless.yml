@@ -230,8 +230,8 @@ custom:
                 pattern: ''
                 template:
                     application/json: $input.path("$.body")
-                headers:
-                    Cache-Control: integration.response.body.headers.Cache-Control
+                # headers:
+                #     Cache-Control: integration.response.body.headers.Cache-Control
             400:
                 pattern: '^\[400\].*'
                 template:

@@ -1,19 +1,17 @@
-"use strict";
+import * as talentMapper from "./talent/mapper";
+import * as venueMapper from "./venue/mapper";
+import * as eventSeriesMapper from "./event-series/mapper";
+import * as eventMapper from "./event/mapper";
 
-const talentConstants = require("./talent/constants");
-const venueConstants = require("./venue/constants");
-const eventSeriesConstants = require("./event-series/constants");
-const eventConstants = require("./event/constants");
-
-exports.NORMAL_ADMIN_USER_REQUEST_HEADERS = {
+export const NORMAL_ADMIN_USER_REQUEST_HEADERS = {
   Authorization:
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiY29nbml0bzp1c2VybmFtZSI6IlN0ZXZlIn0.zD8h7GMwyhBnY4ijQzmBaTl57wscAWKCyBuvCOMVRCA"
 };
 
-exports.INDIVIDUAL_TALENT_ID = "carrie-cracknell-actor";
-exports.GROUP_TALENT_ID = "the-darkness-artist";
+export const INDIVIDUAL_TALENT_ID = "carrie-cracknell-actor";
+export const GROUP_TALENT_ID = "the-darkness-artist";
 
-exports.createMinimalIndividualRequestTalent = () => {
+export const createMinimalIndividualRequestTalent = () => {
   return {
     firstNames: "Carrie",
     lastName: "Cracknell",
@@ -31,7 +29,7 @@ exports.createMinimalIndividualRequestTalent = () => {
   };
 };
 
-exports.createFullIndividualRequestTalent = () => {
+export const createFullIndividualRequestTalent = () => {
   return {
     firstNames: "Carrie",
     lastName: "Cracknell",
@@ -55,7 +53,7 @@ exports.createFullIndividualRequestTalent = () => {
   };
 };
 
-exports.createMinimalGroupRequestTalent = () => {
+export const createMinimalGroupRequestTalent = () => {
   return {
     lastName: "The Darkness",
     status: "Active",
@@ -73,7 +71,7 @@ exports.createMinimalGroupRequestTalent = () => {
   };
 };
 
-exports.createFullGroupRequestTalent = () => {
+export const createFullGroupRequestTalent = () => {
   return {
     lastName: "The Darkness",
     status: "Active",
@@ -96,24 +94,24 @@ exports.createFullGroupRequestTalent = () => {
   };
 };
 
-exports.createMinimalIndividualDbTalent = () => {
+export const createMinimalIndividualDbTalent = () => {
   return {
-    id: exports.INDIVIDUAL_TALENT_ID,
+    id: INDIVIDUAL_TALENT_ID,
     firstNames: "Carrie",
     lastName: "Cracknell",
     status: "Active",
     talentType: "Individual",
     commonRole: "Actor",
     version: 3,
-    schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
+    schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11"
   };
 };
 
-exports.createFullIndividualDbTalent = () => {
+export const createFullIndividualDbTalent = () => {
   return {
-    id: exports.INDIVIDUAL_TALENT_ID,
+    id: INDIVIDUAL_TALENT_ID,
     firstNames: "Carrie",
     lastName: "Cracknell",
     status: "Active",
@@ -131,15 +129,15 @@ exports.createFullIndividualDbTalent = () => {
     ],
     weSay: "something",
     version: 3,
-    schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
+    schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11"
   };
 };
 
-exports.createFullGroupDbTalent = () => {
+export const createFullGroupDbTalent = () => {
   return {
-    id: exports.GROUP_TALENT_ID,
+    id: GROUP_TALENT_ID,
     lastName: "The Darkness",
     status: "Active",
     talentType: "Group",
@@ -156,30 +154,30 @@ exports.createFullGroupDbTalent = () => {
     ],
     weSay: "something",
     version: 3,
-    schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
+    schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11"
   };
 };
 
-exports.createMinimalGroupDbTalent = () => {
+export const createMinimalGroupDbTalent = () => {
   return {
-    id: exports.GROUP_TALENT_ID,
+    id: GROUP_TALENT_ID,
     lastName: "The Darkness",
     status: "Active",
     talentType: "Group",
     commonRole: "Artist",
     version: 1,
-    schemeVersion: talentConstants.CURRENT_TALENT_SCHEME_VERSION,
+    schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11"
   };
 };
 
-exports.MINIMAL_VENUE_ID = "almeida-theatre";
-exports.FULL_VENUE_ID = "tate-modern";
+export const MINIMAL_VENUE_ID = "almeida-theatre";
+export const FULL_VENUE_ID = "tate-modern";
 
-exports.createMinimalRequestVenue = () => {
+export const createMinimalRequestVenue = () => {
   return {
     name: "Almeida Theatre",
     status: "Active",
@@ -210,7 +208,7 @@ exports.createMinimalRequestVenue = () => {
   };
 };
 
-exports.createFullRequestVenue = () => {
+export const createFullRequestVenue = () => {
   return {
     name: "Tate Modern",
     status: "Active",
@@ -248,9 +246,9 @@ exports.createFullRequestVenue = () => {
   };
 };
 
-exports.createMinimalDbVenue = () => {
+export const createMinimalDbVenue = () => {
   return {
-    id: exports.MINIMAL_VENUE_ID,
+    id: MINIMAL_VENUE_ID,
     name: "Almeida Theatre",
     status: "Active",
     venueType: "Theatre",
@@ -262,15 +260,15 @@ exports.createMinimalDbVenue = () => {
     disabledBathroomType: "Present",
     hearingFacilitiesType: "HearingLoops",
     version: 1,
-    schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+    schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11"
   };
 };
 
-exports.createFullDbVenue = () => {
+export const createFullDbVenue = () => {
   return {
-    id: exports.FULL_VENUE_ID,
+    id: FULL_VENUE_ID,
     name: "Tate Modern",
     status: "Active",
     venueType: "Art Gallery",
@@ -302,15 +300,15 @@ exports.createFullDbVenue = () => {
     weSay: "something",
     notes: "hi",
     version: 1,
-    schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+    schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11"
   };
 };
 
-exports.EVENT_SERIES_ID = "bang-said-the-gun";
+export const EVENT_SERIES_ID = "bang-said-the-gun";
 
-exports.createMinimalRequestEventSeries = () => {
+export const createMinimalRequestEventSeries = () => {
   return {
     name: "Bang Said The Gun",
     status: "Active",
@@ -329,7 +327,7 @@ exports.createMinimalRequestEventSeries = () => {
   };
 };
 
-exports.createFullRequestEventSeries = () => {
+export const createFullRequestEventSeries = () => {
   return {
     name: "Bang Said The Gun",
     status: "Active",
@@ -349,9 +347,9 @@ exports.createFullRequestEventSeries = () => {
   };
 };
 
-exports.createMinimalDbEventSeries = () => {
+export const createMinimalDbEventSeries = () => {
   return {
-    id: exports.EVENT_SERIES_ID,
+    id: EVENT_SERIES_ID,
     name: "Bang Said The Gun",
     status: "Active",
     eventSeriesType: "Occasional",
@@ -359,15 +357,15 @@ exports.createMinimalDbEventSeries = () => {
     summary: "A poetry riot",
     description: "Poetry for people who dont like poetry.",
     version: 1,
-    schemeVersion: eventSeriesConstants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
+    schemeVersion: eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11"
   };
 };
 
-exports.createFullDbEventSeries = () => {
+export const createFullDbEventSeries = () => {
   return {
-    id: exports.EVENT_SERIES_ID,
+    id: EVENT_SERIES_ID,
     name: "Bang Said The Gun",
     status: "Active",
     eventSeriesType: "Occasional",
@@ -381,20 +379,20 @@ exports.createFullDbEventSeries = () => {
     ],
     weSay: "something",
     version: 1,
-    schemeVersion: eventSeriesConstants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
+    schemeVersion: eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11"
   };
 };
 
-exports.PERFORMANCE_EVENT_ID = "almeida-theatre/2016/taming-of-the-shrew";
-exports.EXHIBITION_EVENT_ID = "almeida-theatre/2016/taming-of-the-shrew";
-exports.COURSE_EVENT_ID = "photographers-gallery/2017/taking-pictures";
-exports.EVENT_EVENT_SERIES_ID = "some-event-series";
-exports.EVENT_VENUE_ID = "almeida-theatre";
-exports.EVENT_TALENT_ID = "john-doe";
+export const PERFORMANCE_EVENT_ID = "almeida-theatre/2016/taming-of-the-shrew";
+export const EXHIBITION_EVENT_ID = "almeida-theatre/2016/taming-of-the-shrew";
+export const COURSE_EVENT_ID = "photographers-gallery/2017/taking-pictures";
+export const EVENT_EVENT_SERIES_ID = "some-event-series";
+export const EVENT_VENUE_ID = "almeida-theatre";
+export const EVENT_TALENT_ID = "john-doe";
 
-exports.createMinimalPerformanceRequestEvent = () => {
+export const createMinimalPerformanceRequestEvent = () => {
   return {
     status: "Active",
     name: "Taming of the Shrew",
@@ -410,7 +408,7 @@ exports.createMinimalPerformanceRequestEvent = () => {
     timedEntry: undefined,
     summary: "A Shakespearian classic",
     description: undefined,
-    venueId: exports.EVENT_VENUE_ID,
+    venueId: EVENT_VENUE_ID,
     version: 4,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11",
@@ -444,7 +442,7 @@ exports.createMinimalPerformanceRequestEvent = () => {
   };
 };
 
-exports.createMinimalExhibitionRequestEvent = () => {
+export const createMinimalExhibitionRequestEvent = () => {
   return {
     status: "Active",
     name: "Taming of the Shrew",
@@ -460,7 +458,7 @@ exports.createMinimalExhibitionRequestEvent = () => {
     timedEntry: undefined,
     summary: "A Shakespearian classic",
     description: undefined,
-    venueId: exports.EVENT_VENUE_ID,
+    venueId: EVENT_VENUE_ID,
     version: 4,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11",
@@ -494,7 +492,7 @@ exports.createMinimalExhibitionRequestEvent = () => {
   };
 };
 
-exports.createFullPerformanceRequestEvent = () => {
+export const createFullPerformanceRequestEvent = () => {
   return {
     status: "Active",
     name: "Taming of the Shrew",
@@ -517,8 +515,8 @@ exports.createFullPerformanceRequestEvent = () => {
     minAge: 14,
     maxAge: 18,
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
-    eventSeriesId: exports.EVENT_EVENT_SERIES_ID,
-    venueId: exports.EVENT_VENUE_ID,
+    eventSeriesId: EVENT_EVENT_SERIES_ID,
+    venueId: EVENT_VENUE_ID,
     venueGuidance:
       "Exhibition is located in the Purcell Room in the Foster Building",
     useVenueOpeningTimes: false,
@@ -545,7 +543,7 @@ exports.createFullPerformanceRequestEvent = () => {
     openingTimesClosures: undefined,
     performancesClosures: [{ date: "2016/12/25" }],
     duration: "01:00",
-    talents: [{ id: exports.EVENT_TALENT_ID, roles: ["Director"] }],
+    talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     audienceTags: [{ id: "audience/families", label: "families" }],
     mediumTags: [{ id: "medium/sculpture", label: "sculpture" }],
     styleTags: [{ id: "style/contemporary", label: "contemporary" }],
@@ -575,7 +573,7 @@ exports.createFullPerformanceRequestEvent = () => {
   };
 };
 
-exports.createFullExhibitionRequestEvent = () => {
+export const createFullExhibitionRequestEvent = () => {
   return {
     status: "Active",
     name: "Taming of the Shrew",
@@ -598,8 +596,8 @@ exports.createFullExhibitionRequestEvent = () => {
     minAge: 14,
     maxAge: 18,
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
-    eventSeriesId: exports.EVENT_EVENT_SERIES_ID,
-    venueId: exports.EVENT_VENUE_ID,
+    eventSeriesId: EVENT_EVENT_SERIES_ID,
+    venueId: EVENT_VENUE_ID,
     venueGuidance:
       "Exhibition is located in the Purcell Room in the Foster Building",
     useVenueOpeningTimes: false,
@@ -615,7 +613,7 @@ exports.createFullExhibitionRequestEvent = () => {
     openingTimesClosures: [{ date: "2016/12/25" }],
     performancesClosures: undefined,
     duration: "01:00",
-    talents: [{ id: exports.EVENT_TALENT_ID, roles: ["Director"] }],
+    talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     audienceTags: [{ id: "audience/families", label: "families" }],
     mediumTags: [{ id: "medium/sculpture", label: "sculpture" }],
     styleTags: [{ id: "style/contemporary", label: "contemporary" }],
@@ -640,7 +638,7 @@ exports.createFullExhibitionRequestEvent = () => {
   };
 };
 
-exports.createMinimalCourseRequestEvent = () => {
+export const createMinimalCourseRequestEvent = () => {
   return {
     status: "Active",
     name: "Picture Taking",
@@ -656,7 +654,7 @@ exports.createMinimalCourseRequestEvent = () => {
     timedEntry: undefined,
     summary: "How to take pictures",
     description: undefined,
-    venueId: exports.EVENT_VENUE_ID,
+    venueId: EVENT_VENUE_ID,
     version: 4,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11",
@@ -690,7 +688,7 @@ exports.createMinimalCourseRequestEvent = () => {
   };
 };
 
-exports.createFullCourseRequestEvent = () => {
+export const createFullCourseRequestEvent = () => {
   return {
     status: "Active",
     name: "Taking Pictures",
@@ -712,8 +710,8 @@ exports.createFullCourseRequestEvent = () => {
     minAge: 14,
     maxAge: 18,
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
-    eventSeriesId: exports.EVENT_EVENT_SERIES_ID,
-    venueId: exports.EVENT_VENUE_ID,
+    eventSeriesId: EVENT_EVENT_SERIES_ID,
+    venueId: EVENT_VENUE_ID,
     venueGuidance:
       "Course is located in the Purcell Room in the Foster Building",
     useVenueOpeningTimes: false,
@@ -727,7 +725,7 @@ exports.createFullCourseRequestEvent = () => {
     openingTimesClosures: undefined,
     performancesClosures: undefined,
     duration: "01:00",
-    talents: [{ id: exports.EVENT_TALENT_ID, roles: ["Director"] }],
+    talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     audienceTags: [{ id: "audience/families", label: "families" }],
     mediumTags: [{ id: "medium/sculpture", label: "sculpture" }],
     styleTags: [{ id: "style/contemporary", label: "contemporary" }],
@@ -752,9 +750,9 @@ exports.createFullCourseRequestEvent = () => {
   };
 };
 
-exports.createMinimalPerformanceDbEvent = () => {
+export const createMinimalPerformanceDbEvent = () => {
   return {
-    id: exports.PERFORMANCE_EVENT_ID,
+    id: PERFORMANCE_EVENT_ID,
     status: "Active",
     name: "Taming of the Shrew",
     eventType: "Performance",
@@ -767,16 +765,16 @@ exports.createMinimalPerformanceDbEvent = () => {
     costType: "Paid",
     summary: "A Shakespearian classic",
     version: 4,
-    schemeVersion: eventConstants.CURRENT_EVENT_SCHEME_VERSION,
+    schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11",
-    venueId: exports.EVENT_VENUE_ID
+    venueId: EVENT_VENUE_ID
   };
 };
 
-exports.createMinimalCourseDbEvent = () => {
+export const createMinimalCourseDbEvent = () => {
   return {
-    id: exports.COURSE_EVENT_ID,
+    id: COURSE_EVENT_ID,
     status: "Active",
     name: "Taking Pictures",
     eventType: "Course",
@@ -789,16 +787,16 @@ exports.createMinimalCourseDbEvent = () => {
     costType: "Free",
     summary: "A Shakespearian classic",
     version: 4,
-    schemeVersion: eventConstants.CURRENT_EVENT_SCHEME_VERSION,
+    schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11",
-    venueId: exports.EVENT_VENUE_ID
+    venueId: EVENT_VENUE_ID
   };
 };
 
-exports.createFullPerformanceDbEvent = () => {
+export const createFullPerformanceDbEvent = () => {
   return {
-    id: exports.PERFORMANCE_EVENT_ID,
+    id: PERFORMANCE_EVENT_ID,
     status: "Active",
     name: "Taming of the Shrew",
     eventType: "Performance",
@@ -816,7 +814,7 @@ exports.createFullPerformanceDbEvent = () => {
     description: "A contemporary update of this Shakespearian classic",
     descriptionCredit: "Description credit",
     version: 4,
-    schemeVersion: eventConstants.CURRENT_EVENT_SCHEME_VERSION,
+    schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11",
     timesRanges: [
@@ -829,7 +827,7 @@ exports.createFullPerformanceDbEvent = () => {
     ],
     performances: [{ day: 6, at: "12:00", timesRangeId: "all-run" }],
     additionalPerformances: [{ date: "2016/08/15", at: "08:00" }],
-    talents: [{ id: exports.EVENT_TALENT_ID, roles: ["Director"] }],
+    talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
     images: [
       { id: "12345678123456781234567812345678", ratio: 1.2, copyright: "foo" }
@@ -841,8 +839,8 @@ exports.createFullPerformanceDbEvent = () => {
       { id: "geo/europe", label: "europe" },
       { id: "geo/spain", label: "spain" }
     ],
-    venueId: exports.EVENT_VENUE_ID,
-    eventSeriesId: exports.EVENT_EVENT_SERIES_ID,
+    venueId: EVENT_VENUE_ID,
+    eventSeriesId: EVENT_EVENT_SERIES_ID,
     duration: "01:00",
     venueGuidance: "Through the curtains",
     reviews: [{ source: "The Guardian", rating: 4 }],
@@ -851,9 +849,9 @@ exports.createFullPerformanceDbEvent = () => {
   };
 };
 
-exports.createFullCourseDbEvent = () => {
+export const createFullCourseDbEvent = () => {
   return {
-    id: exports.PERFORMANCE_EVENT_ID,
+    id: PERFORMANCE_EVENT_ID,
     status: "Active",
     name: "Taking Pictures",
     eventType: "Course",
@@ -871,11 +869,11 @@ exports.createFullCourseDbEvent = () => {
     description: "How to do that thing of taking pictures",
     descriptionCredit: "Description credit",
     version: 4,
-    schemeVersion: eventConstants.CURRENT_EVENT_SCHEME_VERSION,
+    schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11",
     additionalPerformances: [{ date: "2016/08/15", at: "08:00" }],
-    talents: [{ id: exports.EVENT_TALENT_ID, roles: ["Director"] }],
+    talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
     images: [
       { id: "12345678123456781234567812345678", ratio: 1.2, copyright: "foo" }
@@ -887,8 +885,8 @@ exports.createFullCourseDbEvent = () => {
       { id: "geo/europe", label: "europe" },
       { id: "geo/spain", label: "spain" }
     ],
-    venueId: exports.EVENT_VENUE_ID,
-    eventSeriesId: exports.EVENT_EVENT_SERIES_ID,
+    venueId: EVENT_VENUE_ID,
+    eventSeriesId: EVENT_EVENT_SERIES_ID,
     duration: "01:00",
     venueGuidance: "Through the curtains",
     reviews: [{ source: "The Guardian", rating: 4 }],
@@ -897,9 +895,9 @@ exports.createFullCourseDbEvent = () => {
   };
 };
 
-exports.createFullExhibitionDbEvent = () => {
+export const createFullExhibitionDbEvent = () => {
   return {
-    id: exports.PERFORMANCE_EVENT_ID,
+    id: PERFORMANCE_EVENT_ID,
     status: "Active",
     name: "Taming of the Shrew",
     eventType: "Exhibition",
@@ -917,14 +915,14 @@ exports.createFullExhibitionDbEvent = () => {
     description: "A contemporary update of this Shakespearian classic",
     descriptionCredit: "Description credit",
     version: 4,
-    schemeVersion: eventConstants.CURRENT_EVENT_SCHEME_VERSION,
+    schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
     createdDate: "2016/01/10",
     updatedDate: "2016/01/11",
     openingTimes: [{ day: 6, from: "12:00", to: "16:00" }],
     additionalOpeningTimes: [
       { date: "2016/08/15", from: "17:00", to: "18:00" }
     ],
-    talents: [{ id: exports.EVENT_TALENT_ID, roles: ["Director"] }],
+    talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
     images: [
       { id: "12345678123456781234567812345678", ratio: 1.2, copyright: "foo" }
@@ -936,8 +934,8 @@ exports.createFullExhibitionDbEvent = () => {
       { id: "geo/europe", label: "europe" },
       { id: "geo/spain", label: "spain" }
     ],
-    venueId: exports.EVENT_VENUE_ID,
-    eventSeriesId: exports.EVENT_EVENT_SERIES_ID,
+    venueId: EVENT_VENUE_ID,
+    eventSeriesId: EVENT_EVENT_SERIES_ID,
     duration: "01:00",
     venueGuidance: "Through the curtains",
     reviews: [{ source: "The Guardian", rating: 4 }],

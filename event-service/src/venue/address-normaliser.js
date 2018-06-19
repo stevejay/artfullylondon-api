@@ -1,9 +1,7 @@
-"use strict";
-
 const WINDOWS_NEWLINE_REGEX = /\r\n/g;
 const LINE_OF_ADDRESS_REGEX = /^\s*(.+?)\s*(?:,+)?\s*$/;
 
-module.exports = exports = param => {
+export default function(param) {
   if (typeof param !== "string") {
     return param;
   }
@@ -19,4 +17,4 @@ module.exports = exports = param => {
     .filter(lineOfAddress => lineOfAddress.length > 0);
 
   return linesOfAddress.join("\n");
-};
+}

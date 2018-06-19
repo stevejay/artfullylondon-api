@@ -3,7 +3,7 @@
 const dynamodb = require("../external-services/dynamodb");
 const testData = require("../test-data");
 const talentConstants = require("../talent/constants");
-const venueConstants = require("../venue/constants");
+import * as venueMapper from "../venue/mapper";
 const eventSeriesConstants = require("../event-series/constants");
 const populate = require("./populate");
 
@@ -71,7 +71,7 @@ describe("populate", () => {
                 disabledBathroomType: "Present",
                 hearingFacilitiesType: "HearingLoops",
                 version: 1,
-                schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+                schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
                 createdDate: "2016/01/10",
                 updatedDate: "2016/01/11"
               }
@@ -111,7 +111,7 @@ describe("populate", () => {
                 disabledBathroomType: "Present",
                 hearingFacilitiesType: "HearingLoops",
                 version: 1,
-                schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+                schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
                 createdDate: "2016/01/10",
                 updatedDate: "2016/01/11"
               }
@@ -196,7 +196,7 @@ describe("populate", () => {
                 disabledBathroomType: "Present",
                 hearingFacilitiesType: "HearingLoops",
                 version: 1,
-                schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+                schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
                 createdDate: "2016/01/10",
                 updatedDate: "2016/01/11"
               }
@@ -259,7 +259,7 @@ describe("populate", () => {
                 disabledBathroomType: "Present",
                 hearingFacilitiesType: "HearingLoops",
                 version: 1,
-                schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+                schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
                 createdDate: "2016/01/10",
                 updatedDate: "2016/01/11"
               }
@@ -351,7 +351,7 @@ describe("populate", () => {
             disabledBathroomType: "Present",
             hearingFacilitiesType: "HearingLoops",
             version: 1,
-            schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+            schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
             createdDate: "2016/01/10",
             updatedDate: "2016/01/11"
           }
@@ -410,7 +410,7 @@ describe("populate", () => {
             disabledBathroomType: "Present",
             hearingFacilitiesType: "HearingLoops",
             version: 1,
-            schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+            schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
             createdDate: "2016/01/10",
             updatedDate: "2016/01/11"
           }
@@ -480,7 +480,7 @@ describe("populate", () => {
             disabledBathroomType: "Present",
             hearingFacilitiesType: "HearingLoops",
             version: 1,
-            schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+            schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
             createdDate: "2016/01/10",
             updatedDate: "2016/01/11"
           }
@@ -552,7 +552,7 @@ describe("populate", () => {
             disabledBathroomType: "Present",
             hearingFacilitiesType: "HearingLoops",
             version: 1,
-            schemeVersion: venueConstants.CURRENT_VENUE_SCHEME_VERSION,
+            schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
             createdDate: "2016/01/10",
             updatedDate: "2016/01/11"
           }

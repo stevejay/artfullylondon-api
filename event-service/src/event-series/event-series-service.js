@@ -61,11 +61,10 @@ exports.createOrUpdateEventSeries = async function(params) {
   normalise(params, normalisers);
   ensure(params, constraints, ensureErrorHandler);
 
-  const eventSeries = params.body;
-  const id = params.id || identity.createIdFromName(eventSeries.name);
+  const id = params.id || identity.createIdFromName(params.name);
   const isUpdate = !!params.id;
 
-  const dbItem = mappings.mapRequestToDbItem(id, eventSeries);
+  const dbItem = mappings.mapRequestToDbItem(id, params);
   await entity.write(process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME, dbItem);
   const adminResponse = mappings.mapDbItemToAdminResponse(dbItem);
 

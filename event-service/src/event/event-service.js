@@ -75,12 +75,11 @@ exports.createOrUpdateEvent = async function(params) {
   normalise(params, normalisers);
   ensure(params, constraints, ensureErrorHandler);
 
-  const event = params.body;
   const id =
     params.id ||
-    identity.createEventId(event.venueId, event.dateFrom, event.name);
+    identity.createEventId(params.venueId, params.dateFrom, params.name);
 
-  const dbItem = mappings.mapRequestToDbItem(id, event);
+  const dbItem = mappings.mapRequestToDbItem(id, params);
   const referencedEntities = await populate.getReferencedEntities(dbItem);
   await entity.write(process.env.SERVERLESS_EVENT_TABLE_NAME, dbItem);
 
