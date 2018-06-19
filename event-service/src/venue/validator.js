@@ -101,6 +101,6 @@ function errorHandler(errors) {
   throw new Error("[400] Bad Request: " + errors.join("; "));
 }
 
-export function validateCreateVenueRequest(request) {
+export function validateCreateOrUpdateVenueRequest(request) {
   ensure(request, VENUE_CONSTRAINT, errorHandler);
 }

@@ -45,6 +45,6 @@ const VENUE_NORMALISER = {
   notes: entityNormaliser.NOTES_NORMALISER
 };
 
-export function normaliseCreateVenueRequest(request) {
+export function normaliseCreateOrUpdateVenueRequest(request) {
   return normalise({ ...request }, VENUE_NORMALISER);
 }

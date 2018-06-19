@@ -1,88 +1,48 @@
-"use strict";
+import * as eventSeriesRepository from "../persistence/event-series-repository";
+import * as entityType from "../types/entity-type";
+import * as normaliser from "./normaliser";
+import * as validator from "./validator";
+import * as mapper from "./mapper";
+import * as indexer from "../indexer";
+// const etag = require("../lambda/etag");
 
-const ensure = require("ensure-request").ensure;
-const normalise = require("normalise-request");
-const ensureErrorHandler = require("../data/ensure-error-handler");
-const entity = require("../entity/entity");
-const identity = require("../entity/id");
-const globalConstants = require("../constants");
-const mappings = require("./mappings");
-const constants = require("./constants");
-const normalisers = require("./normalisers");
-const constraints = require("./constraints");
-const dynamodb = require("../external-services/dynamodb");
-const eventMessaging = require("../event/messaging");
-const etag = require("../lambda/etag");
-const sns = require("../external-services/sns");
-
-exports.getEventSeries = async function(params) {
-  const dbItem = await entity.get(
-    process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,
+export async function getEventSeries(params) {
+  const eventSeries = await eventSeriesRepository.getEventSeries(
     params.id,
     false
   );
+  return { entity: mapper.mapToPublicFullResponse(eventSeries) };
+}
 
-  const response = mappings.mapDbItemToPublicResponse(dbItem);
-  response.isFullEntity = true;
-  return { entity: response };
-};
-
-exports.getEventSeriesForEdit = async function(params) {
-  const dbItem = await entity.get(
-    process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,
+export async function getEventSeriesForEdit(params) {
+  const eventSeries = await eventSeriesRepository.getEventSeries(
     params.id,
     true
   );
+  return { entity: mapper.mapToAdminResponse(eventSeries) };
+}
 
-  return { entity: mappings.mapDbItemToAdminResponse(dbItem) };
-};
+export async function getEventSeriesMulti(params) {
+  const eventSeries = await eventSeriesRepository.getEventSeriesMulti(
+    params.ids
+  );
+  return { entities: eventSeries.map(mapper.mapToPublicSummaryResponse) };
+}
 
-exports.getEventSeriesMulti = async function(params) {
-  const response = await dynamodb.batchGet({
-    RequestItems: {
-      [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
-        Keys: params.ids.map(id => ({ id })),
-        ProjectionExpression:
-          constants.SUMMARY_EVENT_SERIES_PROJECTION_EXPRESSION,
-        ExpressionAttributeNames:
-          constants.SUMMARY_EVENT_SERIES_PROJECTION_NAMES
-      }
-    },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
-  });
-
-  const dbItems =
-    response.Responses[process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME];
-
-  return { entities: dbItems.map(mappings.mapDbItemToPublicSummaryResponse) };
-};
-
-exports.createOrUpdateEventSeries = async function(params) {
-  normalise(params, normalisers);
-  ensure(params, constraints, ensureErrorHandler);
-
-  const id = params.id || identity.createIdFromName(params.name);
+export async function createOrUpdateEventSeries(params) {
+  params = normaliser.normaliseCreateOrUpdateEventSeriesRequest(params);
+  validator.validateCreateOrUpdateEventSeriesRequest(params);
   const isUpdate = !!params.id;
-
-  const dbItem = mappings.mapRequestToDbItem(id, params);
-  await entity.write(process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME, dbItem);
-  const adminResponse = mappings.mapDbItemToAdminResponse(dbItem);
-
+  const eventSeries = mapper.mapCreateOrUpdateEventSeriesRequest(params);
+  await eventSeriesRepository.createOrUpdateEventSeries(eventSeries);
   if (isUpdate) {
     await eventMessaging.notifyEventsForEventSeries(dbItem.id);
   }
-
-  await sns.notify(
-    { entityType: globalConstants.ENTITY_TYPE_EVENT_SERIES, entity: dbItem },
-    { arn: process.env.SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN }
-  );
-
-  const publicResponse = mappings.mapDbItemToPublicResponse(dbItem);
-
-  await etag.writeETagToRedis(
-    "event-series/" + id,
-    JSON.stringify({ entity: publicResponse })
-  );
-
-  return { entity: adminResponse };
-};
+  await indexer.indexEntity(eventSeries);
+  // const publicResponse = mapper.mapToPublicFullResponse(eventSeries);
+  // await etag.writeETagToRedis(
+  //   "event-series/" + dbItem.id,
+  //   JSON.stringify({ entity: publicResponse })
+  // );
+  return { entity: eventSeries };
+}

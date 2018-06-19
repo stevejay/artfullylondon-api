@@ -126,6 +126,12 @@ export const DESCRIPTION_CONSTRAINT = {
   length: DESCRIPTION_LENGTH
 };
 
+export const SUMMARY_CONSTRAINT =  {
+  string: true,
+  presence: true,
+  length: { minimum: 1, maximum: 140 }
+}
+
 export const OPTIONAL_ADDITIONAL_INFO_CONSTRAINT = {
   string: true,
   length: ADDITIONAL_INFO_LENGTH

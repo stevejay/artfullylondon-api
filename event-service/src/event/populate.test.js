@@ -4,7 +4,7 @@ const dynamodb = require("../external-services/dynamodb");
 const testData = require("../test-data");
 const talentConstants = require("../talent/constants");
 import * as venueMapper from "../venue/mapper";
-const eventSeriesConstants = require("../event-series/constants");
+import * as eventSeriesMapper from "../event-series/mapper";
 const populate = require("./populate");
 
 process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME = "event-series-table";
@@ -52,7 +52,7 @@ describe("populate", () => {
                 description: "Poetry for people who dont like poetry.",
                 version: 1,
                 schemeVersion:
-                  eventSeriesConstants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
+                  eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
                 createdDate: "2016/01/10",
                 updatedDate: "2016/01/11"
               }
@@ -92,7 +92,7 @@ describe("populate", () => {
                 description: "Poetry for people who dont like poetry.",
                 version: 1,
                 schemeVersion:
-                  eventSeriesConstants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
+                  eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
                 createdDate: "2016/01/10",
                 updatedDate: "2016/01/11"
               }
@@ -177,7 +177,7 @@ describe("populate", () => {
                 description: "Poetry for people who dont like poetry.",
                 version: 1,
                 schemeVersion:
-                  eventSeriesConstants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
+                  eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
                 createdDate: "2016/01/10",
                 updatedDate: "2016/01/11"
               }
@@ -332,7 +332,7 @@ describe("populate", () => {
             description: "Poetry for people who dont like poetry.",
             version: 1,
             schemeVersion:
-              eventSeriesConstants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
+              eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
             createdDate: "2016/01/10",
             updatedDate: "2016/01/11"
           }
@@ -461,7 +461,7 @@ describe("populate", () => {
             description: "Poetry for people who dont like poetry.",
             version: 1,
             schemeVersion:
-              eventSeriesConstants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
+              eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
             createdDate: "2016/01/10",
             updatedDate: "2016/01/11"
           }

@@ -19,6 +19,6 @@ const TALENT_NORMALISER = {
   weSay: entityNormaliser.WE_SAY_NORMALISER
 };
 
-export function normaliseCreateTalentRequest(request) {
+export function normaliseCreateOrUpdateTalentRequest(request) {
   return normalise({ ...request }, TALENT_NORMALISER);
 }

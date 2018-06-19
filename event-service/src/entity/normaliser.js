@@ -48,3 +48,7 @@ export const NOTES_NORMALISER = {
   trim: true,
   undefinedIfEmpty: true
 };
+
+export const SUMMARY_NORMALISER = {
+  trim: true
+};

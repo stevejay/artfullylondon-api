@@ -34,7 +34,7 @@ it("should apply normalisers to a fully populated request", () => {
     notes: "   a note   "
   };
 
-  const result = normaliser.normaliseCreateVenueRequest(params);
+  const result = normaliser.normaliseCreateOrUpdateVenueRequest(params);
 
   expect(result).toEqual({
     name: "Almeida Theatre",
@@ -85,7 +85,7 @@ it("should apply normalisers to a minimally populated request", () => {
     hearingFacilitiesType: "HearingLoops"
   };
 
-  const result = normaliser.normaliseCreateVenueRequest(params);
+  const result = normaliser.normaliseCreateOrUpdateVenueRequest(params);
 
   expect(result).toEqual({
     name: "Almeida Theatre",

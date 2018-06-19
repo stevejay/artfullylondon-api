@@ -21,7 +21,7 @@ it("should normalise a fully populated individual talent", () => {
     version: 3
   };
 
-  const result = normaliser.normaliseCreateTalentRequest(request);
+  const result = normaliser.normaliseCreateOrUpdateTalentRequest(request);
 
   expect(result).toEqual({
     firstNames: "Anne",
@@ -55,7 +55,7 @@ it("should normalise a minimally populated individual talent", () => {
     version: 3
   };
 
-  const result = normaliser.normaliseCreateTalentRequest(request);
+  const result = normaliser.normaliseCreateOrUpdateTalentRequest(request);
 
   expect(result).toEqual({
     firstNames: undefined,

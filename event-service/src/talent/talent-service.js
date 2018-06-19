@@ -23,8 +23,8 @@ export async function getTalentMulti(params) {
 }
 
 export async function createOrUpdateTalent(params) {
-  params = normaliser.normaliseCreateTalentRequest(params);
-  validator.validateCreateTalentRequest(params);
+  params = normaliser.normaliseCreateOrUpdateTalentRequest(params);
+  validator.validateCreateOrUpdateTalentRequest(params);
   params = entityEnhancer.addDescriptionFromWikipedia(params);
   const talent = mapper.mapCreateOrUpdateTalentRequest(params);
   await talentRepository.createOrUpdateTalent(talent);
