@@ -1,9 +1,9 @@
-"use strict";
+import etag from "etag";
+import * as log from "loglevel";
 
-const etag = require("etag");
-const log = require("loglevel");
+// TODO fix this file
 
-exports.tryGetETagFromRedis = async function(key) {
+export async function tryGetETagFromRedis(key) {
   if (process.env.IS_OFFLINE) {
     return null;
   }
@@ -19,9 +19,9 @@ exports.tryGetETagFromRedis = async function(key) {
   } finally {
     redisClient.quit();
   }
-};
+}
 
-exports.writeETagToRedis = async function(key, objStr) {
+export async function writeETagToRedis(key, objStr) {
   if (process.env.IS_OFFLINE) {
     return;
   }
@@ -37,6 +37,8 @@ exports.writeETagToRedis = async function(key, objStr) {
   } finally {
     redisClient.quit();
   }
-};
+}
 
-exports.getETagValue = str => etag(str);
+export function getETagValue(str) {
+  return etag(str);
+}

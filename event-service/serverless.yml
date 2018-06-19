@@ -9,9 +9,6 @@ provider:
     name: aws
     runtime: nodejs8.10
     region: eu-west-1
-    refreshSearchIndexTopicNamePrefix: RefreshSearchIndex
-    eventUpdatedTopicNamePrefix: EventUpdated
-    indexDocumentTopicNamePrefix: IndexDocument
     tracing: true
     apiKeys:
         - apiKey
@@ -189,7 +186,7 @@ provider:
                         - ":"
                         - Ref: "AWS::AccountId"
                         - ":"
-                        - ${self.custom.indexDocumentTopicName}
+                        - ${self:custom.indexDocumentTopicName}
 
 plugins:
     - serverless-webpack
@@ -204,6 +201,9 @@ custom:
     stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
     env: ${file(./env.yml):${self:custom.stage}}
+    refreshSearchIndexTopicNamePrefix: RefreshSearchIndex
+    eventUpdatedTopicNamePrefix: EventUpdated
+    indexDocumentTopicNamePrefix: IndexDocument
     venueTableName: ${self:custom.project}-${self:custom.stage}-venue
     venueBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-venue-by-scheme
     eventTableName: ${self:custom.project}-${self:custom.stage}-event
@@ -217,9 +217,9 @@ custom:
     eventUpdatedTopicName: ${self:custom.eventUpdatedTopicNamePrefix}-${self:custom.stage}
     refreshSearchIndexTopicName: ${self:custom.refreshSearchIndexTopicNamePrefix}-${self:custom.stage}
     indexDocumentTopicName: ${self:custom.indexDocumentTopicNamePrefix}-${self:custom.stage}
-    eventUpdatedTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self.custom.eventUpdatedTopicName}"
-    refreshSearchIndexTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self.custom.refreshSearchIndexTopicName}"
-    indexDocumentTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self.custom.indexDocumentTopicName}"
+    eventUpdatedTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.eventUpdatedTopicName}"
+    refreshSearchIndexTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.refreshSearchIndexTopicName}"
+    indexDocumentTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.indexDocumentTopicName}"
     errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
     standardResponses:
         headers:
@@ -347,13 +347,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "id": "$input.params('id')",
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "id": "$input.params('id')"
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getNextVenue:
         handler: src/lambda/venue/get-next-venue.handler
         environment:
@@ -365,6 +361,14 @@ functions:
                 method: get
                 cors: true
                 private: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "lastId": "$input.params('lastId')"
+                            }
+                response: ${self:custom.standardResponses}
     getVenueForEdit:
         handler: src/lambda/venue/get-venue-for-edit.handler
         environment:
@@ -424,13 +428,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "ids": $input.json('$.ids'),
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "ids": $input.json('$.ids')
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "public/venue"
                 method: get
@@ -440,13 +440,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "ids": "$input.params('ids')",
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "ids": "$input.params('ids')"
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
     createUpdateTalent:
         handler: src/lambda/talent/create-or-update-talent.handler
         environment:
@@ -524,13 +520,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "id": "$input.params('id')",
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "id": "$input.params('id')"
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getTalentForEdit:
         handler: src/lambda/talent/get-talent-for-edit.handler
         environment:
@@ -590,13 +582,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "ids": $input.json('$.ids'),
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "ids": $input.json('$.ids')
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "public/talent"
                 method: get
@@ -606,13 +594,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "ids": "$input.params('ids')",
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "ids": "$input.params('ids')"
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
     createUpdateEvent:
         handler: src/lambda/event/create-or-update-event.handler
         environment:
@@ -690,13 +674,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "id": "$input.params('id')",
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "id": "$input.params('id')"
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getEventForEdit:
         handler: src/lambda/event/get-event-for-edit.handler
         environment:
@@ -756,13 +736,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "ids": $input.json('$.ids'),
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "ids": $input.json('$.ids')
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "public/event"
                 method: get
@@ -772,13 +748,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "ids": "$input.params('ids')",
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "ids": "$input.params('ids')"
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
     createUpdateEventSeries:
         handler: src/lambda/event-series/create-or-update-event-series.handler
         environment:
@@ -856,13 +828,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "id": "$input.params('id')",
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "id": "$input.params('id')"
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
     getEventSeriesForEdit:
         handler: src/lambda/event-series/get-event-series-for-edit.handler
         environment:
@@ -922,13 +890,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "ids": $input.json('$.ids'),
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "ids": $input.json('$.ids')
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
             - http:
                 path: "public/event-series"
                 method: get
@@ -938,13 +902,9 @@ functions:
                     template:
                         application/json: >
                             {
-                                "ids": "$input.params('ids')",
-                                "authorization" : "$input.params().header.get('Authorization')"
+                                "ids": "$input.params('ids')"
                             }
                 response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
     updateEventSearchIndex:
         handler: src/lambda/search/update-event-search-index-sns.handler
         environment:
@@ -1019,7 +979,7 @@ functions:
         events:
             - schedule: 
                 rate: cron(0 4 * * ? *)
-                enabled: true
+                enabled: false
 
 resources:
     Resources:

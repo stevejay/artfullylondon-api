@@ -15,23 +15,23 @@ const dynamodb = require("../external-services/dynamodb");
 const etag = require("../lambda/etag");
 const sns = require("../external-services/sns");
 
-exports.getTalent = async function(talentId) {
+exports.getTalent = async function(params) {
   const dbItem = await entity.get(
     process.env.SERVERLESS_TALENT_TABLE_NAME,
-    talentId,
+    params.id,
     false
   );
 
   const response = mappings.mapDbItemToPublicResponse(dbItem);
   response.isFullEntity = true;
-  return response;
+  return { entity: response };
 };
 
-exports.getTalentMulti = async function(talentIds) {
+exports.getTalentMulti = async function(params) {
   const response = await dynamodb.batchGet({
     RequestItems: {
       [process.env.SERVERLESS_TALENT_TABLE_NAME]: {
-        Keys: talentIds.map(id => ({ id })),
+        Keys: params.ids.map(id => ({ id })),
         ProjectionExpression: constants.SUMMARY_TALENT_PROJECTION_EXPRESSION,
         ExpressionAttributeNames: constants.SUMMARY_TALENT_PROJECTION_NAMES
       }
@@ -40,32 +40,33 @@ exports.getTalentMulti = async function(talentIds) {
   });
 
   const dbItems = response.Responses[process.env.SERVERLESS_TALENT_TABLE_NAME];
-  return dbItems.map(mappings.mapDbItemToPublicSummaryResponse);
+  return { entities: dbItems.map(mappings.mapDbItemToPublicSummaryResponse) };
 };
 
-exports.getTalentForEdit = async function(talentId) {
+exports.getTalentForEdit = async function(params) {
   const dbItem = await entity.get(
     process.env.SERVERLESS_TALENT_TABLE_NAME,
-    talentId,
+    params.id,
     true
   );
 
-  return mappings.mapDbItemToAdminResponse(dbItem);
+  return { entity: mappings.mapDbItemToAdminResponse(dbItem) };
 };
 
-exports.createOrUpdateTalent = async function(existingTalentId, params) {
+exports.createOrUpdateTalent = async function(params) {
   normalise(params, normalisers);
   ensure(params, constraints, ensureErrorHandler);
 
-  const id = existingTalentId || identity.createIdFromTalentData(params);
+  const talent = params.body;
+  const id = params.id || identity.createIdFromTalentData(talent);
 
   const description = await wikipedia.getDescription(
-    params.description,
-    params.descriptionCredit,
-    params.links
+    talent.description,
+    talent.descriptionCredit,
+    talent.links
   );
 
-  const dbItem = mappings.mapRequestToDbItem(id, params, description);
+  const dbItem = mappings.mapRequestToDbItem(id, talent, description);
   await entity.write(process.env.SERVERLESS_TALENT_TABLE_NAME, dbItem);
   await sns.notify(
     { entityType: globalConstants.ENTITY_TYPE_TALENT, entity: dbItem },
@@ -77,5 +78,5 @@ exports.createOrUpdateTalent = async function(existingTalentId, params) {
     "talent/" + id,
     JSON.stringify({ entity: publicResponse })
   );
-  return adminResponse;
+  return { entity: adminResponse };
 };

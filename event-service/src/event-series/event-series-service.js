@@ -15,34 +15,33 @@ const eventMessaging = require("../event/messaging");
 const etag = require("../lambda/etag");
 const sns = require("../external-services/sns");
 
-exports.getEventSeries = async function(eventSeriesId) {
+exports.getEventSeries = async function(params) {
   const dbItem = await entity.get(
     process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,
-    eventSeriesId,
+    params.id,
     false
   );
 
   const response = mappings.mapDbItemToPublicResponse(dbItem);
-
   response.isFullEntity = true;
-  return response;
+  return { entity: response };
 };
 
-exports.getEventSeriesForEdit = async function(eventSeriesId) {
+exports.getEventSeriesForEdit = async function(params) {
   const dbItem = await entity.get(
     process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME,
-    eventSeriesId,
+    params.id,
     true
   );
 
-  return mappings.mapDbItemToAdminResponse(dbItem);
+  return { entity: mappings.mapDbItemToAdminResponse(dbItem) };
 };
 
-exports.getEventSeriesMulti = async function(eventSeriesIds) {
+exports.getEventSeriesMulti = async function(params) {
   const response = await dynamodb.batchGet({
     RequestItems: {
       [process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME]: {
-        Keys: eventSeriesIds.map(id => ({ id })),
+        Keys: params.ids.map(id => ({ id })),
         ProjectionExpression:
           constants.SUMMARY_EVENT_SERIES_PROJECTION_EXPRESSION,
         ExpressionAttributeNames:
@@ -55,20 +54,18 @@ exports.getEventSeriesMulti = async function(eventSeriesIds) {
   const dbItems =
     response.Responses[process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME];
 
-  return dbItems.map(mappings.mapDbItemToPublicSummaryResponse);
+  return { entities: dbItems.map(mappings.mapDbItemToPublicSummaryResponse) };
 };
 
-exports.createOrUpdateEventSeries = async function(
-  existingEventSeriesId,
-  params
-) {
+exports.createOrUpdateEventSeries = async function(params) {
   normalise(params, normalisers);
   ensure(params, constraints, ensureErrorHandler);
 
-  const id = existingEventSeriesId || identity.createIdFromName(params.name);
-  const isUpdate = !!existingEventSeriesId;
+  const eventSeries = params.body;
+  const id = params.id || identity.createIdFromName(eventSeries.name);
+  const isUpdate = !!params.id;
 
-  const dbItem = mappings.mapRequestToDbItem(id, params);
+  const dbItem = mappings.mapRequestToDbItem(id, eventSeries);
   await entity.write(process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME, dbItem);
   const adminResponse = mappings.mapDbItemToAdminResponse(dbItem);
 
@@ -88,5 +85,5 @@ exports.createOrUpdateEventSeries = async function(
     JSON.stringify({ entity: publicResponse })
   );
 
-  return adminResponse;
+  return { entity: adminResponse };
 };

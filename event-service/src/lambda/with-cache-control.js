@@ -1,10 +1,10 @@
-"use strict";
+import * as etag from "./etag";
 
-const etag = require("./etag");
+// TODO fix this file
 
 const ARTFULLY_CACHE_HEADER_KEY = "X-Artfully-Cache";
 
-module.exports = exports = function(handler, maxAgeSeconds) {
+export default function(handler, maxAgeSeconds) {
   return async function(event, context) {
     const isPublic = event.resource.startsWith("/public/");
     const ifNoneMatchHeader = event.headers["If-None-Match"];
@@ -30,8 +30,7 @@ module.exports = exports = function(handler, maxAgeSeconds) {
     }
 
     const handlerResult = await handler(event, context);
-
-    const body = JSON.stringify(handlerResult);
+    const body = handlerResult.body;
     let result = null;
 
     if (!isPublic) {
@@ -51,4 +50,4 @@ module.exports = exports = function(handler, maxAgeSeconds) {
 
     return result;
   };
-};
+}

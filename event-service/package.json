@@ -6,7 +6,7 @@
     "posttest": "yarn run lint",
     "test:integration": "cross-env NODE_ENV=test jest --runInBand --no-cache ./tests/integration",
     "lint": "eslint .",
-    "deploy": "yarn test && node build.js && sls deploy -v",
+    "deploy": "yarn test && sls deploy -v",
     "local": "sls offline start --stage=development --port 3014 --noTimeout  --noAuth --apiKey dddddddddddddddddddddddddddddddd",
     "debug:windows": "SET SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline start --port 3014 --stage=development --noTimeout --noAuth"
   },

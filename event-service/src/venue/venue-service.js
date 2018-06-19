@@ -18,23 +18,23 @@ const addressNormaliser = require("./address-normaliser");
 normalise.normalisers.address = addressNormaliser;
 const sns = require("../external-services/sns");
 
-exports.getVenue = async function(venueId) {
+exports.getVenue = async function(params) {
   const dbItem = await entity.get(
     process.env.SERVERLESS_VENUE_TABLE_NAME,
-    venueId,
+    params.id,
     false
   );
 
   const response = mappings.mapDbItemToPublicResponse(dbItem);
   response.isFullEntity = true;
-  return response;
+  return { entity: response };
 };
 
-exports.getVenueMulti = async function(venueIds) {
+exports.getVenueMulti = async function(params) {
   const response = await dynamodb.batchGet({
     RequestItems: {
       [process.env.SERVERLESS_VENUE_TABLE_NAME]: {
-        Keys: venueIds.map(id => ({ id })),
+        Keys: params.ids.map(id => ({ id })),
         ProjectionExpression: constants.SUMMARY_VENUE_PROJECTION_EXPRESSION,
         ExpressionAttributeNames: constants.SUMMARY_VENUE_PROJECTION_NAMES
       }
@@ -43,43 +43,46 @@ exports.getVenueMulti = async function(venueIds) {
   });
 
   const dbItems = response.Responses[process.env.SERVERLESS_VENUE_TABLE_NAME];
-  return dbItems.map(mappings.mapDbItemToPublicSummaryResponse);
+  return { entities: dbItems.map(mappings.mapDbItemToPublicSummaryResponse) };
 };
 
-exports.getVenueForEdit = async function(venueId) {
+exports.getVenueForEdit = async function(params) {
   const dbItem = await entity.get(
     process.env.SERVERLESS_VENUE_TABLE_NAME,
-    venueId,
+    params.id,
     true
   );
 
-  return mappings.mapDbItemToAdminResponse(dbItem);
+  return { entity: mappings.mapDbItemToAdminResponse(dbItem) };
 };
 
-exports.getNextVenue = async function(previousVenueId) {
-  return await dynamodb.scanBasic({
+exports.getNextVenue = async function(params) {
+  const result = await dynamodb.scanBasic({
     TableName: process.env.SERVERLESS_VENUE_TABLE_NAME,
-    ExclusiveStartKey: previousVenueId ? { id: previousVenueId } : null,
+    ExclusiveStartKey: params.lastId ? { id: params.lastId } : null,
     Limit: 1,
     ProjectionExpression: "id",
     ConsistentRead: false
   });
+
+  return { venueId: result.Items.length ? result.Items[0].id : null };
 };
 
-exports.createOrUpdateVenue = async function(existingVenueId, params) {
+exports.createOrUpdateVenue = async function(params) {
   normalise(params, normalisers);
   ensure(params, constraints, ensureErrorHandler);
 
-  const id = existingVenueId || identity.createIdFromName(params.name);
-  const isUpdate = !!existingVenueId;
+  const venue = params.body;
+  const id = params.id || identity.createIdFromName(venue.name);
+  const isUpdate = !!params.id;
 
   const description = await wikipedia.getDescription(
-    params.description,
-    params.descriptionCredit,
-    params.links
+    venue.description,
+    venue.descriptionCredit,
+    venue.links
   );
 
-  const dbItem = mappings.mapRequestToDbItem(id, params, description);
+  const dbItem = mappings.mapRequestToDbItem(id, venue, description);
   await entity.write(process.env.SERVERLESS_VENUE_TABLE_NAME, dbItem);
   const adminResponse = mappings.mapDbItemToAdminResponse(dbItem);
 
@@ -99,5 +102,5 @@ exports.createOrUpdateVenue = async function(existingVenueId, params) {
     JSON.stringify({ entity: publicResponse })
   );
 
-  return adminResponse;
+  return { entity: adminResponse };
 };

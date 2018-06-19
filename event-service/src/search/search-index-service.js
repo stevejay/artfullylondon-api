@@ -90,6 +90,8 @@ exports.refreshSearchIndex = async function(params) {
       }
     );
   }
+
+  return { acknowledged: true };
 };
 
 exports.processRefreshSearchIndexMessage = async function(message) {

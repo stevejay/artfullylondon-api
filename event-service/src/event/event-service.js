@@ -12,10 +12,10 @@ const sns = require("../external-services/sns");
 const identity = require("../entity/id");
 const ensureErrorHandler = require("../data/ensure-error-handler");
 
-exports.getEvent = async function(eventId) {
+exports.getEvent = async function(params) {
   const dbItem = await entity.get(
     process.env.SERVERLESS_EVENT_TABLE_NAME,
-    eventId,
+    params.id,
     false
   );
 
@@ -27,25 +27,27 @@ exports.getEvent = async function(eventId) {
   );
 
   response.isFullEntity = true;
-  return response;
+  return { entity: response };
 };
 
-exports.getEventForEdit = async function(eventId) {
+exports.getEventForEdit = async function(params) {
   const dbItem = await entity.get(
     process.env.SERVERLESS_EVENT_TABLE_NAME,
-    eventId,
+    params.id,
     true
   );
 
   const referencedEntities = await populate.getReferencedEntities(dbItem);
-  return mappings.mapDbItemToAdminResponse(dbItem, referencedEntities);
+  return {
+    entity: mappings.mapDbItemToAdminResponse(dbItem, referencedEntities)
+  };
 };
 
-exports.getEventMulti = async function(eventIds) {
+exports.getEventMulti = async function(params) {
   const response = await dynamodb.batchGet({
     RequestItems: {
       [process.env.SERVERLESS_EVENT_TABLE_NAME]: {
-        Keys: eventIds.map(id => ({ id })),
+        Keys: params.ids.map(id => ({ id })),
         ProjectionExpression:
           "id, #s, #n, eventType, occurrenceType, " +
           "costType, dateFrom, dateTo, summary, " +
@@ -59,23 +61,26 @@ exports.getEventMulti = async function(eventIds) {
   const dbItems = response.Responses[process.env.SERVERLESS_EVENT_TABLE_NAME];
   const entities = await populate.getReferencedEntitiesForSearch(dbItems);
 
-  return entities.map(entity =>
-    mappings.mapDbItemToPublicSummaryResponse(
-      entity.entity,
-      entity.referencedEntities
+  return {
+    entities: entities.map(entity =>
+      mappings.mapDbItemToPublicSummaryResponse(
+        entity.entity,
+        entity.referencedEntities
+      )
     )
-  );
+  };
 };
 
-exports.createOrUpdateEvent = async function(existingEventId, params) {
+exports.createOrUpdateEvent = async function(params) {
   normalise(params, normalisers);
   ensure(params, constraints, ensureErrorHandler);
 
+  const event = params.body;
   const id =
-    existingEventId ||
-    identity.createEventId(params.venueId, params.dateFrom, params.name);
+    params.id ||
+    identity.createEventId(event.venueId, event.dateFrom, event.name);
 
-  const dbItem = mappings.mapRequestToDbItem(id, params);
+  const dbItem = mappings.mapRequestToDbItem(id, event);
   const referencedEntities = await populate.getReferencedEntities(dbItem);
   await entity.write(process.env.SERVERLESS_EVENT_TABLE_NAME, dbItem);
 
@@ -89,5 +94,5 @@ exports.createOrUpdateEvent = async function(existingEventId, params) {
     { arn: process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN }
   );
 
-  return response;
+  return { entity: response };
 };
