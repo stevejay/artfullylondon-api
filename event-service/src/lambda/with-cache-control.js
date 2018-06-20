@@ -1,5 +1,4 @@
 import _ from "lodash";
-import etag from "etag";
 import * as cache from "../cache";
 
 const ARTFULLY_CACHE_HEADER_KEY = "X-Artfully-Cache";
@@ -28,6 +27,6 @@ export default function(handler, entityType, maxAgeSeconds = 1800) {
     );
     headers["etag"] = etagValue;
     headers["cache-control"] = "public, max-age=" + maxAgeSeconds;
-    return { statusCode: 200, headers, body: handlerResult.body };
+    return { statusCode: 200, headers, body: result.body };
   };
 }

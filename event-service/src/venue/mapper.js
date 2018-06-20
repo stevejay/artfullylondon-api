@@ -48,7 +48,7 @@ export const mapToAdminResponse = venue => ({
 });
 
 export const mapToPublicSummaryResponse = mappr.compose(
-  { entityType: () => entityType.VENUE },
+  () => ({ entityType: entityType.VENUE }),
   fpPick([
     "id",
     "status",
@@ -82,5 +82,5 @@ export const mapToPublicFullResponse = mappr.compose(
     "openingTimesClosures",
     "namedClosures"
   ]),
-  { isFullEntity: true }
+  () => ({ isFullEntity: true })
 );

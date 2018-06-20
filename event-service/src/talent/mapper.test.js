@@ -154,11 +154,10 @@ describe("mapToPublicSummaryResponse", () => {
 describe("mapToPublicFullResponse", () => {
   it("should map a fully populated db item for an individual talent", () => {
     const dbTalent = testData.createFullIndividualDbTalent();
-
     const result = mapper.mapToPublicFullResponse(dbTalent);
-
     expect(result).toEqual({
       entityType: "talent",
+      isFullEntity: true,
       status: "Active",
       id: testData.INDIVIDUAL_TALENT_ID,
       lastName: "Cracknell",
@@ -184,11 +183,10 @@ describe("mapToPublicFullResponse", () => {
 
   it("should map a minimally populated db item for an individual talent", () => {
     const dbTalent = testData.createMinimalIndividualDbTalent();
-
     const result = mapper.mapToPublicFullResponse(dbTalent);
-
     expect(result).toEqual({
       entityType: "talent",
+      isFullEntity: true,
       status: "Active",
       id: testData.INDIVIDUAL_TALENT_ID,
       lastName: "Cracknell",
@@ -200,11 +198,10 @@ describe("mapToPublicFullResponse", () => {
 
   it("should map a minimally populated db item for a group talent", () => {
     const dbTalent = testData.createMinimalGroupDbTalent();
-
     const result = mapper.mapToPublicFullResponse(dbTalent);
-
     expect(result).toEqual({
       entityType: "talent",
+      isFullEntity: true,
       status: "Active",
       id: testData.GROUP_TALENT_ID,
       lastName: "The Darkness",

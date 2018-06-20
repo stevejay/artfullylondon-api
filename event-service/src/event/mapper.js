@@ -90,7 +90,7 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
 );
 
 export const mapToPublicSummaryResponse = mappr.compose(
-  { entityType: () => entityType.EVENT },
+  () => ({ entityType: entityType.EVENT }),
   fpPick([
     "id",
     "status",
@@ -153,7 +153,7 @@ export const mapToPublicFullResponse = mappr(
       "links",
       "images"
     ]),
-    { isFullEntity: true }
+    () => ({ isFullEntity: true })
   ),
   copyValuesFromReferencedEntities,
   // We redo this mapping in case images are now coming from a referenced entity:

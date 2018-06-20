@@ -28,7 +28,7 @@ export const mapCreateOrUpdateEventSeriesRequest = mappr.compose(
 );
 
 export const mapToPublicSummaryResponse = mappr.compose(
-  { entityType: () => entityType.EVENT_SERIES },
+  () => ({ entityType: entityType.EVENT_SERIES }),
   fpPick(["id", "status", "name", "eventSeriesType", "occurrence", "summary"]),
   entityMapper.mapResponseMainImage
 );
@@ -36,5 +36,5 @@ export const mapToPublicSummaryResponse = mappr.compose(
 export const mapToPublicFullResponse = mappr.compose(
   mapToPublicSummaryResponse,
   fpPick(["description", "descriptionCredit", "weSay", "links", "images"]),
-  { isFullEntity: true }
+  () => ({ isFullEntity: true })
 );

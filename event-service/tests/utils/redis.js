@@ -32,7 +32,7 @@ export function flushAll() {
     .then(
       () =>
         new Promise((resolve, reject) => {
-          client.flushall((err, response) => {
+          client.flushall(err => {
             if (err) {
               reject(err);
             } else {

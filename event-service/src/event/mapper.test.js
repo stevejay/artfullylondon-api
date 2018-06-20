@@ -311,6 +311,7 @@ describe("mapToPublicFullResponse", () => {
 
     expect(result).toEqual({
       entityType: "event",
+      isFullEntity: true,
       id: testData.PERFORMANCE_EVENT_ID,
       status: "Active",
       name: "Taming of the Shrew",
@@ -450,6 +451,7 @@ describe("mapToPublicFullResponse", () => {
 
     expect(result).toEqual({
       entityType: "event",
+      isFullEntity: true,
       id: testData.PERFORMANCE_EVENT_ID,
       status: "Active",
       name: "Taming of the Shrew",

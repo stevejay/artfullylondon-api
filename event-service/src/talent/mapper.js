@@ -32,7 +32,7 @@ export const mapCreateOrUpdateTalentRequest = mappr.compose(
 );
 
 export const mapToPublicSummaryResponse = mappr.compose(
-  { entityType: () => entityType.TALENT },
+  () => ({ entityType: entityType.TALENT }),
   fpPick([
     "id",
     "status",
@@ -47,5 +47,5 @@ export const mapToPublicSummaryResponse = mappr.compose(
 export const mapToPublicFullResponse = mappr.compose(
   mapToPublicSummaryResponse,
   fpPick(["description", "descriptionCredit", "weSay", "links", "images"]),
-  { isFullEntity: true }
+  () => ({ isFullEntity: true })
 );

@@ -215,6 +215,7 @@ describe("mapToPublicFullResponse", () => {
 
     expect(result).toEqual({
       entityType: "venue",
+      isFullEntity: true,
       id: testData.FULL_VENUE_ID,
       status: "Active",
       name: "Tate Modern",
@@ -263,6 +264,7 @@ describe("mapToPublicFullResponse", () => {
 
     expect(result).toEqual({
       entityType: "venue",
+      isFullEntity: true,
       id: testData.MINIMAL_VENUE_ID,
       status: "Active",
       name: "Almeida Theatre",

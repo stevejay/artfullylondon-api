@@ -93,6 +93,7 @@ describe("mapToPublicFullResponse", () => {
 
     expect(result).toEqual({
       entityType: "event-series",
+      isFullEntity: true,
       id: testData.EVENT_SERIES_ID,
       status: "Active",
       name: "Bang Said The Gun",
