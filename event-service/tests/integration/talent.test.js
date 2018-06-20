@@ -72,32 +72,33 @@ describe("talent", () => {
     testTalentId = parsedResponse.entity.id;
   });
 
-  // it("should get the talent without cache control headers when using the admin api", async () => {
-  //   const response = await request({
-  //     uri: "http://localhost:3014/admin/talent/" + testTalentId,
-  //     json: true,
-  //     method: "GET",
-  //     timeout: 14000,
-  //     resolveWithFullResponse: true
-  //   });
+  it("should get the talent without cache control headers when using the admin api", async () => {
+    const response = await request({
+      uri: "http://localhost:3014/admin/talent/" + testTalentId,
+      json: true,
+      method: "GET",
+      timeout: 14000,
+      resolveWithFullResponse: true
+    });
 
-  //   expect(response.headers).toEqual(
-  //     expect.objectContaining({
-  //       "cache-control": "no-cache"
-  //     })
-  //   );
+    expect(response.headers).toEqual(
+      expect.objectContaining({
+        "cache-control": "no-cache"
+      })
+    );
 
-  //   expect(response.headers.etag).not.toBeDefined();
+    expect(response.headers.etag).not.toBeDefined();
 
-  //   expect(response.body.entity).toEqual(
-  //     expect.objectContaining({
-  //       id: testTalentId,
-  //       firstNames: "Byron",
-  //       status: "Active",
-  //       version: 1
-  //     })
-  //   );
-  // });
+    const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
+    expect(parsedResponse.entity).toEqual(
+      expect.objectContaining({
+        id: testTalentId,
+        firstNames: "Byron",
+        status: "Active",
+        version: 1
+      })
+    );
+  });
 
   // it("should get the talent with cache control headers when using the public api", async () => {
   //   const response = await request({
