@@ -1,9 +1,14 @@
 import * as request from "request-promise-native";
 import * as wikipedia from "./wikipedia";
+// import * as xrayWrapper from "./xray-wrapper";
 
 const linksWithWikipedia = [
   { type: "Wikipedia", url: "https://en.wikipedia.org/wiki/Rabbit" }
 ];
+
+// const MOCK_XRAY_IMPL = (name, cb) => {
+//   cb({ close: () => {} });
+// };
 
 describe("getDescription", () => {
   it("should get a wikipedia description", async () => {
@@ -30,14 +35,13 @@ describe("getDescription", () => {
       }
     });
 
-    const result = await wikipedia.getDescription(
-      entity.description,
-      entity.descriptionCredit,
-      entity.links
-    );
+    // xrayWrapper.captureAsyncFunc = jest.fn(MOCK_XRAY_IMPL);
+
+    const result = await wikipedia.getDescription(entity);
 
     expect(result).toEqual({
-      content: "<p>Rabbits are small mammals in the family Leporidae.</p>"
+      description: "<p>Rabbits are small mammals in the family Leporidae.</p>",
+      descriptionCredit: "Wikipedia"
     });
 
     expect(request.get).toHaveBeenCalledWith(
@@ -70,14 +74,13 @@ describe("getDescription", () => {
       }
     });
 
-    const result = await wikipedia.getDescription(
-      entity.description,
-      entity.descriptionCredit,
-      entity.links
-    );
+    // xrayWrapper.captureAsyncFunc = jest.fn(MOCK_XRAY_IMPL);
+
+    const result = await wikipedia.getDescription(entity);
 
     expect(result).toEqual({
-      content: "<p>Rabbits are small mammals in the family.</p>"
+      description: "<p>Rabbits are small mammals in the family.</p>",
+      descriptionCredit: "Wikipedia"
     });
 
     expect(request.get).toHaveBeenCalledWith(
@@ -103,14 +106,10 @@ describe("getDescription", () => {
       }
     });
 
-    const result = await wikipedia.getDescription(
-      entity.description,
-      entity.descriptionCredit,
-      entity.links
-    );
+    // xrayWrapper.captureAsyncFunc = jest.fn(MOCK_XRAY_IMPL);
 
+    const result = await wikipedia.getDescription(entity);
     expect(result).toEqual({});
-
     expect(request.get).toHaveBeenCalledWith(
       "https://en.wikipedia.org" + path,
       { json: true }
@@ -125,14 +124,8 @@ describe("getDescription", () => {
     };
 
     request.get = jest.fn();
-
-    const result = await wikipedia.getDescription(
-      entity.description,
-      entity.descriptionCredit,
-      entity.links
-    );
-
-    expect(result).toEqual({ content: "not empty", credit: "some credit" });
+    const result = await wikipedia.getDescription(entity);
+    expect(result).toEqual(null);
     expect(request.get).not.toHaveBeenCalled();
   });
 
@@ -144,13 +137,8 @@ describe("getDescription", () => {
     };
 
     request.get = jest.fn();
-
-    const result = await wikipedia.getDescription(
-      entity.description,
-      entity.links
-    );
-
-    expect(result).toEqual({});
+    const result = await wikipedia.getDescription(entity);
+    expect(result).toEqual(null);
     expect(request.get).not.toHaveBeenCalled();
   });
 
@@ -163,13 +151,8 @@ describe("getDescription", () => {
     };
 
     request.get = jest.fn();
-
-    const result = await wikipedia.getDescription(
-      entity.description,
-      entity.links
-    );
-
-    expect(result).toEqual({});
+    const result = await wikipedia.getDescription(entity);
+    expect(result).toEqual(null);
     expect(request.get).not.toHaveBeenCalled();
   });
 });

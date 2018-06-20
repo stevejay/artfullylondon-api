@@ -2,6 +2,7 @@ import fpPick from "lodash/fp/pick";
 import mappr from "mappr";
 import * as entityMapper from "../entity/mapper";
 import * as talentType from "../types/talent-type";
+import * as entityType from "../types/entity-type";
 import * as identity from "../entity/id";
 
 export const CURRENT_TALENT_SCHEME_VERSION = 2;
@@ -31,8 +32,8 @@ export const mapCreateOrUpdateTalentRequest = mappr.compose(
 );
 
 export const mapToPublicSummaryResponse = mappr.compose(
+  { entityType: () => entityType.TALENT },
   fpPick([
-    "entityType",
     "id",
     "status",
     "firstNames",

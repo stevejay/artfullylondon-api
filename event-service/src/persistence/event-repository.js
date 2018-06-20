@@ -1,8 +1,9 @@
+import _ from "lodash";
 import * as entityRepository from "./entity-repository";
-import * as talentRepository from "./talent-repository";
-import * as venueRepository from "./venue-repository";
-import * as eventSeriesRepository from "./event-series-repository";
 import * as dynamodb from "./dynamodb";
+import { TALENT_TABLE_NAME } from "./talent-repository";
+import { EVENT_SERIES_TABLE_NAME } from "./event-series-repository";
+import { VENUE_TABLE_NAME } from "./venue-repository";
 
 export const EVENT_TABLE_NAME = process.env.SERVERLESS_EVENT_TABLE_NAME;
 
@@ -58,37 +59,54 @@ export async function createOrUpdateEvent(event) {
   await entityRepository.write(EVENT_TABLE_NAME, event);
 }
 
-export async function getReferencedEntities(event, consistentRead) {
+export function getReferencedEntities(event, consistentRead) {
+  return getReferencedEntitiesImpl(
+    event.venueId,
+    event.eventSeriesId,
+    event.talents.map(talent => talent.id),
+    consistentRead
+  );
+}
+
+async function getReferencedEntitiesImpl(
+  venueId,
+  eventSeriesId,
+  talentIds,
+  consistentRead
+) {
   const params = {
     RequestItems: {},
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
   };
 
-  if (event.talents && event.talents.length) {
-    params.RequestItems[talentRepository.TALENT_TABLE_NAME] = {
-      Keys: event.talents.map(talent => ({ id: talent.id })),
-      ConsistentRead: consistentRead
+  if (!_.isEmpty(talentIds)) {
+    params.RequestItems[TALENT_TABLE_NAME] = {
+      Keys: talentIds.map(id => ({ id })),
+      ConsistentRead: !!consistentRead
     };
   }
 
-  if (event.eventSeriesId) {
-    params.RequestItems[eventSeriesRepository.EVENT_SERIES_TABLE_NAME] = {
-      Keys: [{ id: event.eventSeriesId }],
-      ConsistentRead: consistentRead
+  if (eventSeriesId) {
+    params.RequestItems[EVENT_SERIES_TABLE_NAME] = {
+      Keys: [{ id: eventSeriesId }],
+      ConsistentRead: !!consistentRead
     };
   }
 
-  params.RequestItems[venueRepository.VENUE_TABLE_NAME] = {
-    Keys: [{ id: event.venueId }],
-    ConsistentRead: consistentRead
-  };
+  if (venueId) {
+    params.RequestItems[VENUE_TABLE_NAME] = {
+      Keys: [{ id: venueId }],
+      ConsistentRead: !!consistentRead
+    };
+  }
 
   const response = await dynamodb.batchGet(params);
+  const eventSeries = response.Responses[process.EVENT_SERIES_TABLE_NAME];
+  const venue = response.Responses[process.VENUE_TABLE_NAME];
 
   return {
-    talents: response.Responses[talentRepository.TALENT_TABLE_NAME] || [],
-    eventSeries:
-      response.Responses[eventSeriesRepository.EVENT_SERIES_TABLE_NAME] || [],
-    venue: response.Responses[venueRepository.VENUE_TABLE_NAME] || []
+    talents: response.Responses[TALENT_TABLE_NAME] || [],
+    eventSeries: _.isEmpty(eventSeries) ? null : eventSeries[0],
+    venue: _.isEmpty(venue) ? null : venue[0]
   };
 }

@@ -16,11 +16,11 @@ it("should apply normalisers to a fully populated request", () => {
     hearingFacilitiesType: "HearingLoops",
     email: "  boxoffice@almeida.co.uk",
     telephone: " (  020 ) 7359-4404",
-    openingTimes: [{ day: 0, from: "09:00", to: "18:00" }],
+    openingTimes: [{ day: 1, from: "09:00", to: "18:00" }],
     additionalOpeningTimes: [
-      { date: "2016/02/12", from: "23:00", to: "23:30" }
+      { date: "2016-02-12", from: "23:00", to: "23:30" }
     ],
-    openingTimesClosures: [{ date: "2016/01/15" }],
+    openingTimesClosures: [{ date: "2016-01-15" }],
     namedClosures: ["ChristmasDay", "NewYearsDay"],
     links: [{ type: "Wikipedia", url: "  http://wikipedia.com/foo   " }],
     images: [
@@ -51,11 +51,11 @@ it("should apply normalisers to a fully populated request", () => {
     hearingFacilitiesType: "HearingLoops",
     email: "boxoffice@almeida.co.uk",
     telephone: "020 7359 4404",
-    openingTimes: [{ day: 0, from: "09:00", to: "18:00" }],
+    openingTimes: [{ day: 1, from: "09:00", to: "18:00" }],
     additionalOpeningTimes: [
-      { date: "2016/02/12", from: "23:00", to: "23:30" }
+      { date: "2016-02-12", from: "23:00", to: "23:30" }
     ],
-    openingTimesClosures: [{ date: "2016/01/15" }],
+    openingTimesClosures: [{ date: "2016-01-15" }],
     namedClosures: ["ChristmasDay", "NewYearsDay"],
     links: [{ type: "Wikipedia", url: "http://wikipedia.com/foo" }],
     images: [

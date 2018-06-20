@@ -119,8 +119,8 @@ exports.createNewEventBody = function(venueId, talentId, eventSeriesId) {
     costType: "Free",
     summary:
       "An exhibition of paintings and the rarely seen drawings of the pioneering and visionary architect Zaha Hadid",
-    dateFrom: "2017/01/13",
-    dateTo: "2017/02/12",
+    dateFrom: "2017-01-13",
+    dateTo: "2017-02-12",
     rating: 3,
     bookingType: "NotRequired",
     useVenueOpeningTimes: true,

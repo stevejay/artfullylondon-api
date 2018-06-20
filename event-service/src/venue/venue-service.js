@@ -5,7 +5,7 @@ import * as mapper from "./mapper";
 import * as entityEnhancer from "../entity/enhancer";
 import * as eventRepository from "../persistence/event-repository";
 import * as notifier from "../notifier";
-// const etag = require("../lambda/etag");
+import * as cache from "../cache";
 
 export async function getVenue(params) {
   const venue = await venueRepository.getVenue(params.id, false);
@@ -32,17 +32,14 @@ export async function createOrUpdateVenue(params) {
   validator.validateCreateOrUpdateVenueRequest(params);
   params = entityEnhancer.addDescriptionFromWikipedia(params);
   const isUpdate = !!params.id;
-  const venue = mapper.mapCreateOrUpdateVenueRequest(params);
-  await venueRepository.createOrUpdateVenue(venue);
+  const dbVenue = mapper.mapCreateOrUpdateVenueRequest(params);
+  await venueRepository.createOrUpdateVenue(dbVenue);
   if (isUpdate) {
-    const eventIds = await eventRepository.getEventIdsByVenue(venue.id);
+    const eventIds = await eventRepository.getEventIdsByVenue(dbVenue.id);
     await Promise.all(eventIds.map(notifier.updateEvent));
   }
-  await notifier.indexEntity(venue);
-  // const publicResponse = mapper.mapToPublicFullResponse(venue);
-  // await etag.writeETagToRedis(
-  //   "venue/" + dbItem.id,
-  //   JSON.stringify({ entity: publicResponse })
-  // );
-  return { entity: venue };
+  const responseVenue = mapper.mapToPublicFullResponse(dbVenue);
+  await notifier.indexEntity(responseVenue);
+  await cache.storeEntityEtag(responseVenue);
+  return { entity: dbVenue };
 }

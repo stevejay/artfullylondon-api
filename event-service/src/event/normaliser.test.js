@@ -14,21 +14,21 @@ it("should apply event normalisers to fully populated params", () => {
       {
         id: "full-run",
         dateFrom: null,
-        dateTo: "2017/01/20",
+        dateTo: "2017-01-20",
         label: " Full Run  "
       }
     ],
     openingTimes: [
-      { day: 0, from: "09:00", to: "18:00", timesRangeId: "full-run" }
+      { day: 1, from: "09:00", to: "18:00", timesRangeId: "full-run" }
     ],
-    performances: [{ day: 0, at: "18:00" }],
+    performances: [{ day: 1, at: "18:00" }],
     additionalOpeningTimes: [
-      { date: "2016/02/11", from: "09:00", to: "18:00" }
+      { date: "2016-02-11", from: "09:00", to: "18:00" }
     ],
-    additionalPerformances: [{ date: "2016/02/11", at: "15:00" }],
+    additionalPerformances: [{ date: "2016-02-11", at: "15:00" }],
     specialOpeningTimes: [
       {
-        date: "2016/02/11",
+        date: "2016-02-11",
         from: "09:00",
         to: "18:00",
         audienceTags: [{ id: "audience/adult", label: "Adult" }]
@@ -36,13 +36,13 @@ it("should apply event normalisers to fully populated params", () => {
     ],
     specialPerformances: [
       {
-        date: "2016/02/11",
+        date: "2016-02-11",
         at: "15:00",
         audienceTags: [{ id: "audience/adult", label: "Adult" }]
       }
     ],
-    openingTimesClosures: ["2016/12/25"],
-    performancesClosures: ["2016/12/26"],
+    openingTimesClosures: ["2016-12-25"],
+    performancesClosures: ["2016-12-26"],
     talents: [
       {
         id: "john-doe",
@@ -69,7 +69,7 @@ it("should apply event normalisers to fully populated params", () => {
     ],
     reviews: [{ source: "    The  Guardian   ", rating: 4 }],
     weSay: "   something   ",
-    soldOutPerformances: [{ date: "2017/01/20", at: "09:00" }],
+    soldOutPerformances: [{ date: "2017-01-20", at: "09:00" }],
     version: 1
   };
 
@@ -88,21 +88,21 @@ it("should apply event normalisers to fully populated params", () => {
       {
         id: "full-run",
         dateFrom: undefined,
-        dateTo: "2017/01/20",
+        dateTo: "2017-01-20",
         label: "Full Run"
       }
     ],
     openingTimes: [
-      { day: 0, from: "09:00", to: "18:00", timesRangeId: "full-run" }
+      { day: 1, from: "09:00", to: "18:00", timesRangeId: "full-run" }
     ],
-    performances: [{ day: 0, at: "18:00" }],
+    performances: [{ day: 1, at: "18:00" }],
     additionalOpeningTimes: [
-      { date: "2016/02/11", from: "09:00", to: "18:00" }
+      { date: "2016-02-11", from: "09:00", to: "18:00" }
     ],
-    additionalPerformances: [{ date: "2016/02/11", at: "15:00" }],
+    additionalPerformances: [{ date: "2016-02-11", at: "15:00" }],
     specialOpeningTimes: [
       {
-        date: "2016/02/11",
+        date: "2016-02-11",
         from: "09:00",
         to: "18:00",
         audienceTags: [{ id: "audience/adult", label: "Adult" }]
@@ -110,13 +110,13 @@ it("should apply event normalisers to fully populated params", () => {
     ],
     specialPerformances: [
       {
-        date: "2016/02/11",
+        date: "2016-02-11",
         at: "15:00",
         audienceTags: [{ id: "audience/adult", label: "Adult" }]
       }
     ],
-    openingTimesClosures: ["2016/12/25"],
-    performancesClosures: ["2016/12/26"],
+    openingTimesClosures: ["2016-12-25"],
+    performancesClosures: ["2016-12-26"],
     talents: [
       { id: "john-doe", roles: ["Director Actor"], characters: ["Polonius"] },
       { id: "jane-doe", roles: [], characters: undefined }
@@ -135,7 +135,7 @@ it("should apply event normalisers to fully populated params", () => {
     ],
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
-    soldOutPerformances: [{ date: "2017/01/20", at: "09:00" }],
+    soldOutPerformances: [{ date: "2017-01-20", at: "09:00" }],
     version: 1
   });
 });
@@ -215,10 +215,10 @@ it("should apply event normalisers to times audience tags", () => {
     openingTimes: [],
     performances: [],
     specialOpeningTimes: [
-      { date: "2016/02/11", from: "09:00", to: "18:00", audienceTags: [] }
+      { date: "2016-02-11", from: "09:00", to: "18:00", audienceTags: [] }
     ],
     specialPerformances: [
-      { date: "2016/02/11", at: "15:00", audienceTags: [] }
+      { date: "2016-02-11", at: "15:00", audienceTags: [] }
     ],
     closures: [],
     talents: [],

@@ -97,7 +97,7 @@ describe("createEventId", () => {
 
   const tests = [
     {
-      args: ["foo", "2015/09/18", "Baritone"],
+      args: ["foo", "2015-09-18", "Baritone"],
       expected: "foo/2015/baritone"
     },
     {

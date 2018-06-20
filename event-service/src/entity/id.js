@@ -1,7 +1,7 @@
 import slug from "limax";
 
 const MIN_SLUG_LENGTH = 5;
-const YEAR_REGEX = /^(\d\d\d\d)\//;
+const YEAR_REGEX = /^(\d\d\d\d)-/;
 
 export function createIdFromName(name, addEntropy) {
   let result = slug(name, { maintainCase: false });

@@ -2,6 +2,7 @@ import fpPick from "lodash/fp/pick";
 import mappr from "mappr";
 import * as entityMapper from "../entity/mapper";
 import * as identity from "../entity/id";
+import * as entityType from "../types/entity-type";
 
 export const CURRENT_VENUE_SCHEME_VERSION = 4;
 
@@ -47,8 +48,8 @@ export const mapToAdminResponse = venue => ({
 });
 
 export const mapToPublicSummaryResponse = mappr.compose(
+  { entityType: () => entityType.VENUE },
   fpPick([
-    "entityType",
     "id",
     "status",
     "name",
@@ -72,6 +73,7 @@ export const mapToPublicFullResponse = mappr.compose(
     "wheelchairAccessType",
     "disabledBathroomType",
     "hearingFacilitiesType",
+    "hasPermanentCollection",
     "email",
     "telephone",
     "notes",

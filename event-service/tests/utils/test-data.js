@@ -1,7 +1,7 @@
-import * as talentMapper from "./talent/mapper";
-import * as venueMapper from "./venue/mapper";
-import * as eventSeriesMapper from "./event-series/mapper";
-import * as eventMapper from "./event/mapper";
+import * as talentMapper from "../../src/talent/mapper";
+import * as venueMapper from "../../src/venue/mapper";
+import * as eventSeriesMapper from "../../src/event-series/mapper";
+import * as eventMapper from "../../src/event/mapper";
 
 export const NORMAL_ADMIN_USER_REQUEST_HEADERS = {
   Authorization:
@@ -19,8 +19,8 @@ export const createMinimalIndividualRequestTalent = () => {
     talentType: "Individual",
     commonRole: "Actor",
     version: 3,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     description: undefined,
     descriptionCredit: undefined,
     links: undefined,
@@ -48,8 +48,8 @@ export const createFullIndividualRequestTalent = () => {
     ],
     weSay: "something",
     version: 3,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -60,8 +60,8 @@ export const createMinimalGroupRequestTalent = () => {
     talentType: "Group",
     commonRole: "Artist",
     version: 3,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     firstNames: undefined,
     description: undefined,
     descriptionCredit: undefined,
@@ -89,8 +89,8 @@ export const createFullGroupRequestTalent = () => {
     ],
     weSay: "something",
     version: 3,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -104,8 +104,8 @@ export const createMinimalIndividualDbTalent = () => {
     commonRole: "Actor",
     version: 3,
     schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -130,8 +130,8 @@ export const createFullIndividualDbTalent = () => {
     weSay: "something",
     version: 3,
     schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -155,8 +155,8 @@ export const createFullGroupDbTalent = () => {
     weSay: "something",
     version: 3,
     schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -169,8 +169,8 @@ export const createMinimalGroupDbTalent = () => {
     commonRole: "Artist",
     version: 1,
     schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -190,8 +190,8 @@ export const createMinimalRequestVenue = () => {
     disabledBathroomType: "Present",
     hearingFacilitiesType: "HearingLoops",
     version: 2,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     hasPermanentCollection: true,
 
     description: undefined,
@@ -226,13 +226,13 @@ export const createFullRequestVenue = () => {
     email: "boxoffice@tate.co.uk",
     telephone: "020 7359 4404",
     openingTimes: [
-      { day: 0, from: "09:00", to: "18:00" },
-      { day: 1, from: "09:00", to: "18:00" }
+      { day: 1, from: "09:00", to: "18:00" },
+      { day: 2, from: "09:00", to: "18:00" }
     ],
     additionalOpeningTimes: [
-      { date: "2016/02/12", from: "23:00", to: "23:30" }
+      { date: "2016-02-12", from: "23:00", to: "23:30" }
     ],
-    openingTimesClosures: [{ date: "2016/02/10" }, { date: "2016/02/11" }],
+    openingTimesClosures: [{ date: "2016-02-10" }, { date: "2016-02-11" }],
     namedClosures: ["ChristmasDay", "NewYearsDay"],
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
     images: [
@@ -241,8 +241,8 @@ export const createFullRequestVenue = () => {
     weSay: "something",
     notes: "hi",
     version: 1,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -261,8 +261,8 @@ export const createMinimalDbVenue = () => {
     hearingFacilitiesType: "HearingLoops",
     version: 1,
     schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -285,13 +285,13 @@ export const createFullDbVenue = () => {
     email: "boxoffice@tate.co.uk",
     telephone: "020 7359 4404",
     openingTimes: [
-      { day: 0, from: "09:00", to: "18:00" },
-      { day: 1, from: "09:00", to: "18:00" }
+      { day: 1, from: "09:00", to: "18:00" },
+      { day: 2, from: "09:00", to: "18:00" }
     ],
     additionalOpeningTimes: [
-      { date: "2016/02/12", from: "23:00", to: "23:30" }
+      { date: "2016-02-12", from: "23:00", to: "23:30" }
     ],
-    openingTimesClosures: [{ date: "2016/02/10" }, { date: "2016/02/11" }],
+    openingTimesClosures: [{ date: "2016-02-10" }, { date: "2016-02-11" }],
     namedClosures: ["ChristmasDay", "NewYearsDay"],
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
     images: [
@@ -301,8 +301,8 @@ export const createFullDbVenue = () => {
     notes: "hi",
     version: 1,
     schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -317,8 +317,8 @@ export const createMinimalRequestEventSeries = () => {
     summary: "A poetry riot",
     description: "Poetry for people who dont like poetry.",
     version: 1,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
 
     descriptionCredit: undefined,
     links: undefined,
@@ -342,8 +342,8 @@ export const createFullRequestEventSeries = () => {
     ],
     weSay: "something",
     version: 1,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -358,8 +358,8 @@ export const createMinimalDbEventSeries = () => {
     description: "Poetry for people who dont like poetry.",
     version: 1,
     schemeVersion: eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -380,8 +380,8 @@ export const createFullDbEventSeries = () => {
     weSay: "something",
     version: 1,
     schemeVersion: eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11"
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11"
   };
 };
 
@@ -399,8 +399,8 @@ export const createMinimalPerformanceRequestEvent = () => {
     eventType: "Performance",
     occurrenceType: "Bounded",
     bookingType: "NotRequired",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     rating: 3,
     useVenueOpeningTimes: false,
     costType: "Free",
@@ -410,8 +410,8 @@ export const createMinimalPerformanceRequestEvent = () => {
     description: undefined,
     venueId: EVENT_VENUE_ID,
     version: 4,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     costFrom: undefined,
     costTo: undefined,
     minAge: undefined,
@@ -449,8 +449,8 @@ export const createMinimalExhibitionRequestEvent = () => {
     eventType: "Exhibition",
     occurrenceType: "Bounded",
     bookingType: "NotRequired",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     rating: 3,
     useVenueOpeningTimes: false,
     costType: "Free",
@@ -460,8 +460,8 @@ export const createMinimalExhibitionRequestEvent = () => {
     description: undefined,
     venueId: EVENT_VENUE_ID,
     version: 4,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     costFrom: undefined,
     costTo: undefined,
     minAge: undefined,
@@ -498,15 +498,15 @@ export const createFullPerformanceRequestEvent = () => {
     name: "Taming of the Shrew",
     eventType: "Performance",
     occurrenceType: "Bounded",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     costType: "Paid",
     costFrom: 15.5,
     costTo: 35,
     soldOut: false,
     timedEntry: undefined,
     bookingType: "RequiredForNonMembers",
-    bookingOpens: "2016/02/11",
+    bookingOpens: "2016-02-11",
     summary: "A contemporary update of this Shakespeare classic",
     description:
       "A contemporary update of this Shakespeare classic by the acclaimed director Sam Mendes.",
@@ -524,24 +524,24 @@ export const createFullPerformanceRequestEvent = () => {
       {
         id: "all-run",
         label: "all run",
-        dateFrom: "2016/02/11",
-        dateTo: "2016/02/13"
+        dateFrom: "2016-02-11",
+        dateTo: "2016-02-13"
       }
     ],
     openingTimes: undefined,
-    performances: [{ day: 0, at: "18:00", timesRangeId: "all-run" }],
+    performances: [{ day: 1, at: "18:00", timesRangeId: "all-run" }],
     additionalOpeningTimes: undefined,
-    additionalPerformances: [{ date: "2016/02/11", at: "15:00" }],
+    additionalPerformances: [{ date: "2016-02-11", at: "15:00" }],
     specialOpeningTimes: undefined,
     specialPerformances: [
       {
-        date: "2016/02/11",
+        date: "2016-02-11",
         at: "15:00",
         audienceTags: [{ id: "audience/adult", label: "Adult" }]
       }
     ],
     openingTimesClosures: undefined,
-    performancesClosures: [{ date: "2016/12/25" }],
+    performancesClosures: [{ date: "2016-12-25" }],
     duration: "01:00",
     talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     audienceTags: [{ id: "audience/families", label: "families" }],
@@ -562,11 +562,11 @@ export const createFullPerformanceRequestEvent = () => {
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
     version: 1,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     soldOutPerformances: [
       {
-        date: "2016/02/11",
+        date: "2016-02-11",
         at: "15:00"
       }
     ]
@@ -579,15 +579,15 @@ export const createFullExhibitionRequestEvent = () => {
     name: "Taming of the Shrew",
     eventType: "Exhibition",
     occurrenceType: "Bounded",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     costType: "Paid",
     costFrom: 0,
     costTo: 35,
     soldOut: undefined,
     timedEntry: true,
     bookingType: "RequiredForNonMembers",
-    bookingOpens: "2016/02/11",
+    bookingOpens: "2016-02-11",
     summary: "A contemporary update of this Shakespeare classic",
     description:
       "A contemporary update of this Shakespeare classic by the acclaimed director Sam Mendes.",
@@ -602,15 +602,15 @@ export const createFullExhibitionRequestEvent = () => {
       "Exhibition is located in the Purcell Room in the Foster Building",
     useVenueOpeningTimes: false,
     timesRanges: undefined,
-    openingTimes: [{ day: 0, from: "09:00", to: "18:00" }],
+    openingTimes: [{ day: 1, from: "09:00", to: "18:00" }],
     performances: undefined,
     additionalOpeningTimes: [
-      { date: "2016/02/11", from: "09:00", to: "18:00" }
+      { date: "2016-02-11", from: "09:00", to: "18:00" }
     ],
     additionalPerformances: undefined,
     specialOpeningTimes: undefined,
     specialPerformances: undefined,
-    openingTimesClosures: [{ date: "2016/12/25" }],
+    openingTimesClosures: [{ date: "2016-12-25" }],
     performancesClosures: undefined,
     duration: "01:00",
     talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
@@ -632,8 +632,8 @@ export const createFullExhibitionRequestEvent = () => {
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
     version: 1,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     soldOutPerformances: undefined
   };
 };
@@ -645,8 +645,8 @@ export const createMinimalCourseRequestEvent = () => {
     eventType: "Course",
     occurrenceType: "Bounded",
     bookingType: "NotRequired",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     rating: 3,
     useVenueOpeningTimes: false,
     costType: "Free",
@@ -656,8 +656,8 @@ export const createMinimalCourseRequestEvent = () => {
     description: undefined,
     venueId: EVENT_VENUE_ID,
     version: 4,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     costFrom: undefined,
     costTo: undefined,
     minAge: undefined,
@@ -694,15 +694,15 @@ export const createFullCourseRequestEvent = () => {
     name: "Taking Pictures",
     eventType: "Course",
     occurrenceType: "Bounded",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     costType: "Paid",
     costFrom: 15.5,
     costTo: 35,
     soldOut: true,
     timedEntry: undefined,
     bookingType: "RequiredForNonMembers",
-    bookingOpens: "2016/02/11",
+    bookingOpens: "2016-02-11",
     summary: "How to take pictures",
     description: "How to do this thing of taking pictures",
     descriptionCredit: "Some credit",
@@ -719,7 +719,7 @@ export const createFullCourseRequestEvent = () => {
     openingTimes: undefined,
     performances: undefined,
     additionalOpeningTimes: undefined,
-    additionalPerformances: [{ date: "2016/02/11", at: "15:00" }],
+    additionalPerformances: [{ date: "2016-02-11", at: "15:00" }],
     specialOpeningTimes: undefined,
     specialPerformances: undefined,
     openingTimesClosures: undefined,
@@ -744,8 +744,8 @@ export const createFullCourseRequestEvent = () => {
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
     version: 1,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     soldOutPerformances: undefined
   };
 };
@@ -758,16 +758,16 @@ export const createMinimalPerformanceDbEvent = () => {
     eventType: "Performance",
     occurrenceType: "Bounded",
     bookingType: "NotRequired",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     rating: 3,
     useVenueOpeningTimes: false,
     costType: "Paid",
     summary: "A Shakespearian classic",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     venueId: EVENT_VENUE_ID
   };
 };
@@ -780,16 +780,16 @@ export const createMinimalCourseDbEvent = () => {
     eventType: "Course",
     occurrenceType: "Bounded",
     bookingType: "NotRequired",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     rating: 3,
     useVenueOpeningTimes: false,
     costType: "Free",
     summary: "A Shakespearian classic",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     venueId: EVENT_VENUE_ID
   };
 };
@@ -802,8 +802,8 @@ export const createFullPerformanceDbEvent = () => {
     eventType: "Performance",
     occurrenceType: "Bounded",
     bookingType: "NotRequired",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     rating: 3,
     minAge: 14,
     maxAge: 18,
@@ -815,18 +815,18 @@ export const createFullPerformanceDbEvent = () => {
     descriptionCredit: "Description credit",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
     timesRanges: [
       {
         id: "all-run",
         label: "all run",
-        dateFrom: "2016/02/11",
-        dateTo: "2016/02/13"
+        dateFrom: "2016-02-11",
+        dateTo: "2016-02-13"
       }
     ],
-    performances: [{ day: 6, at: "12:00", timesRangeId: "all-run" }],
-    additionalPerformances: [{ date: "2016/08/15", at: "08:00" }],
+    performances: [{ day: 7, at: "12:00", timesRangeId: "all-run" }],
+    additionalPerformances: [{ date: "2016-08-15", at: "08:00" }],
     talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
     images: [
@@ -845,7 +845,7 @@ export const createFullPerformanceDbEvent = () => {
     venueGuidance: "Through the curtains",
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
-    soldOutPerformances: [{ date: "2016/08/15", at: "08:00" }]
+    soldOutPerformances: [{ date: "2016-08-15", at: "08:00" }]
   };
 };
 
@@ -857,8 +857,8 @@ export const createFullCourseDbEvent = () => {
     eventType: "Course",
     occurrenceType: "Bounded",
     bookingType: "NotRequired",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     rating: 3,
     minAge: 14,
     maxAge: 18,
@@ -870,9 +870,9 @@ export const createFullCourseDbEvent = () => {
     descriptionCredit: "Description credit",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
-    additionalPerformances: [{ date: "2016/08/15", at: "08:00" }],
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
+    additionalPerformances: [{ date: "2016-08-15", at: "08:00" }],
     talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
     images: [
@@ -891,7 +891,7 @@ export const createFullCourseDbEvent = () => {
     venueGuidance: "Through the curtains",
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
-    soldOutPerformances: [{ date: "2016/08/15", at: "08:00" }]
+    soldOutPerformances: [{ date: "2016-08-15", at: "08:00" }]
   };
 };
 
@@ -903,8 +903,8 @@ export const createFullExhibitionDbEvent = () => {
     eventType: "Exhibition",
     occurrenceType: "Bounded",
     bookingType: "NotRequired",
-    dateFrom: "2016/02/11",
-    dateTo: "2016/02/13",
+    dateFrom: "2016-02-11",
+    dateTo: "2016-02-13",
     rating: 3,
     minAge: 14,
     maxAge: 18,
@@ -916,11 +916,11 @@ export const createFullExhibitionDbEvent = () => {
     descriptionCredit: "Description credit",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016/01/10",
-    updatedDate: "2016/01/11",
-    openingTimes: [{ day: 6, from: "12:00", to: "16:00" }],
+    createdDate: "2016-01-10",
+    updatedDate: "2016-01-11",
+    openingTimes: [{ day: 7, from: "12:00", to: "16:00" }],
     additionalOpeningTimes: [
-      { date: "2016/08/15", from: "17:00", to: "18:00" }
+      { date: "2016-08-15", from: "17:00", to: "18:00" }
     ],
     talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
     links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],

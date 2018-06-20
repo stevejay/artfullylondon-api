@@ -4,6 +4,7 @@ import mappr from "mappr";
 import * as entityMapper from "../entity/mapper";
 import * as identity from "../entity/id";
 import * as eventType from "../types/event-type";
+import * as entityType from "../types/entity-type";
 
 export const CURRENT_EVENT_SCHEME_VERSION = 4;
 
@@ -46,28 +47,32 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
     switch (params.eventType) {
       case eventType.PERFORMANCE:
         return {
-          timesRanges: entityMapper.mapTimesRanges,
-          performances: entityMapper.mapRequestPerformancesToDbItem,
-          additionalPerformances: entityMapper.mapAdditionalPerformances,
-          specialPerformances: entityMapper.mapSpecialPerformances,
-          performancesClosures: entityMapper.mapPerformancesClosures,
-          soldOutPerformances: entityMapper.mapSoldOutPerformances
+          timesRanges: entityMapper.mapTimesRanges(params),
+          performances: entityMapper.mapRequestPerformancesToDbItem(params),
+          additionalPerformances: entityMapper.mapAdditionalPerformances(
+            params
+          ),
+          specialPerformances: entityMapper.mapSpecialPerformances(params),
+          performancesClosures: entityMapper.mapPerformancesClosures(params),
+          soldOutPerformances: entityMapper.mapSoldOutPerformances(params)
         };
       case eventType.COURSE:
         return {
-          additionalPerformances: entityMapper.mapAdditionalPerformances
+          additionalPerformances: entityMapper.mapAdditionalPerformances(params)
         };
       default:
         return {
           timesRanges: params.useVenueOpeningTimes
             ? undefined
-            : entityMapper.mapTimesRanges,
+            : entityMapper.mapTimesRanges(params),
           openingTimes: params.useVenueOpeningTimes
             ? undefined
-            : entityMapper.mapOpeningTimes,
-          additionalOpeningTimes: entityMapper.mapAdditionalOpeningTimes,
-          specialOpeningTimes: entityMapper.mapSpecialOpeningTimes,
-          openingTimesClosures: entityMapper.mapOpeningTimesClosures
+            : entityMapper.mapOpeningTimes(params),
+          additionalOpeningTimes: entityMapper.mapAdditionalOpeningTimes(
+            params
+          ),
+          specialOpeningTimes: entityMapper.mapSpecialOpeningTimes(params),
+          openingTimesClosures: entityMapper.mapOpeningTimesClosures(params)
         };
     }
   },
@@ -85,8 +90,8 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
 );
 
 export const mapToPublicSummaryResponse = mappr.compose(
+  { entityType: () => entityType.EVENT },
   fpPick([
-    "entityType",
     "id",
     "status",
     "name",
@@ -108,7 +113,7 @@ export const mapToPublicSummaryResponse = mappr.compose(
   entityMapper.mapResponseMainImage
 );
 
-export const mapToPublicFullResponse = mappr.transform(
+export const mapToPublicFullResponse = mappr(
   mappr.compose(
     mapToPublicSummaryResponse,
     fpPick([
@@ -142,15 +147,22 @@ export const mapToPublicFullResponse = mappr.transform(
       "styleTags",
       "geoTags",
       "talents",
+      "venue",
+      "eventSeries",
       "reviews",
       "links",
       "images"
     ]),
-    { isFullEntity: true },
-    // We redo this mapping in case images are now coming from a referenced entity.
-    entityMapper.mapResponseMainImage
+    { isFullEntity: true }
   ),
-  copyValuesFromReferencedEntities
+  copyValuesFromReferencedEntities,
+  // We redo this mapping in case images are now coming from a referenced entity:
+  event => {
+    return {
+      ...event,
+      ...entityMapper.mapResponseMainImage(event)
+    };
+  }
 );
 
 export function mergeReferencedEntities(event, referencedEntities) {
@@ -160,10 +172,19 @@ export function mergeReferencedEntities(event, referencedEntities) {
     ...event,
     venue: referencedEntities.venue,
     eventSeries: referencedEntities.eventSeries || undefined,
-    talents: event.talents.map(talent => ({
-      ...talentsIdMap[talent.id],
-      ...talent
-    }))
+    talents: _.isEmpty(event.talents)
+      ? undefined
+      : event.talents.map(talent => {
+          const talentEntity = talentsIdMap[talent.id];
+          if (_.isNil(talentEntity)) {
+            throw new Error("[404] Referenced talent not found");
+          }
+
+          return {
+            ...talentEntity,
+            ...talent
+          };
+        })
   };
 
   delete result.eventSeriesId;
@@ -173,31 +194,31 @@ export function mergeReferencedEntities(event, referencedEntities) {
 export function copyValuesFromReferencedEntities(event) {
   const result = { ...event };
 
-  if (event.eventSeries) {
-    if (!event.description) {
+  if (result.eventSeries) {
+    if (!result.description) {
       // use the event series description if the event has none
 
-      if (event.eventSeries.description) {
+      if (result.eventSeries.description) {
         result.description = event.eventSeries.description;
 
-        if (event.eventSeries.descriptionCredit) {
-          result.descriptionCredit = event.eventSeries.descriptionCredit;
+        if (result.eventSeries.descriptionCredit) {
+          result.descriptionCredit = result.eventSeries.descriptionCredit;
         }
       }
     }
 
-    if (_.isEmpty(event.images)) {
+    if (_.isEmpty(result.images)) {
       // use the event series images if the event has none
-      if (!_.isEmpty(event.eventSeries.images)) {
-        result.images = event.eventSeries.images;
+      if (!_.isEmpty(result.eventSeries.images)) {
+        result.images = result.eventSeries.images;
       }
     }
   }
 
-  if (_.isEmpty(event.images)) {
+  if (_.isEmpty(result.images)) {
     // use the venue images if the event and the event series have none
-    if (!_.isEmpty(event.venue.images)) {
-      result.images = event.venue.images;
+    if (!_.isEmpty(result.venue.images)) {
+      result.images = result.venue.images;
     }
   }
 

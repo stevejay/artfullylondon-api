@@ -4,7 +4,7 @@ import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as notifier from "../notifier";
 import * as eventRepository from "../persistence/event-repository";
-// const etag = require("../lambda/etag");
+import * as cache from "../cache";
 
 export async function getEventSeries(params) {
   const eventSeries = await eventSeriesRepository.getEventSeries(
@@ -33,19 +33,16 @@ export async function createOrUpdateEventSeries(params) {
   params = normaliser.normaliseCreateOrUpdateEventSeriesRequest(params);
   validator.validateCreateOrUpdateEventSeriesRequest(params);
   const isUpdate = !!params.id;
-  const eventSeries = mapper.mapCreateOrUpdateEventSeriesRequest(params);
-  await eventSeriesRepository.createOrUpdateEventSeries(eventSeries);
+  const dbEventSeries = mapper.mapCreateOrUpdateEventSeriesRequest(params);
+  await eventSeriesRepository.createOrUpdateEventSeries(dbEventSeries);
   if (isUpdate) {
     const eventIds = await eventRepository.getEventIdsByEventSeries(
-      eventSeries.id
+      dbEventSeries.id
     );
     await Promise.all(eventIds.map(notifier.updateEvent));
   }
-  await notifier.indexEntity(eventSeries);
-  // const publicResponse = mapper.mapToPublicFullResponse(eventSeries);
-  // await etag.writeETagToRedis(
-  //   "event-series/" + dbItem.id,
-  //   JSON.stringify({ entity: publicResponse })
-  // );
-  return { entity: eventSeries };
+  const responseEventSeries = mapper.mapToPublicFullResponse(dbEventSeries);
+  await notifier.indexEntity(responseEventSeries);
+  await cache.storeEntityEtag(responseEventSeries);
+  return { entity: dbEventSeries };
 }

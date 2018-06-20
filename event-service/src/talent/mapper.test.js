@@ -24,7 +24,7 @@ describe("mapCreateOrUpdateTalentRequest", () => {
       status: "Active",
       talentType: "Individual",
       commonRole: "Actor",
-      description: "Wikipedia content",
+      description: "Wikipedia description",
       descriptionCredit: "Wikipedia credit",
       links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
       images: [
@@ -47,8 +47,7 @@ describe("mapCreateOrUpdateTalentRequest", () => {
 
     const result = mapper.mapCreateOrUpdateTalentRequest({
       ...request,
-      id: testData.INDIVIDUAL_TALENT_ID,
-      description: "Wikipedia description"
+      id: testData.INDIVIDUAL_TALENT_ID
     });
 
     expect(result).toEqual({
@@ -68,11 +67,12 @@ describe("mapCreateOrUpdateTalentRequest", () => {
   it("should map a fully populated request for a group talent", () => {
     const request = testData.createFullGroupRequestTalent();
 
-    const result = mapper.mapCreateOrUpdateTalentRequest(
-      testData.GROUP_TALENT_ID,
-      request,
-      { content: "Wikipedia description", credit: "Wikipedia credit" }
-    );
+    const result = mapper.mapCreateOrUpdateTalentRequest({
+      ...request,
+      id: testData.GROUP_TALENT_ID,
+      description: "Wikipedia description",
+      descriptionCredit: "Wikipedia credit"
+    });
 
     expect(result).toEqual({
       id: testData.GROUP_TALENT_ID,
@@ -101,9 +101,9 @@ describe("mapCreateOrUpdateTalentRequest", () => {
 
 describe("mapToPublicSummaryResponse", () => {
   it("should map a fully populated db item for an individual talent", () => {
-    const response = testData.createFullIndividualDbTalent();
+    const dbTalent = testData.createFullIndividualDbTalent();
 
-    const result = mapper.mapToPublicSummaryResponse(response);
+    const result = mapper.mapToPublicSummaryResponse(dbTalent);
 
     expect(result).toEqual({
       entityType: "talent",
@@ -120,9 +120,9 @@ describe("mapToPublicSummaryResponse", () => {
   });
 
   it("should map a minimally populated db item for an individual talent", () => {
-    const response = testData.createMinimalIndividualDbTalent();
+    const dbTalent = testData.createMinimalIndividualDbTalent();
 
-    const result = mapper.mapToPublicSummaryResponse(response);
+    const result = mapper.mapToPublicSummaryResponse(dbTalent);
 
     expect(result).toEqual({
       entityType: "talent",
@@ -136,9 +136,9 @@ describe("mapToPublicSummaryResponse", () => {
   });
 
   it("should map a minimally populated db item for a group talent", () => {
-    const response = testData.createMinimalGroupDbTalent();
+    const dbTalent = testData.createMinimalGroupDbTalent();
 
-    const result = mapper.mapToPublicSummaryResponse(response);
+    const result = mapper.mapToPublicSummaryResponse(dbTalent);
 
     expect(result).toEqual({
       entityType: "talent",
@@ -153,9 +153,9 @@ describe("mapToPublicSummaryResponse", () => {
 
 describe("mapToPublicFullResponse", () => {
   it("should map a fully populated db item for an individual talent", () => {
-    const response = testData.createFullIndividualDbTalent();
+    const dbTalent = testData.createFullIndividualDbTalent();
 
-    const result = mapper.mapToPublicFullResponse(response);
+    const result = mapper.mapToPublicFullResponse(dbTalent);
 
     expect(result).toEqual({
       entityType: "talent",
@@ -183,9 +183,9 @@ describe("mapToPublicFullResponse", () => {
   });
 
   it("should map a minimally populated db item for an individual talent", () => {
-    const response = testData.createMinimalIndividualDbTalent();
+    const dbTalent = testData.createMinimalIndividualDbTalent();
 
-    const result = mapper.mapToPublicFullResponse(response);
+    const result = mapper.mapToPublicFullResponse(dbTalent);
 
     expect(result).toEqual({
       entityType: "talent",
@@ -199,9 +199,9 @@ describe("mapToPublicFullResponse", () => {
   });
 
   it("should map a minimally populated db item for a group talent", () => {
-    const response = testData.createMinimalGroupDbTalent();
+    const dbTalent = testData.createMinimalGroupDbTalent();
 
-    const result = mapper.mapToPublicFullResponse(response);
+    const result = mapper.mapToPublicFullResponse(dbTalent);
 
     expect(result).toEqual({
       entityType: "talent",

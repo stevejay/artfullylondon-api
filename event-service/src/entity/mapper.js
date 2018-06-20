@@ -11,17 +11,18 @@ export const mapResponseMainImage = mappr({
 
 export const mapRequestLinks = mappr({
   links: params =>
-    (params.links || []).map(link => ({
-      type: link.type,
-      url: link.url
-    }))
+    _.isEmpty(params.links)
+      ? undefined
+      : params.links.map(link => _.pick(link, ["type", "url"]))
 });
 
 export const mapRequestImages = mappr({
   images: params =>
-    (params.images || []).map(image =>
-      _.pick(image, ["id", "ratio", "copyright", "dominantColor"])
-    )
+    _.isEmpty(params.images)
+      ? undefined
+      : params.images.map(image =>
+          _.pick(image, ["id", "ratio", "copyright", "dominantColor"])
+        )
 });
 
 export const mapEntityEditDates = params => {
@@ -124,22 +125,24 @@ export function mapTags(tags) {
     : tags.map(tag => _.pick(tag, ["id", "label"]));
 }
 
-export function mapTalents(params) {
-  return _.isEmpty(params.talents)
-    ? undefined
-    : params.talents.map(talent => {
-        return {
-          id: talent.id,
-          roles: _.isEmpty(talent.roles) ? undefined : talent.roles,
-          characters: _.isEmpty(talent.characters)
-            ? undefined
-            : talent.characters
-        };
-      });
-}
+export const mapTalents = mappr({
+  talents: params =>
+    _.isEmpty(params.talents)
+      ? undefined
+      : params.talents.map(talent => {
+          return {
+            id: talent.id,
+            roles: _.isEmpty(talent.roles) ? undefined : talent.roles,
+            characters: _.isEmpty(talent.characters)
+              ? undefined
+              : talent.characters
+          };
+        })
+});
 
-export function mapReviews(params) {
-  return _.isEmpty(params.reviews)
-    ? undefined
-    : params.reviews.map(review => _.pick(review, ["source", "rating"]));
-}
+export const mapReviews = mappr({
+  reviews: params =>
+    _.isEmpty(params.reviews)
+      ? undefined
+      : params.reviews.map(review => _.pick(review, ["source", "rating"]))
+});

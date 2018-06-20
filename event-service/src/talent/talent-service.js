@@ -4,7 +4,7 @@ import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as entityEnhancer from "../entity/enhancer";
 import * as notifier from "../notifier";
-// const etag = require("../lambda/etag");
+import * as cache from "../cache";
 
 export async function getTalent(params) {
   const talent = await talentRepository.getTalent(params.id, false);
@@ -25,13 +25,10 @@ export async function createOrUpdateTalent(params) {
   params = normaliser.normaliseCreateOrUpdateTalentRequest(params);
   validator.validateCreateOrUpdateTalentRequest(params);
   params = entityEnhancer.addDescriptionFromWikipedia(params);
-  const talent = mapper.mapCreateOrUpdateTalentRequest(params);
-  await talentRepository.createOrUpdateTalent(talent);
-  await notifier.indexEntity(talent);
-  // const publicResponse = mapper.mapToPublicFullResponse(talent);
-  // await etag.writeETagToRedis(
-  //   "talent/" + dbItem.id,
-  //   JSON.stringify({ entity: publicResponse })
-  // );
-  return { entity: talent };
+  const dbTalent = mapper.mapCreateOrUpdateTalentRequest(params);
+  await talentRepository.createOrUpdateTalent(dbTalent);
+  const responseTalent = mapper.mapToPublicFullResponse(dbTalent);
+  await notifier.indexEntity(responseTalent);
+  await cache.storeEntityEtag(responseTalent);
+  return { entity: dbTalent };
 }

@@ -37,13 +37,13 @@ describe("mapCreateOrUpdateVenueRequest", () => {
       email: "boxoffice@tate.co.uk",
       telephone: "020 7359 4404",
       openingTimes: [
-        { day: 0, from: "09:00", to: "18:00" },
-        { day: 1, from: "09:00", to: "18:00" }
+        { day: 1, from: "09:00", to: "18:00" },
+        { day: 2, from: "09:00", to: "18:00" }
       ],
       additionalOpeningTimes: [
-        { date: "2016/02/12", from: "23:00", to: "23:30" }
+        { date: "2016-02-12", from: "23:00", to: "23:30" }
       ],
-      openingTimesClosures: [{ date: "2016/02/10" }, { date: "2016/02/11" }],
+      openingTimesClosures: [{ date: "2016-02-10" }, { date: "2016-02-11" }],
       namedClosures: ["ChristmasDay", "NewYearsDay"],
       links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
       images: [
@@ -57,8 +57,8 @@ describe("mapCreateOrUpdateVenueRequest", () => {
       notes: "hi",
       version: 1,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
-      createdDate: "2016/01/10",
-      updatedDate: "2016/01/11"
+      createdDate: "2016-01-10",
+      updatedDate: "2016-01-11"
     });
   });
 
@@ -67,8 +67,7 @@ describe("mapCreateOrUpdateVenueRequest", () => {
 
     const result = mapper.mapCreateOrUpdateVenueRequest({
       ...request,
-      id: testData.MINIMAL_VENUE_ID,
-      description: "Wikipedia description"
+      id: testData.MINIMAL_VENUE_ID
     });
 
     expect(result).toEqual({
@@ -80,15 +79,14 @@ describe("mapCreateOrUpdateVenueRequest", () => {
       postcode: "N1 1TA",
       latitude: 51.539464,
       longitude: -0.103103,
-      description: "Wiki description",
       wheelchairAccessType: "FullAccess",
       disabledBathroomType: "Present",
       hearingFacilitiesType: "HearingLoops",
       hasPermanentCollection: true,
       version: 2,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
-      createdDate: "2016/01/10",
-      updatedDate: "2016/01/11"
+      createdDate: "2016-01-10",
+      updatedDate: "2016-01-11"
     });
   });
 });
@@ -117,13 +115,13 @@ describe("mapToAdminResponse", () => {
       email: "boxoffice@tate.co.uk",
       telephone: "020 7359 4404",
       openingTimes: [
-        { day: 0, from: "09:00", to: "18:00" },
-        { day: 1, from: "09:00", to: "18:00" }
+        { day: 1, from: "09:00", to: "18:00" },
+        { day: 2, from: "09:00", to: "18:00" }
       ],
       additionalOpeningTimes: [
-        { date: "2016/02/12", from: "23:00", to: "23:30" }
+        { date: "2016-02-12", from: "23:00", to: "23:30" }
       ],
-      openingTimesClosures: [{ date: "2016/02/10" }, { date: "2016/02/11" }],
+      openingTimesClosures: [{ date: "2016-02-10" }, { date: "2016-02-11" }],
       namedClosures: ["ChristmasDay", "NewYearsDay"],
       links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
       images: [
@@ -137,8 +135,8 @@ describe("mapToAdminResponse", () => {
       notes: "hi",
       version: 1,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
-      createdDate: "2016/01/10",
-      updatedDate: "2016/01/11"
+      createdDate: "2016-01-10",
+      updatedDate: "2016-01-11"
     });
   });
 
@@ -162,8 +160,8 @@ describe("mapToAdminResponse", () => {
       hasPermanentCollection: false,
       version: 1,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
-      createdDate: "2016/01/10",
-      updatedDate: "2016/01/11"
+      createdDate: "2016-01-10",
+      updatedDate: "2016-01-11"
     });
   });
 });
@@ -239,13 +237,13 @@ describe("mapToPublicFullResponse", () => {
       weSay: "something",
       notes: "hi",
       openingTimes: [
-        { day: 0, from: "09:00", to: "18:00" },
-        { day: 1, from: "09:00", to: "18:00" }
+        { day: 1, from: "09:00", to: "18:00" },
+        { day: 2, from: "09:00", to: "18:00" }
       ],
       additionalOpeningTimes: [
-        { date: "2016/02/12", from: "23:00", to: "23:30" }
+        { date: "2016-02-12", from: "23:00", to: "23:30" }
       ],
-      openingTimesClosures: [{ date: "2016/02/10" }, { date: "2016/02/11" }],
+      openingTimesClosures: [{ date: "2016-02-10" }, { date: "2016-02-11" }],
       namedClosures: ["ChristmasDay", "NewYearsDay"],
       links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
       images: [
@@ -275,8 +273,7 @@ describe("mapToPublicFullResponse", () => {
       longitude: -0.103103,
       wheelchairAccessType: "FullAccess",
       disabledBathroomType: "Present",
-      hearingFacilitiesType: "HearingLoops",
-      hasPermanentCollection: false
+      hearingFacilitiesType: "HearingLoops"
     });
   });
 });

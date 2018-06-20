@@ -1,4 +1,5 @@
-import * as etag from "./etag";
+import etag from "etag";
+import * as cache from "../cache";
 
 // TODO fix this file
 
@@ -17,7 +18,7 @@ export default function(handler, maxAgeSeconds) {
 
     if (isPublic && !!ifNoneMatchHeader) {
       const key = event.path.replace("/event-service/public/", "");
-      const eTag = await etag.tryGetETagFromRedis(key);
+      const eTag = await cache.tryGetETag(key);
 
       if (eTag === ifNoneMatchHeader) {
         headers[ARTFULLY_CACHE_HEADER_KEY] = "Hit";
@@ -36,8 +37,7 @@ export default function(handler, maxAgeSeconds) {
     if (!isPublic) {
       result = { statusCode: 200, headers, body };
     } else {
-      const etagValue = etag.getETagValue(body);
-
+      const etagValue = etag(body);
       headers["etag"] = etagValue;
       headers["cache-control"] = "public, max-age=" + maxAgeSeconds;
 

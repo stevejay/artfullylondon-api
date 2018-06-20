@@ -33,8 +33,8 @@ it("should pass a bounded performance", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.eventType = "Performance";
   params.occurrenceType = "Bounded";
-  params.dateFrom = "2016/09/17";
-  params.dateTo = "2016/09/25";
+  params.dateFrom = "2016-09-17";
+  params.dateTo = "2016-09-25";
 
   expect(() =>
     validator.validateCreateOrUpdateEventRequest(params)
@@ -56,7 +56,7 @@ it("should fail a bounded performance with partial dates", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.eventType = "Performance";
   params.occurrenceType = "Bounded";
-  params.dateFrom = "2016/09/17";
+  params.dateFrom = "2016-09-17";
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: Date to must be greater than or equal to date from and both must be given"
@@ -78,8 +78,8 @@ it("should fail a continuous performance with dates", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.eventType = "Performance";
   params.occurrenceType = "Continuous";
-  params.dateFrom = "2016/09/17";
-  params.dateTo = "2016/09/25";
+  params.dateFrom = "2016-09-17";
+  params.dateTo = "2016-09-25";
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: Date from and date to must be null"
@@ -90,7 +90,7 @@ it("should pass a one-time performance", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.eventType = "Performance";
   params.occurrenceType = "OneTime";
-  params.dateFrom = params.dateTo = "2016/09/25";
+  params.dateFrom = params.dateTo = "2016-09-25";
 
   expect(() =>
     validator.validateCreateOrUpdateEventRequest(params)
@@ -111,8 +111,8 @@ it("should fail a one-time performance with dates apart", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.eventType = "Performance";
   params.occurrenceType = "OneTime";
-  params.dateFrom = "2016/09/17";
-  params.dateTo = "2016/09/25";
+  params.dateFrom = "2016-09-17";
+  params.dateTo = "2016-09-25";
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: Date from must equal date to and both must be given"
@@ -123,8 +123,8 @@ it("should pass a bounded exhibition", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.eventType = "Exhibition";
   params.occurrenceType = "Bounded";
-  params.dateFrom = "2016/09/17";
-  params.dateTo = "2016/09/25";
+  params.dateFrom = "2016-09-17";
+  params.dateTo = "2016-09-25";
 
   expect(() =>
     validator.validateCreateOrUpdateEventRequest(params)
@@ -147,7 +147,7 @@ it("should fail a bounded exhibition with partial dates", () => {
   params.eventType = "Exhibition";
   params.occurrenceType = "Bounded";
   params.dateFrom = undefined;
-  params.dateTo = "2016/09/25";
+  params.dateTo = "2016-09-25";
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: Date to must be greater than or equal to date from and both must be given"
@@ -158,7 +158,7 @@ it("should fail a one-time exhibition", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.eventType = "Exhibition";
   params.occurrenceType = "OneTime";
-  params.dateFrom = params.dateTo = "2016/09/25";
+  params.dateFrom = params.dateTo = "2016-09-25";
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: Occurrence type is not valid for exhibition event"
@@ -180,8 +180,8 @@ it("should fail a continuous exhibition with dates", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.eventType = "Exhibition";
   params.occurrenceType = "Continuous";
-  params.dateFrom = "2016/09/17";
-  params.dateTo = "2016/09/25";
+  params.dateFrom = "2016-09-17";
+  params.dateTo = "2016-09-25";
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: Date from and date to must be null"
@@ -250,7 +250,7 @@ it("should pass an event that does not require booking", () => {
 it("should fail an event that does not require booking but that has a booking date", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.bookingType = "NotRequired";
-  params.bookingOpens = "2016/03/15";
+  params.bookingOpens = "2016-03-15";
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: Booking opens must be null"
@@ -260,7 +260,7 @@ it("should fail an event that does not require booking but that has a booking da
 it("should pass an event that requires booking", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.bookingType = "Required";
-  params.bookingOpens = "2016/03/15";
+  params.bookingOpens = "2016-03-15";
 
   expect(() =>
     validator.validateCreateOrUpdateEventRequest(params)
@@ -279,7 +279,7 @@ it("should not fail an event that requires booking but that has no booking date"
 it("should pass an event that requires booking for non-members", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
   params.bookingType = "RequiredForNonMembers";
-  params.bookingOpens = "2016/03/15";
+  params.bookingOpens = "2016-03-15";
 
   expect(() =>
     validator.validateCreateOrUpdateEventRequest(params)
@@ -318,7 +318,7 @@ it("should fail an event with review with invalid rating", () => {
 it("should pass a performance event without times range ids on the performance times", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
 
-  params.performances = [{ day: 1, at: "19:30" }, { day: 2, at: "19:30" }];
+  params.performances = [{ day: 2, at: "19:30" }, { day: 3, at: "19:30" }];
 
   expect(() =>
     validator.validateCreateOrUpdateEventRequest(params)
@@ -331,15 +331,15 @@ it("should pass a performance event with times range ids on the performance time
   params.timesRanges = [
     {
       id: "previews",
-      dateFrom: "2016/02/11",
-      dateTo: "2016/02/13",
+      dateFrom: "2016-02-11",
+      dateTo: "2016-02-13",
       label: "Previews"
     }
   ];
 
   params.performances = [
-    { day: 1, at: "19:30", timesRangeId: "previews" },
-    { day: 2, at: "19:30", timesRangeId: "previews" }
+    { day: 2, at: "19:30", timesRangeId: "previews" },
+    { day: 3, at: "19:30", timesRangeId: "previews" }
   ];
 
   expect(() =>
@@ -353,15 +353,15 @@ it("should fail a performance event with times range ids on the performance time
   params.timesRanges = [
     {
       id: "previews",
-      dateFrom: "2016/02/11",
-      dateTo: "2016/02/13",
+      dateFrom: "2016-02-11",
+      dateTo: "2016-02-13",
       label: "Previews"
     }
   ];
 
   params.performances = [
-    { day: 1, at: "19:30", timesRangeId: "all-run" },
-    { day: 2, at: "19:30", timesRangeId: "previews" }
+    { day: 2, at: "19:30", timesRangeId: "all-run" },
+    { day: 3, at: "19:30", timesRangeId: "previews" }
   ];
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
@@ -375,15 +375,15 @@ it("should fail a performance event with missing times range id on the performan
   params.timesRanges = [
     {
       id: "previews",
-      dateFrom: "2016/02/11",
-      dateTo: "2016/02/13",
+      dateFrom: "2016-02-11",
+      dateTo: "2016-02-13",
       label: "Previews"
     }
   ];
 
   params.performances = [
-    { day: 1, at: "19:30" },
-    { day: 2, at: "19:30", timesRangeId: "previews" }
+    { day: 2, at: "19:30" },
+    { day: 3, at: "19:30", timesRangeId: "previews" }
   ];
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
@@ -484,7 +484,7 @@ it("should fail a performance event with an invalid date in the sold out perform
 
 it("should fail a performance event with an invalid time in the sold out performances", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
-  params.soldOutPerformances = [{ date: "2017/01/20", at: "bar" }];
+  params.soldOutPerformances = [{ date: "2017-01-20", at: "bar" }];
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: At is in the wrong format"
@@ -493,7 +493,7 @@ it("should fail a performance event with an invalid time in the sold out perform
 
 it("should pass a performance event with valid sold out performances", () => {
   const params = testData.createMinimalPerformanceRequestEvent();
-  params.soldOutPerformances = [{ date: "2017/01/20", at: "18:00" }];
+  params.soldOutPerformances = [{ date: "2017-01-20", at: "18:00" }];
 
   expect(() =>
     validator.validateCreateOrUpdateEventRequest(params)
@@ -502,7 +502,7 @@ it("should pass a performance event with valid sold out performances", () => {
 
 it("should fail an exhibition event with sold out performances", () => {
   const params = testData.createMinimalExhibitionRequestEvent();
-  params.soldOutPerformances = [{ date: "2017/01/20", at: "18:00" }];
+  params.soldOutPerformances = [{ date: "2017-01-20", at: "18:00" }];
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: Can only have sold out performances if event is a performance"
@@ -511,7 +511,7 @@ it("should fail an exhibition event with sold out performances", () => {
 
 it("should fail a course event with sold out performances", () => {
   const params = testData.createMinimalCourseRequestEvent();
-  params.soldOutPerformances = [{ date: "2017/01/20", at: "18:00" }];
+  params.soldOutPerformances = [{ date: "2017-01-20", at: "18:00" }];
 
   expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
     "[400] Bad Request: Can only have sold out performances if event is a performance"
