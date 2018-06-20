@@ -3,6 +3,7 @@ import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as entityEnhancer from "../entity/enhancer";
+import * as entityType from "../types/entity-type";
 import * as eventRepository from "../persistence/event-repository";
 import * as notifier from "../notifier";
 import * as cache from "../cache";
@@ -38,8 +39,7 @@ export async function createOrUpdateVenue(params) {
     const eventIds = await eventRepository.getEventIdsByVenue(dbVenue.id);
     await Promise.all(eventIds.map(notifier.updateEvent));
   }
-  const responseVenue = mapper.mapToPublicFullResponse(dbVenue);
-  await notifier.indexEntity(responseVenue);
-  await cache.storeEntityEtag(responseVenue);
+  await notifier.indexEntity(mapper.mapToPublicFullResponse(dbVenue));
+  await cache.clearEntityEtag(entityType.VENUE, dbVenue.id);
   return { entity: dbVenue };
 }

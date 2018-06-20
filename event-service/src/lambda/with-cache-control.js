@@ -1,11 +1,10 @@
+import _ from "lodash";
 import etag from "etag";
 import * as cache from "../cache";
 
-// TODO fix this file
-
 const ARTFULLY_CACHE_HEADER_KEY = "X-Artfully-Cache";
 
-export default function(handler, maxAgeSeconds) {
+export default function(handler, entityType, maxAgeSeconds = 1800) {
   return async function(event, context) {
     const headers = {
       "Access-Control-Allow-Origin": "*",
@@ -13,35 +12,22 @@ export default function(handler, maxAgeSeconds) {
       [ARTFULLY_CACHE_HEADER_KEY]: "Miss"
     };
 
-    const ifNoneMatchHeader = event.headers["If-None-Match"];
-    if (!!ifNoneMatchHeader) {
-      const key = event.path.replace("/event-service/public/", "");
-      const eTag = await cache.tryGetETag(key);
-
-      if (eTag === ifNoneMatchHeader) {
+    if (!_.isNil(event.ifNoneMatch)) {
+      const eTag = await cache.getEntityEtag(entityType, event.id);
+      if (eTag === event.ifNoneMatch) {
         headers[ARTFULLY_CACHE_HEADER_KEY] = "Hit";
-
-        return {
-          statusCode: 304,
-          headers
-        };
+        return { statusCode: 304, headers };
       }
     }
 
-    const handlerResult = await handler(event, context);
-    const body = handlerResult.body;
-    let result = null;
-
-    const etagValue = etag(body);
+    const result = await handler(event, context);
+    const etagValue = await cache.storeEntityEtag(
+      entityType,
+      event.id,
+      result.body
+    );
     headers["etag"] = etagValue;
     headers["cache-control"] = "public, max-age=" + maxAgeSeconds;
-
-    if (ifNoneMatchHeader === etagValue) {
-      result = { statusCode: 304, headers };
-    } else {
-      result = { statusCode: 200, headers, body };
-    }
-
-    return result;
+    return { statusCode: 200, headers, body: handlerResult.body };
   };
 }

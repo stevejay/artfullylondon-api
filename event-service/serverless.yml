@@ -347,7 +347,8 @@ functions:
                     template:
                         application/json: >
                             {
-                                "id": "$input.params('id')"
+                                "id": "$input.params('id')",
+                                "ifNoneMatch" : "$input.params().header.get('If-None-Match')"
                             }
                 response: ${self:custom.standardResponses}
     getNextVenue:
@@ -520,7 +521,8 @@ functions:
                     template:
                         application/json: >
                             {
-                                "id": "$input.params('id')"
+                                "id": "$input.params('id')",
+                                "ifNoneMatch" : "$input.params().header.get('If-None-Match')"
                             }
                 response: ${self:custom.standardResponses}
     getTalentForEdit:
@@ -674,7 +676,8 @@ functions:
                     template:
                         application/json: >
                             {
-                                "id": "$input.params('id')"
+                                "id": "$input.params('id')",
+                                "ifNoneMatch" : "$input.params().header.get('If-None-Match')"
                             }
                 response: ${self:custom.standardResponses}
     getEventForEdit:
@@ -828,7 +831,8 @@ functions:
                     template:
                         application/json: >
                             {
-                                "id": "$input.params('id')"
+                                "id": "$input.params('id')",
+                                "ifNoneMatch" : "$input.params().header.get('If-None-Match')"
                             }
                 response: ${self:custom.standardResponses}
     getEventSeriesForEdit:

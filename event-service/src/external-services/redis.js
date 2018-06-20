@@ -28,7 +28,7 @@ function disconnect() {
   }
 }
 
-export async function get(key) {
+export function get(key) {
   return new Promise((resolve, reject) => {
     xrayWrapper.captureAsyncFunc("redis get", subsegment => {
       connect()
@@ -50,6 +50,7 @@ export async function get(key) {
           resolve(response);
         })
         .catch(err => {
+          disconnect();
           subsegment.close(err);
           reject(err);
         });
@@ -57,7 +58,7 @@ export async function get(key) {
   });
 }
 
-export async function set(key, value) {
+export function set(key, value) {
   return new Promise((resolve, reject) => {
     xrayWrapper.captureAsyncFunc("redis set", subsegment => {
       connect()

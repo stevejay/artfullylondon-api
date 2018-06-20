@@ -1,21 +1,20 @@
 import etag from "etag";
 import * as redisClient from "./external-services/redis";
 
-export async function storeEntityEtag(entity) {
-  if (process.env.IS_OFFLINE) {
-    return;
-  }
-
-  await redisClient.set(
-    `${entity.entityType}/${entity.id}`,
-    etag(JSON.stringify(entity))
-  );
+export async function storeEntityEtag(entityType, id, data) {
+  const value = etag(data);
+  await redisClient.set(createKeyForEntity(entityType, id), value);
+  return value;
 }
 
 export async function getEntityEtag(entityType, id) {
-  if (process.env.IS_OFFLINE) {
-    return;
-  }
+  return await redisClient.get(createKeyForEntity(entityType, id));
+}
 
-  return await redisClient.get(`${entityType}/${id}`);
+export async function clearEntityEtag(entityType, id) {
+  return await redisClient.set(createKeyForEntity(entityType, id), "");
+}
+
+export function createKeyForEntity(entityType, id) {
+  return `${entityType}/${id}`;
 }

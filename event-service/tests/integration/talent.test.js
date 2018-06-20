@@ -5,6 +5,7 @@ import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
 import * as cognitoAuth from "../utils/cognito-auth";
 import * as lambdaUtils from "../utils/lambda";
+import * as redisUtils from "../utils/redis";
 jest.setTimeout(30000);
 
 // TODO test wikipedia integration
@@ -15,6 +16,7 @@ describe("talent", () => {
 
   beforeAll(async () => {
     await dynamodb.truncateAllTables();
+    await redisUtils.flushAll();
   });
 
   it("should fail to create an invalid talent", async () => {
