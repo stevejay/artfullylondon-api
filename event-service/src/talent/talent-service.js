@@ -24,7 +24,7 @@ export async function getTalentMulti(params) {
 export async function createOrUpdateTalent(params) {
   params = normaliser.normaliseCreateOrUpdateTalentRequest(params);
   validator.validateCreateOrUpdateTalentRequest(params);
-  params = entityEnhancer.addDescriptionFromWikipedia(params);
+  params = await entityEnhancer.addDescriptionFromWikipedia(params);
   const dbTalent = mapper.mapCreateOrUpdateTalentRequest(params);
   await talentRepository.createOrUpdateTalent(dbTalent);
   const responseTalent = mapper.mapToPublicFullResponse(dbTalent);

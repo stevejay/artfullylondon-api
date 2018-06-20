@@ -1,5 +1,5 @@
 import * as entityRepository from "./entity-repository";
-import * as dynamodb from "./dynamodb";
+import dynamodb from "./dynamodb";
 
 export const VENUE_TABLE_NAME = process.env.SERVERLESS_VENUE_TABLE_NAME;
 

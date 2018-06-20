@@ -30,7 +30,7 @@ export async function getNextVenueId(params) {
 export async function createOrUpdateVenue(params) {
   params = normaliser.normaliseCreateOrUpdateVenueRequest(params);
   validator.validateCreateOrUpdateVenueRequest(params);
-  params = entityEnhancer.addDescriptionFromWikipedia(params);
+  params = await entityEnhancer.addDescriptionFromWikipedia(params);
   const isUpdate = !!params.id;
   const dbVenue = mapper.mapCreateOrUpdateVenueRequest(params);
   await venueRepository.createOrUpdateVenue(dbVenue);

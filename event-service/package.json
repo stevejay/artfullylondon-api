@@ -43,7 +43,7 @@
   "dependencies": {
     "aws-lambda-invoke": "^3.0.0",
     "aws-xray-sdk": "^1.2.0",
-    "date-fns": "^1.29.0",
+    "date-fns": "^2.0.0-alpha.10",
     "delay": "^3.0.0",
     "dynamodb-doc-client-wrapper": "^2.0.1",
     "ensure-request": "^4.0.0",

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import * as entityRepository from "./entity-repository";
-import * as dynamodb from "./dynamodb";
+import dynamodb from "./dynamodb";
 import { TALENT_TABLE_NAME } from "./talent-repository";
 import { EVENT_SERIES_TABLE_NAME } from "./event-series-repository";
 import { VENUE_TABLE_NAME } from "./venue-repository";

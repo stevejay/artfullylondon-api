@@ -1,4 +1,4 @@
-import * as dynamodb from "./dynamodb";
+import dynamodb from "./dynamodb";
 
 export function write(tableName, entity) {
   return entity.version === 1

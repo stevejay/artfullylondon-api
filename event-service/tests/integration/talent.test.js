@@ -1,35 +1,30 @@
-"use strict";
-
-const request = require("request-promise-native");
-const delay = require("delay");
-const testUtils = require("./utils");
+import { sync } from "jest-toolkit";
+import request from "request-promise-native";
+// import delay from "delay";
+import * as testData from "../utils/test-data";
+import * as dynamodb from "../utils/dynamodb";
+import * as cognitoAuth from "../utils/cognito-auth";
+import * as lambdaUtils from "../utils/lambda";
 jest.setTimeout(30000);
 
 // TODO test wikipedia integration
 
 describe("talent", () => {
   let testTalentId = null;
-  const testTalentBody = testUtils.createNewTalentBody();
+  const testTalentBody = testData.createNewTalentBody();
 
   beforeAll(async () => {
-    await testUtils.createElasticsearchIndex("talent-full");
-    await testUtils.createElasticsearchIndex("talent-auto");
-    await testUtils.truncateAllTables();
-  });
-
-  afterAll(async () => {
-    await testUtils.deleteElasticsearchIndex("talent-full");
-    await testUtils.deleteElasticsearchIndex("talent-auto");
+    await dynamodb.truncateAllTables();
   });
 
   it("should fail to create an invalid talent", async () => {
     expect(
-      await testUtils.sync(
+      await sync(
         request({
-          uri: "http://localhost:3030/admin/talent",
+          uri: "http://localhost:3014/admin/talent",
           json: true,
           method: "POST",
-          headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+          headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
           body: { status: "Active" },
           timeout: 14000
         })
@@ -39,12 +34,12 @@ describe("talent", () => {
 
   it("should fail to create a talent when the user is the readonly user", async () => {
     expect(
-      await testUtils.sync(
+      await sync(
         request({
-          uri: "http://localhost:3030/admin/talent",
+          uri: "http://localhost:3014/admin/talent",
           json: true,
           method: "POST",
-          headers: { Authorization: testUtils.READONLY_AUTH_TOKEN },
+          headers: { Authorization: cognitoAuth.READONLY_AUTH_TOKEN },
           body: testTalentBody,
           timeout: 14000
         })
@@ -54,15 +49,16 @@ describe("talent", () => {
 
   it("should create a valid talent", async () => {
     const response = await request({
-      uri: "http://localhost:3030/admin/talent",
+      uri: "http://localhost:3014/admin/talent",
       json: true,
       method: "POST",
-      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
       body: testTalentBody,
       timeout: 14000
     });
 
-    expect(response.entity).toEqual(
+    const parsedResponse = lambdaUtils.parseLambdaResponse(response);
+    expect(parsedResponse.entity).toEqual(
       expect.objectContaining({
         commonRole: "Poet",
         firstNames: "Byron",
@@ -73,197 +69,141 @@ describe("talent", () => {
       })
     );
 
-    testTalentId = response.entity.id;
+    testTalentId = parsedResponse.entity.id;
   });
 
-  it("should get the talent without cache control headers when using the admin api", async () => {
-    const response = await request({
-      uri: "http://localhost:3030/admin/talent/" + testTalentId,
-      json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
+  // it("should get the talent without cache control headers when using the admin api", async () => {
+  //   const response = await request({
+  //     uri: "http://localhost:3014/admin/talent/" + testTalentId,
+  //     json: true,
+  //     method: "GET",
+  //     timeout: 14000,
+  //     resolveWithFullResponse: true
+  //   });
 
-    expect(response.headers).toEqual(
-      expect.objectContaining({
-        "cache-control": "no-cache"
-      })
-    );
+  //   expect(response.headers).toEqual(
+  //     expect.objectContaining({
+  //       "cache-control": "no-cache"
+  //     })
+  //   );
 
-    expect(response.headers.etag).not.toBeDefined();
+  //   expect(response.headers.etag).not.toBeDefined();
 
-    expect(response.body.entity).toEqual(
-      expect.objectContaining({
-        id: testTalentId,
-        firstNames: "Byron",
-        status: "Active",
-        version: 1
-      })
-    );
-  });
+  //   expect(response.body.entity).toEqual(
+  //     expect.objectContaining({
+  //       id: testTalentId,
+  //       firstNames: "Byron",
+  //       status: "Active",
+  //       version: 1
+  //     })
+  //   );
+  // });
 
-  it("should get the talent with cache control headers when using the public api", async () => {
-    const response = await request({
-      uri: "http://localhost:3030/public/talent/" + testTalentId,
-      json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
+  // it("should get the talent with cache control headers when using the public api", async () => {
+  //   const response = await request({
+  //     uri: "http://localhost:3014/public/talent/" + testTalentId,
+  //     json: true,
+  //     method: "GET",
+  //     timeout: 14000,
+  //     resolveWithFullResponse: true
+  //   });
 
-    expect(response.headers).toEqual(
-      expect.objectContaining({
-        "x-artfully-cache": "Miss",
-        "cache-control": "public, max-age=1800"
-      })
-    );
+  //   expect(response.headers).toEqual(
+  //     expect.objectContaining({
+  //       "x-artfully-cache": "Miss",
+  //       "cache-control": "public, max-age=1800"
+  //     })
+  //   );
 
-    expect(response.headers.etag).toBeDefined();
+  //   expect(response.headers.etag).toBeDefined();
 
-    expect(response.body.entity).toEqual(
-      expect.objectContaining({
-        id: testTalentId,
-        commonRole: "Poet",
-        firstNames: "Byron",
-        status: "Active",
-        talentType: "Individual",
-        entityType: "talent",
-        isFullEntity: true
-      })
-    );
-  });
+  //   expect(response.body.entity).toEqual(
+  //     expect.objectContaining({
+  //       id: testTalentId,
+  //       commonRole: "Poet",
+  //       firstNames: "Byron",
+  //       status: "Active",
+  //       talentType: "Individual",
+  //       entityType: "talent",
+  //       isFullEntity: true
+  //     })
+  //   );
+  // });
 
-  it("should get the talent using the get multi endpoint", async () => {
-    const response = await request({
-      uri:
-        "http://localhost:3030/public/talent?ids=" +
-        encodeURIComponent(testTalentId),
-      json: true,
-      method: "GET",
-      timeout: 14000
-    });
+  // it("should get the talent using the get multi endpoint", async () => {
+  //   const response = await request({
+  //     uri:
+  //       "http://localhost:3014/public/talent?ids=" +
+  //       encodeURIComponent(testTalentId),
+  //     json: true,
+  //     method: "GET",
+  //     timeout: 14000
+  //   });
 
-    expect(response.entities.length).toEqual(1);
+  //   expect(response.entities.length).toEqual(1);
 
-    expect(response.entities[0]).toEqual(
-      expect.objectContaining({
-        id: testTalentId,
-        commonRole: "Poet",
-        firstNames: "Byron",
-        status: "Active",
-        talentType: "Individual",
-        entityType: "talent"
-      })
-    );
-  });
+  //   expect(response.entities[0]).toEqual(
+  //     expect.objectContaining({
+  //       id: testTalentId,
+  //       commonRole: "Poet",
+  //       firstNames: "Byron",
+  //       status: "Active",
+  //       talentType: "Individual",
+  //       entityType: "talent"
+  //     })
+  //   );
+  // });
 
-  it("should reject a stale update to the talent", async () => {
-    expect(
-      await testUtils.sync(
-        request({
-          uri: "http://localhost:3030/admin/talent/" + testTalentId,
-          json: true,
-          method: "PUT",
-          headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-          body: testTalentBody,
-          timeout: 14000
-        })
-      )
-    ).toThrow(/Stale Data/);
-  });
+  // it("should reject a stale update to the talent", async () => {
+  //   expect(
+  //     await sync(
+  //       request({
+  //         uri: "http://localhost:3014/admin/talent/" + testTalentId,
+  //         json: true,
+  //         method: "PUT",
+  //         headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
+  //         body: testTalentBody,
+  //         timeout: 14000
+  //       })
+  //     )
+  //   ).toThrow(/Stale Data/);
+  // });
 
-  it("should accept a valid update to the talent", async () => {
-    const response = await request({
-      uri: "http://localhost:3030/admin/talent/" + testTalentId,
-      json: true,
-      method: "PUT",
-      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-      body: {
-        ...testTalentBody,
-        firstNames: "Byron New",
-        version: 2
-      },
-      timeout: 14000
-    });
+  // it("should accept a valid update to the talent", async () => {
+  //   const response = await request({
+  //     uri: "http://localhost:3014/admin/talent/" + testTalentId,
+  //     json: true,
+  //     method: "PUT",
+  //     headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
+  //     body: {
+  //       ...testTalentBody,
+  //       firstNames: "Byron New",
+  //       version: 2
+  //     },
+  //     timeout: 14000
+  //   });
 
-    expect(response.entity).toEqual(
-      expect.objectContaining({
-        id: testTalentId,
-        firstNames: "Byron New",
-        status: "Active",
-        version: 2
-      })
-    );
-  });
+  //   expect(response.entity).toEqual(
+  //     expect.objectContaining({
+  //       id: testTalentId,
+  //       firstNames: "Byron New",
+  //       status: "Active",
+  //       version: 2
+  //     })
+  //   );
+  // });
 
-  it("should fail to get a non-existent talent", async () => {
-    expect(
-      await testUtils.sync(
-        request({
-          uri: "http://localhost:3030/public/talent/does-not-exist",
-          json: true,
-          method: "GET",
-          timeout: 14000,
-          resolveWithFullResponse: true
-        })
-      )
-    ).toThrow(/Entity Not Found/);
-  });
-
-  it("should refresh the talent-full search index", async () => {
-    await testUtils.createElasticsearchIndex("talent-full");
-
-    let response = await request({
-      uri: "http://localhost:3030/admin/search/talent-full/latest/refresh",
-      json: true,
-      method: "POST",
-      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-      timeout: 14000
-    });
-
-    expect(response).toEqual({ acknowledged: true });
-
-    await delay(5000);
-
-    response = await testUtils.getDocument("talent-full", testTalentId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testTalentId,
-        _index: "talent-full",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
-  });
-
-  it("should refresh the talent-auto search index", async () => {
-    await testUtils.createElasticsearchIndex("talent-auto");
-
-    let response = await request({
-      uri: "http://localhost:3030/admin/search/talent-auto/latest/refresh",
-      json: true,
-      method: "POST",
-      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-      timeout: 14000
-    });
-
-    expect(response).toEqual({ acknowledged: true });
-
-    await delay(5000);
-
-    response = await testUtils.getDocument("talent-auto", testTalentId);
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testTalentId,
-        _index: "talent-auto",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
-  });
+  // it("should fail to get a non-existent talent", async () => {
+  //   expect(
+  //     await sync(
+  //       request({
+  //         uri: "http://localhost:3014/public/talent/does-not-exist",
+  //         json: true,
+  //         method: "GET",
+  //         timeout: 14000,
+  //         resolveWithFullResponse: true
+  //       })
+  //     )
+  //   ).toThrow(/Entity Not Found/);
+  // });
 });

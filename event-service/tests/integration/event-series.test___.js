@@ -1,35 +1,27 @@
-"use strict";
-
-const request = require("request-promise-native");
-const delay = require("delay");
-const testUtils = require("./utils");
+import { sync } from "jest-toolkit";
+import request from "request-promise-native";
+// import delay from "delay";
+import * as testData from "../utils/test-data";
+import * as dynamodb from "../utils/dynamodb";
+import * as cognitoAuth from "../utils/cognito-auth";
 jest.setTimeout(30000);
 
 describe("event series", () => {
   let testEventSeriesId = null;
-  const testEventSeriesBody = testUtils.createNewEventSeriesBody();
+  const testEventSeriesBody = testData.createNewEventSeriesBody();
 
   beforeAll(async () => {
-    await testUtils.createElasticsearchIndex("event-series-full");
-    await testUtils.createElasticsearchIndex("event-series-auto");
-    await testUtils.createElasticsearchIndex("combined-event-auto");
-    await testUtils.truncateAllTables();
-  });
-
-  afterAll(async () => {
-    await testUtils.deleteElasticsearchIndex("event-series-full");
-    await testUtils.deleteElasticsearchIndex("event-series-auto");
-    await testUtils.deleteElasticsearchIndex("combined-event-auto");
+    await dynamodb.truncateAllTables();
   });
 
   it("should fail to create an invalid event series", async () => {
     expect(
-      await testUtils.sync(
+      await sync(
         request({
-          uri: "http://localhost:3030/admin/event-series",
+          uri: "http://localhost:3014/admin/event-series",
           json: true,
           method: "POST",
-          headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+          headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
           body: { status: "Active" },
           timeout: 14000
         })
@@ -39,12 +31,12 @@ describe("event series", () => {
 
   it("should fail to create an event series when the user is the readonly user", async () => {
     expect(
-      await testUtils.sync(
+      await sync(
         request({
-          uri: "http://localhost:3030/admin/event-series",
+          uri: "http://localhost:3014/admin/event-series",
           json: true,
           method: "POST",
-          headers: { Authorization: testUtils.READONLY_AUTH_TOKEN },
+          headers: { Authorization: cognitoAuth.READONLY_AUTH_TOKEN },
           body: testEventSeriesBody,
           timeout: 14000
         })
@@ -54,10 +46,10 @@ describe("event series", () => {
 
   it("should create a valid event series", async () => {
     const response = await request({
-      uri: "http://localhost:3030/admin/event-series",
+      uri: "http://localhost:3014/admin/event-series",
       json: true,
       method: "POST",
-      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
       body: testEventSeriesBody,
       timeout: 14000
     });
@@ -76,7 +68,7 @@ describe("event series", () => {
 
   it("should get the event series without cache control headers when using the admin api", async () => {
     const response = await request({
-      uri: "http://localhost:3030/admin/event-series/" + testEventSeriesId,
+      uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
       json: true,
       method: "GET",
       timeout: 14000,
@@ -104,7 +96,7 @@ describe("event series", () => {
 
   it("should get the event series with cache control headers when using the public api", async () => {
     const response = await request({
-      uri: "http://localhost:3030/public/event-series/" + testEventSeriesId,
+      uri: "http://localhost:3014/public/event-series/" + testEventSeriesId,
       json: true,
       method: "GET",
       timeout: 14000,
@@ -135,7 +127,7 @@ describe("event series", () => {
   it("should get the event series using the get multi endpoint", async () => {
     const response = await request({
       uri:
-        "http://localhost:3030/public/event-series?ids=" +
+        "http://localhost:3014/public/event-series?ids=" +
         encodeURIComponent(testEventSeriesId),
       json: true,
       method: "GET",
@@ -157,12 +149,12 @@ describe("event series", () => {
 
   it("should reject a stale update to the event series", async () => {
     expect(
-      await testUtils.sync(
+      await sync(
         request({
-          uri: "http://localhost:3030/admin/event-series/" + testEventSeriesId,
+          uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
           json: true,
           method: "PUT",
-          headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+          headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
           body: testEventSeriesBody,
           timeout: 14000
         })
@@ -172,10 +164,10 @@ describe("event series", () => {
 
   it("should accept a valid update to the event series", async () => {
     const response = await request({
-      uri: "http://localhost:3030/admin/event-series/" + testEventSeriesId,
+      uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
       json: true,
       method: "PUT",
-      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
+      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
       body: {
         ...testEventSeriesBody,
         summary: "Stand-up poetry New",
@@ -196,9 +188,9 @@ describe("event series", () => {
 
   it("should fail to get a non-existent event series", async () => {
     expect(
-      await testUtils.sync(
+      await sync(
         request({
-          uri: "http://localhost:3030/public/event-series/does-not-exist",
+          uri: "http://localhost:3014/public/event-series/does-not-exist",
           json: true,
           method: "GET",
           timeout: 14000,
@@ -206,69 +198,5 @@ describe("event series", () => {
         })
       )
     ).toThrow(/Entity Not Found/);
-  });
-
-  it("should refresh the event-series-full search index", async () => {
-    await testUtils.createElasticsearchIndex("event-series-full");
-
-    let response = await request({
-      uri:
-        "http://localhost:3030/admin/search/event-series-full/latest/refresh",
-      json: true,
-      method: "POST",
-      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-      timeout: 14000
-    });
-
-    expect(response).toEqual({ acknowledged: true });
-
-    await delay(5000);
-
-    response = await testUtils.getDocument(
-      "event-series-full",
-      testEventSeriesId
-    );
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventSeriesId,
-        _index: "event-series-full",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
-  });
-
-  it("should refresh the event-series-auto search index", async () => {
-    await testUtils.createElasticsearchIndex("event-series-auto");
-
-    let response = await request({
-      uri:
-        "http://localhost:3030/admin/search/event-series-auto/latest/refresh",
-      json: true,
-      method: "POST",
-      headers: { Authorization: testUtils.EDITOR_AUTH_TOKEN },
-      timeout: 14000
-    });
-
-    expect(response).toEqual({ acknowledged: true });
-
-    await delay(5000);
-
-    response = await testUtils.getDocument(
-      "event-series-auto",
-      testEventSeriesId
-    );
-
-    expect(response).toEqual(
-      expect.objectContaining({
-        _id: testEventSeriesId,
-        _index: "event-series-auto",
-        _type: "doc",
-        _version: 2,
-        found: true
-      })
-    );
   });
 });
