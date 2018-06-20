@@ -1,7 +1,7 @@
 import * as entityRepository from "./entity-repository";
 import * as dynamodb from "./dynamodb";
 
-const TALENT_TABLE_NAME = process.env.SERVERLESS_TALENT_TABLE_NAME;
+export const TALENT_TABLE_NAME = process.env.SERVERLESS_TALENT_TABLE_NAME;
 
 export async function getTalent(id, consistentRead) {
   return await entityRepository.get(TALENT_TABLE_NAME, id, consistentRead);

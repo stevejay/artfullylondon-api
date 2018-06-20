@@ -1,5 +1,6 @@
 import * as request from "request-promise-native";
 import * as linkType from "../types/link-type";
+import * as xrayWrapper from "./xray-wrapper";
 
 export async function getDescription(params) {
   if (params.description) {

@@ -1,5 +1,7 @@
+import _ from "lodash";
 import * as statusType from "../types/status-type";
 import * as linkType from "../types/link-type";
+import * as tagType from "../types/tag-type";
 
 const NAME_LENGTH = { minimum: 1, maximum: 200 };
 const DESCRIPTION_LENGTH = { minimum: 1, maximum: 5000 };
@@ -7,11 +9,16 @@ const WE_SAY_LENGTH = { minimum: 1, maximum: 300 };
 const URL_LENGTH = { minimum: 1, maximum: 200 };
 const ADDITIONAL_INFO_LENGTH = { minimum: 1, maximum: 200 };
 const IMAGES_LENGTH = { minimum: 1, maximum: 10 };
+const ID_LENGTH = { minimum: 1, maximum: 300 };
 const LINKS_LENGTH = { minimum: 1, maximum: linkType.ALLOWED_VALUES.length };
 const HEX_COLOR_REGEX = /^[a-f0-9]{6}$/;
 const ISO_DATE_REGEX = /^[12]\d\d\d-[01]\d-[0123]\d$/;
 const TIME_REGEX = /^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/;
 const TIMES_ARRAY_LENGTH = { minimum: 1, maximum: 200 };
+const AUDIENCE_TAG_ID_REGEX = /^audience\//;
+const GEO_TAG_ID_REGEX = /^geo\//;
+const MEDIUM_TAG_ID_REGEX = /^medium\//;
+const STYLE_TAG_ID_REGEX = /^style\//;
 
 const OPENING_TIMES_ORDER = (current, next) =>
   next.day > current.day ||
@@ -62,6 +69,39 @@ const EACH_DAY_RANGE_CONSTRAINT = {
     },
     timesRangeId: {
       string: true
+    }
+  }
+};
+
+export const EACH_DAY_AT_CONSTRAINT = {
+  object: {
+    day: {
+      presence: true,
+      number: true,
+      numericality: DAY_NUMBER_NUMERICALITY
+    },
+    at: {
+      presence: true,
+      string: true,
+      format: TIME_REGEX
+    },
+    timesRangeId: {
+      string: true
+    }
+  }
+};
+
+export const EACH_DATE_AT_CONSTRAINT = {
+  object: {
+    date: {
+      presence: true,
+      string: true,
+      format: ISO_DATE_REGEX
+    },
+    at: {
+      presence: true,
+      string: true,
+      format: TIME_REGEX
     }
   }
 };
@@ -121,16 +161,26 @@ export const REQUIRED_NAME_CONSTRAINT = {
   presence: true
 };
 
+export const OPTIONAL_ID_CONSTRAINT = {
+  string: true,
+  length: ID_LENGTH
+};
+
+export const REQUIRED_ID_CONSTRAINT = {
+  ...OPTIONAL_ID_CONSTRAINT,
+  presence: true
+};
+
 export const DESCRIPTION_CONSTRAINT = {
   string: true,
   length: DESCRIPTION_LENGTH
 };
 
-export const SUMMARY_CONSTRAINT =  {
+export const SUMMARY_CONSTRAINT = {
   string: true,
   presence: true,
   length: { minimum: 1, maximum: 140 }
-}
+};
 
 export const OPTIONAL_ADDITIONAL_INFO_CONSTRAINT = {
   string: true,
@@ -149,8 +199,8 @@ export const WE_SAY_CONSTRAINT = {
 
 export const NOTES_CONSTRAINT = {
   string: true,
-  length: { maximum: 400 };
-}
+  length: { maximum: 400 }
+};
 
 export const VERSION_CONSTRAINT = {
   number: true,
@@ -160,6 +210,21 @@ export const VERSION_CONSTRAINT = {
 
 export const OPTIONAL_DATE_CONSTRAINT = {
   format: ISO_DATE_REGEX
+};
+
+export const REQUIRED_DATE_CONSTRAINT = {
+  ...OPTIONAL_DATE_CONSTRAINT,
+  presence: true
+};
+
+export const OPTIONAL_TIME_CONSTRAINT = {
+  string: true,
+  format: TIME_REGEX
+};
+
+export const REQUIRED_TIME_CONSTRAINT = {
+  ...OPTIONAL_TIME_CONSTRAINT,
+  presence: true
 };
 
 export const LINKS_CONSTRAINT = {
@@ -231,6 +296,38 @@ export const OPENING_TIMES_CLOSURES_CONSTRAINT = {
   ordered: OPENING_TIMES_CLOSURES_ORDER,
   each: EACH_DATE_OPTIONAL_RANGE_CONSTRAINT
 };
+
+export const EACH_TAG_CONSTRAINT = tagType => ({
+  object: {
+    id: {
+      string: true,
+      presence: true,
+      format: getTagFormatConstraint(tagType),
+      length: ID_LENGTH
+    },
+    label: {
+      string: true,
+      presence: true,
+      format: /^\w[\w -]+\w$/,
+      length: { minimum: 1, maximum: 50 }
+    }
+  }
+});
+
+function getTagFormatConstraint(tag) {
+  switch (tag) {
+    case tagType.STYLE:
+      return STYLE_TAG_ID_REGEX;
+    case tagType.MEDIUM:
+      return MEDIUM_TAG_ID_REGEX;
+    case tagType.AUDIENCE:
+      return AUDIENCE_TAG_ID_REGEX;
+    case tagType.GEO:
+      return GEO_TAG_ID_REGEX;
+    default:
+      throw new Error(`tag type not found: ${tag}`);
+  }
+}
 
 function isValidUrlForLinkType(url, linkType) {
   switch (linkType) {

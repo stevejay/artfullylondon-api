@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { ensure } from "ensure-request";
 import * as entityValidator from "../entity/validator";
 import * as eventSeriesType from "../types/event-series-type";

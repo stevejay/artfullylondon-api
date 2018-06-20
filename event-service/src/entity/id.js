@@ -1,6 +1,7 @@
 import slug from "limax";
 
 const MIN_SLUG_LENGTH = 5;
+const YEAR_REGEX = /^(\d\d\d\d)\//;
 
 export function createIdFromName(name, addEntropy) {
   let result = slug(name, { maintainCase: false });
@@ -15,8 +16,6 @@ export function createIdFromTalentData(talent) {
   return createIdFromName(prefix + talent.lastName + "-" + talent.commonRole);
 }
 
-const YEAR_REGEX = /^(\d\d\d\d)\//;
-
 export function createEventId(venueId, dateFrom, eventName) {
   const year = dateFrom
     ? dateFrom.match(YEAR_REGEX)[1]
@@ -25,24 +24,6 @@ export function createEventId(venueId, dateFrom, eventName) {
   return (
     (venueId + "/" + year + "/").toLowerCase() + createIdFromName(eventName)
   );
-}
-
-export function buildEventIdFromEventUrlParts(path) {
-  return (
-    path.idLocation +
-    "/" +
-    path.idYear +
-    "/" +
-    path.idName
-  ).toLowerCase();
-}
-
-const PROTOCOL_REGEX = /^https?:\/\/[^/]+/i;
-
-export function createExternalEventId(venueId, eventUrl) {
-  const normalisedEventUrl =
-    eventUrl.replace(PROTOCOL_REGEX, "").toLowerCase() || "/";
-  return venueId + "|" + normalisedEventUrl;
 }
 
 function getRandomInt(min, max) {

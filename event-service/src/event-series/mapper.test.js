@@ -1,4 +1,4 @@
-import * as testData from "../test-data";
+import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
 import * as timeUtils from "../time-utils";
 
@@ -10,7 +10,7 @@ describe("mapCreateOrUpdateEventSeriesRequest", () => {
   it("should map a minimal event series", () => {
     const params = testData.createMinimalRequestEventSeries();
 
-    const result = mappings.mapCreateOrUpdateEventSeriesRequest({
+    const result = mapper.mapCreateOrUpdateEventSeriesRequest({
       ...params,
       id: testData.EVENT_SERIES_ID
     });
@@ -24,7 +24,7 @@ describe("mapCreateOrUpdateEventSeriesRequest", () => {
       summary: "A poetry riot",
       description: "Poetry for people who dont like poetry.",
       version: 1,
-      schemeVersion: constants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
+      schemeVersion: mapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
       createdDate: "2016/01/10",
       updatedDate: "2016/01/11"
     });
@@ -33,7 +33,7 @@ describe("mapCreateOrUpdateEventSeriesRequest", () => {
   it("should map a fully populated event series", () => {
     const params = testData.createFullRequestEventSeries();
 
-    const result = mappings.mapCreateOrUpdateEventSeriesRequest({
+    const result = mapper.mapCreateOrUpdateEventSeriesRequest({
       ...params,
       id: testData.EVENT_SERIES_ID
     });
@@ -57,7 +57,7 @@ describe("mapCreateOrUpdateEventSeriesRequest", () => {
       ],
       weSay: "something",
       version: 1,
-      schemeVersion: constants.CURRENT_EVENT_SERIES_SCHEME_VERSION,
+      schemeVersion: mapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
       createdDate: "2016/01/10",
       updatedDate: "2016/01/11"
     });
@@ -68,7 +68,7 @@ describe("mapToPublicSummaryResponse", () => {
   it("should map a fully populated event series", () => {
     const dbItem = testData.createFullDbEventSeries();
 
-    const result = mappings.mapToPublicSummaryResponse(dbItem);
+    const result = mapper.mapToPublicSummaryResponse(dbItem);
 
     expect(result).toEqual({
       entityType: "event-series",
@@ -89,7 +89,7 @@ describe("mapToPublicFullResponse", () => {
   it("should map a fully populated event series", () => {
     const dbItem = testData.createFullDbEventSeries();
 
-    const result = mappings.mapToPublicFullResponse(dbItem);
+    const result = mapper.mapToPublicFullResponse(dbItem);
 
     expect(result).toEqual({
       entityType: "event-series",

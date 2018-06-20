@@ -8,8 +8,8 @@ const EVENT_SERIES_NORMALISER = {
   descriptionCredit: entityNormaliser.DESCRIPTION_CREDIT_NORMALISER,
   occurrence: { trim: true },
   links: entityNormaliser.LINKS_NORMALISER,
-  images: entityNormaliser.IMAGES_NORMALISER
-  weSay: entityNormaliser.WE_SAY_NORMALISER,
+  images: entityNormaliser.IMAGES_NORMALISER,
+  weSay: entityNormaliser.WE_SAY_NORMALISER
 };
 
 export function normaliseCreateOrUpdateEventSeriesRequest(request) {

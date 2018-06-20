@@ -1,7 +1,6 @@
 import fpPick from "lodash/fp/pick";
 import mappr from "mappr";
 import * as entityMapper from "../entity/mapper";
-import * as talentType from "../types/talent-type";
 import * as identity from "../entity/id";
 
 export const CURRENT_EVENT_SERIES_SCHEME_VERSION = 1;

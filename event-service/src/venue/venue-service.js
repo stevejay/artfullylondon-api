@@ -1,10 +1,10 @@
 import * as venueRepository from "../persistence/venue-repository";
-import * as entityType from "../types/entity-type";
 import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as entityEnhancer from "../entity/enhancer";
-import * as indexer from "../indexer";
+import * as eventRepository from "../persistence/event-repository";
+import * as notifier from "../notifier";
 // const etag = require("../lambda/etag");
 
 export async function getVenue(params) {
@@ -35,9 +35,10 @@ export async function createOrUpdateVenue(params) {
   const venue = mapper.mapCreateOrUpdateVenueRequest(params);
   await venueRepository.createOrUpdateVenue(venue);
   if (isUpdate) {
-    await eventMessaging.notifyEventsForVenue(venue.id);
+    const eventIds = await eventRepository.getEventIdsByVenue(venue.id);
+    await Promise.all(eventIds.map(notifier.updateEvent));
   }
-  await indexer.indexEntity(venue);
+  await notifier.indexEntity(venue);
   // const publicResponse = mapper.mapToPublicFullResponse(venue);
   // await etag.writeETagToRedis(
   //   "venue/" + dbItem.id,

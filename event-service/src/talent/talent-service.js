@@ -1,10 +1,9 @@
 import * as talentRepository from "../persistence/talent-repository";
-import * as entityType from "../types/entity-type";
 import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as entityEnhancer from "../entity/enhancer";
-import * as indexer from "../indexer";
+import * as notifier from "../notifier";
 // const etag = require("../lambda/etag");
 
 export async function getTalent(params) {
@@ -28,7 +27,7 @@ export async function createOrUpdateTalent(params) {
   params = entityEnhancer.addDescriptionFromWikipedia(params);
   const talent = mapper.mapCreateOrUpdateTalentRequest(params);
   await talentRepository.createOrUpdateTalent(talent);
-  await indexer.indexEntity(talent);
+  await notifier.indexEntity(talent);
   // const publicResponse = mapper.mapToPublicFullResponse(talent);
   // await etag.writeETagToRedis(
   //   "talent/" + dbItem.id,

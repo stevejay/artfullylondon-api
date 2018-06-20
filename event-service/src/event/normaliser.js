@@ -1,21 +1,12 @@
-"use strict";
+import normalise from "normalise-request";
+import * as entityNormaliser from "../entity/normaliser";
 
-const normalisers = require("../data/normalisers");
-
-module.exports = exports = {
+const EVENT_NORMALISER = {
   name: {
     trim: true
   },
   summary: {
     trim: true
-  },
-  description: {
-    trim: true,
-    undefinedIfEmpty: true
-  },
-  descriptionCredit: {
-    trim: true,
-    undefinedIfEmpty: true
   },
   duration: {
     trim: true,
@@ -114,8 +105,6 @@ module.exports = exports = {
   styleTags: {
     undefinedIfEmpty: true
   },
-  links: normalisers.linksNormaliser,
-  images: normalisers.imagesNormaliser,
   reviews: {
     undefinedIfEmpty: true,
     each: {
@@ -127,11 +116,16 @@ module.exports = exports = {
       }
     }
   },
-  weSay: {
-    trim: true,
-    undefinedIfEmpty: true
-  },
   soldOutPerformances: {
     undefinedIfEmpty: true
-  }
+  },
+  description: entityNormaliser.DESCRIPTION_NORMALISER,
+  descriptionCredit: entityNormaliser.DESCRIPTION_CREDIT_NORMALISER,
+  links: entityNormaliser.LINKS_NORMALISER,
+  images: entityNormaliser.IMAGES_NORMALISER,
+  weSay: entityNormaliser.WE_SAY_NORMALISER
 };
+
+export function normaliseCreateOrUpdateEventRequest(request) {
+  return normalise({ ...request }, EVENT_NORMALISER);
+}

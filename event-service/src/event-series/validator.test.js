@@ -1,4 +1,4 @@
-import * as testData from "../test-data";
+import * as testData from "../../tests/utils/test-data";
 import * as eventSeriesType from "../types/event-series-type";
 import * as validator from "./validator";
 

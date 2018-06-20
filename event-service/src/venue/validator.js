@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { ensure } from "ensure-request";
 import * as entityValidator from "../entity/validator";
 import * as venueType from "../types/venue-type";

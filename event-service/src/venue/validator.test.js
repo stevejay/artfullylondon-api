@@ -1,4 +1,4 @@
-import * as testData from "../test-data";
+import * as testData from "../../tests/utils/test-data";
 import * as validator from "./validator";
 
 it("should pass fully populated venue", () => {

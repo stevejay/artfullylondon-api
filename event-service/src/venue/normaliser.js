@@ -8,39 +8,39 @@ const VENUE_NORMALISER = {
   name: entityNormaliser.NAME_NORMALISER,
   address: {
     trim: true,
-    address: true,
+    address: true
   },
   postcode: {
     toUpperCase: true,
     collapseWhitespace: true,
-    trim: true,
+    trim: true
   },
   email: {
     trim: true,
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   telephone: {
-    replace: { pattern: /[-()]/g, newSubStr: ' ' },
+    replace: { pattern: /[-()]/g, newSubStr: " " },
     collapseWhitespace: true,
     trim: true,
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   description: entityNormaliser.DESCRIPTION_NORMALISER,
   descriptionCredit: entityNormaliser.DESCRIPTION_CREDIT_NORMALISER,
   openingTimes: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   additionalOpeningTimes: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   openingTimesClosures: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   namedClosures: {
-    undefinedIfEmpty: true,
+    undefinedIfEmpty: true
   },
   links: entityNormaliser.LINKS_NORMALISER,
-  images: entityNormaliser.IMAGES_NORMALISER
+  images: entityNormaliser.IMAGES_NORMALISER,
   weSay: entityNormaliser.WE_SAY_NORMALISER,
   notes: entityNormaliser.NOTES_NORMALISER
 };

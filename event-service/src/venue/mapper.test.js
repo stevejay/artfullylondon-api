@@ -1,4 +1,4 @@
-import * as testData from "../test-data";
+import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
 import * as timeUtils from "../time-utils";
 
