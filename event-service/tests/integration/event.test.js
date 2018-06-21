@@ -29,7 +29,8 @@ describe("event", () => {
       timeout: 14000
     });
 
-    testVenueId = response.entity.id;
+    let parsedResponse = lambdaUtils.parseLambdaResponse(response);
+    testVenueId = parsedResponse.entity.id;
 
     response = await request({
       uri: "http://localhost:3014/admin/talent",
@@ -40,7 +41,8 @@ describe("event", () => {
       timeout: 14000
     });
 
-    testTalentId = response.entity.id;
+    parsedResponse = lambdaUtils.parseLambdaResponse(response);
+    testTalentId = parsedResponse.entity.id;
 
     response = await request({
       uri: "http://localhost:3014/admin/event-series",
@@ -51,7 +53,8 @@ describe("event", () => {
       timeout: 14000
     });
 
-    testEventSeriesId = response.entity.id;
+    parsedResponse = lambdaUtils.parseLambdaResponse(response);
+    testEventSeriesId = parsedResponse.entity.id;
 
     testEventBody = testData.createNewEventBody(
       testVenueId,
@@ -214,7 +217,7 @@ describe("event", () => {
       })
     );
 
-    expect(response.entities[0].venueId).toEqual(testVenueId);
+    expect(parsedResponse.entities[0].venueId).toEqual(testVenueId);
   });
 
   it("should reject a stale update to the event", async () => {

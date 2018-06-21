@@ -63,7 +63,7 @@ export function getReferencedEntities(event, consistentRead) {
   return getReferencedEntitiesImpl(
     event.venueId,
     event.eventSeriesId,
-    event.talents.map(talent => talent.id),
+    (event.talents || []).map(talent => talent.id),
     consistentRead
   );
 }
@@ -101,8 +101,8 @@ async function getReferencedEntitiesImpl(
   }
 
   const response = await dynamodb.batchGet(params);
-  const eventSeries = response.Responses[process.EVENT_SERIES_TABLE_NAME];
-  const venue = response.Responses[process.VENUE_TABLE_NAME];
+  const eventSeries = response.Responses[EVENT_SERIES_TABLE_NAME];
+  const venue = response.Responses[VENUE_TABLE_NAME];
 
   const result = {
     talents: response.Responses[TALENT_TABLE_NAME] || [],
