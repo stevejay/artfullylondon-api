@@ -1,48 +1,38 @@
 import normalise from "normalise-request";
-import * as entityNormaliser from "../entity/normaliser";
+import {
+  STRING_NORMALISER,
+  BASIC_ARRAY_NORMALISER,
+  LINKS_NORMALISER,
+  IMAGES_NORMALISER
+} from "../entity/normaliser";
 
 normalise.normalisers.address = addressNormaliser;
 import addressNormaliser from "./address-normaliser";
 
 const VENUE_NORMALISER = {
-  name: entityNormaliser.NAME_NORMALISER,
-  address: {
-    trim: true,
-    address: true
-  },
+  name: STRING_NORMALISER,
+  address: { ...STRING_NORMALISER, address: true },
   postcode: {
     toUpperCase: true,
     collapseWhitespace: true,
-    trim: true
+    ...STRING_NORMALISER
   },
-  email: {
-    trim: true,
-    undefinedIfEmpty: true
-  },
+  email: STRING_NORMALISER,
   telephone: {
     replace: { pattern: /[-()]/g, newSubStr: " " },
     collapseWhitespace: true,
-    trim: true,
-    undefinedIfEmpty: true
+    ...STRING_NORMALISER
   },
-  description: entityNormaliser.DESCRIPTION_NORMALISER,
-  descriptionCredit: entityNormaliser.DESCRIPTION_CREDIT_NORMALISER,
-  openingTimes: {
-    undefinedIfEmpty: true
-  },
-  additionalOpeningTimes: {
-    undefinedIfEmpty: true
-  },
-  openingTimesClosures: {
-    undefinedIfEmpty: true
-  },
-  namedClosures: {
-    undefinedIfEmpty: true
-  },
-  links: entityNormaliser.LINKS_NORMALISER,
-  images: entityNormaliser.IMAGES_NORMALISER,
-  weSay: entityNormaliser.WE_SAY_NORMALISER,
-  notes: entityNormaliser.NOTES_NORMALISER
+  description: STRING_NORMALISER,
+  descriptionCredit: STRING_NORMALISER,
+  openingTimes: BASIC_ARRAY_NORMALISER,
+  additionalOpeningTimes: BASIC_ARRAY_NORMALISER,
+  openingTimesClosures: BASIC_ARRAY_NORMALISER,
+  namedClosures: BASIC_ARRAY_NORMALISER,
+  links: LINKS_NORMALISER,
+  images: IMAGES_NORMALISER,
+  weSay: STRING_NORMALISER,
+  notes: STRING_NORMALISER
 };
 
 export function normaliseCreateOrUpdateVenueRequest(request) {

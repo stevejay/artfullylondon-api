@@ -5,27 +5,20 @@ import * as wheelchairAccessType from "../types/wheelchair-access-type";
 import * as disabledBathroomType from "../types/disabled-bathroom-type";
 import * as hearingFacilitiesType from "../types/hearing-facilities-type";
 import * as namedClosureType from "../types/named-closure-type";
+import * as statusType from "../types/status-type";
 
 const LONDON_LAT = 51.5074;
 const LONDON_LAT_RANGE = 0.3;
 const LONDON_LNG = 0.1278;
 const LONDON_LNG_RANGE = 0.6;
 
-const VENUE_CONSTRAINT = {
-  status: entityValidator.STATUS_VALIDATOR,
-  name: entityValidator.REQUIRED_NAME_CONSTRAINT,
-  venueType: {
-    string: true,
-    presence: true,
-    inclusion: venueType.ALLOWED_VALUES
-  },
-  description: entityValidator.DESCRIPTION_CONSTRAINT,
-  descriptionCredit: entityValidator.OPTIONAL_ADDITIONAL_INFO_CONSTRAINT,
-  address: {
-    string: true,
-    presence: true,
-    length: { minimum: 1, maximum: 400 }
-  },
+const VENUE_VALIDATOR = {
+  status: entityValidator.REQUIRED_ENUM(statusType.ALLOWED_VALUES),
+  name: entityValidator.REQUIRED_STRING,
+  venueType: entityValidator.REQUIRED_ENUM(venueType.ALLOWED_VALUES),
+  description: entityValidator.OPTIONAL_LONG_STRING,
+  descriptionCredit: entityValidator.OPTIONAL_STRING,
+  address: entityValidator.REQUIRED_STRING,
   postcode: {
     string: true,
     presence: true,
@@ -47,21 +40,15 @@ const VENUE_CONSTRAINT = {
       lessThanOrEqualTo: LONDON_LNG + LONDON_LNG_RANGE
     }
   },
-  wheelchairAccessType: {
-    string: true,
-    presence: true,
-    inclusion: wheelchairAccessType.ALLOWED_VALUES
-  },
-  disabledBathroomType: {
-    string: true,
-    presence: true,
-    inclusion: disabledBathroomType.ALLOWED_VALUES
-  },
-  hearingFacilitiesType: {
-    string: true,
-    presence: true,
-    inclusion: hearingFacilitiesType.ALLOWED_VALUES
-  },
+  wheelchairAccessType: entityValidator.REQUIRED_ENUM(
+    wheelchairAccessType.ALLOWED_VALUES
+  ),
+  disabledBathroomType: entityValidator.REQUIRED_ENUM(
+    disabledBathroomType.ALLOWED_VALUES
+  ),
+  hearingFacilitiesType: entityValidator.REQUIRED_ENUM(
+    hearingFacilitiesType.ALLOWED_VALUES
+  ),
   email: {
     email: true,
     length: { maximum: 100 }
@@ -70,30 +57,22 @@ const VENUE_CONSTRAINT = {
     string: true,
     format: /^\d[\d\s-]{6,18}\d$/
   },
-  openingTimes: entityValidator.OPENING_TIMES_CONSTRAINT,
-  additionalOpeningTimes: entityValidator.ADDITIONAL_OPENING_TIMES_CONSTRAINT,
-  openingTimesClosures: entityValidator.OPENING_TIMES_CLOSURES_CONSTRAINT,
+  openingTimes: entityValidator.OPENING_TIMES,
+  additionalOpeningTimes: entityValidator.ADDITIONAL_OPENING_TIMES,
+  openingTimesClosures: entityValidator.OPENING_TIMES_CLOSURES,
   namedClosures: {
     array: true,
-    length: {
-      maximum: namedClosureType.ALLOWED_VALUES.length
-    },
-    each: {
-      string: true,
-      inclusion: namedClosureType.ALLOWED_VALUES
-    }
+    length: { maximum: namedClosureType.ALLOWED_VALUES.length },
+    each: entityValidator.REQUIRED_ENUM(namedClosureType.ALLOWED_VALUES)
   },
-  links: entityValidator.LINKS_CONSTRAINT,
-  images: entityValidator.IMAGES_CONSTRAINT,
-  weSay: entityValidator.WE_SAY_CONSTRAINT,
-  hasPermanentCollection: {
-    presence: true,
-    bool: true
-  },
-  notes: entityValidator.NOTES_CONSTRAINT,
-  version: entityValidator.VERSION_CONSTRAINT,
-  createdDate: entityValidator.OPTIONAL_DATE_CONSTRAINT,
-  updatedDate: entityValidator.OPTIONAL_DATE_CONSTRAINT
+  links: entityValidator.LINKS,
+  images: entityValidator.IMAGES,
+  weSay: entityValidator.OPTIONAL_STRING,
+  hasPermanentCollection: entityValidator.REQUIRED_BOOL,
+  notes: entityValidator.OPTIONAL_STRING,
+  version: entityValidator.REQUIRED_VERSION,
+  createdDate: entityValidator.OPTIONAL_DATE,
+  updatedDate: entityValidator.OPTIONAL_DATE
 };
 
 function errorHandler(errors) {
@@ -101,5 +80,5 @@ function errorHandler(errors) {
 }
 
 export function validateCreateOrUpdateVenueRequest(request) {
-  ensure(request, VENUE_CONSTRAINT, errorHandler);
+  ensure(request, VENUE_VALIDATOR, errorHandler);
 }

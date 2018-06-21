@@ -1,63 +1,27 @@
-export const OPTIONAL_STRING_NORMALISER = {
+export const STRING_NORMALISER = {
   trim: true,
   undefinedIfEmpty: true
 };
 
-export const REQUIRED_STRING_NORMALISER = {
-  trim: true
+export const BASIC_ARRAY_NORMALISER = {
+  undefinedIfEmpty: true
 };
 
 export const IMAGES_NORMALISER = {
-  undefinedIfEmpty: true,
+  ...BASIC_ARRAY_NORMALISER,
   each: {
     object: {
-      copyright: {
-        trim: true,
-        undefinedIfEmpty: true
-      },
-      dominantColor: {
-        trim: true,
-        undefinedIfEmpty: true
-      }
+      copyright: STRING_NORMALISER,
+      dominantColor: STRING_NORMALISER
     }
   }
 };
 
 export const LINKS_NORMALISER = {
-  undefinedIfEmpty: true,
+  ...BASIC_ARRAY_NORMALISER,
   each: {
     object: {
-      url: {
-        trim: true
-      }
+      url: STRING_NORMALISER
     }
   }
-};
-
-export const NAME_NORMALISER = {
-  trim: true
-};
-
-export const DESCRIPTION_NORMALISER = {
-  trim: true,
-  undefinedIfEmpty: true
-};
-
-export const DESCRIPTION_CREDIT_NORMALISER = {
-  trim: true,
-  undefinedIfEmpty: true
-};
-
-export const WE_SAY_NORMALISER = {
-  trim: true,
-  undefinedIfEmpty: true
-};
-
-export const NOTES_NORMALISER = {
-  trim: true,
-  undefinedIfEmpty: true
-};
-
-export const SUMMARY_NORMALISER = {
-  trim: true
 };

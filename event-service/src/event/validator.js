@@ -6,6 +6,7 @@ import * as occurrenceType from "../types/occurrence-type";
 import * as costType from "../types/cost-type";
 import * as bookingType from "../types/booking-type";
 import * as tagType from "../types/tag-type";
+import * as statusType from "../types/status-type";
 
 const PERFORMANCES_WITH_DATE_AT_ORDER = (current, next) =>
   next.date > current.date ||
@@ -43,19 +44,19 @@ const ADDITIONAL_PERFORMANCES_CONSTRAINT = {
   array: true,
   length: { minimum: 1, maximum: 200 },
   ordered: PERFORMANCES_WITH_DATE_AT_ORDER,
-  each: entityValidator.EACH_DATE_AT_CONSTRAINT
+  each: {
+    object: {
+      date: entityValidator.REQUIRED_DATE,
+      at: entityValidator.REQUIRED_TIME
+    }
+  }
 };
 
-const AUDIENCE_TAGS_CONSTRAINT = {
-  each: entityValidator.EACH_TAG_CONSTRAINT(tagType.AUDIENCE)
-};
-
-const EVENT_CONSTRAINT = {
-  status: entityValidator.STATUS_VALIDATOR,
-  name: entityValidator.REQUIRED_NAME_CONSTRAINT,
+const EVENT_VALIDATOR = {
+  status: entityValidator.REQUIRED_ENUM(statusType.ALLOWED_VALUES),
+  name: entityValidator.REQUIRED_STRING,
   eventType: {
-    presence: true,
-    inclusion: eventType.ALLOWED_VALUES,
+    ...entityValidator.REQUIRED_ENUM(eventType.ALLOWED_VALUES),
     dependency: [
       {
         test: value => value === eventType.PERFORMANCE,
@@ -87,8 +88,7 @@ const EVENT_CONSTRAINT = {
     ]
   },
   occurrenceType: {
-    presence: true,
-    inclusion: occurrenceType.ALLOWED_VALUES,
+    ...entityValidator.REQUIRED_ENUM(occurrenceType.ALLOWED_VALUES),
     dependency: [
       {
         test: value => value === occurrenceType.ONETIME,
@@ -109,12 +109,12 @@ const EVENT_CONSTRAINT = {
       }
     ]
   },
-  dateFrom: entityValidator.OPTIONAL_DATE_CONSTRAINT,
-  dateTo: entityValidator.OPTIONAL_DATE_CONSTRAINT,
-  soldOut: { bool: true },
-  summary: entityValidator.SUMMARY_CONSTRAINT,
-  description: entityValidator.DESCRIPTION_CONSTRAINT,
-  descriptionCredit: entityValidator.OPTIONAL_ADDITIONAL_INFO_CONSTRAINT,
+  dateFrom: entityValidator.OPTIONAL_DATE,
+  dateTo: entityValidator.OPTIONAL_DATE,
+  soldOut: entityValidator.OPTIONAL_BOOL,
+  summary: entityValidator.REQUIRED_STRING,
+  description: entityValidator.OPTIONAL_LONG_STRING,
+  descriptionCredit: entityValidator.OPTIONAL_STRING,
   rating: RATING_CONSTRAINT,
   minAge: AGE_CONSTRAINT,
   maxAge: {
@@ -126,8 +126,7 @@ const EVENT_CONSTRAINT = {
     }
   },
   costType: {
-    presence: true,
-    inclusion: costType.ALLOWED_VALUES,
+    ...entityValidator.REQUIRED_ENUM(costType.ALLOWED_VALUES),
     dependency: [
       {
         test: value => value === costType.FREE,
@@ -146,15 +145,14 @@ const EVENT_CONSTRAINT = {
   costFrom: COST_CONSTRAINT,
   costTo: COST_CONSTRAINT,
   bookingType: {
-    presence: true,
-    inclusion: bookingType.ALLOWED_VALUES,
+    ...entityValidator.REQUIRED_ENUM(bookingType.ALLOWED_VALUES),
     dependency: {
       test: value => value === bookingType.NOT_REQUIRED,
       ensure: (__, attrs) => _.isNil(attrs.bookingOpens),
       message: "Booking opens must be null"
     }
   },
-  bookingOpens: entityValidator.OPTIONAL_DATE_CONSTRAINT,
+  bookingOpens: entityValidator.OPTIONAL_DATE,
   timedEntry: {
     bool: true,
     dependency: {
@@ -163,13 +161,12 @@ const EVENT_CONSTRAINT = {
       message: "Only exhibition events can have the timed entry flag set"
     }
   },
-  duration: entityValidator.OPTIONAL_TIME_CONSTRAINT,
-  eventSeriesId: entityValidator.OPTIONAL_ID_CONSTRAINT,
-  venueId: entityValidator.REQUIRED_ID_CONSTRAINT,
-  venueGuidance: entityValidator.OPTIONAL_ADDITIONAL_INFO_CONSTRAINT,
+  duration: entityValidator.OPTIONAL_TIME,
+  eventSeriesId: entityValidator.OPTIONAL_STRING,
+  venueId: entityValidator.REQUIRED_STRING,
+  venueGuidance: entityValidator.OPTIONAL_STRING,
   useVenueOpeningTimes: {
-    bool: true,
-    presence: true,
+    ...entityValidator.REQUIRED_BOOL,
     dependency: {
       test: value => !!value,
       ensure: (__, attrs) => attrs.eventType === eventType.EXHIBITION,
@@ -183,17 +180,17 @@ const EVENT_CONSTRAINT = {
     ordered: (current, next) => next.dateFrom > current.dateTo,
     each: {
       object: {
-        id: entityValidator.REQUIRED_ID_CONSTRAINT,
-        dateFrom: entityValidator.REQUIRED_DATE_CONSTRAINT,
+        id: entityValidator.REQUIRED_STRING,
+        dateFrom: entityValidator.REQUIRED_DATE,
         dateTo: {
-          ...entityValidator.REQUIRED_DATE_CONSTRAINT,
+          ...entityValidator.REQUIRED_DATE,
           dependency: {
             ensure: (value, attrs) => value > attrs.dateFrom,
             message:
               "For each times range, Date To must be greater than Date From"
           }
         },
-        label: entityValidator.REQUIRED_ADDITIONAL_INFO_CONSTRAINT
+        label: entityValidator.REQUIRED_STRING
       }
     },
     dependency: [
@@ -230,30 +227,40 @@ const EVENT_CONSTRAINT = {
       }
     ]
   },
-  openingTimes: entityValidator.OPENING_TIMES_CONSTRAINT,
-  additionalOpeningTimes: entityValidator.ADDITIONAL_OPENING_TIMES_CONSTRAINT,
+  openingTimes: entityValidator.OPENING_TIMES,
+  additionalOpeningTimes: entityValidator.ADDITIONAL_OPENING_TIMES,
   specialOpeningTimes: {
-    ...entityValidator.ADDITIONAL_OPENING_TIMES_CONSTRAINT,
+    ...entityValidator.ADDITIONAL_OPENING_TIMES,
     each: {
-      ...entityValidator.ADDITIONAL_OPENING_TIMES_CONSTRAINT.each,
-      audienceTags: AUDIENCE_TAGS_CONSTRAINT
+      object: {
+        ...entityValidator.ADDITIONAL_OPENING_TIMES.each.object,
+        audienceTags: entityValidator.TAGS(tagType.AUDIENCE)
+      }
     }
   },
-  openingTimesClosures: entityValidator.OPENING_TIMES_CLOSURES_CONSTRAINT,
+  openingTimesClosures: entityValidator.OPENING_TIMES_CLOSURES,
   performances: {
     array: true,
     length: { minimum: 1, maximum: 200 },
     ordered: (current, next) =>
       next.day > current.day ||
       (next.day === current.day && next.at > current.at),
-    each: entityValidator.EACH_DAY_AT_CONSTRAINT
+    each: {
+      object: {
+        day: entityValidator.REQUIRED_DAY_NUMBER,
+        at: entityValidator.REQUIRED_TIME,
+        timesRangeId: entityValidator.OPTIONAL_STRING
+      }
+    }
   },
   additionalPerformances: ADDITIONAL_PERFORMANCES_CONSTRAINT,
   specialPerformances: {
     ...ADDITIONAL_PERFORMANCES_CONSTRAINT,
     each: {
-      ...ADDITIONAL_PERFORMANCES_CONSTRAINT.each,
-      audienceTags: AUDIENCE_TAGS_CONSTRAINT
+      object: {
+        ...ADDITIONAL_PERFORMANCES_CONSTRAINT.each.object,
+        audienceTags: entityValidator.TAGS(tagType.AUDIENCE)
+      }
     }
   },
   performancesClosures: {
@@ -264,8 +271,8 @@ const EVENT_CONSTRAINT = {
       (next.date === current.date && next.at > current.at),
     each: {
       object: {
-        date: entityValidator.REQUIRED_DATE_CONSTRAINT,
-        at: entityValidator.OPTIONAL_DATE_CONSTRAINT
+        date: entityValidator.REQUIRED_DATE,
+        at: entityValidator.OPTIONAL_DATE
       }
     }
   },
@@ -274,7 +281,7 @@ const EVENT_CONSTRAINT = {
     length: { minimum: 1, maximum: 50 },
     each: {
       object: {
-        id: entityValidator.REQUIRED_ID_CONSTRAINT,
+        id: entityValidator.REQUIRED_STRING,
         roles: {
           array: true,
           presence: true,
@@ -299,47 +306,31 @@ const EVENT_CONSTRAINT = {
       }
     }
   },
-  audienceTags: {
-    array: true,
-    length: { minimum: 1, maximum: 20 },
-    each: entityValidator.EACH_TAG_CONSTRAINT(tagType.AUDIENCE)
-  },
-  geoTags: {
-    array: true,
-    length: { minimum: 1, maximum: 20 },
-    each: entityValidator.EACH_TAG_CONSTRAINT(tagType.GEO)
-  },
-  mediumTags: {
-    array: true,
-    length: { minimum: 1, maximum: 20 },
-    each: entityValidator.EACH_TAG_CONSTRAINT(tagType.MEDIUM)
-  },
-  styleTags: {
-    array: true,
-    length: { minimum: 1, maximum: 20 },
-    each: entityValidator.EACH_TAG_CONSTRAINT(tagType.STYLE)
-  },
-  links: entityValidator.LINKS_CONSTRAINT,
-  images: entityValidator.IMAGES_CONSTRAINT,
+  audienceTags: entityValidator.TAGS(tagType.AUDIENCE),
+  geoTags: entityValidator.TAGS(tagType.GEO),
+  mediumTags: entityValidator.TAGS(tagType.MEDIUM),
+  styleTags: entityValidator.TAGS(tagType.STYLE),
+  links: entityValidator.LINKS,
+  images: entityValidator.IMAGES,
   reviews: {
     array: true,
     length: { maximum: 5 },
     each: {
       object: {
-        source: entityValidator.REQUIRED_ADDITIONAL_INFO_CONSTRAINT,
+        source: entityValidator.REQUIRED_STRING,
         rating: RATING_CONSTRAINT
       }
     }
   },
-  weSay: entityValidator.WE_SAY_CONSTRAINT,
-  notes: entityValidator.NOTES_CONSTRAINT,
+  weSay: entityValidator.OPTIONAL_STRING,
+  notes: entityValidator.OPTIONAL_STRING,
   soldOutPerformances: {
     array: true,
     length: { maximum: 1000 },
     each: {
       object: {
-        date: entityValidator.REQUIRED_DATE_CONSTRAINT,
-        at: entityValidator.REQUIRED_TIME_CONSTRAINT
+        date: entityValidator.REQUIRED_DATE,
+        at: entityValidator.REQUIRED_TIME
       }
     },
     dependency: {
@@ -348,9 +339,9 @@ const EVENT_CONSTRAINT = {
       message: "Can only have sold out performances if event is a performance"
     }
   },
-  version: entityValidator.VERSION_CONSTRAINT,
-  createdDate: entityValidator.OPTIONAL_DATE_CONSTRAINT,
-  updatedDate: entityValidator.OPTIONAL_DATE_CONSTRAINT
+  version: entityValidator.REQUIRED_VERSION,
+  createdDate: entityValidator.OPTIONAL_DATE,
+  updatedDate: entityValidator.OPTIONAL_DATE
 };
 
 function errorHandler(errors) {
@@ -358,5 +349,5 @@ function errorHandler(errors) {
 }
 
 export function validateCreateOrUpdateEventRequest(request) {
-  ensure(request, EVENT_CONSTRAINT, errorHandler);
+  ensure(request, EVENT_VALIDATOR, errorHandler);
 }

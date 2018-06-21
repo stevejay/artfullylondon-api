@@ -26,7 +26,7 @@ export const mapCreateOrUpdateTalentRequest = mappr.compose(
     "description",
     "descriptionCredit"
   ]),
-  entityMapper.mapEntityEditDates,
+  entityMapper.mapRequestEditDates,
   entityMapper.mapRequestLinks,
   entityMapper.mapRequestImages
 );

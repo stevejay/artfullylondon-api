@@ -1,24 +1,24 @@
 import { ensure } from "ensure-request";
 import * as entityValidator from "../entity/validator";
 import * as eventSeriesType from "../types/event-series-type";
+import * as statusType from "../types/status-type";
 
 const EVENT_SERIES_CONSTRAINT = {
-  status: entityValidator.STATUS_VALIDATOR,
-  name: entityValidator.REQUIRED_NAME_CONSTRAINT,
-  eventSeriesType: {
-    presence: true,
-    inclusion: eventSeriesType.ALLOWED_VALUES
-  },
-  occurrence: entityValidator.REQUIRED_ADDITIONAL_INFO_CONSTRAINT,
-  summary: entityValidator.SUMMARY_CONSTRAINT,
-  description: entityValidator.DESCRIPTION_CONSTRAINT,
-  descriptionCredit: entityValidator.OPTIONAL_ADDITIONAL_INFO_CONSTRAINT,
-  links: entityValidator.LINKS_CONSTRAINT,
-  images: entityValidator.IMAGES_CONSTRAINT,
-  weSay: entityValidator.WE_SAY_CONSTRAINT,
-  version: entityValidator.VERSION_CONSTRAINT,
-  createdDate: entityValidator.OPTIONAL_DATE_CONSTRAINT,
-  updatedDate: entityValidator.OPTIONAL_DATE_CONSTRAINT
+  status: entityValidator.REQUIRED_ENUM(statusType.ALLOWED_VALUES),
+  name: entityValidator.REQUIRED_STRING,
+  eventSeriesType: entityValidator.REQUIRED_ENUM(
+    eventSeriesType.ALLOWED_VALUES
+  ),
+  occurrence: entityValidator.REQUIRED_STRING,
+  summary: entityValidator.REQUIRED_STRING,
+  description: entityValidator.OPTIONAL_LONG_STRING,
+  descriptionCredit: entityValidator.OPTIONAL_STRING,
+  links: entityValidator.LINKS,
+  images: entityValidator.IMAGES,
+  weSay: entityValidator.OPTIONAL_STRING,
+  version: entityValidator.REQUIRED_VERSION,
+  createdDate: entityValidator.OPTIONAL_DATE,
+  updatedDate: entityValidator.OPTIONAL_DATE
 };
 
 function errorHandler(errors) {

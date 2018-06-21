@@ -25,7 +25,7 @@ export const mapRequestImages = mappr({
         )
 });
 
-export const mapEntityEditDates = params => {
+export const mapRequestEditDates = params => {
   const dateToday = timeUtils.getCreatedDateForDB();
   return {
     createdDate: params.createdDate || dateToday,

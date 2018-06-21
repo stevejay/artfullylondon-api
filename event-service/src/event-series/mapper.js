@@ -22,7 +22,7 @@ export const mapCreateOrUpdateEventSeriesRequest = mappr.compose(
     "descriptionCredit",
     "weSay"
   ]),
-  entityMapper.mapEntityEditDates,
+  entityMapper.mapRequestEditDates,
   entityMapper.mapRequestLinks,
   entityMapper.mapRequestImages
 );

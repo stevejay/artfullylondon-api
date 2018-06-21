@@ -84,7 +84,7 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
   },
   entityMapper.mapTalents,
   entityMapper.mapReviews,
-  entityMapper.mapEntityEditDates,
+  entityMapper.mapRequestEditDates,
   entityMapper.mapRequestLinks,
   entityMapper.mapRequestImages
 );

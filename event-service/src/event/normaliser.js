@@ -1,129 +1,90 @@
 import normalise from "normalise-request";
-import * as entityNormaliser from "../entity/normaliser";
+import {
+  STRING_NORMALISER,
+  BASIC_ARRAY_NORMALISER,
+  LINKS_NORMALISER,
+  IMAGES_NORMALISER
+} from "../entity/normaliser";
 
 const EVENT_NORMALISER = {
-  name: {
-    trim: true
-  },
-  summary: {
-    trim: true
-  },
-  duration: {
-    trim: true,
-    undefinedIfEmpty: true
-  },
-  venueGuidance: {
-    trim: true,
-    undefinedIfEmpty: true
-  },
+  name: STRING_NORMALISER,
+  summary: STRING_NORMALISER,
+  duration: STRING_NORMALISER,
+  venueGuidance: STRING_NORMALISER,
   timesRanges: {
-    undefinedIfEmpty: true,
+    ...BASIC_ARRAY_NORMALISER,
     each: {
       object: {
-        dateFrom: {
-          trim: true,
-          undefinedIfEmpty: true
-        },
-        dateTo: {
-          trim: true,
-          undefinedIfEmpty: true
-        },
-        label: {
-          trim: true,
-          undefinedIfEmpty: true
-        }
+        dateFrom: STRING_NORMALISER,
+        dateTo: STRING_NORMALISER,
+        label: STRING_NORMALISER
       }
     }
   },
-  openingTimes: {
-    undefinedIfEmpty: true
-  },
-  additionalOpeningTimes: {
-    undefinedIfEmpty: true
-  },
+  openingTimes: BASIC_ARRAY_NORMALISER,
+  additionalOpeningTimes: BASIC_ARRAY_NORMALISER,
   specialOpeningTimes: {
-    undefinedIfEmpty: true,
+    ...BASIC_ARRAY_NORMALISER,
     each: {
       object: {
-        audienceTags: {
-          undefinedIfEmpty: true
-        }
+        audienceTags: BASIC_ARRAY_NORMALISER
       }
     }
   },
-  openingTimesClosures: {
-    undefinedIfEmpty: true
-  },
-  performances: {
-    undefinedIfEmpty: true
-  },
-  additionalPerformances: {
-    undefinedIfEmpty: true
-  },
+  openingTimesClosures: BASIC_ARRAY_NORMALISER,
+  performances: BASIC_ARRAY_NORMALISER,
+  additionalPerformances: BASIC_ARRAY_NORMALISER,
   specialPerformances: {
-    undefinedIfEmpty: true,
+    ...BASIC_ARRAY_NORMALISER,
     each: {
       object: {
-        audienceTags: {
-          undefinedIfEmpty: true
-        }
+        audienceTags: BASIC_ARRAY_NORMALISER
       }
     }
   },
-  performancesClosures: {
-    undefinedIfEmpty: true
-  },
+  performancesClosures: BASIC_ARRAY_NORMALISER,
   talents: {
-    undefinedIfEmpty: true,
+    ...BASIC_ARRAY_NORMALISER,
     each: {
       object: {
         roles: {
           each: {
             collapseWhitespace: true,
-            trim: true
+            ...STRING_NORMALISER
           }
         },
         characters: {
           undefinedIfEmpty: true,
           each: {
             collapseWhitespace: true,
-            trim: true
+            ...STRING_NORMALISER
           }
         }
       }
     }
   },
-  audienceTags: {
-    undefinedIfEmpty: true
-  },
-  geoTags: {
-    undefinedIfEmpty: true
-  },
-  mediumTags: {
-    undefinedIfEmpty: true
-  },
-  styleTags: {
-    undefinedIfEmpty: true
-  },
+  audienceTags: BASIC_ARRAY_NORMALISER,
+  geoTags: BASIC_ARRAY_NORMALISER,
+  mediumTags: BASIC_ARRAY_NORMALISER,
+  styleTags: BASIC_ARRAY_NORMALISER,
   reviews: {
-    undefinedIfEmpty: true,
+    ...BASIC_ARRAY_NORMALISER,
     each: {
       object: {
         source: {
           collapseWhitespace: true,
-          trim: true
+          ...STRING_NORMALISER
         }
       }
     }
   },
-  soldOutPerformances: {
-    undefinedIfEmpty: true
-  },
-  description: entityNormaliser.DESCRIPTION_NORMALISER,
-  descriptionCredit: entityNormaliser.DESCRIPTION_CREDIT_NORMALISER,
-  links: entityNormaliser.LINKS_NORMALISER,
-  images: entityNormaliser.IMAGES_NORMALISER,
-  weSay: entityNormaliser.WE_SAY_NORMALISER
+  soldOutPerformances: BASIC_ARRAY_NORMALISER,
+  description: STRING_NORMALISER,
+  descriptionCredit: STRING_NORMALISER,
+  links: LINKS_NORMALISER,
+  images: IMAGES_NORMALISER,
+  weSay: STRING_NORMALISER,
+  notes: STRING_NORMALISER
 };
 
 export function normaliseCreateOrUpdateEventRequest(request) {
