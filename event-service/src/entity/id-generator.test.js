@@ -1,6 +1,6 @@
-import * as id from "./id";
+import * as idGenerator from "./id-generator";
 
-describe("createIdFromName", () => {
+describe("generateFromName", () => {
   describe("with no entropy", () => {
     const tests = [
       { arg: "Foo Bar", expected: "foo-bar" },
@@ -18,7 +18,7 @@ describe("createIdFromName", () => {
       it(`should return ${JSON.stringify(
         test.expected
       )} when passed ${JSON.stringify(test.arg)}`, () => {
-        const result = id.createIdFromName(test.arg, false);
+        const result = idGenerator.generateFromName(test.arg, false);
         expect(result).toEqual(test.expected);
       });
     });
@@ -34,7 +34,7 @@ describe("createIdFromName", () => {
       it(`should return ${JSON.stringify(
         test.expected
       )} when passed ${JSON.stringify(test.arg)}`, () => {
-        const result = id.createIdFromName(test.arg, false);
+        const result = idGenerator.generateFromName(test.arg, false);
         expect(result).toContain(test.expected);
         expect(result.length).toEqual(test.expected.length + 4);
       });
@@ -48,7 +48,7 @@ describe("createIdFromName", () => {
       it(`should return ${JSON.stringify(
         test.expected
       )} when passed ${JSON.stringify(test.arg)}`, () => {
-        const result = id.createIdFromName(test.arg, true);
+        const result = idGenerator.generateFromName(test.arg, true);
         expect(result).toContain(test.expected);
         expect(result.length).toEqual(test.expected.length + 4);
       });
@@ -56,7 +56,7 @@ describe("createIdFromName", () => {
   });
 });
 
-describe("createIdFromTalentData", () => {
+describe("generateFromTalent", () => {
   const tests = [
     {
       talent: {
@@ -86,22 +86,26 @@ describe("createIdFromTalentData", () => {
     it(`should return ${JSON.stringify(
       test.expected
     )} when passed ${JSON.stringify(test.talent)}`, () => {
-      const result = id.createIdFromTalentData(test.talent);
+      const result = idGenerator.generateFromTalent(test.talent);
       expect(result).toEqual(test.expected);
     });
   });
 });
 
-describe("createEventId", () => {
+describe("generateFromEvent", () => {
   const nowYear = `${new Date().getUTCFullYear()}`;
 
   const tests = [
     {
-      args: ["foo", "2015-09-18", "Baritone"],
+      arg: { venueId: "foo", dateFrom: "2015-09-18", name: "Baritone" },
       expected: "foo/2015/baritone"
     },
     {
-      args: ["foo", null, "Baritone"],
+      arg: { venue: { id: "foo" }, dateFrom: "2015-09-18", name: "Baritone" },
+      expected: "foo/2015/baritone"
+    },
+    {
+      arg: { venueId: "foo", dateFrom: null, name: "Baritone" },
       expected: "foo/" + nowYear + "/baritone"
     }
   ];
@@ -109,8 +113,8 @@ describe("createEventId", () => {
   tests.map(test => {
     it(`should return ${JSON.stringify(
       test.expected
-    )} when passed ${JSON.stringify(test.args)}`, () => {
-      const result = id.createEventId.apply(null, test.args);
+    )} when passed ${JSON.stringify(test.arg)}`, () => {
+      const result = idGenerator.generateFromEvent(test.arg);
       expect(result).toEqual(test.expected);
     });
   });

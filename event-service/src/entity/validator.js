@@ -188,20 +188,3 @@ export const OPENING_TIMES_CLOSURES = {
     }
   }
 };
-
-export const TAGS = tagType => ({
-  array: true,
-  length: { minimum: 1, maximum: 20 },
-  each: {
-    object: {
-      id: {
-        ...REQUIRED_STRING,
-        format: new RegExp(`^${tagType}\\/`)
-      },
-      label: {
-        ...REQUIRED_STRING,
-        format: /^\w[\w -]+\w$/
-      }
-    }
-  }
-});

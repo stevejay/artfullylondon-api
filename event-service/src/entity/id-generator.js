@@ -3,7 +3,7 @@ import slug from "limax";
 const MIN_SLUG_LENGTH = 5;
 const YEAR_REGEX = /^(\d\d\d\d)-/;
 
-export function createIdFromName(name, addEntropy) {
+export function generateFromName(name, addEntropy) {
   let result = slug(name, { maintainCase: false });
   if (addEntropy || result.length < MIN_SLUG_LENGTH) {
     result += getRandomInt(1000, 9999);
@@ -11,18 +11,19 @@ export function createIdFromName(name, addEntropy) {
   return result;
 }
 
-export function createIdFromTalentData(talent) {
+export function generateFromTalent(talent) {
   const prefix = talent.firstNames ? talent.firstNames + "-" : "";
-  return createIdFromName(prefix + talent.lastName + "-" + talent.commonRole);
+  return generateFromName(prefix + talent.lastName + "-" + talent.commonRole);
 }
 
-export function createEventId(venueId, dateFrom, eventName) {
-  const year = dateFrom
-    ? dateFrom.match(YEAR_REGEX)[1]
+export function generateFromEvent(event) {
+  const year = event.dateFrom
+    ? event.dateFrom.match(YEAR_REGEX)[1]
     : new Date().getUTCFullYear();
 
   return (
-    (venueId + "/" + year + "/").toLowerCase() + createIdFromName(eventName)
+    `${event.venue ? event.venue.id : event.venueId}/${year}/`.toLowerCase() +
+    generateFromName(event.name)
   );
 }
 

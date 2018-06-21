@@ -2,7 +2,7 @@ import * as venueRepository from "../persistence/venue-repository";
 import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
-import * as entityEnhancer from "../entity/enhancer";
+import * as enhancer from "../enhancer";
 import * as entityType from "../types/entity-type";
 import * as eventRepository from "../persistence/event-repository";
 import * as notifier from "../notifier";
@@ -31,7 +31,7 @@ export async function getNextVenueId(params) {
 export async function createOrUpdateVenue(params) {
   params = normaliser.normaliseCreateOrUpdateVenueRequest(params);
   validator.validateCreateOrUpdateVenueRequest(params);
-  params = await entityEnhancer.addDescriptionFromWikipedia(params);
+  params = await enhancer.enhanceDescription(params);
   const isUpdate = !!params.id;
   const dbVenue = mapper.mapCreateOrUpdateVenueRequest(params);
   await venueRepository.createOrUpdateVenue(dbVenue);

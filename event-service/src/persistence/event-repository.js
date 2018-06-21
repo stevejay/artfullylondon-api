@@ -104,9 +104,25 @@ async function getReferencedEntitiesImpl(
   const eventSeries = response.Responses[process.EVENT_SERIES_TABLE_NAME];
   const venue = response.Responses[process.VENUE_TABLE_NAME];
 
-  return {
+  const result = {
     talents: response.Responses[TALENT_TABLE_NAME] || [],
     eventSeries: _.isEmpty(eventSeries) ? null : eventSeries[0],
     venue: _.isEmpty(venue) ? null : venue[0]
   };
+
+  if (venueId && _.isNil(result.venue)) {
+    throw new Error(`[404] Referenced venue ${venueId} not found`);
+  }
+
+  if (eventSeriesId && _.isNil(result.eventSeries)) {
+    throw new Error(`[404] Referenced event series ${eventSeriesId} not found`);
+  }
+
+  if (!_.isEmpty(talentIds) && result.talents.length !== talentIds.length) {
+    throw new Error(
+      `[404] One or more referenced talents ${talentIds.join(";")} not found`
+    );
+  }
+
+  return result;
 }

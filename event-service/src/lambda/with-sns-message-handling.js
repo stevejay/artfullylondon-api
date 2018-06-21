@@ -1,11 +1,11 @@
 import * as log from "loglevel";
 
-export default function(serviceFunc) {
+export default function(handler) {
   return function(event, context, cb) {
     Promise.all(
       (event.Records || []).map(async record => {
         const message = JSON.parse(record.Sns.Message);
-        return await serviceFunc(message);
+        return await handler(message);
       })
     )
       .then(result => {

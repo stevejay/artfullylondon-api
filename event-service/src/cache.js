@@ -15,6 +15,8 @@ export async function clearEntityEtag(entityType, id) {
   return await redisClient.set(createKeyForEntity(entityType, id), "");
 }
 
+// TODO add stage to key!
+
 export function createKeyForEntity(entityType, id) {
   return `${entityType}/${id}`;
 }

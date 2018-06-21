@@ -2,17 +2,99 @@ import _ from "lodash";
 import fpPick from "lodash/fp/pick";
 import mappr from "mappr";
 import * as entityMapper from "../entity/mapper";
-import * as identity from "../entity/id";
+import * as idGenerator from "../entity/id-generator";
 import * as eventType from "../types/event-type";
 import * as entityType from "../types/entity-type";
 
 export const CURRENT_EVENT_SCHEME_VERSION = 4;
 
+function mapTimesRanges(params) {
+  return _.isEmpty(params.timesRanges)
+    ? undefined
+    : params.timesRanges.map(timesRange =>
+        _.pick(timesRange, ["id", "label", "dateFrom", "dateTo"])
+      );
+}
+
+function mapSpecialOpeningTimes(params) {
+  return _.isEmpty(params.specialOpeningTimes)
+    ? undefined
+    : params.specialOpeningTimes.map(special => ({
+        ..._.pick(special, ["date", "from", "to"]),
+        audienceTags: mapTags(special.audienceTags)
+      }));
+}
+
+function mapAdditionalPerformances(params) {
+  return _.isEmpty(params.additionalPerformances)
+    ? undefined
+    : params.additionalPerformances.map(additional =>
+        _.pick(additional, ["date", "at"])
+      );
+}
+
+function mapSoldOutPerformances(params) {
+  return _.isEmpty(params.soldOutPerformances)
+    ? undefined
+    : params.soldOutPerformances.map(soldOut =>
+        _.pick(soldOut, ["date", "at"])
+      );
+}
+
+function mapPerformancesClosures(params) {
+  return _.isEmpty(params.performancesClosures)
+    ? undefined
+    : params.performancesClosures.map(closure =>
+        _.pick(closure, ["date", "at"])
+      );
+}
+
+function mapSpecialPerformances(params) {
+  return _.isEmpty(params.specialPerformances)
+    ? undefined
+    : params.specialPerformances.map(special => ({
+        ..._.pick(special, ["date", "at"]),
+        audienceTags: mapTags(special.audienceTags)
+      }));
+}
+
+function mapPerformances(params) {
+  return _.isEmpty(params.performances)
+    ? undefined
+    : params.performances.map(performance =>
+        _.pick(performance, ["day", "at", "timesRangeId"])
+      );
+}
+
+function mapTags(tags) {
+  return _.isEmpty(tags)
+    ? undefined
+    : tags.map(tag => _.pick(tag, ["id", "label"]));
+}
+
+const mapTalents = mappr({
+  talents: params =>
+    _.isEmpty(params.talents)
+      ? undefined
+      : params.talents.map(talent => ({
+          id: talent.id,
+          roles: _.isEmpty(talent.roles) ? undefined : talent.roles,
+          characters: _.isEmpty(talent.characters)
+            ? undefined
+            : talent.characters
+        }))
+});
+
+const mapReviews = mappr({
+  reviews: params =>
+    _.isEmpty(params.reviews)
+      ? undefined
+      : params.reviews.map(review => _.pick(review, ["source", "rating"]))
+});
+
 export const mapCreateOrUpdateEventRequest = mappr.compose(
   params => ({
-    id:
-      params.id ||
-      identity.createEventId(params.venueId, params.dateFrom, params.name),
+    id: params.id || idGenerator.generateFromEvent(params),
     schemeVersion: CURRENT_EVENT_SCHEME_VERSION
   }),
   fpPick([
@@ -47,43 +129,43 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
     switch (params.eventType) {
       case eventType.PERFORMANCE:
         return {
-          timesRanges: entityMapper.mapTimesRanges(params),
-          performances: entityMapper.mapRequestPerformancesToDbItem(params),
-          additionalPerformances: entityMapper.mapAdditionalPerformances(
-            params
-          ),
-          specialPerformances: entityMapper.mapSpecialPerformances(params),
-          performancesClosures: entityMapper.mapPerformancesClosures(params),
-          soldOutPerformances: entityMapper.mapSoldOutPerformances(params)
+          timesRanges: mapTimesRanges(params),
+          performances: mapPerformances(params),
+          additionalPerformances: mapAdditionalPerformances(params),
+          specialPerformances: mapSpecialPerformances(params),
+          performancesClosures: mapPerformancesClosures(params),
+          soldOutPerformances: mapSoldOutPerformances(params)
         };
       case eventType.COURSE:
         return {
-          additionalPerformances: entityMapper.mapAdditionalPerformances(params)
+          additionalPerformances: mapAdditionalPerformances(params)
         };
       default:
         return {
           timesRanges: params.useVenueOpeningTimes
             ? undefined
-            : entityMapper.mapTimesRanges(params),
+            : mapTimesRanges(params),
           openingTimes: params.useVenueOpeningTimes
             ? undefined
-            : entityMapper.mapOpeningTimes(params),
-          additionalOpeningTimes: entityMapper.mapAdditionalOpeningTimes(
+            : entityMapper.mapRequestOpeningTimes(params),
+          additionalOpeningTimes: entityMapper.mapRequestAdditionalOpeningTimes(
             params
           ),
-          specialOpeningTimes: entityMapper.mapSpecialOpeningTimes(params),
-          openingTimesClosures: entityMapper.mapOpeningTimesClosures(params)
+          specialOpeningTimes: mapSpecialOpeningTimes(params),
+          openingTimesClosures: entityMapper.mapRequestOpeningTimesClosures(
+            params
+          )
         };
     }
   },
   {
-    audienceTags: params => entityMapper.mapTags(params.audienceTags),
-    mediumTags: params => entityMapper.mapTags(params.mediumTags),
-    styleTags: params => entityMapper.mapTags(params.styleTags),
-    geoTags: params => entityMapper.mapTags(params.geoTags)
+    audienceTags: params => mapTags(params.audienceTags),
+    mediumTags: params => mapTags(params.mediumTags),
+    styleTags: params => mapTags(params.styleTags),
+    geoTags: params => mapTags(params.geoTags)
   },
-  entityMapper.mapTalents,
-  entityMapper.mapReviews,
+  mapTalents,
+  mapReviews,
   entityMapper.mapRequestEditDates,
   entityMapper.mapRequestLinks,
   entityMapper.mapRequestImages
@@ -155,7 +237,7 @@ export const mapToPublicFullResponse = mappr(
     ]),
     () => ({ isFullEntity: true })
   ),
-  copyValuesFromReferencedEntities,
+  fixUpEventValuesFromReferencedEntities,
   // We redo this mapping in case images are now coming from a referenced entity:
   event => {
     return {
@@ -174,24 +256,18 @@ export function mergeReferencedEntities(event, referencedEntities) {
     eventSeries: referencedEntities.eventSeries || undefined,
     talents: _.isEmpty(event.talents)
       ? undefined
-      : event.talents.map(talent => {
-          const talentEntity = talentsIdMap[talent.id];
-          if (_.isNil(talentEntity)) {
-            throw new Error("[404] Referenced talent not found");
-          }
-
-          return {
-            ...talentEntity,
-            ...talent
-          };
-        })
+      : event.talents.map(talent => ({
+          ...talentsIdMap[talent.id],
+          ...talent
+        }))
   };
 
   delete result.eventSeriesId;
+  delete result.venueId;
   return result;
 }
 
-export function copyValuesFromReferencedEntities(event) {
+export function fixUpEventValuesFromReferencedEntities(event) {
   const result = { ...event };
 
   if (result.eventSeries) {

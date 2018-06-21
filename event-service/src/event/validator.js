@@ -12,7 +12,7 @@ const PERFORMANCES_WITH_DATE_AT_ORDER = (current, next) =>
   next.date > current.date ||
   (next.date === current.date && next.at > current.at);
 
-const RATING_CONSTRAINT = {
+const REQUIRED_RATING = {
   number: true,
   presence: true,
   numericality: {
@@ -22,7 +22,7 @@ const RATING_CONSTRAINT = {
   }
 };
 
-const AGE_CONSTRAINT = {
+const OPTIONAL_AGE = {
   number: true,
   numericality: {
     onlyInteger: true,
@@ -31,7 +31,7 @@ const AGE_CONSTRAINT = {
   }
 };
 
-const COST_CONSTRAINT = {
+const OPTIONAL_COST = {
   number: true,
   numericality: {
     greaterThanOrEqualTo: 0,
@@ -40,7 +40,7 @@ const COST_CONSTRAINT = {
   }
 };
 
-const ADDITIONAL_PERFORMANCES_CONSTRAINT = {
+const ADDITIONAL_PERFORMANCES = {
   array: true,
   length: { minimum: 1, maximum: 200 },
   ordered: PERFORMANCES_WITH_DATE_AT_ORDER,
@@ -51,6 +51,23 @@ const ADDITIONAL_PERFORMANCES_CONSTRAINT = {
     }
   }
 };
+
+const OPTIONAL_TAGS = tagType => ({
+  array: true,
+  length: { minimum: 1, maximum: 20 },
+  each: {
+    object: {
+      id: {
+        ...entityValidator.REQUIRED_STRING,
+        format: new RegExp(`^${tagType}\\/`)
+      },
+      label: {
+        ...entityValidator.REQUIRED_STRING,
+        format: /^\w[\w -]+\w$/
+      }
+    }
+  }
+});
 
 const EVENT_VALIDATOR = {
   status: entityValidator.REQUIRED_ENUM(statusType.ALLOWED_VALUES),
@@ -115,10 +132,10 @@ const EVENT_VALIDATOR = {
   summary: entityValidator.REQUIRED_STRING,
   description: entityValidator.OPTIONAL_LONG_STRING,
   descriptionCredit: entityValidator.OPTIONAL_STRING,
-  rating: RATING_CONSTRAINT,
-  minAge: AGE_CONSTRAINT,
+  rating: REQUIRED_RATING,
+  minAge: OPTIONAL_AGE,
   maxAge: {
-    ...AGE_CONSTRAINT,
+    ...OPTIONAL_AGE,
     dependency: {
       test: (value, attrs) => !_.isNil(value) && !_.isNil(attrs.minAge),
       ensure: (value, attrs) => value >= attrs.minAge,
@@ -142,8 +159,8 @@ const EVENT_VALIDATOR = {
       }
     ]
   },
-  costFrom: COST_CONSTRAINT,
-  costTo: COST_CONSTRAINT,
+  costFrom: OPTIONAL_COST,
+  costTo: OPTIONAL_COST,
   bookingType: {
     ...entityValidator.REQUIRED_ENUM(bookingType.ALLOWED_VALUES),
     dependency: {
@@ -234,7 +251,7 @@ const EVENT_VALIDATOR = {
     each: {
       object: {
         ...entityValidator.ADDITIONAL_OPENING_TIMES.each.object,
-        audienceTags: entityValidator.TAGS(tagType.AUDIENCE)
+        audienceTags: OPTIONAL_TAGS(tagType.AUDIENCE)
       }
     }
   },
@@ -253,13 +270,13 @@ const EVENT_VALIDATOR = {
       }
     }
   },
-  additionalPerformances: ADDITIONAL_PERFORMANCES_CONSTRAINT,
+  additionalPerformances: ADDITIONAL_PERFORMANCES,
   specialPerformances: {
-    ...ADDITIONAL_PERFORMANCES_CONSTRAINT,
+    ...ADDITIONAL_PERFORMANCES,
     each: {
       object: {
-        ...ADDITIONAL_PERFORMANCES_CONSTRAINT.each.object,
-        audienceTags: entityValidator.TAGS(tagType.AUDIENCE)
+        ...ADDITIONAL_PERFORMANCES.each.object,
+        audienceTags: OPTIONAL_TAGS(tagType.AUDIENCE)
       }
     }
   },
@@ -306,10 +323,10 @@ const EVENT_VALIDATOR = {
       }
     }
   },
-  audienceTags: entityValidator.TAGS(tagType.AUDIENCE),
-  geoTags: entityValidator.TAGS(tagType.GEO),
-  mediumTags: entityValidator.TAGS(tagType.MEDIUM),
-  styleTags: entityValidator.TAGS(tagType.STYLE),
+  audienceTags: OPTIONAL_TAGS(tagType.AUDIENCE),
+  geoTags: OPTIONAL_TAGS(tagType.GEO),
+  mediumTags: OPTIONAL_TAGS(tagType.MEDIUM),
+  styleTags: OPTIONAL_TAGS(tagType.STYLE),
   links: entityValidator.LINKS,
   images: entityValidator.IMAGES,
   reviews: {
@@ -318,7 +335,7 @@ const EVENT_VALIDATOR = {
     each: {
       object: {
         source: entityValidator.REQUIRED_STRING,
-        rating: RATING_CONSTRAINT
+        rating: REQUIRED_RATING
       }
     }
   },
