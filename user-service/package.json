@@ -11,7 +11,7 @@
     "debug:windows": "SET SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline start --port 3012 --stage=development --noTimeout"
   },
   "devDependencies": {
-    "aws-sdk": "^2.259.1",
+    "aws-sdk": "^2.260.1",
     "babel-core": "^6.26.3",
     "babel-jest": "^23.0.1",
     "babel-loader": "^7.1.4",
