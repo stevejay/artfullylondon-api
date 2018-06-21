@@ -1,11 +1,11 @@
-import * as eventSeriesRepository from "../persistence/event-series-repository";
+import * as eventSeriesRepository from "../persister/event-series-repository";
 import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as notifier from "../notifier";
 import * as entityType from "../types/entity-type";
-import * as eventRepository from "../persistence/event-repository";
-import * as cache from "../cache";
+import * as eventRepository from "../persister/event-repository";
+import * as cacher from "../cacher";
 
 export async function getEventSeries(params) {
   const eventSeries = await eventSeriesRepository.getEventSeries(
@@ -20,7 +20,7 @@ export async function getEventSeriesForEdit(params) {
     params.id,
     true
   );
-  return { entity: mapper.mapToAdminResponse(eventSeries) };
+  return { entity: eventSeries };
 }
 
 export async function getEventSeriesMulti(params) {
@@ -43,6 +43,6 @@ export async function createOrUpdateEventSeries(params) {
     await Promise.all(eventIds.map(notifier.updateEvent));
   }
   await notifier.indexEntity(mapper.mapToPublicFullResponse(dbEventSeries));
-  await cache.clearEntityEtag(entityType.EVENT_SERIES, dbEventSeries.id);
+  await cacher.clearEntityEtag(entityType.EVENT_SERIES, dbEventSeries.id);
   return { entity: dbEventSeries };
 }

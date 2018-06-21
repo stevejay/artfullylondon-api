@@ -1,5 +1,5 @@
 import etag from "etag";
-import * as redisClient from "./external-services/redis";
+import * as redisClient from "./redis-client";
 
 export async function storeEntityEtag(entityType, id, data) {
   const value = etag(data);
@@ -15,8 +15,6 @@ export async function clearEntityEtag(entityType, id) {
   return await redisClient.set(createKeyForEntity(entityType, id), "");
 }
 
-// TODO add stage to key!
-
-export function createKeyForEntity(entityType, id) {
-  return `${entityType}/${id}`;
+function createKeyForEntity(entityType, id) {
+  return `${process.env.SERVERLESS_STAGE}/${entityType}/${id}`;
 }

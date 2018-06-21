@@ -1,5 +1,5 @@
 import * as redis from "redis";
-import * as xrayWrapper from "./xray-wrapper";
+import * as xrayWrapper from "../library-wrappers/xray-wrapper";
 
 const CLIENT_OPTIONS = {
   host: process.env.REDIS_HOST,

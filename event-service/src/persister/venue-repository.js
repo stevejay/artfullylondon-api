@@ -26,18 +26,6 @@ export async function getVenueMulti(ids) {
   return response.Responses[VENUE_TABLE_NAME];
 }
 
-export async function getNextVenueId(lastId) {
-  const result = await dynamodb.scanBasic({
-    TableName: VENUE_TABLE_NAME,
-    ExclusiveStartKey: lastId ? { id: lastId } : null,
-    Limit: 1,
-    ProjectionExpression: "id",
-    ConsistentRead: false
-  });
-
-  return result.Items.length ? result.Items[0].id : null;
-}
-
 export async function createOrUpdateVenue(venue) {
   await entityRepository.write(VENUE_TABLE_NAME, venue);
 }

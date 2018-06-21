@@ -1,8 +1,8 @@
 import uuidv4 from "uuid/v4";
 import * as talentMapper from "../../src/talent-service/mapper";
-import * as venueMapper from "../../src/venue/mapper";
-import * as eventSeriesMapper from "../../src/event-series/mapper";
-import * as eventMapper from "../../src/event/mapper";
+import * as venueMapper from "../../src/venue-service/mapper";
+import * as eventSeriesMapper from "../../src/event-series-service/mapper";
+import * as eventMapper from "../../src/event-service/mapper";
 
 export const NORMAL_ADMIN_USER_REQUEST_HEADERS = {
   Authorization:

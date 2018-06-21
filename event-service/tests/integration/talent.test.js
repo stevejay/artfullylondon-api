@@ -9,8 +9,6 @@ import * as redisUtils from "../utils/redis";
 // import * as snsUtils from "../utils/sns";
 jest.setTimeout(30000);
 
-// TODO test wikipedia integration
-
 describe("talent", () => {
   let testTalentId = null;
   const testTalentBody = testData.createNewTalentBody();

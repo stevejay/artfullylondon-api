@@ -1,12 +1,12 @@
-import * as venueRepository from "../persistence/venue-repository";
+import * as venueRepository from "../persister/venue-repository";
 import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as enhancer from "../enhancer";
 import * as entityType from "../types/entity-type";
-import * as eventRepository from "../persistence/event-repository";
+import * as eventRepository from "../persister/event-repository";
 import * as notifier from "../notifier";
-import * as cache from "../cache";
+import * as cacher from "../cacher";
 
 export async function getVenue(params) {
   const venue = await venueRepository.getVenue(params.id, false);
@@ -23,11 +23,6 @@ export async function getVenueMulti(params) {
   return { entities: venues.map(mapper.mapToPublicSummaryResponse) };
 }
 
-export async function getNextVenueId(params) {
-  const venueId = await venueRepository.getNextVenueId(params.lastId);
-  return { venueId };
-}
-
 export async function createOrUpdateVenue(params) {
   params = normaliser.normaliseCreateOrUpdateVenueRequest(params);
   validator.validateCreateOrUpdateVenueRequest(params);
@@ -40,6 +35,6 @@ export async function createOrUpdateVenue(params) {
     await Promise.all(eventIds.map(notifier.updateEvent));
   }
   await notifier.indexEntity(mapper.mapToPublicFullResponse(dbVenue));
-  await cache.clearEntityEtag(entityType.VENUE, dbVenue.id);
+  await cacher.clearEntityEtag(entityType.VENUE, dbVenue.id);
   return { entity: dbVenue };
 }

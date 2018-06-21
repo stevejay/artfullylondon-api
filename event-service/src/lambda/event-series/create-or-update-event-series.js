@@ -1,7 +1,7 @@
 import "../xray-setup";
 import withErrorHandling from "../with-error-handling";
 import withWriteAuthorization from "../with-write-authorization";
-import * as eventSeriesService from "../../event-series/event-series-service";
+import * as eventSeriesService from "../../event-series-service";
 import convertAsyncToCallback from "../convert-async-to-callback";
 
 export const handler = convertAsyncToCallback(

@@ -1,11 +1,13 @@
 import "../xray-setup";
 import withErrorHandling from "../with-error-handling";
-import * as eventSeriesService from "../../event-series/event-series-service";
+import * as eventSeriesService from "../../event-series-service";
+import * as mapper from "../mapper";
 import convertAsyncToCallback from "../convert-async-to-callback";
 
 export const handler = convertAsyncToCallback(
   withErrorHandling(async function(event) {
-    const result = await eventSeriesService.getEventSeriesMulti(event);
+    const params = mapper.mapGetEntityMultiRequest(event);
+    const result = await eventSeriesService.getEventSeriesMulti(params);
     return { body: JSON.stringify(result) };
   })
 );

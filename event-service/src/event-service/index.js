@@ -1,4 +1,4 @@
-import * as eventRepository from "../persistence/event-repository";
+import * as eventRepository from "../persister/event-repository";
 import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";

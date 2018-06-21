@@ -10,8 +10,6 @@ provider:
     runtime: nodejs8.10
     region: eu-west-1
     tracing: true
-    apiKeys:
-        - apiKey
     environment: ${file(env.yml):${self:custom.stage}}
     iamManagedPolicies:
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
@@ -275,6 +273,7 @@ functions:
         handler: src/lambda/venue/create-or-update-venue.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -326,6 +325,7 @@ functions:
         handler: src/lambda/venue/get-venue.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -352,29 +352,11 @@ functions:
                                 "ifNoneMatch" : "$input.params().header.get('If-None-Match')"
                             }
                 response: ${self:custom.standardResponses}
-    getNextVenue:
-        handler: src/lambda/venue/get-next-venue.handler
-        environment:
-            SERVERLESS_REGION: ${self:custom.region}
-            SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
-        events:
-            - http:
-                path: "admin/next-venue/{lastId+}"
-                method: get
-                cors: true
-                private: true
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "lastId": "$input.params('lastId')"
-                            }
-                response: ${self:custom.standardResponses}
     getVenueForEdit:
         handler: src/lambda/venue/get-venue-for-edit.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -408,6 +390,7 @@ functions:
         handler: src/lambda/venue/get-venue-multi.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -449,6 +432,7 @@ functions:
         handler: src/lambda/talent/create-or-update-talent.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -500,6 +484,7 @@ functions:
         handler: src/lambda/talent/get-talent.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -530,6 +515,7 @@ functions:
         handler: src/lambda/talent/get-talent-for-edit.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -563,6 +549,7 @@ functions:
         handler: src/lambda/talent/get-talent-multi.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -604,6 +591,7 @@ functions:
         handler: src/lambda/event/create-or-update-event.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -655,6 +643,7 @@ functions:
         handler: src/lambda/event/get-event.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -685,6 +674,7 @@ functions:
         handler: src/lambda/event/get-event-for-edit.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -718,6 +708,7 @@ functions:
         handler: src/lambda/event/get-event-multi.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -759,6 +750,7 @@ functions:
         handler: src/lambda/event-series/create-or-update-event-series.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -810,6 +802,7 @@ functions:
         handler: src/lambda/event-series/get-event-series.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -840,6 +833,7 @@ functions:
         handler: src/lambda/event-series/get-event-series-for-edit.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -873,6 +867,7 @@ functions:
         handler: src/lambda/event-series/get-event-series-multi.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -914,6 +909,7 @@ functions:
         handler: src/lambda/search/update-event-search-index-sns.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -934,6 +930,7 @@ functions:
         handler: src/lambda/search/refresh-search-index.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
@@ -957,6 +954,7 @@ functions:
         handler: src/lambda/search/refresh-search-index-sns.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -979,6 +977,7 @@ functions:
         handler: src/lambda/search/refresh-event-full-search.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
+            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
             SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN: ${self:custom.indexDocumentTopicArn}
         events:

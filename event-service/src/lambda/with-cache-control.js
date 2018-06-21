@@ -1,5 +1,5 @@
 import _ from "lodash";
-import * as cache from "../cache";
+import * as cacher from "../cacher";
 
 const ARTFULLY_CACHE_HEADER_KEY = "X-Artfully-Cache";
 
@@ -12,7 +12,7 @@ export default function(handler, entityType, maxAgeSeconds = 1800) {
     };
 
     if (!_.isNil(event.ifNoneMatch)) {
-      const eTag = await cache.getEntityEtag(entityType, event.id);
+      const eTag = await cacher.getEntityEtag(entityType, event.id);
       if (eTag === event.ifNoneMatch) {
         headers[ARTFULLY_CACHE_HEADER_KEY] = "Hit";
         return { statusCode: 304, headers };
@@ -20,7 +20,7 @@ export default function(handler, entityType, maxAgeSeconds = 1800) {
     }
 
     const result = await handler(event, context);
-    const etagValue = await cache.storeEntityEtag(
+    const etagValue = await cacher.storeEntityEtag(
       entityType,
       event.id,
       result.body

@@ -1,11 +1,11 @@
-import * as talentRepository from "../persistence/talent-repository";
+import * as talentRepository from "../persister/talent-repository";
 import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as enhancer from "../enhancer";
 import * as entityType from "../types/entity-type";
 import * as notifier from "../notifier";
-import * as cache from "../cache";
+import * as cacher from "../cacher";
 
 export async function getTalent(params) {
   const talent = await talentRepository.getTalent(params.id, false);
@@ -29,6 +29,6 @@ export async function createOrUpdateTalent(params) {
   const dbTalent = mapper.mapCreateOrUpdateTalentRequest(params);
   await talentRepository.createOrUpdateTalent(dbTalent);
   await notifier.indexEntity(mapper.mapToPublicFullResponse(dbTalent));
-  await cache.clearEntityEtag(entityType.TALENT, dbTalent.id);
+  await cacher.clearEntityEtag(entityType.TALENT, dbTalent.id);
   return { entity: dbTalent };
 }

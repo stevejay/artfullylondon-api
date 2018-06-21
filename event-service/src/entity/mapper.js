@@ -1,6 +1,6 @@
 import _ from "lodash";
 import mappr from "mappr";
-import * as timeUtils from "../time-utils";
+import * as timeUtils from "../entity/time-utils";
 
 export const mapResponseMainImage = mappr({
   image: "images[0].id",

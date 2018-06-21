@@ -1,8 +1,8 @@
 import * as notifier from "../notifier";
-import * as eventRepository from "../persistence/event-repository";
-import * as eventMapper from "../event/mapper";
+import * as eventRepository from "../persister/event-repository";
+import * as eventMapper from "../event-service/mapper";
 import * as entityType from "../types/entity-type";
-import * as cache from "../cache";
+import * as cacher from "../cacher";
 
 // const LATEST_VERSION = "latest";
 
@@ -18,7 +18,7 @@ export async function updateEventSearchIndex(message) {
   );
   dbEvent = eventMapper.mergeReferencedEntities(dbEvent, referencedEntities);
   await notifier.indexEntity(eventMapper.mapToPublicFullResponse(dbEvent));
-  await cache.clearEntityEtag(entityType.EVENT, dbEvent.id);
+  await cacher.clearEntityEtag(entityType.EVENT, dbEvent.id);
 }
 
 // const refreshSearchIndexConstraints = {

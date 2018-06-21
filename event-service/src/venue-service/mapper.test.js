@@ -1,6 +1,6 @@
 import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
-import * as timeUtils from "../time-utils";
+import * as timeUtils from "../entity/time-utils";
 
 describe("mapCreateOrUpdateVenueRequest", () => {
   beforeEach(() => {
