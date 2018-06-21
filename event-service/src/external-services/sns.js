@@ -9,12 +9,12 @@ const config = process.env.IS_OFFLINE
 
 const sns = new AWS.SNS(config);
 
-export function notify(body, headers) {
+export function notify(body, topicArn) {
   return sns
     .publish({
-      Message: JSON.stringify(body),
+      Message: JSON.stringify({ default: body }),
       MessageStructure: "json",
-      TopicArn: headers.arn
+      TopicArn: topicArn
     })
     .promise();
 }

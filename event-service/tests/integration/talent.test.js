@@ -6,6 +6,7 @@ import * as dynamodb from "../utils/dynamodb";
 import * as cognitoAuth from "../utils/cognito-auth";
 import * as lambdaUtils from "../utils/lambda";
 import * as redisUtils from "../utils/redis";
+// import * as snsUtils from "../utils/sns";
 jest.setTimeout(30000);
 
 // TODO test wikipedia integration

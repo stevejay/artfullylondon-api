@@ -1,7 +1,7 @@
 import "../xray-setup";
 import withErrorHandling from "../with-error-handling";
 import withWriteAuthorization from "../with-write-authorization";
-import * as talentService from "../../talent/talent-service";
+import * as talentService from "../../talent-service";
 import convertAsyncToCallback from "../convert-async-to-callback";
 
 export const handler = convertAsyncToCallback(

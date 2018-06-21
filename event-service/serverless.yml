@@ -985,6 +985,12 @@ functions:
             - schedule: 
                 rate: cron(0 4 * * ? *)
                 enabled: false
+    # indexDocument:
+    #     handler: src/lambda/test/index-document-sns.handler
+    #     events:
+    #         - sns:
+    #             topicName: ${self:custom.indexDocumentTopicName}
+    #             displayName: Test topic
 
 resources:
     Resources:

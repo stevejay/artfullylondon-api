@@ -1,5 +1,5 @@
 import uuidv4 from "uuid/v4";
-import * as talentMapper from "../../src/talent/mapper";
+import * as talentMapper from "../../src/talent-service/mapper";
 import * as venueMapper from "../../src/venue/mapper";
 import * as eventSeriesMapper from "../../src/event-series/mapper";
 import * as eventMapper from "../../src/event/mapper";

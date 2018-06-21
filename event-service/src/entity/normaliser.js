@@ -1,3 +1,12 @@
+export const OPTIONAL_STRING_NORMALISER = {
+  trim: true,
+  undefinedIfEmpty: true
+};
+
+export const REQUIRED_STRING_NORMALISER = {
+  trim: true
+};
+
 export const IMAGES_NORMALISER = {
   undefinedIfEmpty: true,
   each: {
