@@ -2,6 +2,12 @@
 
 This is the back-end code for the Artfully London website. I built it using Node.js AWS Lambdas, grouped as logical microservices and deployed using the Serverless framework.
 
+## Imagemagick
+
+### Windows
+
+Install a [Windows binary release](https://www.imagemagick.org/script/download.php) of Imagemagick, making sure to tick the installer option of 'Install legacy utilities'.
+
 ## LocalStack
 
 1.  Clone
@@ -34,6 +40,9 @@ This is the back-end code for the Artfully London website. I built it using Node
 - Improve the AWS Cognito serverless configuration. (I think serverless
   supports AWS Cognito configuration now.)
 - Outer describe(s) on every test file
+- Add XRay tracing to every service
+- remove serverless-dynamodb-local???
+- do I need to add cloudwatch:PutMetricData permission?
 
 ## Issues
 

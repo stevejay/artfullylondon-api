@@ -25,7 +25,7 @@ custom:
     project: artfullylondon
     stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
-    indexDocumentTopicName: IndexDocument
+    indexDocumentTopicName: IndexDocument-${self:custom.stage}
     errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
     standardResponses:
         headers:
@@ -167,5 +167,5 @@ functions:
         timeout: 300
         events:
             - sns:
-                topicName: ${self:custom.indexDocumentTopicName}-${self:custom.stage}
+                topicName: ${self:custom.indexDocumentTopicName}
                 displayName: Index a document so it is searchable

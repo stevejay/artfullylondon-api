@@ -1,39 +1,49 @@
-"use strict";
+import dynamodb from "./dynamodb";
 
-const dynamodb = require("../external-services/dynamodb");
+const BASIC_REQUEST = {
+  TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
+  ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+};
 
-exports.getImage = imageId =>
-  dynamodb.get({
-    TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
-    Key: { id: imageId },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+export async function getImage(imageId) {
+  return await dynamodb.get({ ...BASIC_REQUEST, Key: { id: imageId } });
+}
+
+export async function validateDoesNotExist(imageId) {
+  const image = await dynamodb.tryGet({
+    ...BASIC_REQUEST,
+    Key: { id: imageId }
   });
 
-exports.tryGetImage = imageId =>
-  dynamodb.tryGet({
-    TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
-    Key: { id: imageId },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+  if (image) {
+    throw new Error("[400] Image Already Exists");
+  }
+}
+
+export async function getNextImage(lastImageId) {
+  const result = await dynamodb.scanBasic({
+    ...BASIC_REQUEST,
+    ExclusiveStartKey: lastImageId || null,
+    Limit: 1,
+    ProjectionExpression: "id",
+    ConsistentRead: false
   });
 
-exports.getNextImage = lastId =>
-  dynamodb
-    .scanBasic({
-      TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
-      ExclusiveStartKey: lastId || null,
-      Limit: 1,
-      ProjectionExpression: "id",
-      ConsistentRead: false,
-      ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
-    })
-    .then(result => (result.Items.length > 0 ? result.Items[0] : null));
+  return result.Items.length > 0 ? result.Items[0] : null;
+}
 
-exports.saveImage = (image, shouldAlreadyExist) =>
-  dynamodb.put({
-    TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
+export function createImage(image) {
+  return dynamodb.put({
+    ...BASIC_REQUEST,
     Item: image,
-    ConditionExpression: shouldAlreadyExist
-      ? "attribute_exists(id)"
-      : "attribute_not_exists(id)",
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ConditionExpression: "attribute_not_exists(id)"
   });
+}
+
+export function updateImage(image) {
+  return dynamodb.put({
+    ...BASIC_REQUEST,
+    Item: image,
+    ConditionExpression: "attribute_exists(id)"
+  });
+}

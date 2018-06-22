@@ -8,14 +8,25 @@ package:
 provider:
     name: aws
     runtime: nodejs8.10
-    stage: production
     region: eu-west-1
+    tracing: true
     environment: ${file(env.yml):${self:custom.stage}}
+    iamManagedPolicies:
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
     iamRoleStatements:
         -
             Effect: "Allow"
-            Action: "lambda:InvokeFunction"
-            Resource: "*"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
+                        - Ref: "IterationLogDynamoTable"
         -
             Effect: "Allow"
             Action: "dynamodb:*"
@@ -29,32 +40,6 @@ provider:
                         - Ref: "AWS::AccountId"
                         - ":table/"
                         - Ref: "ImageDynamoTable"
-        -
-            Effect: "Allow"
-            Action: "dynamodb:*"
-            Resource:
-                Fn::Join:
-                    - ""
-                    -
-                        - "arn:aws:dynamodb:"
-                        - Ref: "AWS::Region"
-                        - ":"
-                        - Ref: "AWS::AccountId"
-                        - ":table/"
-                        - Ref: "AsyncControlDynamoTable"
-        -
-            Effect: "Allow"
-            Action: "dynamodb:*"
-            Resource:
-                Fn::Join:
-                    - ""
-                    -
-                        - "arn:aws:dynamodb:"
-                        - Ref: "AWS::Region"
-                        - ":"
-                        - Ref: "AWS::AccountId"
-                        - ":table/"
-                        - Ref: "AsyncControlErrorDynamoTable"
         -
             Effect: "Allow"
             Action: "s3:*"
@@ -73,69 +58,101 @@ provider:
                             - "arn:aws:s3:::"
                             - Ref: "ResizedImagesS3Bucket"
                             - "/*"
-        -
-            Effect: "Allow"
-            Action: "cloudwatch:PutMetricData"
-            Resource: "*"
-        -
-            Effect: "Allow"
-            Action: "sns:*"
-            Resource:
-                Fn::Join:
-                    - ""
-                    -
-                        - "arn:aws:sns:"
-                        - Ref: "AWS::Region"
-                        - ":"
-                        - Ref: "AWS::AccountId"
-                        - ":*"
+        # -
+        #     Effect: "Allow"
+        #     Action: "cloudwatch:PutMetricData"
+        #     Resource: "*"
+        # -
+        #     Effect: "Allow"
+        #     Action: "sns:*"
+        #     Resource:
+        #         Fn::Join:
+        #             - ""
+        #             -
+        #                 - "arn:aws:sns:"
+        #                 - Ref: "AWS::Region"
+        #                 - ":"
+        #                 - Ref: "AWS::AccountId"
+        #                 - ":*"
 
 plugins:
     - serverless-webpack
+    - serverless-pseudo-parameters
+    - serverless-plugin-tracing
     - serverless-dynamodb-local
     - serverless-offline-sns
     - serverless-offline
 
 custom:
     project: artfullylondon
-    stage: ${opt:stage, self:provider.stage}
+    stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
     env: ${file(./env.yml):${self:custom.stage}}
-    adminSiteOrigin: https://www.artfully-admin.site
-    publicSiteOrigin: https://www.artfully.london
+    # adminSiteOrigin: https://www.artfully-admin.site
+    # publicSiteOrigin: https://www.artfully.london
+    reprocessImagesTopicName: ReprocessImages-${self:custom.stage}
+    reprocessImagesTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.reprocessImagesTopicName}"
+    iterationLogTableName: ${self:custom.project}-${self:custom.stage}-iteration-log
     imageTableName: ${self:custom.project}-${self:custom.stage}-image
-    asyncControlTableName: ${self:custom.project}-${self:custom.stage}-image-asynccontrol
-    asyncControlErrorTableName: ${self:custom.project}-${self:custom.stage}-image-asynccontrol-error
     originalImagesBucketName: ${self:custom.project}-${self:custom.stage}-original-images
     resizedImagesBucketName: ${self:custom.project}-${self:custom.stage}-resized-images
-    reprocessImagesSnsEndpointName: "ReprocessImages"
-    reprocessImagesTopicArn: ${self:custom.env.topicArnPrefix}:${self:custom.reprocessImagesSnsEndpointName}
-    startIterationLambdaName: artfullylondon-iteration-service-${self:custom.stage}-startIteration
-    endIterationLambdaName: artfullylondon-iteration-service-${self:custom.stage}-endIteration
-    addIterationErrorLambdaName: artfullylondon-iteration-service-${self:custom.stage}-addIterationError
+    errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
+    standardResponses:
+        headers:
+            Access-Control-Allow-Credentials : "'true'"
+        template: $input.path('$')
+        statusCodes:
+            200:
+                pattern: ''
+                template:
+                    application/json: $input.path("$.body")
+                # headers:
+                #     Cache-Control: integration.response.body.headers.Cache-Control
+            400:
+                pattern: '^\[400\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            401:
+                pattern: '^\[401\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            403:
+                pattern: '^\[403\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            404:
+                pattern: '^\[404\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
+            500:
+                pattern: '^\[500\].*'
+                template:
+                    application/json: ${self:custom.errorResponseTemplate}
     webpack:
-        includeModules: true
-        packager: 'npm'
+        webpackConfig: ./webpack.config.js
+        includeModules:
+            forceExclude:
+                - aws-sdk
+        packager: 'yarn'
     dynamodb:
         start:
-            port: 8000
+            port: 4569
             migrate: true
             sharedDb: true
             noStart: true
     serverless-offline-sns:
-        port: 4002 # a free port for the sns server to run on
+        port: 4002
         debug: false
-        # host: 0.0.0.0 # Optional, defaults to 127.0.0.1 if not provided to serverless-offline
-        # sns-endpoint: http://127.0.0.1:4567 # Optional. Only if you want to use a custom endpoint
-        accountId: 1111111111111 # Optional
+        accountId: 1111111111111
 
 functions:
     addImage:
-        handler: src/handlers/add-image.handler
+        handler: src/lambda/add-image.handler
         timeout: 60
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_IMAGE_TABLE_NAME: ${self:custom.imageTableName}
+            SERVERLESS_ITERATION_LOG_TABLE_NAME: ${self:custom.iterationLogTableName}
             SERVERLESS_ORIGINAL_IMAGES_BUCKET_NAME: ${self:custom.originalImagesBucketName}
             SERVERLESS_RESIZED_IMAGES_BUCKET_NAME: ${self:custom.resizedImagesBucketName}
         events:
@@ -143,8 +160,22 @@ functions:
                 path: "image/{id}"
                 method: put
                 cors: true
-    getImage:
-        handler: src/handlers/get-image.handler
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')",
+                                "type": $input.json('$.type'),
+                                "url": $input.json('$.url'),
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
+    getImageData:
+        handler: src/lambda/get-image-data.handler
         timeout: 6
         environment:
             SERVERLESS_REGION: ${self:custom.region}
@@ -156,34 +187,50 @@ functions:
                 path: "image/{id}"
                 method: get
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "id": "$input.params('id')"
+                            }
+                response: ${self:custom.standardResponses}
     reprocessImages:
-        handler: src/handlers/reprocess-images.handler
+        handler: src/lambda/reprocess-images.handler
         timeout: 6
         environment:
             SERVERLESS_REGION: ${self:custom.region}
-            SERVERLESS_ASYNC_CONTROL_TABLE_NAME: ${self:custom.asyncControlTableName}
             SERVERLESS_REPROCESS_IMAGES_TOPIC_ARN: ${self:custom.reprocessImagesTopicArn}
-            SERVERLESS_START_ITERATION_LAMBDA_NAME: ${self:custom.startIterationLambdaName}
         events:
             - http:
                 path: "images/reprocess"
                 method: post
                 cors: true
+                integration: lambda
+                request:
+                    template:
+                        application/json: >
+                            {
+                                "authorization" : "$input.params().header.get('Authorization')"
+                            }
+                response: ${self:custom.standardResponses}
+                authorizer:
+                    name: authorizer
+                    arn: ${self:provider.environment.cognitoUserPoolArn}
     reprocessImagesSns:
-        handler: src/handlers/reprocess-images-sns.handler
+        handler: src/lambda/reprocess-images-sns.handler
         environment:
             SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_IMAGE_TABLE_NAME: ${self:custom.imageTableName}
+            SERVERLESS_ITERATION_LOG_TABLE_NAME: ${self:custom.iterationLogTableName}
             SERVERLESS_ORIGINAL_IMAGES_BUCKET_NAME: ${self:custom.originalImagesBucketName}
             SERVERLESS_RESIZED_IMAGES_BUCKET_NAME: ${self:custom.resizedImagesBucketName}
-            SERVERLESS_ASYNC_CONTROL_TABLE_NAME: ${self:custom.asyncControlTableName}
-            SERVERLESS_ASYNC_CONTROL_ERROR_TABLE_NAME: ${self:custom.asyncControlErrorTableName}
             SERVERLESS_REPROCESS_IMAGES_TOPIC_ARN: ${self:custom.reprocessImagesTopicArn}
-            SERVERLESS_END_ITERATION_LAMBDA_NAME: ${self:custom.endIterationLambdaName}
-            SERVERLESS_ADD_ITERATION_ERROR_LAMBDA_NAME: ${self:custom.addIterationErrorLambdaName}
         timeout: 300
         events:
-            - sns: "${self:custom.reprocessImagesSnsEndpointName}"
+            - sns:
+                topicName: ${self:custom.reprocessImagesTopicName}
+                displayName: Reprocess images in the system
 
 resources:
     Resources:
@@ -211,40 +258,24 @@ resources:
                 ProvisionedThroughput:
                     ReadCapacityUnits: 2
                     WriteCapacityUnits: 1
-        AsyncControlDynamoTable:
+        IterationLogDynamoTable:
             Type: AWS::DynamoDB::Table
-            DeletionPolicy: Delete
+            DeletionPolicy: Retain
             Properties:
-                TableName: ${self:custom.asyncControlTableName}
+                TableName: ${self:custom.iterationLogTableName}
                 AttributeDefinitions:
                     -
-                        AttributeName: id
+                        AttributeName: actionId
+                        AttributeType: S
+                    -
+                        AttributeName: iterationId
                         AttributeType: S
                 KeySchema:
                     -
-                        AttributeName: id
-                        KeyType: HASH
-                ProvisionedThroughput:
-                    ReadCapacityUnits: 2
-                    WriteCapacityUnits: 1
-        AsyncControlErrorDynamoTable:
-            Type: AWS::DynamoDB::Table
-            DeletionPolicy: Delete
-            Properties:
-                TableName: ${self:custom.asyncControlErrorTableName}
-                AttributeDefinitions:
-                    -
-                        AttributeName: processId
-                        AttributeType: S
-                    -
-                        AttributeName: messageId
-                        AttributeType: S
-                KeySchema:
-                    -
-                        AttributeName: processId
+                        AttributeName: actionId
                         KeyType: HASH
                     -
-                        AttributeName: messageId
+                        AttributeName: iterationId
                         KeyType: RANGE
                 ProvisionedThroughput:
                     ReadCapacityUnits: 2
@@ -262,7 +293,8 @@ resources:
                             AllowedMethods:
                                 - GET
                             AllowedOrigins:
-                                - ${self:custom.adminSiteOrigin}
+                                - "*"
+                                # - ${self:custom.adminSiteOrigin}
                             ExposedHeaders:
                                 - DATE
                             Id: ${self:custom.originalImagesBucketName}
@@ -303,8 +335,9 @@ resources:
                             AllowedMethods:
                                 - GET
                             AllowedOrigins:
-                                - ${self:custom.adminSiteOrigin}
-                                - ${self:custom.publicSiteOrigin}
+                                - "*"
+                                # - ${self:custom.adminSiteOrigin}
+                                # - ${self:custom.publicSiteOrigin}
                             ExposedHeaders:
                                 - DATE
                             Id: ${self:custom.resizedImagesBucketName}
