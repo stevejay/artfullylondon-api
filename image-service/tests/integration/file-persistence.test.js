@@ -2,6 +2,7 @@ import path from "path";
 import * as fs from "fs";
 import * as filePersistence from "../../src/file-persistence";
 import * as s3Utils from "../utils/s3";
+jest.setTimeout(60000);
 
 const TEST_IMAGES_DIR = path.resolve(__dirname, "../images");
 const OUTPUT_DIR = path.resolve(__dirname, "../output");

@@ -26,9 +26,9 @@ export async function getImageData(params) {
 }
 
 export async function startReprocessingImages() {
-  const startTimestamp = Date.now();
-  iterationLogRepository.createLog(ITERATE_IMAGES_ACTION_ID, startTimestamp);
-  await notifier.startReprocessingImages(startTimestamp);
+  const iterationId = `${Date.now()}`;
+  await iterationLogRepository.createLog(ITERATE_IMAGES_ACTION_ID, iterationId);
+  await notifier.startReprocessingImages(iterationId);
   return { acknowledged: true };
 }
 
@@ -44,18 +44,18 @@ export async function reprocessNextImage(message) {
         await imageRepository.updateImage(dbImage);
       }
     } catch (err) {
-      iterationLogRepository.addErrorToLog(
+      await iterationLogRepository.addErrorToLog(
         ITERATE_IMAGES_ACTION_ID,
-        message.startTimestamp,
+        message.iterationId,
         `Error with image ${nextImage.id}: ${err.message}`
       );
     }
     await iterationThrottler(startTime, 500);
-    await notifier.reprocessNextImage(message.startTimestamp, nextImage.id);
+    await notifier.reprocessNextImage(message.iterationId, nextImage.id);
   } else {
-    iterationLogRepository.closeLog(
+    await iterationLogRepository.closeLog(
       ITERATE_IMAGES_ACTION_ID,
-      message.startTimestamp
+      message.iterationId
     );
   }
 }

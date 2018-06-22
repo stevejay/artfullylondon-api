@@ -7,7 +7,7 @@ const dynamodb = clientWrapper({
   }
 });
 
-exports.truncateTagTable = async function(tableName) {
+export async function truncateTagTable(tableName) {
   const items = await dynamodb.scan({
     TableName: tableName,
     ProjectionExpression: "id, tagType"
@@ -19,4 +19,4 @@ exports.truncateTagTable = async function(tableName) {
       Key: items[i]
     });
   }
-};
+}

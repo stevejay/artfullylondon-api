@@ -38,3 +38,10 @@ export async function closeLog(actionId, iterationId) {
     }
   });
 }
+
+export async function getLog(actionId, iterationId) {
+  await dynamodb.get({
+    ...BASIC_REQUEST,
+    Key: { actionId, iterationId }
+  });
+}

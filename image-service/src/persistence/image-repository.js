@@ -23,12 +23,11 @@ export async function validateDoesNotExist(imageId) {
 export async function getNextImage(lastImageId) {
   const result = await dynamodb.scanBasic({
     ...BASIC_REQUEST,
-    ExclusiveStartKey: lastImageId || null,
+    ExclusiveStartKey: lastImageId ? { id: lastImageId } : null,
     Limit: 1,
     ProjectionExpression: "id",
     ConsistentRead: false
   });
-
   return result.Items.length > 0 ? result.Items[0] : null;
 }
 

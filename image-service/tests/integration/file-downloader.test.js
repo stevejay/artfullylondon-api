@@ -2,6 +2,8 @@ import { sync } from "jest-toolkit";
 import path from "path";
 import * as fs from "fs";
 import * as fileDownloader from "../../src/image-processing-service/file-downloader";
+jest.setTimeout(60000);
+
 const OUTPUT_DIR = path.resolve(__dirname, "../output");
 
 describe("file downloader", () => {

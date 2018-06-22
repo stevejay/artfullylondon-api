@@ -1,6 +1,7 @@
 import { sync } from "jest-toolkit";
 import path from "path";
 import * as imageReader from "../../src/image-processing-service/image-reader";
+jest.setTimeout(60000);
 
 const TEST_IMAGES_DIR = path.resolve(__dirname, "../images");
 

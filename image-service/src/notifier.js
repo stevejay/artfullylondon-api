@@ -9,13 +9,13 @@ const config = process.env.IS_OFFLINE
 
 const sns = new AWS.SNS(config);
 
-export async function startReprocessingImages(startTimestamp) {
-  const message = { startTimestamp, lastId: null, retry: 0 };
+export async function startReprocessingImages(iterationId) {
+  const message = { iterationId, lastId: null, retry: 0 };
   await publishToReprocessImagesTopic(message);
 }
 
-export async function reprocessNextImage(startTimestamp, lastId) {
-  const message = { startTimestamp, lastId, retry: 0 };
+export async function reprocessNextImage(iterationId, lastId) {
+  const message = { iterationId, lastId, retry: 0 };
   await publishToReprocessImagesTopic(message);
 }
 

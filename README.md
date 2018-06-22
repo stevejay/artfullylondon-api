@@ -41,7 +41,6 @@ Install a [Windows binary release](https://www.imagemagick.org/script/download.p
   supports AWS Cognito configuration now.)
 - Outer describe(s) on every test file
 - Add XRay tracing to every service
-- remove serverless-dynamodb-local???
 - do I need to add cloudwatch:PutMetricData permission?
 
 ## Issues

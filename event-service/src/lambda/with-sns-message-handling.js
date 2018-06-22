@@ -5,7 +5,7 @@ export default function(handler) {
     Promise.all(
       (event.Records || []).map(async record => {
         const message = JSON.parse(record.Sns.Message);
-        return await handler(message);
+        return await handler(message.default || message);
       })
     )
       .then(result => {
