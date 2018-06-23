@@ -6,7 +6,7 @@ jest.setTimeout(60000);
 
 const MOCK_SEARCH_SERVICE_DIR = path.resolve(
   __dirname,
-  "../mock-search-service"
+  "../mocks/mock-search-service"
 );
 
 let server = null;

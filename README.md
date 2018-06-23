@@ -1,24 +1,72 @@
 # Artfully London API
 
-This is the back-end code for the Artfully London website. I built it using Node.js AWS Lambdas, grouped as logical microservices and deployed using the Serverless framework.
+The main back-end code for the Artfully London website. An example of a back-end implemented entirely from AWS Lambda nanoservices, all written in Node.js and deployed using the Serverless framework.
 
-## Imagemagick
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-### Windows
+## Overview
 
-Install a [Windows binary release](https://www.imagemagick.org/script/download.php) of Imagemagick, making sure to tick the installer option of 'Install legacy utilities'.
+The Artfully London website allows a user to search and view current and upcoming art-related events in London. There is also an admin website for creating and editing the site data.
 
-## LocalStack
+This repository contains the API that supports this functionality. It is composed of multiple AWS Lambda nanoservices that have been logically grouped into the following microservices:
 
-1.  Clone
-1.  CD into the cloned repo
-1.  If on Windows, run `export COMPOSE_CONVERT_WINDOWS_PATHS=1` (because of [this issue](https://github.com/docker/for-win/issues/1829))
-1.  Run `docker-compose up`
+- Data Service - Serves the sitemap file and static data required by the public or admin websites
+- Event Service - CRUD operations for the event, event series, talent and venue entities, stored using DynamoDB
+- Image Service - Transcoding of event, event series, talent and venue images
+- Search Service - Indexing and searching of the API entities, implemented using Elasticsearch
+- Tag Service - CRUD operations for the types of event tags (medium, style, geo and audience), stored using DynamoDB
+- User Service - CRUD operations for the watches and preferences the users have, stored using DynamoDB
 
-### Port Conflicts on Windows
+### Authentication
 
-1.  `netstat -a -n -o`
-1.  Get PID from last column and check for it in the Details section in Task Manager.
+Admin user authentication is handled using AWS Cognito. Public user authentication is instead handled using Auth0 as passwordless authentication was required for public users and AWS Cognito does not support that authentication method (as of June 2018).
+
+### Caching
+
+Etags are used in the Event Service to support caching in the browser. The Etag value for an entity request is calculated when it is returned. The value is stored in Redis for recall when a subsequent request is made.
+
+## Development
+
+### Prerequisites
+
+In order to run and develop the code locally, you need to install the following software:
+
+- [Imagemagick](https://www.imagemagick.org/script/index.php) - Used for image querying and resizing in the Image Service
+- [LocalStack](https://localstack.cloud/) - Used for running DynamoDB and Elasticsearch locally.
+
+You also need to run Redis somehow. One option is to run it locally, another is to use a managed Redis service such as [RedisLabs](https://redislabs.com/).
+
+#### Imagemagick
+
+On Windows, install a [Windows binary release](https://www.imagemagick.org/script/download.php of Imagemagick. Make sure you tick the 'Install legacy utilities' installer option.
+
+#### LocalStack
+
+On Windows, you can follow these steps to install and run LocalStack:
+
+1.  Clone the LocalStack repo
+1.  CD into that clone
+1.  Run the command `export COMPOSE_CONVERT_WINDOWS_PATHS=1` (because of [this issue](https://github.com/docker/for-win/issues/1829))
+1.  Run the command `docker-compose up`
+
+### Running a Service
+
+Each service requires an `env.yml` file to exist that is populated with the appropriate values for the enviroment being run/deployed. The root directory for each service contains an `env.template.yml` file that should be copied, renamed to `env.yml` and populated appropriately. Three environments are assumed:
+
+- Development - Run locally
+- Staging - Deployed to and run on AWS
+- Production - Deployed to and run on AWS
+
+The `env.template.yml` contains the required values for the Development environment when those values are not secrets. Values with the text `<INSERT>` need to be replaced.
+
+### Troubleshooting
+
+###~ Port Conflicts on Windows
+
+Use the following process to check what software is already running on a given port:
+
+1.  Run the command `netstat -a -n -o`
+1.  In the command output, get PID from the last column and check for it in the Details section of the Windows Task Manager.
 
 ## Prerequisites
 
@@ -42,6 +90,7 @@ Install a [Windows binary release](https://www.imagemagick.org/script/download.p
 - Outer describe(s) on every test file
 - Add XRay tracing to every service
 - do I need to add cloudwatch:PutMetricData permission?
+- encoding issue with params in lambda integration?
 
 ## Issues
 
