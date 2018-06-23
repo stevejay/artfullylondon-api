@@ -31,10 +31,10 @@ Etags are used in the Event Service to support caching in the browser. The Etag 
 
 In order to run and develop the code locally, you need to install the following software:
 
-- [Imagemagick](https://www.imagemagick.org/script/index.php) - Used for image querying and resizing in the Image Service
-- [LocalStack](https://localstack.cloud/) - Used for running DynamoDB and Elasticsearch locally.
+- [Imagemagick](https://www.imagemagick.org/script/index.php) - Used for image querying and resizing in the Image Service (instructions below)
+- [LocalStack](https://localstack.cloud/) - Used for running DynamoDB and Elasticsearch locally (instructions below)
 
-You also need to run Redis somehow. One option is to run it locally, another is to use a managed Redis service such as [RedisLabs](https://redislabs.com/).
+You also need to run Redis somehow. One option is to run it locally, while another is to use a managed Redis service such as [RedisLabs](https://redislabs.com/).
 
 #### Imagemagick
 
@@ -48,6 +48,11 @@ On Windows, you can follow these steps to install and run LocalStack:
 1.  CD into that clone
 1.  Run the command `export COMPOSE_CONVERT_WINDOWS_PATHS=1` (because of [this issue](https://github.com/docker/for-win/issues/1829))
 1.  Run the command `docker-compose up`
+
+#### Authentication
+
+You need to create a Cognito user pool ;[instructions here](https://stackoverflow.com/a/45253010).
+You also need to create an Auth0 passwordless authentication account.
 
 ### Running a Service
 
@@ -68,39 +73,13 @@ Use the following process to check what software is already running on a given p
 1.  Run the command `netstat -a -n -o`
 1.  In the command output, get PID from the last column and check for it in the Details section of the Windows Task Manager.
 
-## Prerequisites
-
-1.  Install `yarn` globally.
-
-2.  Copy the various `env.template.yml` files as `env.yml`
-    (in the same directories) and populate the values appropriately.
-
-3.  Each service can be tested and deployed by cd'ing into it's
-    director and running the appropriate yarn commands (as listed in
-    the `package.json` file for the service).
-
-## Cognito user authentication
-
-[Instructions here.](https://stackoverflow.com/a/45253010)
-
 ## Todo
 
-- Improve the AWS Cognito serverless configuration. (I think serverless
-  supports AWS Cognito configuration now.)
+- Improve the AWS Cognito serverless configuration. (I think serverless supports AWS Cognito configuration now.)
 - Outer describe(s) on every test file
 - Add XRay tracing to every service
 - do I need to add cloudwatch:PutMetricData permission?
 - encoding issue with params in lambda integration?
-
-## Issues
-
-- Docker on Windows: https://github.com/docker/for-win/issues/1829
-  Use Git Bash:
-
-```
-set COMPOSE_CONVERT_WINDOWS_PATHS=1
-docker-compose down && docker-compose up -d
-```
 
 ## Info
 
