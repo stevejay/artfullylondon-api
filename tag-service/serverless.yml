@@ -107,7 +107,7 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     deleteTag:
         handler: src/lambda/delete-tag.handler
         environment:
@@ -129,7 +129,7 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getAllTags:
         handler: src/lambda/get-all-tags.handler
         environment:

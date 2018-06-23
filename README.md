@@ -80,6 +80,7 @@ Use the following process to check what software is already running on a given p
 - Add XRay tracing to every service
 - do I need to add cloudwatch:PutMetricData permission?
 - encoding issue with params in lambda integration?
+- event service search index sns iteration
 
 ## Info
 

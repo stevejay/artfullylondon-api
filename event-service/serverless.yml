@@ -272,7 +272,6 @@ functions:
     createUpdateVenue:
         handler: src/lambda/venue/create-or-update-venue.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -303,7 +302,7 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
             - http:
                 path: "admin/venue/{id+}"
                 method: put
@@ -320,11 +319,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getVenue:
         handler: src/lambda/venue/get-venue.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -355,7 +353,6 @@ functions:
     getVenueForEdit:
         handler: src/lambda/venue/get-venue-for-edit.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -385,11 +382,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getVenueMulti:
         handler: src/lambda/venue/get-venue-multi.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -431,7 +427,6 @@ functions:
     createUpdateTalent:
         handler: src/lambda/talent/create-or-update-talent.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -462,7 +457,7 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
             - http:
                 path: "admin/talent/{id+}"
                 method: put
@@ -479,11 +474,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getTalent:
         handler: src/lambda/talent/get-talent.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -514,7 +508,6 @@ functions:
     getTalentForEdit:
         handler: src/lambda/talent/get-talent-for-edit.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -544,11 +537,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getTalentMulti:
         handler: src/lambda/talent/get-talent-multi.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -590,7 +582,6 @@ functions:
     createUpdateEvent:
         handler: src/lambda/event/create-or-update-event.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -621,7 +612,7 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
             - http:
                 path: "admin/event/{id+}"
                 method: put
@@ -638,11 +629,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getEvent:
         handler: src/lambda/event/get-event.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -673,7 +663,6 @@ functions:
     getEventForEdit:
         handler: src/lambda/event/get-event-for-edit.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -703,11 +692,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getEventMulti:
         handler: src/lambda/event/get-event-multi.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -749,7 +737,6 @@ functions:
     createUpdateEventSeries:
         handler: src/lambda/event-series/create-or-update-event-series.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -780,7 +767,7 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
             - http:
                 path: "admin/event-series/{id+}"
                 method: put
@@ -797,11 +784,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getEventSeries:
         handler: src/lambda/event-series/get-event-series.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -832,7 +818,6 @@ functions:
     getEventSeriesForEdit:
         handler: src/lambda/event-series/get-event-series-for-edit.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -862,11 +847,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getEventSeriesMulti:
         handler: src/lambda/event-series/get-event-series-multi.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -908,7 +892,6 @@ functions:
     updateEventSearchIndex:
         handler: src/lambda/search/update-event-search-index-sns.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
@@ -929,8 +912,6 @@ functions:
     refreshSearchIndex:
         handler: src/lambda/search/refresh-search-index.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
-            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
@@ -949,12 +930,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     refreshSearchIndexSns:
         handler: src/lambda/search/refresh-search-index-sns.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
-            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -976,20 +955,12 @@ functions:
     refreshEventFullSearch:
         handler: src/lambda/search/refresh-event-full-search.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
-            SERVERLESS_STAGE: ${self:custom.stage}
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
             SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN: ${self:custom.indexDocumentTopicArn}
         events:
             - schedule: 
                 rate: cron(0 4 * * ? *)
                 enabled: false
-    # indexDocument:
-    #     handler: src/lambda/test/index-document-sns.handler
-    #     events:
-    #         - sns:
-    #             topicName: ${self:custom.indexDocumentTopicName}
-    #             displayName: Test topic
 
 resources:
     Resources:

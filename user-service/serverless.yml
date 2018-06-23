@@ -116,12 +116,9 @@ custom:
 functions:
     auth:
         handler: src/lambda/auth.handler
-        environment:
-            SERVERLESS_STAGE: ${self:custom.stage}
     getUser:
         handler: src/lambda/get-user.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
             SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
             SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
@@ -154,7 +151,6 @@ functions:
     deleteUser:
         handler: src/lambda/delete-user.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
             SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
             SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
@@ -187,7 +183,6 @@ functions:
     getWatches:
         handler: src/lambda/get-watches.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
             SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
         events:
@@ -220,7 +215,6 @@ functions:
     updateWatches:
         handler: src/lambda/update-watches.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
             SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
         events:
@@ -255,7 +249,6 @@ functions:
     getPreferences:
         handler: src/lambda/get-preferences.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
         events:
             - http:
@@ -286,7 +279,6 @@ functions:
     updatePreferences:
         handler: src/lambda/update-preferences.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
         events:
             - http:

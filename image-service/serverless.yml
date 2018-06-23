@@ -150,7 +150,6 @@ functions:
         handler: src/lambda/add-image.handler
         timeout: 60
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_IMAGE_TABLE_NAME: ${self:custom.imageTableName}
             SERVERLESS_ITERATION_LOG_TABLE_NAME: ${self:custom.iterationLogTableName}
             SERVERLESS_ORIGINAL_IMAGES_BUCKET_NAME: ${self:custom.originalImagesBucketName}
@@ -173,12 +172,11 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     getImageData:
         handler: src/lambda/get-image-data.handler
         timeout: 6
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_IMAGE_TABLE_NAME: ${self:custom.imageTableName}
             SERVERLESS_ORIGINAL_IMAGES_BUCKET_NAME: ${self:custom.originalImagesBucketName}
             SERVERLESS_RESIZED_IMAGES_BUCKET_NAME: ${self:custom.resizedImagesBucketName}
@@ -199,7 +197,6 @@ functions:
         handler: src/lambda/reprocess-images.handler
         timeout: 6
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_REPROCESS_IMAGES_TOPIC_ARN: ${self:custom.reprocessImagesTopicArn}
         events:
             - http:
@@ -216,11 +213,10 @@ functions:
                 response: ${self:custom.standardResponses}
                 authorizer:
                     name: authorizer
-                    arn: ${self:provider.environment.cognitoUserPoolArn}
+                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
     reprocessImagesSns:
         handler: src/lambda/reprocess-images-sns.handler
         environment:
-            SERVERLESS_REGION: ${self:custom.region}
             SERVERLESS_IMAGE_TABLE_NAME: ${self:custom.imageTableName}
             SERVERLESS_ITERATION_LOG_TABLE_NAME: ${self:custom.iterationLogTableName}
             SERVERLESS_ORIGINAL_IMAGES_BUCKET_NAME: ${self:custom.originalImagesBucketName}
