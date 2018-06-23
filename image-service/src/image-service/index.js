@@ -26,12 +26,14 @@ export async function getImageData(params) {
 }
 
 export async function startReprocessingImages() {
-  const iterationId = `${Date.now()}`;
-  await iterationLogRepository.createLog(ITERATE_IMAGES_ACTION_ID, iterationId);
+  const iterationId = await iterationLogRepository.createLog(
+    ITERATE_IMAGES_ACTION_ID
+  );
   await notifier.startReprocessingImages(iterationId);
   return { acknowledged: true };
 }
 
+// TODO improve error handling here:
 export async function reprocessNextImage(message) {
   const startTime = process.hrtime();
   const nextImage = await imageRepository.getNextImage(message.lastId);

@@ -34,3 +34,7 @@ export async function getEventSeriesMulti(ids) {
 export async function createOrUpdateEventSeries(eventSeries) {
   await entityRepository.write(EVENT_SERIES_TABLE_NAME, eventSeries);
 }
+
+export async function getNextEventSeries(lastId) {
+  return await entityRepository.getNextEntity(EVENT_SERIES_TABLE_NAME, lastId);
+}

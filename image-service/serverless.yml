@@ -92,7 +92,7 @@ custom:
     # publicSiteOrigin: https://www.artfully.london
     reprocessImagesTopicName: ReprocessImages-${self:custom.stage}
     reprocessImagesTopicArn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.reprocessImagesTopicName}"
-    iterationLogTableName: ${self:custom.project}-${self:custom.stage}-iteration-log
+    iterationLogTableName: ${self:custom.project}-${self:custom.stage}-image-iteration-log
     imageTableName: ${self:custom.project}-${self:custom.stage}-image
     originalImagesBucketName: ${self:custom.project}-${self:custom.stage}-original-images
     resizedImagesBucketName: ${self:custom.project}-${self:custom.stage}-resized-images

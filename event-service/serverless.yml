@@ -30,6 +30,19 @@ provider:
                         - ":"
                         - Ref: "AWS::AccountId"
                         - ":table/"
+                        - Ref: "IterationLogDynamoTable"
+        -
+            Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:dynamodb:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":table/"
                         - Ref: "VenueDynamoTable"
         -
             Effect: "Allow"
@@ -202,6 +215,7 @@ custom:
     refreshSearchIndexTopicNamePrefix: RefreshSearchIndex
     eventUpdatedTopicNamePrefix: EventUpdated
     indexDocumentTopicNamePrefix: IndexDocument
+    iterationLogTableName: ${self:custom.project}-${self:custom.stage}-event-iteration-log
     venueTableName: ${self:custom.project}-${self:custom.stage}-venue
     venueBySchemeVersionIndexName: ${self:custom.project}-${self:custom.stage}-venue-by-scheme
     eventTableName: ${self:custom.project}-${self:custom.stage}-event
@@ -284,7 +298,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
             SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN: ${self:custom.indexDocumentTopicArn}
         events:
             - http:
@@ -335,7 +348,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "public/venue/{id+}"
@@ -365,7 +377,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "admin/venue/{id+}"
@@ -398,7 +409,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "public/venue"
@@ -439,7 +449,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
             SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN: ${self:custom.indexDocumentTopicArn}
         events:
             - http:
@@ -490,7 +499,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "public/talent/{id+}"
@@ -520,7 +528,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "admin/talent/{id+}"
@@ -553,7 +560,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "public/talent"
@@ -594,7 +600,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
             SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN: ${self:custom.indexDocumentTopicArn}
         events:
             - http:
@@ -645,7 +650,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "public/event/{id+}"
@@ -675,7 +679,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "admin/event/{id+}"
@@ -708,7 +711,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "public/event"
@@ -749,7 +751,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
             SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN: ${self:custom.indexDocumentTopicArn}
         events:
             - http:
@@ -800,7 +801,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "public/event-series/{id+}"
@@ -830,7 +830,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "admin/event-series/{id+}"
@@ -863,7 +862,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
                 path: "public/event-series"
@@ -904,7 +902,6 @@ functions:
             SERVERLESS_TALENT_TABLE_NAME: ${self:custom.talentTableName}
             SERVERLESS_TALENT_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.talentBySchemeVersionIndexName}
             SERVERLESS_EVENT_UPDATED_TOPIC_ARN: ${self:custom.eventUpdatedTopicArn}
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - sns:
                 topicName: ${self:custom.eventUpdatedTopicName}
@@ -912,10 +909,11 @@ functions:
     refreshSearchIndex:
         handler: src/lambda/search/refresh-search-index.handler
         environment:
+            SERVERLESS_ITERATION_LOG_TABLE_NAME: ${self:custom.iterationLogTableName}
             SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
         events:
             - http:
-                path: "admin/search/{index}/{version}/refresh"
+                path: "admin/search/refresh/{entityType}"
                 method: post
                 cors: true
                 integration: lambda
@@ -923,8 +921,7 @@ functions:
                     template:
                         application/json: >
                             {
-                                "index": "$input.params('index')",
-                                "version": "$input.params('version')",
+                                "entityType": "$input.params('entityType')",
                                 "authorization" : "$input.params().header.get('Authorization')"
                             }
                 response: ${self:custom.standardResponses}
@@ -934,6 +931,7 @@ functions:
     refreshSearchIndexSns:
         handler: src/lambda/search/refresh-search-index-sns.handler
         environment:
+            SERVERLESS_ITERATION_LOG_TABLE_NAME: ${self:custom.iterationLogTableName}
             SERVERLESS_VENUE_TABLE_NAME: ${self:custom.venueTableName}
             SERVERLESS_VENUE_BY_SCHEME_VERSION_INDEX_NAME: ${self:custom.venueBySchemeVersionIndexName}
             SERVERLESS_EVENT_TABLE_NAME: ${self:custom.eventTableName}
@@ -952,18 +950,31 @@ functions:
             - sns:
                 topicName: ${self:custom.refreshSearchIndexTopicName}
                 displayName: Refreshing of a search index
-    refreshEventFullSearch:
-        handler: src/lambda/search/refresh-event-full-search.handler
-        environment:
-            SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN: ${self:custom.refreshSearchIndexTopicArn}
-            SERVERLESS_INDEX_DOCUMENT_TOPIC_ARN: ${self:custom.indexDocumentTopicArn}
-        events:
-            - schedule: 
-                rate: cron(0 4 * * ? *)
-                enabled: false
 
 resources:
     Resources:
+        IterationLogDynamoTable:
+            Type: AWS::DynamoDB::Table
+            DeletionPolicy: Retain
+            Properties:
+                TableName: ${self:custom.iterationLogTableName}
+                AttributeDefinitions:
+                    -
+                        AttributeName: actionId
+                        AttributeType: S
+                    -
+                        AttributeName: iterationId
+                        AttributeType: S
+                KeySchema:
+                    -
+                        AttributeName: actionId
+                        KeyType: HASH
+                    -
+                        AttributeName: iterationId
+                        KeyType: RANGE
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 2
+                    WriteCapacityUnits: 1
         VenueDynamoTable:
             Type: AWS::DynamoDB::Table
             DeletionPolicy: Retain

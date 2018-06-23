@@ -75,11 +75,13 @@ Use the following process to check what software is already running on a given p
 
 ## Todo
 
-- Improve the AWS Cognito serverless configuration. (I think serverless supports AWS Cognito configuration now.)
-- Outer describe(s) on every test file
-- do I need to add cloudwatch:PutMetricData permission?
-- encoding issue with params in lambda integration?
-- event service search index sns iteration
+- Add AWS Cognito serverless configuration to the serverless files? (I think serverless supports AWS Cognito configuration now. Problem is it is not needed locally.)
+- Do I need to add cloudwatch:PutMetricData permission?
+- Is there an encoding issue with params in lambda integration when using serverless local?
+- Implement event service search index sns iteration.
+- See about CORS origin restrictions for getting images from resized and original S3 buckets.
+- Delete the staging table 'artfullylondon-development-iteration-log'
+- Improve error handling on iterators.
 
 ## Info
 

@@ -1,10 +1,10 @@
-import * as venueRepository from "../persister/venue-repository";
+import * as venueRepository from "../persistence/venue-repository";
 import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as enhancer from "../enhancer";
 import * as entityType from "../types/entity-type";
-import * as eventRepository from "../persister/event-repository";
+import * as eventRepository from "../persistence/event-repository";
 import * as notifier from "../notifier";
 import * as cacher from "../cacher";
 
@@ -37,4 +37,9 @@ export async function createOrUpdateVenue(params) {
   await notifier.indexEntity(mapper.mapToPublicFullResponse(dbVenue));
   await cacher.clearEntityEtag(entityType.VENUE, dbVenue.id);
   return { entity: dbVenue };
+}
+
+export async function getNextVenue(lastId) {
+  const dbVenue = await venueRepository.getNextVenue(lastId);
+  return dbVenue ? mapper.mapToPublicFullResponse(dbVenue) : null;
 }

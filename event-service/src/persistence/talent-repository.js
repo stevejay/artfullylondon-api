@@ -28,3 +28,7 @@ export async function getTalentMulti(ids) {
 export async function createOrUpdateTalent(talent) {
   await entityRepository.write(TALENT_TABLE_NAME, talent);
 }
+
+export async function getNextTalent(lastId) {
+  return await entityRepository.getNextEntity(TALENT_TABLE_NAME, lastId);
+}

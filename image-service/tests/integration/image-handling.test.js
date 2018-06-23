@@ -10,7 +10,8 @@ jest.setTimeout(60000);
 
 const ORIGINAL_BUCKET_NAME = "artfullylondon-development-original-images";
 const RESIZED_BUCKET_NAME = "artfullylondon-development-resized-images";
-const ITERATION_LOG_TABLE_NAME = "artfullylondon-development-iteration-log";
+const ITERATION_LOG_TABLE_NAME =
+  "artfullylondon-development-image-iteration-log";
 const IMAGE_TABLE_NAME = "artfullylondon-development-image";
 
 describe("image handling", () => {

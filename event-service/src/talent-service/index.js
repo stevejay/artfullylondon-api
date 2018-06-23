@@ -1,4 +1,4 @@
-import * as talentRepository from "../persister/talent-repository";
+import * as talentRepository from "../persistence/talent-repository";
 import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
@@ -31,4 +31,9 @@ export async function createOrUpdateTalent(params) {
   await notifier.indexEntity(mapper.mapToPublicFullResponse(dbTalent));
   await cacher.clearEntityEtag(entityType.TALENT, dbTalent.id);
   return { entity: dbTalent };
+}
+
+export async function getNextTalent(lastId) {
+  const dbTalent = await talentRepository.getNextTalent(lastId);
+  return dbTalent ? mapper.mapToPublicFullResponse(dbTalent) : null;
 }

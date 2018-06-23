@@ -29,3 +29,7 @@ export async function getVenueMulti(ids) {
 export async function createOrUpdateVenue(venue) {
   await entityRepository.write(VENUE_TABLE_NAME, venue);
 }
+
+export async function getNextVenue(lastId) {
+  return await entityRepository.getNextEntity(VENUE_TABLE_NAME, lastId);
+}

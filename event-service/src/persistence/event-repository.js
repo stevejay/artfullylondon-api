@@ -126,3 +126,7 @@ async function getReferencedEntitiesImpl(
 
   return result;
 }
+
+export async function getNextEvent(lastId) {
+  return await entityRepository.getNextEntity(EVENT_TABLE_NAME, lastId);
+}
