@@ -84,6 +84,7 @@ Use the following process to check what software is already running on a given p
 - Improve error handling on iterators.
 - Do full validation of entities to index that are received by search service?
 - Check further on the search service integration test flakiness.
+- Update launch settings.
 
 ## Info
 
