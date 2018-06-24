@@ -1,5 +1,4 @@
 "use strict";
-
 const nodeExternals = require("webpack-node-externals");
 const slsw = require("serverless-webpack");
 const path = require("path");

@@ -10,12 +10,12 @@ const MOCK_SEARCH_SERVICE_DIR = path.resolve(
 );
 
 describe("sitemap handler", () => {
-  let server = null;
+  let mockSearchServer = null;
 
   beforeAll(async () => {
     await new Promise((resolve, reject) => {
-      server = http.createServer(mockserver(MOCK_SEARCH_SERVICE_DIR));
-      server.listen(
+      mockSearchServer = http.createServer(mockserver(MOCK_SEARCH_SERVICE_DIR));
+      mockSearchServer.listen(
         { port: 3013, exclusive: true },
         err => (err ? reject(err) : resolve())
       );
@@ -23,9 +23,9 @@ describe("sitemap handler", () => {
   });
 
   afterAll(async () => {
-    if (server) {
+    if (mockSearchServer) {
       await new Promise((resolve, reject) => {
-        server.close(err => (err ? reject(err) : resolve()));
+        mockSearchServer.close(err => (err ? reject(err) : resolve()));
       });
     }
   });

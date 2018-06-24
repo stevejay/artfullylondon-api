@@ -7,7 +7,6 @@ export default function(handler) {
       if (!errorCodeMatch) {
         err.message = "[500] " + (err.message || "Unknown error");
       }
-
       throw err;
     }
   };

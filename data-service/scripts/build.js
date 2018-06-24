@@ -1,10 +1,11 @@
 "use strict";
-
 const fs = require("fs");
 
-if (!fs.existsSync("./build")) {
-  fs.mkdirSync("./build");
+const BUILD_DIR_PATH = "./build";
+
+if (!fs.existsSync(BUILD_DIR_PATH)) {
+  fs.mkdirSync(BUILD_DIR_PATH);
 }
 
 const obj = JSON.parse(fs.readFileSync("./content.json", "utf8"));
-fs.writeFileSync("./build/content.txt", JSON.stringify(obj));
+fs.writeFileSync(BUILD_DIR_PATH + "/content.txt", JSON.stringify(obj));
