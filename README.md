@@ -1,6 +1,6 @@
 # Artfully London API
 
-The main back-end code for the Artfully London website. An example of a back-end implemented entirely from AWS Lambda nanoservices, all written in Node.js and deployed using the Serverless framework.
+The main back-end code for the Artfully London website. An example of a back-end implemented entirely using AWS Lambda nanoservices, all written in Node.js and deployed using the Serverless framework.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -8,22 +8,22 @@ The main back-end code for the Artfully London website. An example of a back-end
 
 The Artfully London website allows a user to search and view current and upcoming art-related events in London. There is also an admin website for creating and editing the site data.
 
-This repository contains the API that supports this functionality. It is composed of multiple AWS Lambda nanoservices that have been logically grouped into the following microservices:
+This repository contains the API that supports this functionality. It is composed of multiple AWS Lambda nanoservices that have been logically grouped together into the following microservices:
 
 - Data Service - Serves the sitemap file and static data required by the public or admin websites
 - Event Service - CRUD operations for the event, event series, talent and venue entities, stored using DynamoDB
 - Image Service - Transcoding of event, event series, talent and venue images
-- Search Service - Indexing and searching of the API entities, implemented using Elasticsearch
+- Search Service - Indexing and searching of the API entities using Elasticsearch
 - Tag Service - CRUD operations for the types of event tags (medium, style, geo and audience), stored using DynamoDB
 - User Service - CRUD operations for the watches and preferences the users have, stored using DynamoDB
 
 ### Authentication
 
-Admin user authentication is handled using AWS Cognito. Public user authentication is instead handled using Auth0 as passwordless authentication was required for public users and AWS Cognito does not support that authentication method (as of June 2018).
+Admin user authentication is handled using AWS Cognito while public user authentication is handled using Auth0. (Passwordless authentication was required for public users and AWS Cognito does not support that authentication method, as of June 2018.)
 
 ### Caching
 
-Etags are used in the Event Service to support caching in the browser. The Etag value for an entity request is calculated when it is returned. The value is stored in Redis for recall when a subsequent request is made.
+Etags are used in the Event Service to support caching in the browser. The Etag value for an entity request is calculated when it is returned. The value is stored in Redis for recall when a subsequent request with an Etag is made.
 
 ## Development
 
@@ -38,35 +38,36 @@ You also need to run Redis somehow. One option is to run it locally, while anoth
 
 #### Imagemagick
 
-On Windows, install a [Windows binary release](https://www.imagemagick.org/script/download.php of Imagemagick. Make sure you tick the 'Install legacy utilities' installer option.
+On Windows, install a [Windows binary release](https://www.imagemagick.org/script/download.php) of Imagemagick. Make sure to tick the 'Install legacy utilities' installer option.
 
 #### LocalStack
 
 On Windows, you can follow these steps to install and run LocalStack:
 
 1.  Clone the LocalStack repo
-1.  CD into that clone
+1.  Cd into that clone
 1.  Run the command `export COMPOSE_CONVERT_WINDOWS_PATHS=1` (because of [this issue](https://github.com/docker/for-win/issues/1829))
 1.  Run the command `docker-compose up`
 
 #### Authentication
 
-You need to create a Cognito user pool ;[instructions here](https://stackoverflow.com/a/45253010).
-You also need to create an Auth0 passwordless authentication account.
+When running the services locally, Cognito authentication is disabled. When running on a different environment, you need to have created a Cognito user pool for it. The instructions to do that are [here](https://stackoverflow.com/a/45253010).
+
+When running the User Service on any environment, you need to have created an Auth0 passwordless authentication account.
 
 ### Running a Service
 
-Each service requires an `env.yml` file to exist that is populated with the appropriate values for the enviroment being run/deployed. The root directory for each service contains an `env.template.yml` file that should be copied, renamed to `env.yml` and populated appropriately. Three environments are assumed:
+Each service requires an `env.yml` file to exist that is populated with the appropriate values for the enviroment being run or deployed. The root directory for each service contains an `env.template.yml` file that should be copied, renamed to `env.yml` and populated appropriately. Three environments are assumed:
 
-- Development - Run locally
-- Staging - Deployed to and run on AWS
-- Production - Deployed to and run on AWS
+- Development - The services are run locally using [serverless-offline](https://github.com/dherault/serverless-offline) and LocalStack
+- Staging - The services are deployed to and run on AWS
+- Production - The services are deployed to and run on AWS
 
 The `env.template.yml` contains the required values for the Development environment when those values are not secrets. Values with the text `<INSERT>` need to be replaced.
 
 ### Troubleshooting
 
-###~ Port Conflicts on Windows
+#### Port Conflicts on Windows
 
 Use the following process to check what software is already running on a given port:
 
@@ -86,8 +87,8 @@ Use the following process to check what software is already running on a given p
 
 ## Info
 
-- [nvm on Windows](https://github.com/coreybutler/nvm-windows)
-- [Git creds manager on Windows](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
+- [Using nvm in Windows](https://github.com/coreybutler/nvm-windows)
+- [Git creds manager in Windows](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
 
 ## License
 
