@@ -5,7 +5,7 @@ import convertAsyncToCallback from "../convert-async-to-callback";
 
 export const handler = convertAsyncToCallback(
   withErrorHandling(async function(event) {
-    const result = await eventService.getEventForEdit(event);
+    const result = await eventService.getForEdit(event);
     return { body: JSON.stringify(result) };
   })
 );

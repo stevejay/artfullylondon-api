@@ -7,7 +7,7 @@ import convertAsyncToCallback from "../convert-async-to-callback";
 export const handler = convertAsyncToCallback(
   withWriteAuthorization(
     withErrorHandling(async function(event) {
-      const result = await venueService.createOrUpdateVenue({
+      const result = await venueService.createOrUpdate({
         ...event.body,
         id: event.id
       });

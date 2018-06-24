@@ -402,7 +402,8 @@ describe("mapToPublicFullResponse", () => {
       imageCopyright: "foo",
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
-      soldOutPerformances: [{ at: "08:00", date: "2016-08-15" }]
+      soldOutPerformances: [{ at: "08:00", date: "2016-08-15" }],
+      version: 4
     });
   });
 
@@ -534,7 +535,8 @@ describe("mapToPublicFullResponse", () => {
       imageRatio: 1.2,
       imageCopyright: "foo",
       reviews: [{ source: "The Guardian", rating: 4 }],
-      weSay: "something"
+      weSay: "something",
+      version: 4
     });
   });
 
@@ -585,190 +587,4 @@ describe("mapToPublicFullResponse", () => {
     expect(result.imageRatio).toEqual(1.4);
     expect(result.imageCopyright).toEqual("bar");
   });
-
-  // it("should use images from venue", () => {
-  //   const dbItem = testData.createFullPerformanceDbEvent();
-  //   delete dbItem.images;
-
-  //   const referencedEntities = {
-  //     eventSeries: {
-  //       id: testData.EVENT_EVENT_SERIES_ID,
-  //       name: "Some Event Series"
-  //     },
-  //     talents: [{ id: testData.EVENT_TALENT_ID, name: "John Doe" }],
-  //     venue: {
-  //       id: testData.EVENT_VENUE_ID,
-  //       name: "Almeida Theatre",
-  //       images: [{ id: "333333333333333", ratio: 1.6, copyright: "bat" }]
-  //     }
-  //   };
-
-  //   const event = mapper.mergeReferencedEntities(dbItem, referencedEntities);
-  //   const result = mapper.mapToPublicFullResponse(event);
-
-  //   expect(result.images).toEqual([
-  //     { id: "333333333333333", ratio: 1.6, copyright: "bat" }
-  //   ]);
-
-  //   expect(result.image).toEqual("333333333333333");
-  //   expect(result.imageRatio).toEqual(1.6);
-  //   expect(result.imageCopyright).toEqual("bat");
-  // });
-
-  // it("should map an event with minimal referenced entities", () => {
-  //   const dbItem = testData.createMinimalPerformanceDbEvent();
-
-  //   const referencedEntities = {
-  //     venue: {
-  //       id: testData.EVENT_VENUE_ID,
-  //       status: "Active",
-  //       name: "Almeida Theatre",
-  //       address: "Islington",
-  //       postcode: "N5 2UA",
-  //       latitude: 53,
-  //       longitude: 2,
-  //       venueType: "Theatre",
-  //       wheelchairAccessType: "FullAccess",
-  //       disabledBathroomType: "Present",
-  //       hearingFacilitiesType: "HearingLoops"
-  //     }
-  //   };
-
-  //   const event = mapper.mergeReferencedEntities(dbItem, referencedEntities);
-  //   const result = mapper.mapToPublicFullResponse(event);
-
-  //   expect(result).toEqual({
-  //     entityType: "event",
-  //     id: testData.PERFORMANCE_EVENT_ID,
-  //     status: "Active",
-  //     name: "Taming of the Shrew",
-  //     eventType: "Performance",
-  //     occurrenceType: "Bounded",
-  //     bookingType: "NotRequired",
-  //     dateFrom: "2016-02-11",
-  //     dateTo: "2016-02-13",
-  //     rating: 3,
-  //     useVenueOpeningTimes: false,
-  //     costType: "Paid",
-  //     summary: "A Shakespearian classic",
-  //     venue: {
-  //       status: "Active",
-  //       id: testData.EVENT_VENUE_ID,
-  //       name: "Almeida Theatre",
-  //       address: "Islington",
-  //       postcode: "N5 2UA",
-  //       latitude: 53,
-  //       longitude: 2,
-  //       venueType: "Theatre",
-  //       wheelchairAccessType: "FullAccess",
-  //       disabledBathroomType: "Present",
-  //       hearingFacilitiesType: "HearingLoops"
-  //     },
-  //     venueId: "almeida-theatre",
-  //     venueName: "Almeida Theatre",
-  //     postcode: "N5 2UA",
-  //     latitude: 53,
-  //     longitude: 2
-  //   });
-  // });
-
-  // it("should throw when a talent is not found", () => {
-  //   let event = {
-  //     id: "some-event",
-  //     eventSeriesId: testData.EVENT_EVENT_SERIES_ID,
-  //     venueId: testData.EVENT_VENUE_ID,
-  //     talents: [{ id: "some-other-talent" }]
-  //   };
-
-  //   const referencedEntities = {
-  //     eventSeries: { id: testData.EVENT_EVENT_SERIES_ID },
-  //     talents: [{ id: testData.EVENT_TALENT_ID }],
-  //     venue: { id: testData.EVENT_VENUE_ID }
-  //   };
-
-  //   expect(() =>
-  //     mapper.mergeReferencedEntities(event, referencedEntities)
-  //   ).toThrow();
-  // });
 });
-
-// describe("mapDbItemToPublicSummaryResponse", () => {
-//   it("should map a fully populated performance with all referenced entities", () => {
-//     const dbItem = testData.createFullPerformanceDbEvent();
-
-//     const referencedEntities = {
-//       eventSeries: {
-//         id: testData.EVENT_EVENT_SERIES_ID,
-//         name: "Some Event Series"
-//       },
-//       talents: [{ id: testData.EVENT_TALENT_ID, name: "John Doe" }],
-//       venue: {
-//         id: testData.EVENT_VENUE_ID,
-//         name: "Almeida Theatre",
-//         postcode: "N5 2UA",
-//         latitude: 53,
-//         longitude: 2
-//       }
-//     };
-
-//     const event = mapper.mergeReferencedEntities(dbItem, referencedEntities);
-//     const result = mapper.mapToPublicSummaryResponse(event);
-
-//     expect(result).toEqual({
-//       entityType: "event",
-//       id: testData.PERFORMANCE_EVENT_ID,
-//       status: "Active",
-//       name: "Taming of the Shrew",
-//       eventType: "Performance",
-//       occurrenceType: "Bounded",
-//       soldOut: true,
-//       costType: "Paid",
-//       dateFrom: "2016-02-11",
-//       dateTo: "2016-02-13",
-//       summary: "A Shakespearian classic",
-//       venueId: "almeida-theatre",
-//       venueName: "Almeida Theatre",
-//       postcode: "N5 2UA",
-//       latitude: 53,
-//       longitude: 2,
-//       image: "12345678123456781234567812345678",
-//       imageCopyright: "foo",
-//       imageRatio: 1.2
-//     });
-//   });
-
-//   it("should map a minimally populated performance with minimal referenced entities", () => {
-//     const dbItem = testData.createMinimalPerformanceDbEvent();
-
-//     const referencedEntities = {
-//       venue: {
-//         id: testData.EVENT_VENUE_ID,
-//         name: "Almeida Theatre",
-//         postcode: "N5 2UA",
-//         latitude: 53,
-//         longitude: 2
-//       }
-//     };
-
-//     const event = mapper.mergeReferencedEntities(dbItem, referencedEntities);
-//     const result = mapper.mapToPublicSummaryResponse(event);
-
-//     expect(result).toEqual({
-//       entityType: "event",
-//       id: testData.PERFORMANCE_EVENT_ID,
-//       status: "Active",
-//       name: "Taming of the Shrew",
-//       eventType: "Performance",
-//       occurrenceType: "Bounded",
-//       costType: "Paid",
-//       dateFrom: "2016-02-11",
-//       dateTo: "2016-02-13",
-//       summary: "A Shakespearian classic",
-//       venueId: "almeida-theatre",
-//       venueName: "Almeida Theatre",
-//       postcode: "N5 2UA",
-//       latitude: 53,
-//       longitude: 2
-//     });
-//   });
-// });

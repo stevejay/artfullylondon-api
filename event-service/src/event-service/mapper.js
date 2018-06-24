@@ -233,7 +233,8 @@ export const mapToPublicFullResponse = mappr(
       "eventSeries",
       "reviews",
       "links",
-      "images"
+      "images",
+      "version"
     ]),
     () => ({ isFullEntity: true })
   ),

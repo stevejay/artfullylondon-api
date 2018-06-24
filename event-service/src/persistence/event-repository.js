@@ -7,11 +7,11 @@ import { VENUE_TABLE_NAME } from "./venue-repository";
 
 export const EVENT_TABLE_NAME = process.env.SERVERLESS_EVENT_TABLE_NAME;
 
-export async function getEvent(id, consistentRead) {
+export async function get(id, consistentRead) {
   return await entityRepository.get(EVENT_TABLE_NAME, id, consistentRead);
 }
 
-export async function getEventMulti(ids) {
+export async function getMulti(ids) {
   const response = await dynamodb.batchGet({
     RequestItems: {
       [EVENT_TABLE_NAME]: {
@@ -55,7 +55,7 @@ export async function getEventIdsByEventSeries(eventSeriesId) {
   return events.map(event => event.id);
 }
 
-export async function createOrUpdateEvent(event) {
+export async function createOrUpdate(event) {
   await entityRepository.write(EVENT_TABLE_NAME, event);
 }
 
@@ -127,6 +127,6 @@ async function getReferencedEntitiesImpl(
   return result;
 }
 
-export async function getNextEvent(lastId) {
-  return await entityRepository.getNextEntity(EVENT_TABLE_NAME, lastId);
+export async function getNextId(lastId) {
+  return await entityRepository.getNextEntityId(EVENT_TABLE_NAME, lastId);
 }

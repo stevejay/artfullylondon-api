@@ -1,18 +1,32 @@
 import { sync } from "jest-toolkit";
 import request from "request-promise-native";
-// import delay from "delay";
+import delay from "delay";
 import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
 import * as cognitoAuth from "../utils/cognito-auth";
 import * as lambdaUtils from "../utils/lambda";
+import SnsListener from "../utils/serverless-offline-sns-listener";
 jest.setTimeout(30000);
 
 describe("venue", () => {
   let testVenueId = null;
+  let snsListener = null;
   const testVenueBody = testData.createNewVenueBody();
 
   beforeAll(async () => {
     await dynamodb.truncateAllTables();
+    snsListener = new SnsListener({
+      endpoint: "http://127.0.0.1:4002",
+      region: "eu-west-1"
+    });
+    await snsListener.startListening(
+      "arn:aws:sns:eu-west-1:1111111111111:IndexDocument-development",
+      3019
+    );
+  });
+
+  afterAll(async () => {
+    await snsListener.stopListening();
   });
 
   it("should fail to create an invalid venue", async () => {
@@ -46,6 +60,7 @@ describe("venue", () => {
   });
 
   it("should create a valid venue", async () => {
+    snsListener.clearReceivedMessages();
     const response = await request({
       uri: "http://localhost:3014/admin/venue",
       json: true,
@@ -65,6 +80,18 @@ describe("venue", () => {
     );
 
     testVenueId = parsedResponse.entity.id;
+
+    delay(3000);
+    expect(snsListener.receivedMessages).toEqual([
+      {
+        entityType: "venue",
+        entity: expect.objectContaining({
+          status: "Active",
+          postcode: "N1 1TA",
+          version: 1
+        })
+      }
+    ]);
   });
 
   it("should get the venue without cache control headers when using the admin api", async () => {
@@ -75,14 +102,6 @@ describe("venue", () => {
       timeout: 14000,
       resolveWithFullResponse: true
     });
-
-    // expect(response.headers).toEqual(
-    //   expect.objectContaining({
-    //     "cache-control": "no-cache"
-    //   })
-    // );
-
-    // expect(response.headers.etag).not.toBeDefined();
 
     const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
     expect(parsedResponse.entity).toEqual(
@@ -103,15 +122,6 @@ describe("venue", () => {
       timeout: 14000,
       resolveWithFullResponse: true
     });
-
-    // expect(response.headers).toEqual(
-    //   expect.objectContaining({
-    //     "x-artfully-cache": "Miss",
-    //     "cache-control": "public, max-age=1800"
-    //   })
-    // );
-
-    // expect(response.headers.etag).toBeDefined();
 
     const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
     expect(parsedResponse.entity).toEqual(
@@ -163,6 +173,7 @@ describe("venue", () => {
   });
 
   it("should accept a valid update to the venue", async () => {
+    snsListener.clearReceivedMessages();
     const response = await request({
       uri: "http://localhost:3014/admin/venue/" + testVenueId,
       json: true,
@@ -185,6 +196,18 @@ describe("venue", () => {
         version: 2
       })
     );
+
+    delay(3000);
+    expect(snsListener.receivedMessages).toEqual([
+      {
+        entityType: "venue",
+        entity: expect.objectContaining({
+          postcode: "N8 0KL",
+          status: "Active",
+          version: 2
+        })
+      }
+    ]);
   });
 
   it("should fail to get a non-existent venue", async () => {

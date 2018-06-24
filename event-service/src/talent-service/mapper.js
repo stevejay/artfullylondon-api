@@ -46,6 +46,13 @@ export const mapToPublicSummaryResponse = mappr.compose(
 
 export const mapToPublicFullResponse = mappr.compose(
   mapToPublicSummaryResponse,
-  fpPick(["description", "descriptionCredit", "weSay", "links", "images"]),
+  fpPick([
+    "description",
+    "descriptionCredit",
+    "weSay",
+    "links",
+    "images",
+    "version"
+  ]),
   () => ({ isFullEntity: true })
 );

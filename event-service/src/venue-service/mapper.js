@@ -82,7 +82,8 @@ export const mapToPublicFullResponse = mappr.compose(
     "openingTimes",
     "additionalOpeningTimes",
     "openingTimesClosures",
-    "namedClosures"
+    "namedClosures",
+    "version"
   ]),
   () => ({ isFullEntity: true })
 );

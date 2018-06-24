@@ -1,21 +1,34 @@
 import { sync } from "jest-toolkit";
 import request from "request-promise-native";
-// import delay from "delay";
+import delay from "delay";
 import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
 import * as cognitoAuth from "../utils/cognito-auth";
 import * as lambdaUtils from "../utils/lambda";
 import * as redisUtils from "../utils/redis";
-// import * as snsUtils from "../utils/sns";
+import SnsListener from "../utils/serverless-offline-sns-listener";
 jest.setTimeout(30000);
 
 describe("talent", () => {
   let testTalentId = null;
+  let snsListener = null;
   const testTalentBody = testData.createNewTalentBody();
 
   beforeAll(async () => {
     await dynamodb.truncateAllTables();
     await redisUtils.flushAll();
+    snsListener = new SnsListener({
+      endpoint: "http://127.0.0.1:4002",
+      region: "eu-west-1"
+    });
+    await snsListener.startListening(
+      "arn:aws:sns:eu-west-1:1111111111111:IndexDocument-development",
+      3019
+    );
+  });
+
+  afterAll(async () => {
+    await snsListener.stopListening();
   });
 
   it("should fail to create an invalid talent", async () => {
@@ -49,6 +62,7 @@ describe("talent", () => {
   });
 
   it("should create a valid talent", async () => {
+    snsListener.clearReceivedMessages();
     const response = await request({
       uri: "http://localhost:3014/admin/talent",
       json: true,
@@ -71,6 +85,21 @@ describe("talent", () => {
     );
 
     testTalentId = parsedResponse.entity.id;
+
+    delay(3000);
+    expect(snsListener.receivedMessages).toEqual([
+      {
+        entityType: "talent",
+        entity: expect.objectContaining({
+          commonRole: "Poet",
+          firstNames: "Byron",
+          links: [{ type: "Homepage", url: "http://www.byronvincent.com/" }],
+          status: "Active",
+          talentType: "Individual",
+          version: 1
+        })
+      }
+    ]);
   });
 
   it("should get the talent without cache control headers when using the admin api", async () => {
@@ -173,6 +202,7 @@ describe("talent", () => {
   });
 
   it("should accept a valid update to the talent", async () => {
+    snsListener.clearReceivedMessages();
     const response = await request({
       uri: "http://localhost:3014/admin/talent/" + testTalentId,
       json: true,
@@ -195,6 +225,19 @@ describe("talent", () => {
         version: 2
       })
     );
+
+    delay(3000);
+    expect(snsListener.receivedMessages).toEqual([
+      {
+        entityType: "talent",
+        entity: expect.objectContaining({
+          id: testTalentId,
+          firstNames: "Byron New",
+          status: "Active",
+          version: 2
+        })
+      }
+    ]);
   });
 
   it("should fail to get a non-existent talent", async () => {

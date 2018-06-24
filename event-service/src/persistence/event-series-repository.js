@@ -4,7 +4,7 @@ import dynamodb from "./dynamodb";
 export const EVENT_SERIES_TABLE_NAME =
   process.env.SERVERLESS_EVENT_SERIES_TABLE_NAME;
 
-export async function getEventSeries(id, consistentRead) {
+export async function get(id, consistentRead) {
   return await entityRepository.get(
     EVENT_SERIES_TABLE_NAME,
     id,
@@ -12,7 +12,7 @@ export async function getEventSeries(id, consistentRead) {
   );
 }
 
-export async function getEventSeriesMulti(ids) {
+export async function getMulti(ids) {
   const response = await dynamodb.batchGet({
     RequestItems: {
       [EVENT_SERIES_TABLE_NAME]: {
@@ -31,10 +31,13 @@ export async function getEventSeriesMulti(ids) {
   return response.Responses[EVENT_SERIES_TABLE_NAME];
 }
 
-export async function createOrUpdateEventSeries(eventSeries) {
+export async function createOrUpdate(eventSeries) {
   await entityRepository.write(EVENT_SERIES_TABLE_NAME, eventSeries);
 }
 
-export async function getNextEventSeries(lastId) {
-  return await entityRepository.getNextEntity(EVENT_SERIES_TABLE_NAME, lastId);
+export async function getNextId(lastId) {
+  return await entityRepository.getNextEntityId(
+    EVENT_SERIES_TABLE_NAME,
+    lastId
+  );
 }

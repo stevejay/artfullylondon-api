@@ -253,7 +253,8 @@ describe("mapToPublicFullResponse", () => {
           ratio: 1.2,
           copyright: "Foo"
         }
-      ]
+      ],
+      version: 1
     });
   });
 
@@ -275,7 +276,8 @@ describe("mapToPublicFullResponse", () => {
       longitude: -0.103103,
       wheelchairAccessType: "FullAccess",
       disabledBathroomType: "Present",
-      hearingFacilitiesType: "HearingLoops"
+      hearingFacilitiesType: "HearingLoops",
+      version: 1
     });
   });
 });

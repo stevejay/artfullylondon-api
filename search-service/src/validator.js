@@ -172,6 +172,7 @@ const PRESET_SEARCH_CONSTRAINT = {
   }
 };
 
+// TODO could create a constraint per entity type.
 const INDEX_DOCUMENT_CONSTRAINT = {
   entityType: {
     presence: true,
@@ -187,6 +188,11 @@ const INDEX_DOCUMENT_CONSTRAINT = {
       entityType: {
         presence: true,
         inclusion: entityType.ALLOWED_VALUES
+      },
+      version: {
+        number: true,
+        presence: true,
+        numericality: { onlyInteger: true, greaterThanOrEqualTo: 1 }
       }
     }
   }

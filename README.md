@@ -82,6 +82,7 @@ Use the following process to check what software is already running on a given p
 - See about CORS origin restrictions for getting images from resized and original S3 buckets.
 - Delete the staging table 'artfullylondon-development-iteration-log'
 - Improve error handling on iterators.
+- Check search service does basic validation of entites to index (eg, id, version, entityType)
 
 ## Info
 

@@ -7,35 +7,27 @@ import * as entityType from "../types/entity-type";
 import * as eventRepository from "../persistence/event-repository";
 import * as cacher from "../cacher";
 
-export async function getEventSeries(params) {
-  const eventSeries = await eventSeriesRepository.getEventSeries(
-    params.id,
-    false
-  );
+export async function get(params) {
+  const eventSeries = await eventSeriesRepository.get(params.id, false);
   return { entity: mapper.mapToPublicFullResponse(eventSeries) };
 }
 
-export async function getEventSeriesForEdit(params) {
-  const eventSeries = await eventSeriesRepository.getEventSeries(
-    params.id,
-    true
-  );
+export async function getForEdit(params) {
+  const eventSeries = await eventSeriesRepository.get(params.id, true);
   return { entity: eventSeries };
 }
 
-export async function getEventSeriesMulti(params) {
-  const eventSeries = await eventSeriesRepository.getEventSeriesMulti(
-    params.ids
-  );
+export async function getMulti(params) {
+  const eventSeries = await eventSeriesRepository.getMulti(params.ids);
   return { entities: eventSeries.map(mapper.mapToPublicSummaryResponse) };
 }
 
-export async function createOrUpdateEventSeries(params) {
+export async function createOrUpdate(params) {
   params = normaliser.normaliseCreateOrUpdateEventSeriesRequest(params);
   validator.validateCreateOrUpdateEventSeriesRequest(params);
   const isUpdate = !!params.id;
   const dbEventSeries = mapper.mapCreateOrUpdateEventSeriesRequest(params);
-  await eventSeriesRepository.createOrUpdateEventSeries(dbEventSeries);
+  await eventSeriesRepository.createOrUpdate(dbEventSeries);
   if (isUpdate) {
     const eventIds = await eventRepository.getEventIdsByEventSeries(
       dbEventSeries.id
@@ -47,7 +39,6 @@ export async function createOrUpdateEventSeries(params) {
   return { entity: dbEventSeries };
 }
 
-export async function getNextEventSeries(lastId) {
-  const dbEventSeries = await eventSeriesRepository.getNextEventSeries(lastId);
-  return dbEventSeries ? mapper.mapToPublicFullResponse(dbEventSeries) : null;
+export async function getNextId(lastId) {
+  return await eventSeriesRepository.getNextId(lastId);
 }

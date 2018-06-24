@@ -1,18 +1,32 @@
 import { sync } from "jest-toolkit";
 import request from "request-promise-native";
-// import delay from "delay";
+import delay from "delay";
 import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
 import * as cognitoAuth from "../utils/cognito-auth";
 import * as lambdaUtils from "../utils/lambda";
+import SnsListener from "../utils/serverless-offline-sns-listener";
 jest.setTimeout(30000);
 
 describe("event series", () => {
   let testEventSeriesId = null;
+  let snsListener = null;
   const testEventSeriesBody = testData.createNewEventSeriesBody();
 
   beforeAll(async () => {
     await dynamodb.truncateAllTables();
+    snsListener = new SnsListener({
+      endpoint: "http://127.0.0.1:4002",
+      region: "eu-west-1"
+    });
+    await snsListener.startListening(
+      "arn:aws:sns:eu-west-1:1111111111111:IndexDocument-development",
+      3019
+    );
+  });
+
+  afterAll(async () => {
+    await snsListener.stopListening();
   });
 
   it("should fail to create an invalid event series", async () => {
@@ -46,6 +60,7 @@ describe("event series", () => {
   });
 
   it("should create a valid event series", async () => {
+    snsListener.clearReceivedMessages();
     const response = await request({
       uri: "http://localhost:3014/admin/event-series",
       json: true,
@@ -66,6 +81,19 @@ describe("event series", () => {
     );
 
     testEventSeriesId = parsedResponse.entity.id;
+
+    delay(3000);
+    expect(snsListener.receivedMessages).toEqual([
+      {
+        entityType: "event-series",
+        entity: expect.objectContaining({
+          eventSeriesType: "Occasional",
+          summary: "Stand-up poetry",
+          status: "Active",
+          version: 1
+        })
+      }
+    ]);
   });
 
   it("should get the event series without cache control headers when using the admin api", async () => {
@@ -76,14 +104,6 @@ describe("event series", () => {
       timeout: 14000,
       resolveWithFullResponse: true
     });
-
-    // expect(response.headers).toEqual(
-    //   expect.objectContaining({
-    //     "cache-control": "no-cache"
-    //   })
-    // );
-
-    // expect(response.headers.etag).not.toBeDefined();
 
     const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
     expect(parsedResponse.entity).toEqual(
@@ -105,15 +125,6 @@ describe("event series", () => {
       timeout: 14000,
       resolveWithFullResponse: true
     });
-
-    // expect(response.headers).toEqual(
-    //   expect.objectContaining({
-    //     "x-artfully-cache": "Miss",
-    //     "cache-control": "public, max-age=1800"
-    //   })
-    // );
-
-    // expect(response.headers.etag).toBeDefined();
 
     const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
     expect(parsedResponse.entity).toEqual(
@@ -167,6 +178,7 @@ describe("event series", () => {
   });
 
   it("should accept a valid update to the event series", async () => {
+    snsListener.clearReceivedMessages();
     const response = await request({
       uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
       json: true,
@@ -189,6 +201,19 @@ describe("event series", () => {
         version: 2
       })
     );
+
+    delay(3000);
+    expect(snsListener.receivedMessages).toEqual([
+      {
+        entityType: "event-series",
+        entity: expect.objectContaining({
+          eventSeriesType: "Occasional",
+          summary: "Stand-up poetry New",
+          status: "Active",
+          version: 2
+        })
+      }
+    ]);
   });
 
   it("should fail to get a non-existent event series", async () => {

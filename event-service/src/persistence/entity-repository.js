@@ -26,7 +26,7 @@ export function get(tableName, id, consistentRead) {
   });
 }
 
-export async function getNextEntity(tableName, lastId) {
+export async function getNextEntityId(tableName, lastId) {
   const result = await dynamodb.scanBasic({
     TableName: tableName,
     ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
@@ -35,5 +35,5 @@ export async function getNextEntity(tableName, lastId) {
     ProjectionExpression: "id",
     ConsistentRead: false
   });
-  return result.Items.length > 0 ? result.Items[0] : null;
+  return result.Items.length > 0 ? result.Items[0].id : null;
 }

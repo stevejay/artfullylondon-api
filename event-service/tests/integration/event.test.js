@@ -5,6 +5,7 @@ import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
 import * as cognitoAuth from "../utils/cognito-auth";
 import * as lambdaUtils from "../utils/lambda";
+import SnsListener from "../utils/serverless-offline-sns-listener";
 jest.setTimeout(30000);
 
 describe("event", () => {
@@ -12,6 +13,7 @@ describe("event", () => {
   let testTalentId = null;
   let testEventSeriesId = null;
   let testEventId = null;
+  let snsListener = null;
   const testVenueBody = testData.createNewVenueBody();
   const testTalentBody = testData.createNewTalentBody();
   const testEventSeriesBody = testData.createNewEventSeriesBody();
@@ -61,6 +63,19 @@ describe("event", () => {
       testTalentId,
       testEventSeriesId
     );
+
+    snsListener = new SnsListener({
+      endpoint: "http://127.0.0.1:4002",
+      region: "eu-west-1"
+    });
+    await snsListener.startListening(
+      "arn:aws:sns:eu-west-1:1111111111111:IndexDocument-development",
+      3019
+    );
+  });
+
+  afterAll(async () => {
+    await snsListener.stopListening();
   });
 
   it("should fail to create an invalid event", async () => {
@@ -94,6 +109,7 @@ describe("event", () => {
   });
 
   it("should create a valid event", async () => {
+    snsListener.clearReceivedMessages();
     const response = await request({
       uri: "http://localhost:3014/admin/event",
       json: true,
@@ -122,6 +138,18 @@ describe("event", () => {
 
     // Allow time for the SNS search index update message to be processed.
     await delay(5000);
+    expect(snsListener.receivedMessages).toEqual([
+      {
+        entityType: "event",
+        entity: expect.objectContaining({
+          eventType: "Exhibition",
+          occurrenceType: "Bounded",
+          costType: "Free",
+          status: "Active",
+          version: 1
+        })
+      }
+    ]);
   });
 
   it("should get the event without cache control headers when using the admin api", async () => {
@@ -132,14 +160,6 @@ describe("event", () => {
       timeout: 14000,
       resolveWithFullResponse: true
     });
-
-    // expect(response.headers).toEqual(
-    //   expect.objectContaining({
-    //     "cache-control": "no-cache"
-    //   })
-    // );
-
-    // expect(response.headers.etag).not.toBeDefined();
 
     const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
     expect(parsedResponse.entity).toEqual(
@@ -166,15 +186,6 @@ describe("event", () => {
       timeout: 14000,
       resolveWithFullResponse: true
     });
-
-    // expect(response.headers).toEqual(
-    //   expect.objectContaining({
-    //     "x-artfully-cache": "Miss",
-    //     "cache-control": "public, max-age=1800"
-    //   })
-    // );
-
-    // expect(response.headers.etag).toBeDefined();
 
     const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
     expect(parsedResponse.entity).toEqual(
@@ -236,6 +247,7 @@ describe("event", () => {
   });
 
   it("should accept a valid update to the event", async () => {
+    snsListener.clearReceivedMessages();
     const response = await request({
       uri: "http://localhost:3014/admin/event/" + testEventId,
       json: true,
@@ -265,6 +277,17 @@ describe("event", () => {
 
     // Allow time for the SNS search index update message to be processed.
     await delay(5000);
+    expect(snsListener.receivedMessages).toEqual([
+      {
+        entityType: "event",
+        entity: expect.objectContaining({
+          id: testEventId,
+          duration: "02:00",
+          status: "Active",
+          version: 2
+        })
+      }
+    ]);
   });
 
   it("should fail to get a non-existent event", async () => {
@@ -281,80 +304,103 @@ describe("event", () => {
     ).toThrow(/Entity Not Found/);
   });
 
-  // it("should update the event when the venue entity updates", async () => {
-  //   await request({
-  //     uri: "http://localhost:3014/admin/venue/" + testVenueId,
-  //     json: true,
-  //     method: "PUT",
-  //     headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-  //     body: {
-  //       ...testVenueBody,
-  //       postcode: "N8 0KL",
-  //       version: 2
-  //     },
-  //     timeout: 14000
-  //   });
+  it("should update the event when the venue entity updates", async () => {
+    snsListener.clearReceivedMessages();
+    let response = await request({
+      uri: "http://localhost:3014/admin/venue/" + testVenueId,
+      json: true,
+      method: "PUT",
+      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
+      body: {
+        ...testVenueBody,
+        postcode: "N8 0KL",
+        version: 2
+      },
+      timeout: 14000
+    });
 
-  //   // Allow time for the search index update message to be processed.
-  //   await delay(5000);
+    // Allow time for the search index update message to be processed.
+    await delay(5000);
+    expect(snsListener.receivedMessages).toEqual(
+      expect.arrayContaining([
+        {
+          entityType: "event",
+          entity: expect.objectContaining({
+            id: testEventId,
+            duration: "02:00",
+            status: "Active",
+            version: 2
+          })
+        },
+        {
+          entityType: "venue",
+          entity: expect.objectContaining({
+            postcode: "N8 0KL",
+            version: 2
+          })
+        }
+      ])
+    );
 
-  //   const response = await testUtils.getDocument("event-full", testEventId);
+    // Check the event was updated:
+    response = await request({
+      uri: "http://localhost:3014/public/event/" + testEventId,
+      json: true,
+      method: "GET",
+      timeout: 14000,
+      resolveWithFullResponse: true
+    });
 
-  //   expect(response).toEqual(
-  //     expect.objectContaining({
-  //       _id: testEventId,
-  //       _index: "event-full",
-  //       _type: "doc",
-  //       _version: 2,
-  //       found: true
-  //     })
-  //   );
+    const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
+    expect(parsedResponse.entity).toEqual(
+      expect.objectContaining({
+        id: testEventId,
+        duration: "02:00",
+        status: "Active",
+        version: 2,
+        postcode: "N8 0KL"
+      })
+    );
+  });
 
-  //   expect(response._source).toEqual(
-  //     expect.objectContaining({
-  //       postcode: "N8 0KL",
-  //       venueId: testVenueId,
-  //       eventSeriesId: testEventSeriesId,
-  //       talents: [testTalentId]
-  //     })
-  //   );
-  // });
+  it("should update the event when the event series entity updates", async () => {
+    snsListener.clearReceivedMessages();
+    await request({
+      uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
+      json: true,
+      method: "PUT",
+      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
+      body: {
+        ...testEventSeriesBody,
+        summary: "Stand-up poetry New",
+        version: 2
+      },
+      timeout: 14000
+    });
 
-  // it("should update the event when the event series entity updates", async () => {
-  //   await request({
-  //     uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
-  //     json: true,
-  //     method: "PUT",
-  //     headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-  //     body: {
-  //       ...testEventSeriesBody,
-  //       name: "New Event Series Name",
-  //       version: 2
-  //     },
-  //     timeout: 14000
-  //   });
-
-  //   // Allow time for the search index update message to be processed.
-  //   await delay(5000);
-
-  //   const response = await testUtils.getDocument("event-full", testEventId);
-
-  //   expect(response).toEqual(
-  //     expect.objectContaining({
-  //       _id: testEventId,
-  //       _index: "event-full",
-  //       _type: "doc",
-  //       _version: 2,
-  //       found: true
-  //     })
-  //   );
-
-  //   expect(response._source).toEqual(
-  //     expect.objectContaining({
-  //       venueId: testVenueId,
-  //       eventSeriesId: testEventSeriesId,
-  //       talents: [testTalentId]
-  //     })
-  //   );
-  // });
+    // Allow time for the search index update message to be processed.
+    await delay(5000);
+    expect(snsListener.receivedMessages).toEqual(
+      expect.arrayContaining([
+        {
+          entityType: "event",
+          entity: expect.objectContaining({
+            id: testEventId,
+            duration: "02:00",
+            status: "Active",
+            version: 2
+          })
+        },
+        {
+          entityType: "event-series",
+          entity: expect.objectContaining({
+            eventSeriesType: "Occasional",
+            summary: "Stand-up poetry New",
+            status: "Active",
+            version: 2
+          })
+        }
+      ])
+    );
+  });
 });

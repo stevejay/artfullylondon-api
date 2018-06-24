@@ -7,7 +7,7 @@ import convertAsyncToCallback from "../convert-async-to-callback";
 export const handler = convertAsyncToCallback(
   withErrorHandling(async function(event) {
     const params = mapper.mapGetEntityMultiRequest(event);
-    const result = await talentService.getTalentMulti(params);
+    const result = await talentService.getMulti(params);
     return { body: JSON.stringify(result) };
   })
 );

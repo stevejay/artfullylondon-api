@@ -177,7 +177,8 @@ describe("mapToPublicFullResponse", () => {
           ratio: 1.2,
           copyright: "Tate Modern"
         }
-      ]
+      ],
+      version: 3
     });
   });
 
@@ -192,7 +193,8 @@ describe("mapToPublicFullResponse", () => {
       lastName: "Cracknell",
       talentType: "Individual",
       commonRole: "Actor",
-      firstNames: "Carrie"
+      firstNames: "Carrie",
+      version: 3
     });
   });
 
@@ -206,7 +208,8 @@ describe("mapToPublicFullResponse", () => {
       id: testData.GROUP_TALENT_ID,
       lastName: "The Darkness",
       talentType: "Group",
-      commonRole: "Artist"
+      commonRole: "Artist",
+      version: 1
     });
   });
 });

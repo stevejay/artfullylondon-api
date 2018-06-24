@@ -8,28 +8,28 @@ import * as eventRepository from "../persistence/event-repository";
 import * as notifier from "../notifier";
 import * as cacher from "../cacher";
 
-export async function getVenue(params) {
-  const venue = await venueRepository.getVenue(params.id, false);
+export async function get(params) {
+  const venue = await venueRepository.get(params.id, false);
   return { entity: mapper.mapToPublicFullResponse(venue) };
 }
 
-export async function getVenueForEdit(params) {
-  const venue = await venueRepository.getVenue(params.id, true);
+export async function getForEdit(params) {
+  const venue = await venueRepository.get(params.id, true);
   return { entity: mapper.mapToAdminResponse(venue) };
 }
 
-export async function getVenueMulti(params) {
-  const venues = await venueRepository.getVenueMulti(params.ids);
+export async function getMulti(params) {
+  const venues = await venueRepository.getMulti(params.ids);
   return { entities: venues.map(mapper.mapToPublicSummaryResponse) };
 }
 
-export async function createOrUpdateVenue(params) {
+export async function createOrUpdate(params) {
   params = normaliser.normaliseCreateOrUpdateVenueRequest(params);
   validator.validateCreateOrUpdateVenueRequest(params);
   params = await enhancer.enhanceDescription(params);
   const isUpdate = !!params.id;
   const dbVenue = mapper.mapCreateOrUpdateVenueRequest(params);
-  await venueRepository.createOrUpdateVenue(dbVenue);
+  await venueRepository.createOrUpdate(dbVenue);
   if (isUpdate) {
     const eventIds = await eventRepository.getEventIdsByVenue(dbVenue.id);
     await Promise.all(eventIds.map(notifier.updateEvent));
@@ -39,7 +39,6 @@ export async function createOrUpdateVenue(params) {
   return { entity: dbVenue };
 }
 
-export async function getNextVenue(lastId) {
-  const dbVenue = await venueRepository.getNextVenue(lastId);
-  return dbVenue ? mapper.mapToPublicFullResponse(dbVenue) : null;
+export async function getNextId(lastId) {
+  return await venueRepository.getNextId(lastId);
 }

@@ -6,16 +6,13 @@ import * as entityType from "../types/entity-type";
 import * as cacher from "../cacher";
 import * as validator from "./validator";
 import iterationThrottler from "./iteration-throttler";
-import * as venueService from "../venue-service";
-import * as talentService from "../talent-service";
-import * as eventService from "../event-service";
-import * as eventSeriesService from "../event-series-service";
+import * as serviceLookup from "./service-lookup";
 
 export async function updateEventSearchIndex(message) {
   if (!message || !message.eventId) {
     return;
   }
-  let dbEvent = await eventRepository.getEvent(message.eventId, true);
+  let dbEvent = await eventRepository.get(message.eventId, true);
   const referencedEntities = await eventRepository.getReferencedEntities(
     dbEvent,
     true
@@ -33,18 +30,19 @@ export async function refreshSearchIndex(params) {
   return { acknowledged: true };
 }
 
-// TODO improve error handling here:
 export async function processRefreshSearchIndexMessage(message) {
   const startTime = process.hrtime();
-  const nextEntity = await getNextEntity(message.entityType, message.lastId);
-  if (nextEntity) {
+  const service = serviceLookup.getEntityServiceForType(message.entityType);
+  const nextEntityId = await service.getNextId(message.lastId);
+  if (nextEntityId) {
     try {
-      await notifier.indexEntity(nextEntity);
+      const result = await service.get({ id: nextEntityId });
+      await notifier.indexEntity(result.entity);
     } catch (err) {
       await iterationLogRepository.addErrorToLog(
         message.actionId,
         message.iterationId,
-        `Error with ${message.entityType} entity ${nextEntity.id}: ${
+        `Error with ${message.entityType} entity ${nextEntityId}: ${
           err.message
         }`
       );
@@ -54,29 +52,12 @@ export async function processRefreshSearchIndexMessage(message) {
       message.actionId,
       message.iterationId,
       message.entityType,
-      nextEntity.id
+      nextEntityId
     );
   } else {
     await iterationLogRepository.closeLog(
       message.actionId,
       message.iterationId
     );
-  }
-}
-
-// TODO!!! eventMapper.mapToPublicFullResponse(nextEntity)
-
-async function getNextEntity(type, lastId) {
-  switch (type) {
-    case entityType.EVENT:
-      return await eventService.getNextEvent(lastId);
-    case entityType.EVENT_SERIES:
-      return await eventSeriesService.getNextEventSeries(lastId);
-    case entityType.TALENT:
-      return await talentService.getNextTalent(lastId);
-    case entityType.VENUE:
-      return await venueService.getNextVenue(lastId);
-    default:
-      throw new Error(`Unsupported entity type ${type}`);
   }
 }

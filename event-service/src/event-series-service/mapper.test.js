@@ -113,7 +113,8 @@ describe("mapToPublicFullResponse", () => {
           copyright: "Foo"
         }
       ],
-      weSay: "something"
+      weSay: "something",
+      version: 1
     });
   });
 });
