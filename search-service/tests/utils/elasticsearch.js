@@ -4,6 +4,7 @@ import path from "path";
 import yaml from "js-yaml";
 import delay from "delay";
 import * as fs from "fs";
+import * as log from "loglevel";
 
 const envVars = yaml.safeLoad(fs.readFileSync("./env.yml", "utf8")).development;
 
@@ -17,6 +18,22 @@ const INDEXES_DIR = path.resolve(__dirname, "../../elasticsearch/indexes");
 export async function deleteIndex(index) {
   if (await esClient.indices.exists({ index })) {
     await esClient.indices.delete({ index });
+  }
+
+  let count = 0;
+  for (;;) {
+    await delay(500);
+    const exists = await esClient.indices.exists({ index });
+    if (!exists) {
+      return;
+    } else {
+      log.warn(`Index '${index}' found to still exist`);
+      ++count;
+    }
+
+    if (count >= 10) {
+      throw new Error(`Failed to delete index '${index}'`);
+    }
   }
 }
 

@@ -189,29 +189,33 @@ describe("validatePresetSearch", () => {
 });
 
 describe("validateIndexDocumentRequest", () => {
-  test.each([
-    [
-      {
-        entityType: entityType.TALENT,
-        entity: { id: "talent1", entityType: entityType.TALENT }
-      }
-    ]
-  ])("%o should validate", arg => {
-    expect(() =>
-      validator.validateIndexDocumentRequest(deepFreeze(arg))
-    ).not.toThrow();
+  describe("valid requests", () => {
+    test.each([
+      [
+        {
+          entityType: entityType.TALENT,
+          entity: { id: "talent1", entityType: entityType.TALENT, version: 1 }
+        }
+      ]
+    ])("%o should validate", arg => {
+      expect(() =>
+        validator.validateIndexDocumentRequest(deepFreeze(arg))
+      ).not.toThrow();
+    });
   });
 
-  test.each([
-    [
-      {
-        entityType: "not-a-type",
-        entity: { id: "talent1", entityType: entityType.TALENT }
-      }
-    ]
-  ])("%o should fail to validate", arg => {
-    expect(() =>
-      validator.validateIndexDocumentRequest(deepFreeze(arg))
-    ).toThrow();
+  describe("invalid requests", () => {
+    test.each([
+      [
+        {
+          entityType: "not-a-type",
+          entity: { id: "talent1", entityType: entityType.TALENT, version: 2 }
+        }
+      ]
+    ])("%o should fail to validate", arg => {
+      expect(() =>
+        validator.validateIndexDocumentRequest(deepFreeze(arg))
+      ).toThrow();
+    });
   });
 });
