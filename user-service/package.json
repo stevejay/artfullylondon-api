@@ -11,7 +11,7 @@
     "debug:windows": "SET SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline start --port 3012 --stage=development --noTimeout"
   },
   "devDependencies": {
-    "aws-sdk": "^2.260.1",
+    "aws-sdk": "^2.263.1",
     "babel-core": "^6.26.3",
     "babel-jest": "^23.0.1",
     "babel-loader": "^7.1.4",
@@ -21,7 +21,7 @@
     "babel-preset-env": "^1.7.0",
     "cross-env": "^5.2.0",
     "dynamodb-localhost": "^0.0.5",
-    "eslint": "^4.19.1",
+    "eslint": "^5.0.0",
     "jest": "^23.1.0",
     "jest-toolkit": "^0.1.2",
     "js-yaml": "^3.12.0",
@@ -34,11 +34,11 @@
     "serverless-pseudo-parameters": "^1.6.0",
     "serverless-webpack": "^5.1.5",
     "uuid": "^3.2.1",
-    "webpack": "^4.12.0",
+    "webpack": "^4.12.1",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "auth0": "^2.9.1",
+    "auth0": "^2.10.0",
     "aws-xray-sdk": "^1.2.0",
     "dynamodb-doc-client-wrapper": "^2.0.1",
     "ensure-request": "^4.0.0",

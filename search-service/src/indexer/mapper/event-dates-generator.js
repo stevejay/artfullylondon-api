@@ -1,5 +1,5 @@
 import _ from "lodash";
-import getISODay from "date-fns/getIsoDay";
+import getISODay from "date-fns/getISODay";
 import addDays from "date-fns/addDays";
 import * as eventType from "../../types/event-type";
 import * as occurrenceType from "../../types/occurrence-type";

@@ -1,5 +1,5 @@
 import _ from "lodash";
-import getISODay from "date-fns/getIsoDay";
+import getISODay from "date-fns/getISODay";
 import subDays from "date-fns/subDays";
 import addDays from "date-fns/addDays";
 import getYear from "date-fns/getYear";

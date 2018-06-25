@@ -83,7 +83,6 @@ Use the following process to check what software is already running on a given p
 - Do full validation of entities to index that are received by search service?
 - Check further on the search service integration test flakiness.
 - DLQs: https://serverless.com/framework/docs/providers/aws/guide/functions/
-- Fix SNS permissions
 
 ## Info
 
