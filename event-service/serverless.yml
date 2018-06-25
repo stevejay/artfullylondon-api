@@ -16,10 +16,6 @@ provider:
     iamRoleStatements:
         -
             Effect: "Allow"
-            Action: "lambda:InvokeFunction"
-            Resource: "*"
-        -
-            Effect: "Allow"
             Action: "dynamodb:*"
             Resource:
                 Fn::Join:
@@ -184,7 +180,8 @@ provider:
                         - Ref: "AWS::Region"
                         - ":"
                         - Ref: "AWS::AccountId"
-                        - ":*"
+                        - ":"
+                        - ${self:custom.indexDocumentTopicName}
         -
             Effect: "Allow"
             Action: "sns:*"
@@ -197,7 +194,20 @@ provider:
                         - ":"
                         - Ref: "AWS::AccountId"
                         - ":"
-                        - ${self:custom.indexDocumentTopicName}
+                        - ${self:custom.eventUpdatedTopicName}
+        -
+            Effect: "Allow"
+            Action: "sns:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:sns:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":"
+                        - ${self:custom.refreshSearchIndexTopicName}
 
 plugins:
     - serverless-webpack

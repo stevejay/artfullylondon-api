@@ -79,10 +79,11 @@ Use the following process to check what software is already running on a given p
 - Add AWS Cognito serverless configuration to the serverless files? (I think serverless supports AWS Cognito configuration now. Problem is it is not needed locally.)
 - Is there an encoding issue with params in lambda integration when using serverless local?
 - See about CORS origin restrictions for getting images from resized and original S3 buckets.
-- Delete the staging table 'artfullylondon-development-iteration-log'
 - Improve error handling on iterators.
 - Do full validation of entities to index that are received by search service?
 - Check further on the search service integration test flakiness.
+- DLQs: https://serverless.com/framework/docs/providers/aws/guide/functions/
+- Fix SNS permissions
 
 ## Info
 

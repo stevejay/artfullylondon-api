@@ -58,6 +58,19 @@ provider:
                             - "arn:aws:s3:::"
                             - Ref: "ResizedImagesS3Bucket"
                             - "/*"
+        -
+            Effect: "Allow"
+            Action: "sns:*"
+            Resource:
+                Fn::Join:
+                    - ""
+                    -
+                        - "arn:aws:sns:"
+                        - Ref: "AWS::Region"
+                        - ":"
+                        - Ref: "AWS::AccountId"
+                        - ":"
+                        - ${self:custom.reprocessImagesTopicName}
 
 plugins:
     - serverless-webpack

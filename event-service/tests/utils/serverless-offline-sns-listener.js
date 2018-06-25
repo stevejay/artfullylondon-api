@@ -49,7 +49,7 @@ export default class {
         this._receivedMessages.push("ERROR: Failed to get received message");
       } else {
         const decodedMessage = JSON.parse(message);
-        this._receivedMessages.push(decodedMessage.default || decodedMessage);
+        this._receivedMessages.push(decodedMessage);
       }
       ctx.response.status = 200;
     });

@@ -7,7 +7,7 @@
     "test:integration": "cross-env NODE_ENV=test jest --runInBand --no-cache --detectOpenHandles ./tests/integration",
     "lint": "eslint .",
     "deploy": "yarn test && node ./scripts/build.js && sls deploy -v",
-    "local": "sls offline start --stage=development --port 3010 --noTimeout",
+    "offline": "sls offline start --stage=development --port 3010 --noTimeout",
     "debug:windows": "SET SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline start --port 3010 --stage=development --noTimeout"
   },
   "devDependencies": {

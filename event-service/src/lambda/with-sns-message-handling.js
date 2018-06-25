@@ -6,7 +6,7 @@ export default function(handler) {
       (event.Records || []).map(async record => {
         const message = JSON.parse(record.Sns.Message);
         log.error("GOT MESSAGE", JSON.stringify(message));
-        return await handler(message.default || message);
+        return await handler(message);
       })
     )
       .then(result => {

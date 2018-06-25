@@ -9,8 +9,7 @@ export function send(topicName, message) {
   return new Promise((resolve, reject) => {
     sns.publish(
       {
-        Message: JSON.stringify({ default: message }),
-        MessageStructure: "json",
+        Message: JSON.stringify(message),
         TopicArn: `arn:aws:sns:eu-west-1:1111111111111:${topicName}-development`
       },
       (err, data) => {
