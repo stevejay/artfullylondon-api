@@ -77,7 +77,6 @@ Use the following process to check what software is already running on a given p
 ## Todo
 
 - Add AWS Cognito serverless configuration to the serverless files? (I think serverless supports AWS Cognito configuration now. Problem is it is not needed locally.)
-- Do I need to add cloudwatch:PutMetricData permission?
 - Is there an encoding issue with params in lambda integration when using serverless local?
 - See about CORS origin restrictions for getting images from resized and original S3 buckets.
 - Delete the staging table 'artfullylondon-development-iteration-log'

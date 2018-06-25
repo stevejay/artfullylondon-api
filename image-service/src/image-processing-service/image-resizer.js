@@ -8,7 +8,7 @@ export async function resize(srcPath, destPath, newWidth, newHeight) {
       const FILTER = "Triangle"; // FYI an alternative is Lagrange
       const FORMAT = "jpg";
 
-      const callback = (err /*, stdout , _stderr */) => {
+      const callback = err => {
         if (err) {
           reject(err);
         } else {
