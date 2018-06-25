@@ -8,8 +8,7 @@ describe("normaliseCreateTagRequest", () => {
       { type: "audience", label: "the family" }
     ]
   ])("%s should be normalised to %s", (request, expected) => {
-    request = deepFreeze(request);
-    const result = normaliser.normaliseCreateTagRequest(request);
+    const result = normaliser.normaliseCreateTagRequest(deepFreeze(request));
     expect(result).toEqual(expected);
   });
 });

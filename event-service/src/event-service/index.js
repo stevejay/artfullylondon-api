@@ -41,13 +41,13 @@ export async function getMulti(params) {
 }
 
 export async function createOrUpdate(params) {
-  params = normaliser.normaliseCreateOrUpdateEventRequest(params);
-  validator.validateCreateOrUpdateEventRequest(params);
+  const event = normaliser.normaliseCreateOrUpdateEventRequest(params);
+  validator.validateCreateOrUpdateEventRequest(event);
   const referencedEntities = await eventRepository.getReferencedEntities(
-    params,
+    event,
     false
   );
-  const dbEvent = mapper.mapCreateOrUpdateEventRequest(params);
+  const dbEvent = mapper.mapCreateOrUpdateEventRequest(event);
   await eventRepository.createOrUpdate(dbEvent);
   await notifier.updateEvent(dbEvent.id);
   return {

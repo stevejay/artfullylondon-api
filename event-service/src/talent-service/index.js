@@ -23,10 +23,10 @@ export async function getMulti(params) {
 }
 
 export async function createOrUpdate(params) {
-  params = normaliser.normaliseCreateOrUpdateTalentRequest(params);
-  validator.validateCreateOrUpdateTalentRequest(params);
-  params = await enhancer.enhanceDescription(params);
-  const dbTalent = mapper.mapCreateOrUpdateTalentRequest(params);
+  let talent = normaliser.normaliseCreateOrUpdateTalentRequest(params);
+  validator.validateCreateOrUpdateTalentRequest(talent);
+  talent = await enhancer.enhanceDescription(talent);
+  const dbTalent = mapper.mapCreateOrUpdateTalentRequest(talent);
   await talentRepository.createOrUpdate(dbTalent);
   await notifier.indexEntity(mapper.mapToPublicFullResponse(dbTalent));
   await cacher.clearEntityEtag(entityType.TALENT, dbTalent.id);

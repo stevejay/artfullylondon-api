@@ -23,10 +23,12 @@ export async function getMulti(params) {
 }
 
 export async function createOrUpdate(params) {
-  params = normaliser.normaliseCreateOrUpdateEventSeriesRequest(params);
-  validator.validateCreateOrUpdateEventSeriesRequest(params);
-  const isUpdate = !!params.id;
-  const dbEventSeries = mapper.mapCreateOrUpdateEventSeriesRequest(params);
+  const eventSeries = normaliser.normaliseCreateOrUpdateEventSeriesRequest(
+    params
+  );
+  validator.validateCreateOrUpdateEventSeriesRequest(eventSeries);
+  const isUpdate = !!eventSeries.id;
+  const dbEventSeries = mapper.mapCreateOrUpdateEventSeriesRequest(eventSeries);
   await eventSeriesRepository.createOrUpdate(dbEventSeries);
   if (isUpdate) {
     const eventIds = await eventRepository.getEventIdsByEventSeries(

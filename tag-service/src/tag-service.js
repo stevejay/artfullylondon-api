@@ -5,9 +5,9 @@ import * as normaliser from "./normaliser";
 import * as mapper from "./mapper";
 
 export async function createTag(request) {
-  request = normaliser.normaliseCreateTagRequest(request);
-  validator.validateCreateTagRequest(request);
-  const dbTag = mapper.mapCreateTagRequest(request);
+  const tag = normaliser.normaliseCreateTagRequest(request);
+  validator.validateCreateTagRequest(tag);
+  const dbTag = mapper.mapCreateTagRequest(tag);
   await tagRepository.createTag(dbTag);
   return mapper.mapSingleTagResponse(dbTag);
 }

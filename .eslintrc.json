@@ -5,6 +5,12 @@
     "jest": true
   },
   "extends": "eslint:recommended",
+  "rules": {
+    "no-param-reassign": [
+      "error",
+      { "props": true, "ignorePropertyModificationsFor": ["ctx"] }
+    ]
+  },
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2018

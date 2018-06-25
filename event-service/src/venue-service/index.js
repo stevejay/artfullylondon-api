@@ -24,11 +24,11 @@ export async function getMulti(params) {
 }
 
 export async function createOrUpdate(params) {
-  params = normaliser.normaliseCreateOrUpdateVenueRequest(params);
-  validator.validateCreateOrUpdateVenueRequest(params);
-  params = await enhancer.enhanceDescription(params);
-  const isUpdate = !!params.id;
-  const dbVenue = mapper.mapCreateOrUpdateVenueRequest(params);
+  let venue = normaliser.normaliseCreateOrUpdateVenueRequest(params);
+  validator.validateCreateOrUpdateVenueRequest(venue);
+  venue = await enhancer.enhanceDescription(venue);
+  const isUpdate = !!venue.id;
+  const dbVenue = mapper.mapCreateOrUpdateVenueRequest(venue);
   await venueRepository.createOrUpdate(dbVenue);
   if (isUpdate) {
     const eventIds = await eventRepository.getEventIdsByVenue(dbVenue.id);

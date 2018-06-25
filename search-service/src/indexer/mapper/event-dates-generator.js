@@ -459,8 +459,5 @@ function getClosures(event) {
 }
 
 function addDateTimeKey(times) {
-  return times.map(x => {
-    x.key = `${x.date}-${x.from}-${x.to}`;
-    return x;
-  });
+  return times.map(x => ({ ...x, key: `${x.date}-${x.from}-${x.to}` }));
 }

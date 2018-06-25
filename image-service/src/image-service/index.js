@@ -11,10 +11,10 @@ import iterationThrottler from "./iteration-throttler";
 const ITERATE_IMAGES_ACTION_ID = "IterateImages";
 
 export async function addImage(request) {
-  request = normaliser.normaliseAddImageRequest(request);
-  validator.validateAddImageRequest(request);
-  imageRepository.validateDoesNotExist(request.id);
-  const imageData = await imageProcessingService.processImage(request);
+  const image = normaliser.normaliseAddImageRequest(request);
+  validator.validateAddImageRequest(image);
+  imageRepository.validateDoesNotExist(image.id);
+  const imageData = await imageProcessingService.processImage(image);
   const dbImage = mapper.mapImageDataToDb(imageData);
   await imageRepository.createImage(dbImage);
   return { image: mapper.mapImageToResponse(dbImage) };
