@@ -64,12 +64,23 @@ custom:
         packager: 'yarn'
 
 functions:
-    createTag:
-        handler: src/lambda/graphql.handler
+    graphql:
+        handler: src/lambda/graphql.graphqlHandler
         events:
             - http:
-                path: "graphql"
+                path: graphql
                 method: post
+                cors: true
+            - http:
+                path: graphql
+                method: get
+                cors: true
+    graphqlInspector:
+        handler: src/lambda/graphql.graphiqlHandler
+        events:
+            - http:
+                path: graphiql
+                method: get
                 cors: true
                 # integration: lambda
                 # request:

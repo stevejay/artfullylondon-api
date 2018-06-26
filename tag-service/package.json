@@ -38,9 +38,12 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "apollo-server-lambda": "^2.0.0-rc.4",
     "aws-xray-sdk": "^1.2.0",
     "dynamodb-doc-client-wrapper": "^2.0.1",
     "ensure-request": "^4.0.0",
+    "graphql": "^0.13.2",
+    "graphql-tools": "^3.0.4",
     "jwt-decode": "^2.2.0",
     "limax": "^1.6.0",
     "lodash": "^4.17.10",

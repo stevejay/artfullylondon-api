@@ -84,6 +84,13 @@ Use the following process to check what software is already running on a given p
 - Check further on the search service integration test flakiness.
 - DLQs: https://serverless.com/framework/docs/providers/aws/guide/functions/
 - IfNoneMatch bad string problem when sending etag in request.
+- GraphQL:
+
+  - graphql-tools
+  - schema stitching
+  - database request batching https://github.com/facebook/dataloader
+  - paging: https://graphql.github.io/learn/pagination/
+  - https://www.apollographql.com/engine
 
 ## Info
 

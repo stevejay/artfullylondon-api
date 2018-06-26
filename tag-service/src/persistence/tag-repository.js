@@ -23,8 +23,7 @@ export function deleteTag(tagType, tagId) {
 
 export function getAll() {
   return dynamodb.scan({
-    ...BASIC_REQUEST,
-    ProjectionExpression: "id, label"
+    ...BASIC_REQUEST
   });
 }
 
@@ -32,7 +31,6 @@ export function getAllByTagType(tagType) {
   return dynamodb.query({
     ...BASIC_REQUEST,
     KeyConditionExpression: "tagType = :type",
-    ExpressionAttributeValues: { ":type": tagType },
-    ProjectionExpression: "id, label"
+    ExpressionAttributeValues: { ":type": tagType }
   });
 }

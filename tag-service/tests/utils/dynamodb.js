@@ -20,3 +20,7 @@ export async function truncateTagTable(tableName) {
     });
   }
 }
+
+export async function addToTable(tableName, item) {
+  return dynamodb.put({ TableName: tableName, Item: item });
+}
