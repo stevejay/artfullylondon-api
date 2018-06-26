@@ -1,5 +1,4 @@
 import request from "request-promise-native";
-// import { sync } from "jest-toolkit";
 import { EDITOR_AUTH_TOKEN } from "../utils/cognito-auth";
 import { addToTable, truncateTagTable } from "../utils/dynamodb";
 jest.setTimeout(60000);
@@ -25,20 +24,32 @@ describe("tag graphql querying", () => {
       json: true,
       method: "POST",
       headers: { Authorization: EDITOR_AUTH_TOKEN },
-      body: { query: "{ tags { label } }" },
-      timeout: 30000
+      body: { query: "{ tags { audience { label } geo { label } } }" },
+      timeout: 30000,
+      resolveWithFullResponse: true
     });
 
-    expect(result).toEqual({
+    expect(result.headers).toEqual(
+      expect.objectContaining({
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*"
+      })
+    );
+
+    expect(result.body).toEqual({
       data: {
-        tags: expect.arrayContaining([
-          {
-            label: "usa"
-          },
-          {
-            label: "families"
-          }
-        ])
+        tags: {
+          geo: [
+            {
+              label: "usa"
+            }
+          ],
+          audience: [
+            {
+              label: "families"
+            }
+          ]
+        }
       }
     });
   });
@@ -49,19 +60,23 @@ describe("tag graphql querying", () => {
       json: true,
       method: "POST",
       headers: { Authorization: EDITOR_AUTH_TOKEN },
-      body: { query: "{ tags(tagType: geo) { tagType, id, label } }" },
+      body: {
+        query: "{ tags { geo { tagType, id , label } } }"
+      },
       timeout: 30000
     });
 
     expect(result).toEqual({
       data: {
-        tags: [
-          {
-            tagType: "geo",
-            id: "geo/usa",
-            label: "usa"
-          }
-        ]
+        tags: {
+          geo: [
+            {
+              tagType: "geo",
+              id: "geo/usa",
+              label: "usa"
+            }
+          ]
+        }
       }
     });
   });

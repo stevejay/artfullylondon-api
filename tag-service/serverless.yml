@@ -108,7 +108,7 @@ functions:
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
         events:
             - http:
-                path: "tag/{type}"
+                path: "tag/{tagType}"
                 method: post
                 cors: true
                 integration: lambda
@@ -116,7 +116,7 @@ functions:
                     template:
                         application/json: >
                             {
-                                "type": "$input.params('type')",
+                                "tagType": "$input.params('tagType')",
                                 "label": $input.json('$.label'),
                                 "authorization" : "$input.params().header.get('Authorization')"
                             }
@@ -130,7 +130,7 @@ functions:
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
         events:
             - http:
-                path: "tag/{type}/{idPart}"
+                path: "tag/{id+}"
                 method: delete
                 cors: true
                 integration: lambda
@@ -138,8 +138,7 @@ functions:
                     template:
                         application/json: >
                             {
-                                "type": "$input.params('type')",
-                                "idPart": "$input.params('idPart')",
+                                "id": "$input.params('id')",
                                 "authorization" : "$input.params().header.get('Authorization')"
                             }
                 response: ${self:custom.standardResponses}
@@ -163,7 +162,7 @@ functions:
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
         events:
             - http:
-                path: "tags/{type}"
+                path: "tags/{tagType}"
                 method: get
                 cors: true
                 integration: lambda
@@ -171,7 +170,7 @@ functions:
                     template:
                         application/json: >
                             {
-                                "type": "$input.params('type')"
+                                "tagType": "$input.params('tagType')"
                             }
                 response: ${self:custom.standardResponses}
 

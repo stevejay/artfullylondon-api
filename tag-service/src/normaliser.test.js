@@ -4,8 +4,8 @@ import * as normaliser from "./normaliser";
 describe("normaliseCreateTagRequest", () => {
   test.each([
     [
-      { type: " Audience  ", label: " The     Family   " },
-      { type: "audience", label: "the family" }
+      { tagType: " Audience  ", label: " The     Family   " },
+      { tagType: "audience", label: "the family" }
     ]
   ])("%s should be normalised to %s", (request, expected) => {
     const result = normaliser.normaliseCreateTagRequest(deepFreeze(request));

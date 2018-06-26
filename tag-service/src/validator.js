@@ -17,14 +17,14 @@ function errorHandler(errors) {
 }
 
 export function validateGetTagsByTypeRequest(request) {
-  ensure(request, { type: typeConstraint }, errorHandler);
+  ensure(request, { tagType: typeConstraint }, errorHandler);
 }
 
 export function validateCreateTagRequest(request) {
   ensure(
     request,
     {
-      type: typeConstraint,
+      tagType: typeConstraint,
       label: labelConstraint
     },
     errorHandler

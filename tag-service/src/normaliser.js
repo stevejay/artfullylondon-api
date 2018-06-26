@@ -1,7 +1,7 @@
 import normalise from "normalise-request";
 
 const normaliser = {
-  type: {
+  tagType: {
     trim: true,
     toLowerCase: true
   },

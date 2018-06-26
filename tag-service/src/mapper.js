@@ -2,12 +2,19 @@ import _ from "lodash";
 import * as idGenerator from "./id-generator";
 
 export function mapCreateTagRequest(request) {
-  const id = idGenerator.createFromLabel(request.type, request.label);
+  const id = idGenerator.createFromLabel(request.tagType, request.label);
 
   return {
     id,
-    tagType: request.type,
+    tagType: request.tagType,
     label: request.label
+  };
+}
+
+export function mapDeleteTagRequest(request) {
+  return {
+    id: request.id,
+    tagType: extractTagTypeFromId(request)
   };
 }
 

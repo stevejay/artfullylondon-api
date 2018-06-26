@@ -27,10 +27,10 @@ export function getAll() {
   });
 }
 
-export function getAllByTagType(tagType) {
+export function getByTagType(tagType) {
   return dynamodb.query({
     ...BASIC_REQUEST,
-    KeyConditionExpression: "tagType = :type",
-    ExpressionAttributeValues: { ":type": tagType }
+    KeyConditionExpression: "tagType = :tagType",
+    ExpressionAttributeValues: { ":tagType": tagType }
   });
 }

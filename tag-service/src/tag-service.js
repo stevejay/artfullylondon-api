@@ -1,5 +1,4 @@
 import * as tagRepository from "./persistence/tag-repository";
-import * as idGenerator from "./id-generator";
 import * as validator from "./validator";
 import * as normaliser from "./normaliser";
 import * as mapper from "./mapper";
@@ -13,8 +12,8 @@ export async function createTag(request) {
 }
 
 export async function deleteTag(request) {
-  const id = idGenerator.join(request.type, request.idPart);
-  await tagRepository.deleteTag(request.type, id);
+  const tag = mapper.mapDeleteTagRequest(request);
+  await tagRepository.deleteTag(tag.tagType, tag.id);
   return { acknowledged: true };
 }
 
@@ -25,6 +24,6 @@ export async function getAllTags() {
 
 export async function getTagsByType(request) {
   validator.validateGetTagsByTypeRequest(request);
-  const dbTags = await tagRepository.getAllByTagType(request.type);
+  const dbTags = await tagRepository.getByTagType(request.tagType);
   return mapper.mapMultiTagsResponse(dbTags);
 }

@@ -2,9 +2,8 @@ import * as mapper from "./mapper";
 
 describe("mapCreateTagRequest", () => {
   it("should map correctly", () => {
-    const request = { type: "geo", label: "usa" };
+    const request = { tagType: "geo", label: "usa" };
     const result = mapper.mapCreateTagRequest(request);
-
     expect(result).toEqual({
       id: "geo/usa",
       tagType: "geo",
@@ -13,11 +12,21 @@ describe("mapCreateTagRequest", () => {
   });
 });
 
+describe("mapDeleteTagRequest", () => {
+  it("should map correctly", () => {
+    const request = { id: "geo/usa" };
+    const result = mapper.mapDeleteTagRequest(request);
+    expect(result).toEqual({
+      id: "geo/usa",
+      tagType: "geo"
+    });
+  });
+});
+
 describe("mapSingleTagResponse", () => {
   it("should map correctly", () => {
     const dbTag = { id: "geo/usa", tagType: "geo", label: "usa" };
     const result = mapper.mapSingleTagResponse(dbTag);
-
     expect(result).toEqual({
       tag: {
         id: "geo/usa",
@@ -33,9 +42,7 @@ describe("mapMultiTagsResponse", () => {
       { id: "audience/a", label: "a" },
       { id: "audience/b", label: "b" }
     ];
-
     const result = mapper.mapMultiTagsResponse(dbResponse);
-
     expect(result).toEqual({
       tags: {
         audience: [
@@ -52,9 +59,7 @@ describe("mapMultiTagsResponse", () => {
       { id: "geo/c", label: "c" },
       { id: "audience/b", label: "b" }
     ];
-
     const result = mapper.mapMultiTagsResponse(dbResponse);
-
     expect(result).toEqual({
       tags: {
         audience: [
