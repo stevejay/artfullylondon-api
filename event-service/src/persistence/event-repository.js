@@ -22,8 +22,7 @@ export async function getMulti(ids) {
           "performancesOverrides, images, venueId",
         ExpressionAttributeNames: { "#n": "name", "#s": "status" }
       }
-    },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    }
   });
 
   return response.Responses[EVENT_TABLE_NAME];
@@ -35,8 +34,7 @@ export async function getEventIdsByVenue(venueId) {
     IndexName: process.env.SERVERLESS_EVENT_BY_VENUE_INDEX_NAME,
     KeyConditionExpression: "venueId = :id",
     ExpressionAttributeValues: { ":id": venueId },
-    ProjectionExpression: "id",
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ProjectionExpression: "id"
   });
 
   return events.map(event => event.id);
@@ -48,8 +46,7 @@ export async function getEventIdsByEventSeries(eventSeriesId) {
     IndexName: process.env.SERVERLESS_EVENT_BY_EVENT_SERIES_INDEX_NAME,
     KeyConditionExpression: "eventSeriesId = :id",
     ExpressionAttributeValues: { ":id": eventSeriesId },
-    ProjectionExpression: "id",
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ProjectionExpression: "id"
   });
 
   return events.map(event => event.id);
@@ -75,8 +72,7 @@ async function getReferencedEntitiesImpl(
   consistentRead
 ) {
   const params = {
-    RequestItems: {},
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    RequestItems: {}
   };
 
   if (!_.isEmpty(talentIds)) {

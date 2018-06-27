@@ -8,11 +8,3 @@ describe("createFromLabel", () => {
     expect(idGenerator.createFromLabel(prefix, label)).toEqual(expected);
   });
 });
-
-describe("join", () => {
-  it("should return valid id from id parts", () => {
-    expect(idGenerator.join("medium", "theatre", "immersive")).toEqual(
-      "medium/theatre/immersive"
-    );
-  });
-});

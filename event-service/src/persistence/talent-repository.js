@@ -18,8 +18,7 @@ export async function getMulti(ids) {
           "#s": "status"
         }
       }
-    },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    }
   });
 
   return response.Responses[TALENT_TABLE_NAME];

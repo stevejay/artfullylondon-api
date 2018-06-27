@@ -3,7 +3,6 @@ import * as tagType from "./tag-type";
 import * as validator from "./validator";
 import * as normaliser from "./normaliser";
 import * as mapper from "./mapper";
-import * as auth from "./lambda/auth";
 
 export default {
   Query: {
@@ -15,18 +14,16 @@ export default {
     })
   },
   Mutation: {
-    createTag: async (__, request, c) => {
-      console.log("REQUEST", JSON.stringify(request), JSON.stringify(c));
-      // if (auth.isReadonlyUser(request)) {
-      //   throw new Error("[401] readonly user cannot modify system");
-      // }
+    createTag: async (__, request, context) => {
+      validator.validateUserForMutation(context);
       const tag = normaliser.normaliseCreateTagRequest(request.input.tag);
       validator.validateCreateTagRequest(tag);
       const dbTag = mapper.mapCreateTagRequest(tag);
       await tagRepository.createTag(dbTag);
       return { tag: dbTag };
     },
-    deleteTag: async (__, request) => {
+    deleteTag: async (__, request, context) => {
+      validator.validateUserForMutation(context);
       const tag = mapper.mapDeleteTagRequest(request.input.tag);
       await tagRepository.deleteTag(tag.tagType, tag.id);
       return { ok: true };

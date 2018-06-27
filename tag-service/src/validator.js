@@ -1,32 +1,28 @@
 import { ensure } from "ensure-request";
 import * as tagType from "./tag-type";
 
-const typeConstraint = {
-  inclusion: tagType.ALLOWED_TAG_TYPES,
-  presence: true
-};
-
-const labelConstraint = {
-  format: /[&\w àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ-]+/i,
-  presence: true,
-  length: { minimum: 2, maximum: 50 }
+const CREATE_TAG_CONSTRAINT = {
+  tagType: {
+    inclusion: tagType.ALLOWED_TAG_TYPES,
+    presence: true
+  },
+  label: {
+    format: /[&\w àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ-]+/i,
+    presence: true,
+    length: { minimum: 2, maximum: 50 }
+  }
 };
 
 function errorHandler(errors) {
   throw new Error("[400] Bad Request: " + errors.join("; "));
 }
 
-export function validateGetTagsByTypeRequest(request) {
-  ensure(request, { tagType: typeConstraint }, errorHandler);
+export function validateCreateTagRequest(request) {
+  ensure(request, CREATE_TAG_CONSTRAINT, errorHandler);
 }
 
-export function validateCreateTagRequest(request) {
-  ensure(
-    request,
-    {
-      tagType: typeConstraint,
-      label: labelConstraint
-    },
-    errorHandler
-  );
+export function validateUserForMutation(context) {
+  if (!context.authorizer.isEditor) {
+    throw new Error("[401] User not authorized for requested action");
+  }
 }

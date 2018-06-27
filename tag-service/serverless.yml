@@ -40,38 +40,6 @@ custom:
     stage: "${opt:stage}"
     region: "${opt:region, self:provider.region}"
     tagTableName: ${self:custom.project}-${self:custom.stage}-tag
-    errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
-    standardResponses:
-        headers:
-            Access-Control-Allow-Credentials : "'true'"
-        template: $input.path('$')
-        statusCodes:
-            200:
-                pattern: ''
-                template:
-                    application/json: $input.path("$.body")
-                headers:
-                    Cache-Control: integration.response.body.headers.Cache-Control
-            400:
-                pattern: '^\[400\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            401:
-                pattern: '^\[401\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            403:
-                pattern: '^\[403\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            404:
-                pattern: '^\[404\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            500:
-                pattern: '^\[500\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -86,6 +54,8 @@ custom:
             noStart: true
 
 functions:
+    auth:
+        handler: src/lambda/auth.handler
     graphql:
         handler: src/lambda/graphql.graphqlHandler
         environment:
@@ -95,84 +65,21 @@ functions:
                 path: graphql
                 method: post
                 cors: true
+               
+                authorizer:
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
             - http:
                 path: graphql
                 method: get
                 cors: true
-        authorizer:
-            name: authorizer
-            arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
-    createTag:
-        handler: src/lambda/create-tag.handler
-        environment:
-            SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
-        events:
-            - http:
-                path: "tag/{tagType}"
-                method: post
-                cors: true
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "tagType": "$input.params('tagType')",
-                                "label": $input.json('$.label'),
-                                "authorization" : "$input.params().header.get('Authorization')"
-                            }
-                response: ${self:custom.standardResponses}
                 authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
-    deleteTag:
-        handler: src/lambda/delete-tag.handler
-        environment:
-            SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
-        events:
-            - http:
-                path: "tag/{id+}"
-                method: delete
-                cors: true
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "id": "$input.params('id')",
-                                "authorization" : "$input.params().header.get('Authorization')"
-                            }
-                response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
-    getAllTags:
-        handler: src/lambda/get-all-tags.handler
-        environment:
-            SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
-        events:
-            - http:
-                path: tags
-                method: get
-                cors: true
-                integration: lambda
-                response: ${self:custom.standardResponses}
-    getTags:
-        handler: src/lambda/get-tags.handler
-        environment:
-            SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
-        events:
-            - http:
-                path: "tags/{tagType}"
-                method: get
-                cors: true
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "tagType": "$input.params('tagType')"
-                            }
-                response: ${self:custom.standardResponses}
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
 
 resources:
     Resources:

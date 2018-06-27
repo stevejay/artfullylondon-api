@@ -1,9 +1,12 @@
 import request from "request-promise-native";
-import { EDITOR_AUTH_TOKEN } from "../utils/cognito-auth";
 import { addToTable, truncateTagTable } from "../utils/dynamodb";
+import MockJwksServer from "../utils/mock-jwks-server";
+import * as authUtils from "../utils/authentication";
 jest.setTimeout(60000);
 
 describe("tag graphql querying", () => {
+  const mockJwksServer = new MockJwksServer();
+
   beforeAll(async () => {
     await truncateTagTable("artfullylondon-development-tag");
     await addToTable("artfullylondon-development-tag", {
@@ -16,6 +19,11 @@ describe("tag graphql querying", () => {
       id: "geo/usa",
       label: "usa"
     });
+    mockJwksServer.start(3021);
+  });
+
+  afterAll(async () => {
+    mockJwksServer.stop();
   });
 
   it("should support querying of all tags", async () => {
@@ -23,7 +31,7 @@ describe("tag graphql querying", () => {
       uri: "http://localhost:3011/graphql",
       json: true,
       method: "POST",
-      headers: { Authorization: EDITOR_AUTH_TOKEN },
+      headers: { Authorization: authUtils.createEditorAuthToken() },
       body: { query: "{ tags { audience { label } geo { label } } }" },
       timeout: 30000,
       resolveWithFullResponse: true
@@ -59,7 +67,7 @@ describe("tag graphql querying", () => {
       uri: "http://localhost:3011/graphql",
       json: true,
       method: "POST",
-      headers: { Authorization: EDITOR_AUTH_TOKEN },
+      headers: { Authorization: authUtils.createEditorAuthToken() },
       body: {
         query: "{ tags { geo { tagType, id , label } } }"
       },

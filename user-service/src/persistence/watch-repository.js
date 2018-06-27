@@ -6,8 +6,7 @@ export function tryGetWatchesByTypeForUser(userId, entityType) {
     TableName: process.env.SERVERLESS_WATCH_TABLE_NAME,
     Key: { userId, entityType },
     ProjectionExpression: "entityType, #items, version",
-    ExpressionAttributeNames: { "#items": "items" },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ExpressionAttributeNames: { "#items": "items" }
   });
 }
 
@@ -17,8 +16,7 @@ export function getAllWatchesForUser(userId) {
     KeyConditionExpression: "userId = :userId",
     ExpressionAttributeValues: { ":userId": userId },
     ProjectionExpression: "entityType, #items, version",
-    ExpressionAttributeNames: { "#items": "items" },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ExpressionAttributeNames: { "#items": "items" }
   });
 }
 
@@ -49,8 +47,7 @@ export async function createWatches(newVersion, userId, entityType, items) {
     TableName: process.env.SERVERLESS_WATCH_TABLE_NAME,
     Item: item,
     ConditionExpression:
-      "attribute_not_exists(userId) and attribute_not_exists(entityType)",
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+      "attribute_not_exists(userId) and attribute_not_exists(entityType)"
   });
 }
 
@@ -67,7 +64,6 @@ export async function updateWatches(newVersion, userId, entityType, items) {
     Item: item,
     ConditionExpression:
       "attribute_exists(userId) and attribute_exists(entityType) and version = :oldVersion",
-    ExpressionAttributeValues: { ":oldVersion": newVersion - 1 },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ExpressionAttributeValues: { ":oldVersion": newVersion - 1 }
   });
 }

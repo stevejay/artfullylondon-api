@@ -5,15 +5,13 @@ export function write(tableName, entity) {
     ? dynamodb.put({
         TableName: tableName,
         Item: entity,
-        ConditionExpression: "attribute_not_exists(id)",
-        ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+        ConditionExpression: "attribute_not_exists(id)"
       })
     : dynamodb.put({
         TableName: tableName,
         Item: entity,
         ConditionExpression: "attribute_exists(id) and version = :oldVersion",
-        ExpressionAttributeValues: { ":oldVersion": entity.version - 1 },
-        ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+        ExpressionAttributeValues: { ":oldVersion": entity.version - 1 }
       });
 }
 
@@ -21,15 +19,13 @@ export function get(tableName, id, consistentRead) {
   return dynamodb.get({
     TableName: tableName,
     Key: { id: id },
-    ConsistentRead: !!consistentRead,
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ConsistentRead: !!consistentRead
   });
 }
 
 export async function getNextEntityId(tableName, lastId) {
   const result = await dynamodb.scanBasic({
     TableName: tableName,
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY,
     ExclusiveStartKey: lastId ? { id: lastId } : null,
     Limit: 1,
     ProjectionExpression: "id",
