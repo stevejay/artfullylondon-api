@@ -23,6 +23,7 @@
     "deep-freeze-strict": "^1.1.1",
     "dynamodb-localhost": "^0.0.5",
     "eslint": "^5.0.0",
+    "graphql-import-loader": "^0.2.1",
     "http": "^0.0.0",
     "jest": "^23.1.0",
     "jest-toolkit": "^0.1.2",

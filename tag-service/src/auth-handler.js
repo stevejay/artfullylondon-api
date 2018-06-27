@@ -1,3 +1,4 @@
+import "./xray-setup";
 import { AwsJwtVerifier } from "aws-jwt-verifier";
 import AuthPolicy from "aws-auth-policy";
 import request from "request-promise-native";

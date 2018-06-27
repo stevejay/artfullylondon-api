@@ -55,9 +55,9 @@ custom:
 
 functions:
     auth:
-        handler: src/lambda/auth.handler
+        handler: src/auth-handler.handler
     graphql:
-        handler: src/lambda/graphql.graphqlHandler
+        handler: src/graphql-handler.handler
         environment:
             SERVERLESS_TAG_TABLE_NAME: ${self:custom.tagTableName}
         events:

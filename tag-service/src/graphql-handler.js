@@ -1,8 +1,8 @@
 import "./xray-setup";
 import _ from "lodash";
 import { ApolloServer } from "apollo-server-lambda";
-import typeDefs from "../type-defs";
-import resolvers from "../resolvers";
+import typeDefs from "./schema.gql";
+import resolvers from "./resolvers";
 
 const server = new ApolloServer({
   typeDefs,
@@ -12,6 +12,6 @@ const server = new ApolloServer({
   })
 });
 
-export const graphqlHandler = server.createHandler({
+export const handler = server.createHandler({
   cors: { origin: "*", credentials: true }
 });
