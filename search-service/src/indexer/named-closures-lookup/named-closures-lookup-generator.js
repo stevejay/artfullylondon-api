@@ -124,7 +124,7 @@ export function generate(seedData, dateFrom, dateTo) {
 function createEntryForType(key, dates) {
   return {
     [key]: {
-      label: _.startCase(key),
+      label: _.startCase(key.replace("_", " ").toLowerCase()),
       dates
     }
   };

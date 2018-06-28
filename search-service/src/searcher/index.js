@@ -4,8 +4,7 @@ import * as queryFactory from "./query-factory";
 import * as presetSearchType from "../types/preset-search-type";
 
 export async function autocompleteSearch(params) {
-  const searchParams = mapper.mapAutocompleteSearchParams(params);
-  const search = queryFactory.createAutocompleteSearch(searchParams);
+  const search = queryFactory.createAutocompleteSearch(params);
   const results = await esClient.search(search);
   return mapper.mapAutocompleteSearchResults(results);
 }

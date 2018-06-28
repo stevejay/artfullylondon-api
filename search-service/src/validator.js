@@ -58,7 +58,6 @@ const AUTOCOMPLETE_SEARCH_CONSTRAINT = {
     length: TERM_LENGTH
   },
   entityType: {
-    presence: true,
     inclusion: entityType.ALLOWED_VALUES
   }
 };
@@ -72,11 +71,10 @@ const BASIC_SEARCH_CONSTRAINT = {
     length: TERM_LENGTH
   },
   entityType: {
-    presence: true,
     inclusion: entityType.ALLOWED_VALUES,
     dependency: [
       {
-        test: value => value === entityType.ALL,
+        test: value => !value,
         ensure: (_, attrs) => attrs.skip === 0,
         message: "Skip must be zero or not included when searching all entities"
       }
@@ -183,7 +181,8 @@ const INDEX_DOCUMENT_CONSTRAINT = {
     object: {
       id: {
         string: true,
-        presence: true
+        presence: true,
+        format: /^(event|event-series|talent|venue)\/.+/
       },
       entityType: {
         presence: true,

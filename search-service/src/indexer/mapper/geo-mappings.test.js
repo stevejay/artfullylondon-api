@@ -1,17 +1,18 @@
 import * as geoMappings from "./geo-mappings";
+import * as areaType from "../../types/area-type";
 
 describe("mapLondonArea", () => {
   const tests = [
-    { postcode: "W1S 1AA", expected: "Central" },
-    { postcode: "W1 1AA", expected: "Central" },
-    { postcode: "W12 1AA", expected: "West" },
-    { postcode: "N4 1AA", expected: "North" },
-    { postcode: "E17 1AA", expected: "East" },
-    { postcode: "SE6 1AA", expected: "SouthEast" },
-    { postcode: "SW12 1AA", expected: "SouthWest" },
-    { postcode: "UB1 1AA", expected: "West" },
-    { postcode: "NW2 1AA", expected: "North" },
-    { postcode: "EC2N 1AA", expected: "Central" }
+    { postcode: "W1S 1AA", expected: areaType.CENTRAL },
+    { postcode: "W1 1AA", expected: areaType.CENTRAL },
+    { postcode: "W12 1AA", expected: areaType.WEST },
+    { postcode: "N4 1AA", expected: areaType.NORTH },
+    { postcode: "E17 1AA", expected: areaType.EAST },
+    { postcode: "SE6 1AA", expected: areaType.SOUTH_EAST },
+    { postcode: "SW12 1AA", expected: areaType.SOUTH_WEST },
+    { postcode: "UB1 1AA", expected: areaType.WEST },
+    { postcode: "NW2 1AA", expected: areaType.NORTH },
+    { postcode: "EC2N 1AA", expected: areaType.CENTRAL }
   ];
 
   tests.map(test => {

@@ -1,26 +1,31 @@
 import * as mapper from "./index";
 import * as entityType from "../../types/entity-type";
+import * as statusType from "../../types/status-type";
+import * as talentType from "../../types/talent-type";
+import * as eventSeriesType from "../../types/event-series-type";
+import * as venueType from "../../types/venue-type";
+import * as eventType from "../../types/event-type";
 
 describe("mapTalentForTalentIndex", () => {
   it("should map a talent with an image", () => {
     const talent = {
       entityType: entityType.TALENT,
-      id: "talent-1",
-      status: "Active",
+      id: "talent/talent-1",
+      status: statusType.ACTIVE,
       firstNames: "Cherry",
       lastName: "Pie",
-      talentType: "Individual",
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       version: 1,
       images: [
         {
-          id: "image-1",
+          id: "image/image-1",
           copyright: "Copyright 1",
           ratio: 10,
           dominantColor: "111"
         },
         {
-          id: "image-2",
+          id: "image/image-2",
           copyright: "Copyright 2",
           ratio: 20,
           dominantColor: "222"
@@ -32,15 +37,15 @@ describe("mapTalentForTalentIndex", () => {
 
     expect(result).toEqual({
       entityType: entityType.TALENT,
-      id: "talent-1",
-      status: "Active",
+      id: "talent/talent-1",
+      status: statusType.ACTIVE,
       firstNames: "Cherry",
       lastName: "Pie",
       lastName_sort: "pie",
-      talentType: "Individual",
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       version: 1,
-      image: "image-1",
+      image: "image/image-1",
       imageCopyright: "Copyright 1",
       imageRatio: 10,
       imageColor: "111"
@@ -50,11 +55,11 @@ describe("mapTalentForTalentIndex", () => {
   it("should map a talent with no image", () => {
     const talent = {
       entityType: entityType.TALENT,
-      id: "talent-1",
-      status: "Active",
+      id: "talent/talent-1",
+      status: statusType.ACTIVE,
       firstNames: "Cherry",
       lastName: "Pie",
-      talentType: "Individual",
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       version: 1
     };
@@ -63,12 +68,12 @@ describe("mapTalentForTalentIndex", () => {
 
     expect(result).toEqual({
       entityType: entityType.TALENT,
-      id: "talent-1",
-      status: "Active",
+      id: "talent/talent-1",
+      status: statusType.ACTIVE,
       firstNames: "Cherry",
       lastName: "Pie",
       lastName_sort: "pie",
-      talentType: "Individual",
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       version: 1
     });
@@ -79,11 +84,11 @@ describe("mapTalentForAutocompleteIndex", () => {
   it("should map an individual", () => {
     const talent = {
       entityType: entityType.TALENT,
-      id: "talent-1",
-      status: "Active",
+      id: "talent/talent-1",
+      status: statusType.ACTIVE,
       firstNames: "Cherry",
       lastName: "Pie",
-      talentType: "Individual",
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       version: 1
     };
@@ -92,9 +97,9 @@ describe("mapTalentForAutocompleteIndex", () => {
 
     expect(result).toEqual({
       entityType: entityType.TALENT,
-      id: "talent-1",
-      status: "Active",
-      talentType: "Individual",
+      id: "talent/talent-1",
+      status: statusType.ACTIVE,
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       version: 1,
       output: "Cherry Pie",
@@ -108,10 +113,10 @@ describe("mapEventSeriesForEventSeriesIndex", () => {
     const eventSeries = {
       entityType: entityType.EVENT_SERIES,
       id: "event-series-1",
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Bang Said The Gun",
       version: 1,
-      eventSeriesType: "Occasional",
+      eventSeriesType: eventSeriesType.OCCASIONAL,
       occurrence: "Monthly",
       summary: "Some summary"
     };
@@ -121,11 +126,11 @@ describe("mapEventSeriesForEventSeriesIndex", () => {
     expect(result).toEqual({
       entityType: entityType.EVENT_SERIES,
       id: "event-series-1",
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Bang Said The Gun",
       name_sort: "bang said the gun",
       version: 1,
-      eventSeriesType: "Occasional",
+      eventSeriesType: eventSeriesType.OCCASIONAL,
       occurrence: "Monthly",
       summary: "Some summary"
     });
@@ -137,10 +142,10 @@ describe("mapEventSeriesForAutocompleteIndex", () => {
     const eventSeries = {
       entityType: entityType.EVENT_SERIES,
       id: "event-series-1",
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Bang Said The Gun",
       version: 1,
-      eventSeriesType: "Occasional",
+      eventSeriesType: eventSeriesType.OCCASIONAL,
       occurrence: "Monthly",
       summary: "Some summary"
     };
@@ -150,7 +155,7 @@ describe("mapEventSeriesForAutocompleteIndex", () => {
     expect(result).toEqual({
       entityType: entityType.EVENT_SERIES,
       id: "event-series-1",
-      status: "Active",
+      status: statusType.ACTIVE,
       version: 1,
       output: "Bang Said The Gun (Event Series)",
       nameSuggest: ["bang said the gun"]
@@ -162,11 +167,11 @@ describe("mapVenueForVenueIndex", () => {
   it("should map a venue", () => {
     const venue = {
       entityType: entityType.VENUE,
-      id: "venue-1",
-      status: "Active",
+      id: "venue/venue-1",
+      status: statusType.ACTIVE,
       name: "Almeida Theatre",
       version: 1,
-      venueType: "Theatre",
+      venueType: venueType.THEATRE,
       address: "56 Some Street",
       postcode: "N5 2AA",
       latitude: 11,
@@ -177,12 +182,12 @@ describe("mapVenueForVenueIndex", () => {
 
     expect(result).toEqual({
       entityType: entityType.VENUE,
-      id: "venue-1",
-      status: "Active",
+      id: "venue/venue-1",
+      status: statusType.ACTIVE,
       name: "Almeida Theatre",
       name_sort: "almeida theatre",
       version: 1,
-      venueType: "Theatre",
+      venueType: venueType.THEATRE,
       address: "56 Some Street",
       postcode: "N5 2AA",
       latitude: 11,
@@ -196,11 +201,11 @@ describe("mapVenueForAutocompleteIndex", () => {
   it("should map a venue", () => {
     const venue = {
       entityType: entityType.VENUE,
-      id: "venue-1",
-      status: "Active",
+      id: "venue/venue-1",
+      status: statusType.ACTIVE,
       name: "Almeida Theatre",
       version: 1,
-      venueType: "Theatre",
+      venueType: venueType.THEATRE,
       address: "56 Some Street",
       postcode: "N5 2AA",
       latitude: 11,
@@ -211,12 +216,12 @@ describe("mapVenueForAutocompleteIndex", () => {
 
     expect(result).toEqual({
       entityType: entityType.VENUE,
-      id: "venue-1",
-      status: "Active",
+      id: "venue/venue-1",
+      status: statusType.ACTIVE,
       output: "Almeida Theatre",
       nameSuggest: ["almeida theatre"],
       version: 1,
-      venueType: "Theatre",
+      venueType: venueType.THEATRE,
       address: "56 Some Street",
       postcode: "N5 2AA"
     });
@@ -227,11 +232,11 @@ describe("mapEventForAutocompleteIndex", () => {
   it("should map an event", () => {
     const event = {
       entityType: entityType.EVENT,
-      id: "event-1",
-      status: "Active",
+      id: "event/event-1",
+      status: statusType.ACTIVE,
       name: "The Merchant of Venice",
       version: 1,
-      eventType: "Performance",
+      eventType: eventType.PERFORMANCE,
       venue: {
         name: "Almeida Theatre"
       }
@@ -241,8 +246,8 @@ describe("mapEventForAutocompleteIndex", () => {
 
     expect(result).toEqual({
       entityType: entityType.EVENT,
-      id: "event-1",
-      status: "Active",
+      id: "event/event-1",
+      status: statusType.ACTIVE,
       output: "The Merchant of Venice (Almeida Theatre)",
       nameSuggest: [
         "the merchant of venice",
@@ -250,7 +255,7 @@ describe("mapEventForAutocompleteIndex", () => {
         "merchant of venice"
       ],
       version: 1,
-      eventType: "Performance"
+      eventType: eventType.PERFORMANCE
     });
   });
 });

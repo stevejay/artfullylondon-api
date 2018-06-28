@@ -1,10 +1,12 @@
 import BulkUpdateBuilder from "./bulk-update-builder";
+import * as statusType from "../types/status-type";
+import * as entityType from "../types/entity-type";
 
 describe("addFullSearchUpdate", () => {
   it("should add a full search update", () => {
     const document = {
-      entityType: "talent",
-      id: "some-id",
+      entityType: entityType.TALENT,
+      id: "talent/some-id",
       version: 4
     };
 
@@ -19,7 +21,7 @@ describe("addFullSearchUpdate", () => {
         index: {
           _index: "some-index",
           _type: "doc",
-          _id: "some-id",
+          _id: "talent/some-id",
           _version: 4,
           _version_type: "external_gte"
         }
@@ -30,8 +32,8 @@ describe("addFullSearchUpdate", () => {
 
   it("should add a full search update for an event", () => {
     const document = {
-      entityType: "event",
-      id: "some-id",
+      entityType: entityType.EVENT,
+      id: "event/some-id",
       version: 4
     };
 
@@ -46,7 +48,7 @@ describe("addFullSearchUpdate", () => {
         index: {
           _index: "some-index",
           _type: "doc",
-          _id: "some-id",
+          _id: "event/some-id",
           _version: 4,
           _version_type: "external_gte"
         }
@@ -60,9 +62,9 @@ describe("addAutocompleteSearchUpdate", () => {
   it("should add an index autocomplete search update for an active entity", () => {
     const document = {
       nameSuggest: [],
-      status: "Active",
-      entityType: "talent",
-      id: "some-id",
+      status: statusType.ACTIVE,
+      entityType: entityType.TALENT,
+      id: "talent/some-id",
       version: 4
     };
 
@@ -77,7 +79,7 @@ describe("addAutocompleteSearchUpdate", () => {
         index: {
           _index: "some-auto-index",
           _type: "doc",
-          _id: "talent_some-id",
+          _id: "talent/some-id",
           _version: 4,
           _version_type: "external_gte"
         }
@@ -90,8 +92,8 @@ describe("addAutocompleteSearchUpdate", () => {
     const document = {
       nameSuggest: [],
       status: "Deleted",
-      entityType: "talent",
-      id: "some-id",
+      entityType: entityType.TALENT,
+      id: "talent/some-id",
       version: 4
     };
 
@@ -106,7 +108,7 @@ describe("addAutocompleteSearchUpdate", () => {
         delete: {
           _index: "some-auto-index",
           _type: "doc",
-          _id: "talent_some-id"
+          _id: "talent/some-id"
         }
       }
     ]);

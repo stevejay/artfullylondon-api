@@ -1,12 +1,15 @@
 import deepFreeze from "deep-freeze";
 import * as eventDatesGenerator from "./event-dates-generator";
+import * as occurrenceType from '../../types/occurrence-type'
+import * as eventType from '../../types/event-type'
+import * as namedClosureType from '../../types/named-closure-type'
 
 describe("getEventDateRange", () => {
   const tests = [
     {
       it: "should handle a continuous event",
       args: {
-        event: { occurrenceType: "Continuous" },
+        event: { occurrenceType: occurrenceType.CONTINUOUS },
         dateTodayStr: "2016-12-10",
         dateMaxStr: "2016-12-20"
       },
@@ -19,7 +22,7 @@ describe("getEventDateRange", () => {
       it: "should handle a bounded event",
       args: {
         event: {
-          occurrenceType: "Bounded",
+          occurrenceType: occurrenceType.BOUNDED,
           dateFrom: "2016-12-12",
           dateTo: "2016-12-14"
         },
@@ -35,7 +38,7 @@ describe("getEventDateRange", () => {
       it: "should handle a bounded event that starts before date today",
       args: {
         event: {
-          occurrenceType: "Bounded",
+          occurrenceType: occurrenceType.BOUNDED,
           dateFrom: "2016-12-01",
           dateTo: "2016-12-14"
         },
@@ -51,7 +54,7 @@ describe("getEventDateRange", () => {
       it: "should handle a bounded event that ends after date max",
       args: {
         event: {
-          occurrenceType: "Bounded",
+          occurrenceType: occurrenceType.BOUNDED,
           dateFrom: "2016-12-12",
           dateTo: "2016-12-30"
         },
@@ -67,7 +70,7 @@ describe("getEventDateRange", () => {
       it: "should handle a bounded event that is before date today",
       args: {
         event: {
-          occurrenceType: "Bounded",
+          occurrenceType: occurrenceType.BOUNDED,
           dateFrom: "2016-12-01",
           dateTo: "2016-12-03"
         },
@@ -80,7 +83,7 @@ describe("getEventDateRange", () => {
       it: "should handle a bounded event that is after date max",
       args: {
         event: {
-          occurrenceType: "Bounded",
+          occurrenceType: occurrenceType.BOUNDED,
           dateFrom: "2016-12-25",
           dateTo: "2016-12-30"
         },
@@ -93,7 +96,7 @@ describe("getEventDateRange", () => {
       it: "should handle a one time event at the start of the range",
       args: {
         event: {
-          occurrenceType: "OneTime",
+          occurrenceType: occurrenceType.ONE_TIME,
           dateFrom: "2016-12-10",
           dateTo: "2016-12-10"
         },
@@ -109,7 +112,7 @@ describe("getEventDateRange", () => {
       it: "should handle a one time event at the end of the range",
       args: {
         event: {
-          occurrenceType: "OneTime",
+          occurrenceType: occurrenceType.ONE_TIME,
           dateFrom: "2016-12-20",
           dateTo: "2016-12-20"
         },
@@ -125,7 +128,7 @@ describe("getEventDateRange", () => {
       it: "should handle a one time event before date today",
       args: {
         event: {
-          occurrenceType: "OneTime",
+          occurrenceType: occurrenceType.ONE_TIME,
           dateFrom: "2016-12-01",
           dateTo: "2016-12-01"
         },
@@ -138,7 +141,7 @@ describe("getEventDateRange", () => {
       it: "should handle a one time event after date max",
       args: {
         event: {
-          occurrenceType: "OneTime",
+          occurrenceType: occurrenceType.ONE_TIME,
           dateFrom: "2016-12-30",
           dateTo: "2016-12-30"
         },
@@ -214,9 +217,9 @@ describe("removeNamedClosuresDates", () => {
       it: "should ignore a performance event",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           useVenueOpeningTimes: true,
-          venue: { namedClosures: ["ChristmasDay"] }
+          venue: { namedClosures: [namedClosureType.CHRISTMAS_DAY] }
         },
         dates: {
           "2016-12-23": { day: 4, times: [] },
@@ -224,7 +227,7 @@ describe("removeNamedClosuresDates", () => {
           "2016-12-25": { day: 6, times: [] }
         },
         namedClosuresLookup: {
-          ChristmasDay: ["2016-12-25", "2017-12-25"]
+          [namedClosureType.CHRISTMAS_DAY]: ["2016-12-25", "2017-12-25"]
         }
       },
       expected: {
@@ -238,9 +241,9 @@ describe("removeNamedClosuresDates", () => {
         "should ignore a exhibition event that is not using the venue opening times",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: false,
-          venue: { namedClosures: ["ChristmasDay"] }
+          venue: { namedClosures: [namedClosureType.CHRISTMAS_DAY] }
         },
         dates: {
           "2016-12-23": { day: 4, times: [] },
@@ -248,7 +251,7 @@ describe("removeNamedClosuresDates", () => {
           "2016-12-25": { day: 6, times: [] }
         },
         namedClosuresLookup: {
-          ChristmasDay: ["2016-12-25", "2017-12-25"]
+          [namedClosureType.CHRISTMAS_DAY]: ["2016-12-25", "2017-12-25"]
         }
       },
       expected: {
@@ -261,7 +264,7 @@ describe("removeNamedClosuresDates", () => {
       it: "should ignore a exhibition event with no named closures",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
           venue: {}
         },
@@ -271,7 +274,7 @@ describe("removeNamedClosuresDates", () => {
           "2016-12-25": { day: 6, times: [] }
         },
         namedClosuresLookup: {
-          ChristmasDay: ["2016-12-25", "2017-12-25"]
+          [namedClosureType.CHRISTMAS_DAY]: ["2016-12-25", "2017-12-25"]
         }
       },
       expected: {
@@ -284,9 +287,9 @@ describe("removeNamedClosuresDates", () => {
       it: "should remove named closures for an exhibition event",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
-          venue: { namedClosures: ["ChristmasDay"] }
+          venue: { namedClosures: [namedClosureType.CHRISTMAS_DAY] }
         },
         dates: {
           "2016-12-23": { day: 4, times: [] },
@@ -294,7 +297,7 @@ describe("removeNamedClosuresDates", () => {
           "2016-12-25": { day: 6, times: [] }
         },
         namedClosuresLookup: {
-          ChristmasDay: ["2016-12-25", "2017-12-25"]
+          [namedClosureType.CHRISTMAS_DAY]: ["2016-12-25", "2017-12-25"]
         }
       },
       expected: {
@@ -323,7 +326,7 @@ describe("removeFullDayClosureDates", () => {
       it: "should handle performance event with no closures",
       args: {
         event: {
-          eventType: "Performance"
+          eventType: eventType.PERFORMANCE
         },
         dates: {
           "2016-12-23": { day: 4, times: [] },
@@ -341,7 +344,7 @@ describe("removeFullDayClosureDates", () => {
       it: "should handle performance event with no full day closures",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           performancesClosures: [{ date: "2016-12-23", at: "14:00" }]
         },
         dates: {
@@ -360,7 +363,7 @@ describe("removeFullDayClosureDates", () => {
       it: "should handle performance event with full day closures",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           performancesClosures: [
             { date: "2016-12-23", at: "14:00" },
             { date: "2016-12-24" }
@@ -381,7 +384,7 @@ describe("removeFullDayClosureDates", () => {
       it: "should handle exhibition event with no full day closures",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           openingTimesClosures: [
             { date: "2016-12-23", from: "14:00", to: "16:00" }
           ]
@@ -402,7 +405,7 @@ describe("removeFullDayClosureDates", () => {
       it: "should handle exhibition event with full day closures",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
           openingTimesClosures: [
             { date: "2016-12-23", from: "14:00", to: "16:00" },
@@ -425,7 +428,7 @@ describe("removeFullDayClosureDates", () => {
       it: "should handle exhibition event with venue full day closures",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
           venue: {
             openingTimesClosures: [
@@ -450,7 +453,7 @@ describe("removeFullDayClosureDates", () => {
         "should handle exhibition event with event and venue full day closures",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
           openingTimesClosures: [{ date: "2016-12-23" }],
           venue: { openingTimesClosures: [{ date: "2016-12-24" }] }
@@ -470,7 +473,7 @@ describe("removeFullDayClosureDates", () => {
         "should handle exhibition event with event and venue full day closures but venue times are not being used",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: false,
           openingTimesClosures: [{ date: "2016-12-23" }],
           venue: { openingTimesClosures: [{ date: "2016-12-24" }] }
@@ -506,7 +509,7 @@ describe("addRegularTimes", () => {
       it: "should handle no regular times for a performance event",
       args: {
         event: {
-          eventType: "Performance"
+          eventType: eventType.PERFORMANCE
         },
         dates: {
           "2016-12-23": { day: 5, times: [] },
@@ -524,7 +527,7 @@ describe("addRegularTimes", () => {
       it: "should handle no regular times for an exhibition event",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: false
         },
         dates: {
@@ -544,7 +547,7 @@ describe("addRegularTimes", () => {
         "should handle no regular times for an exhibition event that uses venue times",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
           venue: {}
         },
@@ -564,7 +567,7 @@ describe("addRegularTimes", () => {
       it: "should handle regular times for a performance event",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           performances: [
             { day: 6, at: "12:00" },
             { day: 6, at: "14:00" },
@@ -596,7 +599,7 @@ describe("addRegularTimes", () => {
       it: "should handle regular times for an exhibition event",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           openingTimes: [
             { day: 6, from: "12:00", to: "13:00" },
             { day: 6, from: "14:00", to: "15:00" },
@@ -629,7 +632,7 @@ describe("addRegularTimes", () => {
         "should handle regular times for an exhibition event that uses the venue times",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
           venue: {
             openingTimes: [
@@ -665,7 +668,7 @@ describe("addRegularTimes", () => {
         "should handle regular times with times ranges for a performance event",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           timesRanges: [
             { id: "previews", dateFrom: "2016-12-20", dateTo: "2016-12-24" },
             { id: "normal", dateFrom: "2016-12-25", dateTo: "2016-12-30" }
@@ -702,7 +705,7 @@ describe("addRegularTimes", () => {
         "should handle regular times with times ranges rejection for a performance event",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           timesRanges: [
             { id: "previews", dateFrom: "2016-12-20", dateTo: "2016-12-23" },
             { id: "normal", dateFrom: "2016-12-25", dateTo: "2016-12-30" }
@@ -748,7 +751,7 @@ describe("addAdditionalTimes", () => {
       it: "should handle a performance event with no additional times",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           venue: {}
         },
         dates: {
@@ -785,7 +788,7 @@ describe("addAdditionalTimes", () => {
       it: "should handle an exhibition event with no additional times",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           venue: {}
         },
         dates: {
@@ -822,7 +825,7 @@ describe("addAdditionalTimes", () => {
       it: "should handle a performance event with additional times",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           additionalPerformances: [
             { date: "2016-12-23", at: "13:30" },
             { date: "2016-12-24", at: "13:00" }
@@ -867,7 +870,7 @@ describe("addAdditionalTimes", () => {
       it: "should handle an exhibition event with additional times",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           additionalOpeningTimes: [
             { date: "2016-12-23", from: "13:30", to: "14:00" },
             { date: "2016-12-24", from: "13:30", to: "13:45" }
@@ -913,7 +916,7 @@ describe("addAdditionalTimes", () => {
         "should handle an exhibition event with additional times on the venue",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
           venue: {
             additionalOpeningTimes: [
@@ -961,7 +964,7 @@ describe("addAdditionalTimes", () => {
         "should handle an exhibition event with additional times on the event and the venue",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           additionalOpeningTimes: [
             { date: "2016-12-23", from: "13:30", to: "14:00" },
             { date: "2016-12-24", from: "13:30", to: "13:45" },
@@ -1033,7 +1036,7 @@ describe("removePartDayClosureDates", () => {
       it: "should handle no part day closures on a performance event",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           performancesClosures: [{ date: "2016-12-24" }]
         },
         dates: {
@@ -1076,7 +1079,7 @@ describe("removePartDayClosureDates", () => {
       it: "should handle no part day closures on an exhibition event",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: false,
           openingTimesClosures: [{ date: "2016-12-24" }]
         },
@@ -1121,7 +1124,7 @@ describe("removePartDayClosureDates", () => {
         "should handle no part day closures on an exhibition event that uses venue times",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
           venue: {
             openingTimesClosures: [{ date: "2016-12-24" }]
@@ -1167,7 +1170,7 @@ describe("removePartDayClosureDates", () => {
       it: "should handle part day closures on a performance event",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           performancesClosures: [
             { date: "2016-12-24", at: "12:00" },
             { date: "2016-12-24", at: "18:00" },
@@ -1211,7 +1214,7 @@ describe("removePartDayClosureDates", () => {
       it: "should handle part day closures on an exhibition event",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           openingTimesClosures: [
             { date: "2016-12-24", from: "12:00", to: "12:30" },
             { date: "2016-12-24", from: "14:00", to: "15:00" },
@@ -1260,7 +1263,7 @@ describe("removePartDayClosureDates", () => {
         "should handle part day closures on an exhibition event that uses venue times",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           useVenueOpeningTimes: true,
           openingTimesClosures: [
             { date: "2016-12-24", from: "12:00", to: "12:30" },
@@ -1331,7 +1334,7 @@ describe("addSpecialDatesTags", () => {
       it: "should handle no special dates on an exhibition event",
       args: {
         event: {
-          eventType: "Exhibition"
+          eventType: eventType.EXHIBITION
         },
         dates: {
           "2016-12-23": { day: 5, times: [{ from: "12:00", to: "14:00" }] },
@@ -1349,7 +1352,7 @@ describe("addSpecialDatesTags", () => {
       it: "should handle no special dates on a performance event",
       args: {
         event: {
-          eventType: "Performance"
+          eventType: eventType.PERFORMANCE
         },
         dates: {
           "2016-12-23": { day: 5, times: [{ from: "12:00", to: "12:00" }] },
@@ -1367,17 +1370,17 @@ describe("addSpecialDatesTags", () => {
       it: "should handle special dates on an exhibition event",
       args: {
         event: {
-          eventType: "Exhibition",
+          eventType: eventType.EXHIBITION,
           specialOpeningTimes: [
             {
               date: "2016-12-24",
               from: "12:00",
-              audienceTags: [{ id: "audience-families", label: "families" }]
+              audienceTags: [{ id: "audience/families", label: "families" }]
             },
             {
               date: "2016-12-30",
               from: "12:00",
-              audienceTags: [{ id: "audience-cats", label: "cats" }]
+              audienceTags: [{ id: "audience/cats", label: "cats" }]
             }
           ]
         },
@@ -1395,7 +1398,7 @@ describe("addSpecialDatesTags", () => {
             {
               from: "12:00",
               to: "14:00",
-              tags: ["audience-families"]
+              tags: ["audience/families"]
             }
           ]
         },
@@ -1406,17 +1409,17 @@ describe("addSpecialDatesTags", () => {
       it: "should handle special dates on a performance event",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           specialPerformances: [
             {
               date: "2016-12-24",
               at: "12:00",
-              audienceTags: [{ id: "audience-families", label: "families" }]
+              audienceTags: [{ id: "audience/families", label: "families" }]
             },
             {
               date: "2016-12-30",
               at: "12:00",
-              audienceTags: [{ id: "audience-cats", label: "cats" }]
+              audienceTags: [{ id: "audience/cats", label: "cats" }]
             }
           ]
         },
@@ -1434,7 +1437,7 @@ describe("addSpecialDatesTags", () => {
             {
               from: "12:00",
               to: "12:00",
-              tags: ["audience-families"]
+              tags: ["audience/families"]
             }
           ]
         },
@@ -1462,7 +1465,7 @@ describe("removeSoldOutPerformances", () => {
       it: "should handle null sold out performances",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           soldOutPerformances: null
         },
         dates: {
@@ -1481,7 +1484,7 @@ describe("removeSoldOutPerformances", () => {
       it: "should handle empty sold out performances",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           soldOutPerformances: []
         },
         dates: {
@@ -1500,7 +1503,7 @@ describe("removeSoldOutPerformances", () => {
       it: "should handle sold out performances that do not apply",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           soldOutPerformances: [{ date: "2016-12-23", at: "18:00" }]
         },
         dates: {
@@ -1519,7 +1522,7 @@ describe("removeSoldOutPerformances", () => {
       it: "should handle a sold out performance that applies",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           soldOutPerformances: [{ date: "2016-12-23", at: "12:00" }]
         },
         dates: {
@@ -1538,7 +1541,7 @@ describe("removeSoldOutPerformances", () => {
         "should handle a sold out performance that applies on a day that has multiple performances",
       args: {
         event: {
-          eventType: "Performance",
+          eventType: eventType.PERFORMANCE,
           soldOutPerformances: [{ date: "2016-12-23", at: "18:00" }]
         },
         dates: {
@@ -1588,7 +1591,7 @@ describe("convertToList", () => {
           "2016-12-24": {
             day: 5,
             times: [
-              { from: "12:00", to: "14:00", tags: ["audience-families"] },
+              { from: "12:00", to: "14:00", tags: ["audience/families"] },
               { from: "16:00", to: "18:00" }
             ]
           },
@@ -1603,7 +1606,7 @@ describe("convertToList", () => {
           date: "2016-12-24",
           from: "12:00",
           to: "14:00",
-          tags: ["audience-families"]
+          tags: ["audience/families"]
         },
         { date: "2016-12-24", from: "16:00", to: "18:00" },
         { date: "2016-12-25", from: "20:00", to: "22:00" }
@@ -1699,8 +1702,8 @@ describe("generate", () => {
         it: "should handle no performances",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             venue: {}
@@ -1714,8 +1717,8 @@ describe("generate", () => {
         it: "should handle a closure",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "11:00" }],
@@ -1732,8 +1735,8 @@ describe("generate", () => {
         it: "should handle additional performances",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "11:00" }],
@@ -1753,8 +1756,8 @@ describe("generate", () => {
         args: {
           event: {
             soldOut: true,
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "11:00" }],
@@ -1770,8 +1773,8 @@ describe("generate", () => {
         it: "should handle a performance with a sold out performance",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "11:00" }],
@@ -1788,8 +1791,8 @@ describe("generate", () => {
         it: "should handle closure with time that does not match",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "11:00" }],
@@ -1809,8 +1812,8 @@ describe("generate", () => {
         it: "should handle closure with time that matches",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "11:00" }],
@@ -1827,8 +1830,8 @@ describe("generate", () => {
         it: "should handle special performances that match",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "09:00" }],
@@ -1837,8 +1840,8 @@ describe("generate", () => {
                 date: "2016-12-25",
                 at: "09:00",
                 audienceTags: [
-                  { id: "audience-family", label: "family" },
-                  { id: "audience-baby", label: "baby" }
+                  { id: "audience/family", label: "family" },
+                  { id: "audience/baby", label: "baby" }
                 ]
               }
             ],
@@ -1852,7 +1855,7 @@ describe("generate", () => {
             date: "2016-12-25",
             from: "09:00",
             to: "09:00",
-            tags: ["audience-family", "audience-baby"]
+            tags: ["audience/family", "audience/baby"]
           }
         ]
       },
@@ -1860,8 +1863,8 @@ describe("generate", () => {
         it: "should handle special performances that do not match",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "09:00" }],
@@ -1870,8 +1873,8 @@ describe("generate", () => {
                 date: "2016-12-25",
                 at: "11:00",
                 audienceTags: [
-                  { id: "audience-family", label: "family" },
-                  { id: "audience-baby", label: "baby" }
+                  { id: "audience/family", label: "family" },
+                  { id: "audience/baby", label: "baby" }
                 ]
               }
             ],
@@ -1887,8 +1890,8 @@ describe("generate", () => {
           "should handle special performances that match both performances and additional performances",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "11:00" }],
@@ -1898,15 +1901,15 @@ describe("generate", () => {
                 date: "2016-12-25",
                 at: "09:00",
                 audienceTags: [
-                  { id: "audience-family", label: "family" },
-                  { id: "audience-baby", label: "baby" }
+                  { id: "audience/family", label: "family" },
+                  { id: "audience/baby", label: "baby" }
                 ]
               },
               {
                 date: "2016-12-25",
                 at: "11:00",
                 audienceTags: [
-                  { id: "audience-teenagers", label: "teenagers" }
+                  { id: "audience/teenagers", label: "teenagers" }
                 ]
               }
             ],
@@ -1920,13 +1923,13 @@ describe("generate", () => {
             date: "2016-12-25",
             from: "09:00",
             to: "09:00",
-            tags: ["audience-family", "audience-baby"]
+            tags: ["audience/family", "audience/baby"]
           },
           {
             date: "2016-12-25",
             from: "11:00",
             to: "11:00",
-            tags: ["audience-teenagers"]
+            tags: ["audience/teenagers"]
           }
         ]
       },
@@ -1934,8 +1937,8 @@ describe("generate", () => {
         it: "should handle simple performances",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 7, at: "11:00" }],
@@ -1950,8 +1953,8 @@ describe("generate", () => {
         it: "should handle complete replacement of performances on a day",
         args: {
           event: {
-            eventType: "Performance",
-            occurrenceType: "Bounded",
+            eventType: eventType.PERFORMANCE,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             performances: [{ day: 5, at: "11:00" }, { day: 5, at: "12:00" }],
@@ -1997,8 +2000,8 @@ describe("generate", () => {
         it: "should handle no opening times",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             openingTimesClosures: [{ date: "2016-12-21" }],
@@ -2013,8 +2016,8 @@ describe("generate", () => {
         it: "should handle closure for additional opening time",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: false,
@@ -2034,8 +2037,8 @@ describe("generate", () => {
         it: "should handle additional opening times",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: false,
@@ -2055,8 +2058,8 @@ describe("generate", () => {
         it: "should handle opening times being before date range",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: false,
@@ -2076,8 +2079,8 @@ describe("generate", () => {
         it: "should handle opening times being after date range",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: false,
@@ -2097,8 +2100,8 @@ describe("generate", () => {
         it: "should handle opening times with additions",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: false,
@@ -2127,8 +2130,8 @@ describe("generate", () => {
         it: "should handle opening times with additions and a closure",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: false,
@@ -2160,8 +2163,8 @@ describe("generate", () => {
           "should handle opening times with a time closure before the regular times",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: false,
@@ -2183,8 +2186,8 @@ describe("generate", () => {
           "should handle opening times with a time closure after the regular times",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: false,
@@ -2223,8 +2226,8 @@ describe("generate", () => {
         it: "should ignore event opening times",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: true,
@@ -2249,8 +2252,8 @@ describe("generate", () => {
           "should apply venue opening times and duplicate additions at both venue and event levels",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: true,
@@ -2283,8 +2286,8 @@ describe("generate", () => {
           "should apply venue opening times and non-duplicate additions at both venue and event levels",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-30",
             useVenueOpeningTimes: true,
@@ -2317,8 +2320,8 @@ describe("generate", () => {
         it: "should apply venue closures to block venue opening times times",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-28",
             useVenueOpeningTimes: true,
@@ -2343,14 +2346,14 @@ describe("generate", () => {
         it: "should apply named closures to block venue opening times",
         args: {
           event: {
-            eventType: "Exhibition",
-            occurrenceType: "Bounded",
+            eventType: eventType.EXHIBITION,
+            occurrenceType: occurrenceType.BOUNDED,
             dateFrom: "2016-12-20",
             dateTo: "2016-12-28",
             useVenueOpeningTimes: true,
             venue: {
               openingTimes: [{ day: 1, from: "20:00", to: "21:00" }],
-              namedClosures: ["BoxingDay"]
+              namedClosures: [namedClosureType.BOXING_DAY]
             }
           },
           dateToday: "2016-12-01",
@@ -2366,7 +2369,7 @@ describe("generate", () => {
           test.args.event,
           new Date(test.args.dateToday),
           new Date(test.args.dateMax),
-          { BoxingDay: ["2016-12-26", "2017-12-26"] }
+          { [namedClosureType.BOXING_DAY]: ["2016-12-26", "2017-12-26"] }
         );
 
         expect(result).toEqual(test.expected);

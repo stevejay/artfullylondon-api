@@ -1,4 +1,4 @@
-import * as mapper from "./mapper";
+import * as mapper from "./___mapper";
 
 describe("mapResponse", () => {
   it("should map an admin response", () => {

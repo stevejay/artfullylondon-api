@@ -65,7 +65,6 @@ functions:
                 path: graphql
                 method: post
                 cors: true
-               
                 authorizer:
                     name: auth
                     identitySource: method.request.header.Authorization

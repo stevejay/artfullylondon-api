@@ -1,0 +1,88 @@
+enum EntityTypeEnum {
+  EVENT
+  EVENT_SERIES
+  TALENT
+  VENUE
+}
+
+enum StatusTypeEnum {
+  PENDING
+  ACTIVE
+  DELETED
+  MERGED
+}
+
+enum VenueTypeEnum {
+  THEATRE
+  ART_GALLERY
+  CONCERT_HALL
+  EXHIBITION_HALL
+  PERFORMING_ARTS_CENTRE
+  MUSEUM
+  CHURCH
+  CINEMA
+  OTHER
+}
+
+enum TalentTypeEnum {
+  INDIVIDUAL
+  GROUP
+}
+
+enum EventTypeEnum {
+  PERFORMANCE
+  EXHIBITION
+  COURSE
+}
+
+interface Autocomplete {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+}
+
+type AutocompleteEvent implements Autocomplete {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+  eventType: EventTypeEnum!
+}
+
+type AutocompleteEventSeries implements Autocomplete {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+}
+
+type AutocompleteVenue implements Autocomplete {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+}
+
+type AutocompleteTalent implements Autocomplete {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+}
+
+type AutocompleteResult {
+  results: [Autocomplete!]!
+}
+
+type Query {
+  autocompleteSearch(
+    term: String!
+    entityType: EntityTypeEnum
+  ): AutocompleteResult
+}

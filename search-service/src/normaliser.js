@@ -1,6 +1,5 @@
 import normalise from "normalise-request";
 import simplify from "es-simplify";
-import * as entityType from "./types/entity-type";
 
 const SEARCH_RESULTS_DEFAULT_PAGE_SIZE = 12;
 
@@ -51,8 +50,7 @@ const AUTOCOMPLETE_SEARCH_NORMALISER = {
     simplify: true
   },
   entityType: {
-    undefinedIfEmpty: true,
-    default: entityType.ALL
+    undefinedIfEmpty: true
   }
 };
 
@@ -63,8 +61,7 @@ const BASIC_SEARCH_NORMALISER = {
     undefinedIfEmpty: true
   },
   entityType: {
-    undefinedIfEmpty: true,
-    default: entityType.ALL
+    undefinedIfEmpty: true
   },
   ...LOCATION_NORMALISER,
   ...SKIP_TAKE_NORMALISER

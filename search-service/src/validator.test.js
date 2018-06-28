@@ -8,7 +8,7 @@ import * as areaType from "./types/area-type";
 
 describe("validateAutocompleteSearchRequest", () => {
   test.each([
-    [{ term: "f", entityType: entityType.ALL }],
+    [{ term: "f" }],
     [{ admin: true, term: "foo", entityType: entityType.EVENT }]
   ])("%o should validate", arg => {
     expect(() =>
@@ -17,7 +17,7 @@ describe("validateAutocompleteSearchRequest", () => {
   });
 
   test.each([
-    [{ term: "", entityType: entityType.ALL }],
+    [{ term: "" }],
     [{ admin: true, term: "foo", entityType: "not-a-type" }]
   ])("%o should fail to validate", arg => {
     expect(() =>
@@ -28,7 +28,7 @@ describe("validateAutocompleteSearchRequest", () => {
 
 describe("validateBasicSearchRequest", () => {
   test.each([
-    [{ entityType: entityType.ALL, skip: 0, take: 12 }],
+    [{ skip: 0, take: 12 }],
     [
       {
         admin: true,
@@ -119,9 +119,9 @@ describe("validateEventAdvancedSearchRequest", () => {
         east: 4.5,
         skip: 100,
         take: 50,
-        venueId: "venue1",
-        talentId: "talent1",
-        eventSeriesId: "eventseries1"
+        venueId: "venue/venue1",
+        talentId: "talent/talent1",
+        eventSeriesId: "event-series/eventseries1"
       }
     ]
   ])("%o should validate", arg => {
@@ -151,8 +151,8 @@ describe("validateEventAdvancedSearchRequest", () => {
         east: 4.5,
         skip: 100,
         take: 50,
-        venueId: "venue1",
-        talentId: "talent1"
+        venueId: "venue/venue1",
+        talentId: "talent/talent1"
       }
     ]
   ])("%o should fail to validate", arg => {
@@ -168,7 +168,7 @@ describe("validatePresetSearch", () => {
       {
         admin: true,
         name: presetSearchType.TALENT_RELATED_EVENTS,
-        id: "event1"
+        id: "event/event1"
       }
     ]
   ])("%o should validate", arg => {
@@ -180,7 +180,7 @@ describe("validatePresetSearch", () => {
       {
         admin: true,
         name: "not-a-preset-type",
-        id: "event1"
+        id: "event/event1"
       }
     ]
   ])("%o should fail to validate", arg => {
@@ -194,7 +194,11 @@ describe("validateIndexDocumentRequest", () => {
       [
         {
           entityType: entityType.TALENT,
-          entity: { id: "talent1", entityType: entityType.TALENT, version: 1 }
+          entity: {
+            id: "talent/talent1",
+            entityType: entityType.TALENT,
+            version: 1
+          }
         }
       ]
     ])("%o should validate", arg => {
@@ -209,7 +213,11 @@ describe("validateIndexDocumentRequest", () => {
       [
         {
           entityType: "not-a-type",
-          entity: { id: "talent1", entityType: entityType.TALENT, version: 2 }
+          entity: {
+            id: "talent/talent1",
+            entityType: entityType.TALENT,
+            version: 2
+          }
         }
       ]
     ])("%o should fail to validate", arg => {

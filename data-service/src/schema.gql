@@ -1,0 +1,19 @@
+scalar IsoShortDate
+
+type HeroImage {
+  name: String!
+  dominantColor: String!
+  label: String!
+}
+
+type NamedClosuresSet {
+  BankHolidays: [IsoShortDate!]!
+  EasterSunday: [IsoShortDate!]!
+  RoshHashanah: [IsoShortDate!]!
+  YomKippur: [IsoShortDate!]!
+}
+
+type Query {
+  heroImage: HeroImage!
+  namedClosures: NamedClosuresSet!
+}

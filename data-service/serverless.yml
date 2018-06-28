@@ -23,7 +23,6 @@ custom:
     project: artfullylondon
     stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
-    sitemapUrlPrefix: 'https://www.artfully.london'
     errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
     standardResponses:
         headers:
@@ -43,108 +42,28 @@ custom:
                     application/json: ${self:custom.errorResponseTemplate}
     webpack:
         webpackConfig: ./webpack.config.js
-        includeModules: true
+        includeModules:
+            forceExclude:
+                - aws-sdk
         packager: 'yarn'
 
 functions:
     siteMap:
         handler: src/lambda/sitemap-handler.handler
-        environment:
-            SITEMAP_URL_PREFIX: ${self:custom.sitemapUrlPrefix}
         events:
             - http:
                 path: "public/sitemap.txt"
                 method: get
                 integration: lambda
                 response: ${self:custom.standardResponses}
-
-resources:
-    Resources:
-        ApiGatewayResourceAdminSiteData:
-            Type: AWS::ApiGateway::Resource
-            Properties:
-                ParentId:
-                    Fn::GetAtt:
-                        - ApiGatewayRestApi
-                        - RootResourceId
-                PathPart: "admin-site-data"
-                RestApiId:
-                    Ref: ApiGatewayRestApi
-        AdminSiteDataEndpoint:
-            Type: AWS::ApiGateway::Method
-            Properties:
-                AuthorizationType: NONE
-                HttpMethod: GET
-                ResourceId:
-                    Ref: ApiGatewayResourceAdminSiteData
-                RestApiId:
-                    Ref: ApiGatewayRestApi
-                Integration:
-                    Type: MOCK
-                    PassthroughBehavior: WHEN_NO_MATCH
-                    RequestTemplates:
-                        application/json: '{"statusCode": 200}'
-                    IntegrationResponses:
-                        - 
-                            StatusCode: 200
-                            ResponseParameters:
-                                method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-                                method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-                                method.response.header.Access-Control-Allow-Origin: "'*'"
-                                method.response.header.Cache-Control: "'no-cache'"
-                            ResponseTemplates:
-                                application/json: "${file(./build/content.txt)}"
-                MethodResponses:
-                    -
-                        StatusCode: 200
-                        ResponseModels:
-                            application/json: 'Empty'
-                        ResponseParameters:
-                            method.response.header.Access-Control-Allow-Headers: false
-                            method.response.header.Access-Control-Allow-Methods: false
-                            method.response.header.Access-Control-Allow-Origin: false
-                            method.response.header.Cache-Control: false
-        ApiGatewayResourcePublicSiteData:
-            Type: AWS::ApiGateway::Resource
-            Properties:
-                ParentId:
-                    Fn::GetAtt:
-                        - ApiGatewayRestApi
-                        - RootResourceId
-                PathPart: "public-site-data"
-                RestApiId:
-                    Ref: ApiGatewayRestApi
-        PublicSiteDataEndpoint:
-            Type: AWS::ApiGateway::Method
-            Properties:
-                AuthorizationType: NONE
-                HttpMethod: GET
-                ResourceId:
-                    Ref: ApiGatewayResourcePublicSiteData
-                RestApiId:
-                    Ref: ApiGatewayRestApi
-                Integration:
-                    Type: MOCK
-                    PassthroughBehavior: WHEN_NO_MATCH
-                    RequestTemplates:
-                        application/json: '{"statusCode": 200}'
-                    IntegrationResponses:
-                        - 
-                            StatusCode: 200
-                            ResponseParameters:
-                                method.response.header.Access-Control-Allow-Headers: "'Cache-Control,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-                                method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-                                method.response.header.Access-Control-Allow-Origin: "'*'"
-                                method.response.header.Cache-Control: "'public,max-age=86400'"
-                            ResponseTemplates:
-                                application/json: "${file(./build/content.txt)}"
-                MethodResponses:
-                    -
-                        StatusCode: 200
-                        ResponseModels:
-                            application/json: 'Empty'
-                        ResponseParameters:
-                            method.response.header.Access-Control-Allow-Headers: false
-                            method.response.header.Access-Control-Allow-Methods: false
-                            method.response.header.Access-Control-Allow-Origin: false
-                            method.response.header.Cache-Control: false
+    graphql:
+        handler: src/lambda/graphql-handler.handler
+        events:
+            - http:
+                path: graphql
+                method: post
+                cors: true
+            - http:
+                path: graphql
+                method: get
+                cors: true

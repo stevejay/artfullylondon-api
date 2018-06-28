@@ -1,8 +1,8 @@
 import "./xray-setup";
-import withErrorHandling from "./with-error-handling";
+import withErrorHandling from "./___with-error-handling";
 import * as searchService from "../search-service";
-import * as mapper from "./mapper";
-import convertAsyncToCallback from "./convert-async-to-callback";
+import * as mapper from "./___mapper";
+import convertAsyncToCallback from "./___convert-async-to-callback";
 
 export const handler = convertAsyncToCallback(
   withErrorHandling(async function(event) {

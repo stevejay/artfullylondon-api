@@ -6,13 +6,6 @@ import * as presetSearchType from "../types/preset-search-type";
 import * as artsType from "../types/arts-type";
 import * as timeUtils from "../time-utils";
 
-export function mapAutocompleteSearchParams(params) {
-  return {
-    ...params,
-    singleEntitySearch: params.entityType !== entityType.ALL
-  };
-}
-
 export function mapBasicSearchParams(params) {
   return {
     ...params,
@@ -117,7 +110,7 @@ export function mapAutocompleteSearchResults(result) {
   const fuzzyOptions = _.get(result, "suggest.fuzzyAutocomplete[0].options");
 
   return {
-    items: _
+    results: _
       .unionBy(options, fuzzyOptions, "_source.id")
       .map(option => ({ ...option._source, name: option.text }))
   };
@@ -135,7 +128,7 @@ export function mapBasicSearchResults(results, take) {
       );
 
   const total = hasSingleEntityType ? mapped[0].total : items.length;
-  return { items, total };
+  return { results, total };
 }
 
 export function mapSimpleQuerySearchResults(result) {

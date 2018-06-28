@@ -8,10 +8,7 @@ import * as areaType from "./types/area-type";
 
 describe("normaliseAutocompleteSearchRequest", () => {
   test.each([
-    [
-      { admin: "", term: "", entityType: "" },
-      { term: "", entityType: entityType.ALL }
-    ],
+    [{ admin: "", term: "", entityType: "" }, { term: "" }],
     [
       { admin: "true", term: "  foo  ", entityType: entityType.EVENT },
       { admin: true, term: "foo", entityType: entityType.EVENT }
@@ -37,7 +34,7 @@ describe("normaliseBasicSearchRequest", () => {
         skip: "",
         take: ""
       },
-      { entityType: entityType.ALL, skip: 0, take: 12 }
+      { skip: 0, take: 12 }
     ],
     [
       {
@@ -142,9 +139,9 @@ describe("normaliseEventAdvancedSearchRequest", () => {
         east: "4.5",
         skip: "100",
         take: "50",
-        venueId: "venue1",
-        talentId: "talent1",
-        eventSeriesId: "eventseries1"
+        venueId: "venue/venue1",
+        talentId: "talent/talent1",
+        eventSeriesId: "event-series/eventseries1"
       },
       {
         admin: true,
@@ -165,9 +162,9 @@ describe("normaliseEventAdvancedSearchRequest", () => {
         east: 4.5,
         skip: 100,
         take: 50,
-        venueId: "venue1",
-        talentId: "talent1",
-        eventSeriesId: "eventseries1"
+        venueId: "venue/venue1",
+        talentId: "talent/talent1",
+        eventSeriesId: "event-series/eventseries1"
       }
     ]
   ])("%o should normalise to %o", (arg, expected) => {
@@ -184,12 +181,12 @@ describe("normalisePresetSearchRequest", () => {
       {
         admin: "true",
         name: presetSearchType.TALENT_RELATED_EVENTS,
-        id: "event1"
+        id: "event/event1"
       },
       {
         admin: true,
         name: presetSearchType.TALENT_RELATED_EVENTS,
-        id: "event1"
+        id: "event/event1"
       }
     ]
   ])("%o should normalise to %o", (arg, expected) => {

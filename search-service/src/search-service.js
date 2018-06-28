@@ -5,8 +5,7 @@ import * as searcher from "./searcher";
 export async function autocompleteSearch(request) {
   const search = normaliser.normaliseAutocompleteSearchRequest(request);
   validator.validateAutocompleteSearchRequest(search);
-  const result = await searcher.autocompleteSearch(search);
-  return { ...result, params: search };
+  return await searcher.autocompleteSearch(search);
 }
 
 export async function basicSearch(request) {

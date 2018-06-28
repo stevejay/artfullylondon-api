@@ -1,6 +1,7 @@
 import * as queryFactory from "./query-factory";
 import * as entityType from "../types/entity-type";
 import * as searchIndexType from "../types/search-index-type";
+import * as statusType from "../types/status-type";
 
 describe("createAutocompleteSearch", () => {
   test.each([
@@ -36,7 +37,7 @@ describe("createAutocompleteSearch", () => {
     ],
     // multiple entity search
     [
-      { term: "foo", entityType: entityType.ALL, singleEntitySearch: false },
+      { term: "foo", singleEntitySearch: false },
       {
         index: searchIndexType.AUTOCOMPLETE,
         type: "doc",
@@ -157,7 +158,7 @@ describe("createBasicSearchSearches", () => {
                 type: "cross_fields"
               }
             },
-            filter: { term: { status: "Active" } }
+            filter: { term: { status: statusType.ACTIVE } }
           }
         }
       }

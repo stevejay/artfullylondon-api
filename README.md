@@ -86,7 +86,9 @@ Use the following process to check what software is already running on a given p
 - IfNoneMatch bad string problem when sending etag in request.
 - Upgrade apollo-server-lambda to latest when release candidate finalised.
 - Sort out graphql-service graphql dependency.
+- Use global IDs for graphql.
 - GraphQL info links:
+  - useful regex /[^\w{}]+/g
   - database request batching https://github.com/facebook/dataloader
   - paging: https://graphql.github.io/learn/pagination/
   - https://www.apollographql.com/engine

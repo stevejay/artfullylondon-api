@@ -6,38 +6,11 @@ import * as bookingType from "../types/booking-type";
 import * as areaType from "../types/area-type";
 import * as artsType from "../types/arts-type";
 
-describe("mapAutocompleteSearchParams", () => {
-  test.each([
-    [
-      { term: "f", entityType: entityType.ALL },
-      {
-        term: "f",
-        entityType: entityType.ALL,
-        singleEntitySearch: false
-      }
-    ],
-    [
-      { admin: true, term: "foo", entityType: entityType.EVENT },
-      {
-        admin: true,
-        term: "foo",
-        entityType: entityType.EVENT,
-        singleEntitySearch: true
-      }
-    ]
-  ])("%o should map to %o", (arg, expected) => {
-    expect(mapper.mapAutocompleteSearchParams(deepFreeze(arg))).toEqual(
-      expected
-    );
-  });
-});
-
 describe("mapBasicSearchParams", () => {
   test.each([
     [
-      { entityType: entityType.ALL, skip: 0, take: 12 },
+      { skip: 0, take: 12 },
       {
-        entityType: entityType.ALL,
         skip: 0,
         take: 12,
         hasTerm: false,
@@ -121,9 +94,9 @@ describe("mapEventAdvancedSearchParams", () => {
         east: 4.5,
         skip: 100,
         take: 50,
-        venueId: "venue1",
-        talentId: "talent1",
-        eventSeriesId: "eventseries1"
+        venueId: "venue/venue1",
+        talentId: "talent/talent1",
+        eventSeriesId: "event-series/eventseries1"
       },
       {
         admin: true,
@@ -145,9 +118,9 @@ describe("mapEventAdvancedSearchParams", () => {
         east: 4.5,
         skip: 100,
         take: 50,
-        venueId: "venue1",
-        talentId: "talent1",
-        eventSeriesId: "eventseries1",
+        venueId: "venue/venue1",
+        talentId: "talent/talent1",
+        eventSeriesId: "event-series/eventseries1",
         hasTerm: true,
         hasArea: true,
         hasArtsType: false,
@@ -221,33 +194,33 @@ describe("mapEventsByExternalIdsSearchParams", () => {
 
 describe("mapAutocompleteSearchResults", () => {
   test.each([
-    [{}, { items: [] }],
+    [{}, { results: [] }],
     [
       {
         suggest: {
           autocomplete: [
             {
               options: [
-                { text: "1", _source: { id: "event-1" } },
-                { text: "3", _source: { id: "event-3" } }
+                { text: "1", _source: { id: "event/event-1" } },
+                { text: "3", _source: { id: "event/event-3" } }
               ]
             }
           ],
           fuzzyAutocomplete: [
             {
               options: [
-                { text: "1", _source: { id: "event-1" } },
-                { text: "2", _source: { id: "event-2" } }
+                { text: "1", _source: { id: "event/event-1" } },
+                { text: "2", _source: { id: "event/event-2" } }
               ]
             }
           ]
         }
       },
       {
-        items: [
-          { id: "event-1", name: "1" },
-          { id: "event-3", name: "3" },
-          { id: "event-2", name: "2" }
+        results: [
+          { id: "event/event-1", name: "1" },
+          { id: "event/event-3", name: "3" },
+          { id: "event/event-2", name: "2" }
         ]
       }
     ]
@@ -262,8 +235,8 @@ describe("mapSimpleQuerySearchResults", () => {
   test.each([
     [{ hits: { hits: [], total: 0 } }, { items: [], total: 0 }],
     [
-      { hits: { hits: [{ _source: { id: "event-1" } }], total: 100 } },
-      { items: [{ id: "event-1" }], total: 100 }
+      { hits: { hits: [{ _source: { id: "event/event-1" } }], total: 100 } },
+      { items: [{ id: "event/event-1" }], total: 100 }
     ]
   ])("%o should map to %o", (arg, expected) => {
     expect(mapper.mapSimpleQuerySearchResults(deepFreeze(arg))).toEqual(
@@ -314,29 +287,36 @@ describe("mapBasicSearchResults", () => {
     [
       {
         responses: [
-          { hits: { hits: [{ _source: { id: "event-1" } }], total: 100 } }
+          { hits: { hits: [{ _source: { id: "event/event-1" } }], total: 100 } }
         ]
       },
       12,
       {
-        items: [{ id: "event-1" }],
+        items: [{ id: "event/event-1" }],
         total: 100
       }
     ],
     [
       {
         responses: [
-          { hits: { hits: [{ _source: { id: "event-1" } }], total: 100 } },
           {
-            hits: { hits: [{ _source: { id: "event-series-1" } }], total: 200 }
+            hits: { hits: [{ _source: { id: "event/event-1" } }], total: 100 }
           },
-          { hits: { hits: [{ _source: { id: "talent-1" } }], total: 300 } },
-          { hits: { hits: [{ _source: { id: "venue-1" } }], total: 400 } }
+          {
+            hits: {
+              hits: [{ _source: { id: "event-series/event-series-1" } }],
+              total: 200
+            }
+          },
+          {
+            hits: { hits: [{ _source: { id: "talent/talent-1" } }], total: 300 }
+          },
+          { hits: { hits: [{ _source: { id: "venue/venue-1" } }], total: 400 } }
         ]
       },
       2,
       {
-        items: [{ id: "event-1" }, { id: "event-series-1" }],
+        items: [{ id: "event/event-1" }, { id: "event-series/event-series-1" }],
         total: 2
       }
     ]

@@ -1,6 +1,7 @@
 import esb from "elastic-builder";
 import * as searchIndexType from "../types/search-index-type";
 import * as entityType from "../types/entity-type";
+import * as statusType from "../types/status-type";
 
 export function createAutocompleteSearch(params) {
   const suggest = esb
@@ -14,7 +15,7 @@ export function createAutocompleteSearch(params) {
     .size(5)
     .fuzzy(true);
 
-  if (params.singleEntitySearch) {
+  if (params.entityType) {
     suggest.contexts("entityType", [params.entityType]);
     fuzzySuggest.contexts("entityType", [params.entityType]);
   }
@@ -85,15 +86,13 @@ function getBasicSearchCreationData(type) {
     case entityType.EVENT:
     case entityType.EVENT_SERIES:
       return [BASIC_SEARCH_DATA[type]];
-    case entityType.ALL:
+    default:
       return [
         BASIC_SEARCH_DATA[entityType.TALENT],
         BASIC_SEARCH_DATA[entityType.VENUE],
         BASIC_SEARCH_DATA[entityType.EVENT_SERIES],
         BASIC_SEARCH_DATA[entityType.EVENT]
       ];
-    default:
-      throw new Error(`entity type value out of range: ${type}`);
   }
 }
 
@@ -393,5 +392,5 @@ export function createEventsByExternalIdsSearch(params) {
 }
 
 function createPublicFilter() {
-  return esb.termQuery("status", "Active");
+  return esb.termQuery("status", statusType.ACTIVE);
 }

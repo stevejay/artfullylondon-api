@@ -1,3 +1,3 @@
-export const BOUNDED = 'Bounded';
-export const CONTINUOUS = 'Continuous';
-export const ONETIME = 'OneTime';
+export const BOUNDED = "BOUNDED";
+export const CONTINUOUS = "CONTINUOUS";
+export const ONETIME = "ONE_TIME";

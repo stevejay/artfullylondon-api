@@ -1,9 +1,9 @@
-export const CENTRAL = "Central";
-export const EAST = "East";
-export const WEST = "West";
-export const NORTH = "North";
-export const SOUTH_EAST = "SouthEast";
-export const SOUTH_WEST = "SouthWest";
+export const CENTRAL = "CENTRAL";
+export const EAST = "EAST";
+export const WEST = "WEST";
+export const NORTH = "NORTH";
+export const SOUTH_EAST = "SOUTH_EAST";
+export const SOUTH_WEST = "SOUTH_WEST";
 
 export const ALLOWED_VALUES = [
   CENTRAL,

@@ -1,35 +1,35 @@
 import _ from "lodash";
 import mappr from "mappr";
-import * as locationAreaType from "../../types/location-area-type";
+import * as areaType from "../../types/area-type";
 
 const AREA_DATA = [
   {
     regex: /^(?:SW7|SW3|SW1[A-Z]|W1|W1[A-Z]|W2|W9|NW8|NW1|N1C|N1|WC.+|EC.+|SE1|SE11|E1W|E2|E1)$/,
-    type: locationAreaType.CENTRAL
+    type: areaType.CENTRAL
   },
   {
     regex: /^(?:W\d+|UB.+|SL.+)$/,
-    type: locationAreaType.WEST
+    type: areaType.WEST
   },
   {
     regex: /^(?:N\d+|EN.+|AL.+)$/,
-    type: locationAreaType.NORTH
+    type: areaType.NORTH
   },
   {
     regex: /^(?:NW\d+|HA.+|WD.+|HP.+)$/,
-    type: locationAreaType.NORTH
+    type: areaType.NORTH
   },
   {
     regex: /^(?:E\d+|IG.+|RM.+|CM.+)$/,
-    type: locationAreaType.EAST
+    type: areaType.EAST
   },
   {
     regex: /^(?:SE\d+|CR.+|BR.+|DA.+|TN.+)$/,
-    type: locationAreaType.SOUTH_EAST
+    type: areaType.SOUTH_EAST
   },
   {
     regex: /^(?:SW\d+|TW.+|KT.+|SM.+)$/,
-    type: locationAreaType.SOUTH_WEST
+    type: areaType.SOUTH_WEST
   }
 ];
 
