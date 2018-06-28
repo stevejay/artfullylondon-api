@@ -24,38 +24,6 @@ custom:
     project: artfullylondon
     stage: "${opt:stage}"
     region: "${opt:region, self:provider.region}"
-    errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
-    standardResponses:
-        headers:
-            Access-Control-Allow-Credentials : "'true'"
-        template: $input.path('$')
-        statusCodes:
-            200:
-                pattern: ''
-                template:
-                    application/json: $input.path("$.body")
-                headers:
-                    Cache-Control: integration.response.body.headers.Cache-Control
-            400:
-                pattern: '^\[400\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            401:
-                pattern: '^\[401\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            403:
-                pattern: '^\[403\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            404:
-                pattern: '^\[404\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            500:
-                pattern: '^\[500\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -65,7 +33,7 @@ custom:
 
 functions:
     graphql:
-        handler: src/lambda/graphql.graphqlHandler
+        handler: src/graphql-handler.handler
         events:
             - http:
                 path: graphql
@@ -75,23 +43,3 @@ functions:
                 path: graphql
                 method: get
                 cors: true
-    graphqlInspector:
-        handler: src/lambda/graphql.graphiqlHandler
-        events:
-            - http:
-                path: graphiql
-                method: get
-                cors: true
-                # integration: lambda
-                # request:
-                #     template:
-                #         application/json: >
-                #             {
-                #                 "type": "$input.params('type')",
-                #                 "label": $input.json('$.label'),
-                #                 "authorization" : "$input.params().header.get('Authorization')"
-                #             }
-                # response: ${self:custom.standardResponses}
-                # authorizer:
-                #     name: authorizer
-                #     arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
