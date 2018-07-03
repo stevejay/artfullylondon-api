@@ -1,10 +1,10 @@
 import subDays from "date-fns/subDays";
 import addDays from "date-fns/addDays";
 import format from "date-fns/format";
-import * as statusType from "../../src/types/status-type";
-import * as entityType from "../../src/types/entity-type";
-import * as talentType from "../../src/types/talent-type";
-import * as occurrenceType from "../../src/types/occurrence-type";
+import * as statusType from "../src/types/status-type";
+import * as entityType from "../src/types/entity-type";
+import * as talentType from "../src/types/talent-type";
+import * as occurrenceType from "../src/types/occurrence-type";
 
 export const TALENT_ACTIVE_CARRIE_CRACKNELL = {
   status: statusType.ACTIVE,

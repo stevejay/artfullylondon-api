@@ -1,6 +1,6 @@
 import request from "request-promise-native";
 import * as elasticsearch from "../utils/elasticsearch";
-import * as testData from "./test-data";
+import * as testData from "../test-data";
 import * as searchIndexType from "../../src/types/search-index-type";
 import * as entityType from "../../src/types/entity-type";
 jest.setTimeout(60000);

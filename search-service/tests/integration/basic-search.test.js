@@ -3,6 +3,7 @@ import * as elasticsearch from "../utils/elasticsearch";
 import * as searchIndexType from "../../src/types/search-index-type";
 import * as entityType from "../../src/types/entity-type";
 import * as statusType from "../../src/types/status-type";
+import * as testData from "../test-data";
 jest.setTimeout(60000);
 
 const BASIC_SEARCH_QUERY = `
@@ -50,58 +51,30 @@ describe("basic search", () => {
     await elasticsearch.createIndex(searchIndexType.VENUE);
     await elasticsearch.createIndex(searchIndexType.EVENT);
     await elasticsearch.createIndex(searchIndexType.EVENT_SERIES);
-
-    await elasticsearch.indexDocument(searchIndexType.TALENT, {
-      status: statusType.ACTIVE,
-      id: "talent/1",
-      commonRole: "Director",
-      entityType: entityType.TALENT,
-      firstNames: "Carrie",
-      lastName: "Cracknell",
-      lastName_sort: "cracknell"
-    });
-    await elasticsearch.indexDocument(searchIndexType.TALENT, {
-      status: statusType.ACTIVE,
-      id: "talent/2",
-      commonRole: "Actor",
-      entityType: entityType.TALENT,
-      firstNames: "Dave",
-      lastName: "Donnelly",
-      lastName_sort: "donnelly"
-    });
-
-    await elasticsearch.indexDocument(searchIndexType.VENUE, {
-      status: statusType.ACTIVE,
-      id: "venue/1",
-      entityType: entityType.VENUE,
-      name: "Almeida Theatre"
-    });
-    await elasticsearch.indexDocument(searchIndexType.VENUE, {
-      status: statusType.DELETED,
-      id: "venue/2",
-      entityType: entityType.VENUE,
-      name: "Arcola Theatre",
-      latitude: 1,
-      longitude: 2,
-      locationOptimized: {
-        lat: 1,
-        lon: 2
-      }
-    });
-
-    await elasticsearch.indexDocument(searchIndexType.EVENT_SERIES, {
-      status: statusType.ACTIVE,
-      id: "event-series/1",
-      entityType: entityType.EVENT_SERIES,
-      name: "Bang Said the Gun"
-    });
-
-    await elasticsearch.indexDocument(searchIndexType.EVENT, {
-      status: statusType.ACTIVE,
-      id: "event/1",
-      entityType: entityType.EVENT,
-      name: "Andy Warhol: New York Start"
-    });
+    await elasticsearch.indexDocument(
+      searchIndexType.TALENT,
+      testData.TALENT_ACTIVE_CARRIE_CRACKNELL
+    );
+    await elasticsearch.indexDocument(
+      searchIndexType.TALENT,
+      testData.TALENT_ACTIVE_DAVE_DONNELLY
+    );
+    await elasticsearch.indexDocument(
+      searchIndexType.VENUE,
+      testData.VENUE_ACTIVE_ALMEIDA_THEATRE
+    );
+    await elasticsearch.indexDocument(
+      searchIndexType.VENUE,
+      testData.VENUE_DELETED_ARCOLA_THEATRE
+    );
+    await elasticsearch.indexDocument(
+      searchIndexType.EVENT_SERIES,
+      testData.EVENT_SERIES_ACTIVE_BANG_SAID_THE_GUN
+    );
+    await elasticsearch.indexDocument(
+      searchIndexType.EVENT,
+      testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION
+    );
   });
 
   afterAll(async () => {
@@ -136,11 +109,13 @@ describe("basic search", () => {
         basicSearch: {
           edges: [
             {
-              cursor: expect.stringContaining("talent/1"),
+              cursor: expect.stringContaining(
+                testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id
+              ),
               node: {
-                entityType: "TALENT",
-                id: "talent/1",
-                status: "ACTIVE",
+                entityType: entityType.TALENT,
+                id: testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id,
+                status: statusType.ACTIVE,
                 commonRole: "Director"
               }
             }
@@ -201,18 +176,22 @@ describe("basic search", () => {
         basicSearch: {
           edges: [
             {
-              cursor: expect.stringContaining("venue/1"),
+              cursor: expect.stringContaining(
+                testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id
+              ),
               node: {
                 entityType: entityType.VENUE,
-                id: "venue/1",
+                id: testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id,
                 status: statusType.ACTIVE
               }
             },
             {
-              cursor: expect.stringContaining("venue/2"),
+              cursor: expect.stringContaining(
+                testData.VENUE_DELETED_ARCOLA_THEATRE.id
+              ),
               node: {
                 entityType: entityType.VENUE,
-                id: "venue/2",
+                id: testData.VENUE_DELETED_ARCOLA_THEATRE.id,
                 status: statusType.DELETED
               }
             }
@@ -245,10 +224,12 @@ describe("basic search", () => {
         basicSearch: {
           edges: [
             {
-              cursor: expect.stringContaining("venue/2"),
+              cursor: expect.stringContaining(
+                testData.VENUE_DELETED_ARCOLA_THEATRE.id
+              ),
               node: {
                 entityType: entityType.VENUE,
-                id: "venue/2",
+                id: testData.VENUE_DELETED_ARCOLA_THEATRE.id,
                 status: statusType.DELETED
               }
             }
@@ -283,10 +264,12 @@ describe("basic search", () => {
         basicSearch: {
           edges: [
             {
-              cursor: expect.stringContaining("venue/1"),
+              cursor: expect.stringContaining(
+                testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id
+              ),
               node: {
                 entityType: entityType.VENUE,
-                id: "venue/1",
+                id: testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id,
                 status: statusType.ACTIVE
               }
             }
@@ -323,10 +306,12 @@ describe("basic search", () => {
         basicSearch: {
           edges: [
             {
-              cursor: expect.stringContaining("venue/2"),
+              cursor: expect.stringContaining(
+                testData.VENUE_DELETED_ARCOLA_THEATRE.id
+              ),
               node: {
                 entityType: entityType.VENUE,
-                id: "venue/2",
+                id: testData.VENUE_DELETED_ARCOLA_THEATRE.id,
                 status: statusType.DELETED
               }
             }
@@ -360,10 +345,12 @@ describe("basic search", () => {
         basicSearch: {
           edges: [
             {
-              cursor: expect.stringContaining("event-series/1"),
+              cursor: expect.stringContaining(
+                testData.EVENT_SERIES_ACTIVE_BANG_SAID_THE_GUN.id
+              ),
               node: {
                 entityType: entityType.EVENT_SERIES,
-                id: "event-series/1",
+                id: testData.EVENT_SERIES_ACTIVE_BANG_SAID_THE_GUN.id,
                 status: statusType.ACTIVE
               }
             }
@@ -397,10 +384,12 @@ describe("basic search", () => {
         basicSearch: {
           edges: [
             {
-              cursor: expect.stringContaining("event/1"),
+              cursor: expect.stringContaining(
+                testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION.id
+              ),
               node: {
                 entityType: entityType.EVENT,
-                id: "event/1",
+                id: testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION.id,
                 status: statusType.ACTIVE
               }
             }

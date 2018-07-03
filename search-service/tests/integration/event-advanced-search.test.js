@@ -1,8 +1,9 @@
 import request from "request-promise-native";
+import _ from "lodash";
 import * as elasticsearch from "../utils/elasticsearch";
 import * as searchIndexType from "../../src/types/search-index-type";
-import * as entityType from "../../src/types/entity-type";
 import * as statusType from "../../src/types/status-type";
+import * as testData from "../test-data";
 jest.setTimeout(60000);
 
 const EVENT_ADVANCED_SEARCH_QUERY = `
@@ -71,18 +72,14 @@ const EVENT_ADVANCED_SEARCH_QUERY = `
 describe("event advanced search", () => {
   beforeAll(async () => {
     await elasticsearch.createIndex(searchIndexType.EVENT);
-    await elasticsearch.indexDocument(searchIndexType.EVENT, {
-      status: statusType.ACTIVE,
-      id: "event/1",
-      entityType: entityType.EVENT,
-      name: "Foo"
-    });
-    await elasticsearch.indexDocument(searchIndexType.EVENT, {
-      status: statusType.ACTIVE,
-      id: "event/2",
-      entityType: entityType.EVENT,
-      name: "Bar"
-    });
+    await elasticsearch.indexDocument(
+      searchIndexType.EVENT,
+      testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION
+    );
+    await elasticsearch.indexDocument(
+      searchIndexType.EVENT,
+      testData.EVENT_ACTIVE_BRITISH_MUSEUM_PERM_COLL
+    );
   });
 
   afterAll(async () => {
@@ -97,7 +94,7 @@ describe("event advanced search", () => {
       body: {
         query: EVENT_ADVANCED_SEARCH_QUERY,
         variables: {
-          term: "foo",
+          term: "andy",
           status: statusType.ACTIVE,
           first: 12
         }
@@ -110,12 +107,16 @@ describe("event advanced search", () => {
         eventAdvancedSearch: {
           edges: [
             {
-              cursor: expect.stringContaining("event/1"),
+              cursor: expect.stringContaining(
+                testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION.id
+              ),
               node: {
-                entityType: entityType.EVENT,
-                id: "event/1",
-                name: "Foo",
-                status: statusType.ACTIVE
+                ..._.pick(testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION, [
+                  "entityType",
+                  "id",
+                  "name",
+                  "status"
+                ])
               }
             }
           ],
