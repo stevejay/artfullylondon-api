@@ -1,10 +1,7 @@
 import _ from "lodash";
-import addDays from "date-fns/addDays";
 import looseInterleave from "loose-interleave";
 import * as entityType from "../types/entity-type";
-import * as presetSearchType from "../types/preset-search-type";
 import * as artsType from "../types/arts-type";
-import * as areaType from "../types/area-type";
 import * as timeUtils from "../time-utils";
 
 const DEFAULT_FIRST = 12;
@@ -34,54 +31,9 @@ export function mapEventAdvancedSearchParams(params) {
   };
 }
 
-export function mapPresetEventAdvancedSearchParams(params) {
-  const now = timeUtils.getUtcNow();
-
-  switch (params.name) {
-    case presetSearchType.FEATURED_EVENTS:
-      return {
-        skip: 0,
-        take: 24,
-        area: areaType.CENTRAL,
-        dateFrom: timeUtils.formatAsISODateString(now),
-        dateTo: timeUtils.formatAsISODateString(addDays(now, 14))
-      };
-    case presetSearchType.VENUE_RELATED_EVENTS:
-      return {
-        skip: 0,
-        take: 300,
-        venueId: params.id,
-        dateFrom: timeUtils.formatAsISODateString(now),
-        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
-      };
-    case presetSearchType.TALENT_RELATED_EVENTS:
-      return {
-        skip: 0,
-        take: 300,
-        talentId: params.id,
-        dateFrom: timeUtils.formatAsISODateString(now),
-        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
-      };
-    case presetSearchType.EVENT_SERIES_RELATED_EVENTS:
-      return {
-        skip: 0,
-        take: 300,
-        eventSeriesId: params.id,
-        dateFrom: timeUtils.formatAsISODateString(now),
-        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
-      };
-    default:
-      throw new Error(`Unsupported preset search ${params.name}`);
-  }
-}
-
 export function mapSitemapEventSearchParams() {
   const now = timeUtils.getUtcNow();
-  return { dateTo: timeUtils.formatAsISODateString(now) };
-}
-
-export function mapEventsByExternalIdsSearchParams(params) {
-  return { ids: _.without(params.id.split(","), "") };
+  return { dateTo: timeUtils.formatAsIsoShortDateString(now) };
 }
 
 export function mapAutocompleteSearchResults(result) {
@@ -96,7 +48,10 @@ export function mapAutocompleteSearchResults(result) {
 }
 
 export function mapBasicSearchResults(result, first) {
-  // TODO use mapEventAdvancedSearchResults when is single entity search
+  const hasSingleEntityType = result.responses.length === 1;
+  if (hasSingleEntityType) {
+    return mapSingleEntitySearchResults(result.responses[0], first);
+  }
 
   const edgesList = result.responses.map(response =>
     response.hits.hits.map(hit => ({
@@ -105,32 +60,24 @@ export function mapBasicSearchResults(result, first) {
     }))
   );
 
-  const hasSingleEntityType = edgesList.length === 1;
-  const edges = hasSingleEntityType
-    ? edgesList[0]
-    : _.take(looseInterleave.apply(null, edgesList), first);
+  const edges = _.take(looseInterleave.apply(null, edgesList), first);
 
-  if (hasSingleEntityType) {
-    return {
-      edges,
-      pageInfo: {
-        hasNextPage: edges.length >= first // TODO how to best determine this?
-      }
-    };
-  } else {
-    return {
-      edges: edges.map(edge => ({
-        node: edge.node,
-        cursor: ""
-      })),
-      pageInfo: {
-        hasNextPage: false
-      }
-    };
-  }
+  return {
+    edges: edges.map(edge => ({
+      node: edge.node,
+      cursor: ""
+    })),
+    pageInfo: {
+      hasNextPage: false
+    }
+  };
 }
 
 export function mapEventAdvancedSearchResults(result, first) {
+  return mapSingleEntitySearchResults(result, first);
+}
+
+function mapSingleEntitySearchResults(result, first) {
   const edges = result.hits.hits.map(hit => ({
     node: hit._source,
     cursor: mapFromSortToCursor(hit.sort)
@@ -147,14 +94,6 @@ export function mapEventAdvancedSearchResults(result, first) {
 export function mapSitemapEventSearchResults(result) {
   return {
     results: result.hits.hits.map(hit => hit._source)
-  };
-}
-
-// TODO remove?
-export function mapSimpleQuerySearchResults(result) {
-  return {
-    items: result.hits.hits.map(hit => hit._source),
-    total: result.hits.total
   };
 }
 

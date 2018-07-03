@@ -1,6 +1,5 @@
 import deepFreeze from "deep-freeze";
 import * as normaliser from "./normaliser";
-import * as presetSearchType from "./types/preset-search-type";
 import * as entityType from "./types/entity-type";
 import * as costType from "./types/cost-type";
 import * as bookingType from "./types/booking-type";
@@ -171,27 +170,5 @@ describe("normaliseEventAdvancedSearchRequest", () => {
     expect(
       normaliser.normaliseEventAdvancedSearchRequest(deepFreeze(arg))
     ).toEqual(expected);
-  });
-});
-
-describe("normalisePresetSearchRequest", () => {
-  test.each([
-    [{ admin: "", name: "", id: "" }, { name: "", id: "" }],
-    [
-      {
-        admin: "true",
-        name: presetSearchType.TALENT_RELATED_EVENTS,
-        id: "event/event1"
-      },
-      {
-        admin: true,
-        name: presetSearchType.TALENT_RELATED_EVENTS,
-        id: "event/event1"
-      }
-    ]
-  ])("%o should normalise to %o", (arg, expected) => {
-    expect(normaliser.normalisePresetSearchRequest(deepFreeze(arg))).toEqual(
-      expected
-    );
   });
 });

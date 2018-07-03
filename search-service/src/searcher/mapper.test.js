@@ -153,17 +153,6 @@ describe("mapEventAdvancedSearchParams", () => {
   });
 });
 
-describe("mapEventsByExternalIdsSearchParams", () => {
-  test.each([
-    [{ id: "" }, { ids: [] }],
-    [{ id: "foo,bar" }, { ids: ["foo", "bar"] }]
-  ])("%o should map to %o", (arg, expected) => {
-    expect(mapper.mapEventsByExternalIdsSearchParams(deepFreeze(arg))).toEqual(
-      expected
-    );
-  });
-});
-
 describe("mapAutocompleteSearchResults", () => {
   test.each([
     [{}, { results: [] }],
@@ -198,20 +187,6 @@ describe("mapAutocompleteSearchResults", () => {
     ]
   ])("%o should map to %o", (arg, expected) => {
     expect(mapper.mapAutocompleteSearchResults(deepFreeze(arg))).toEqual(
-      expected
-    );
-  });
-});
-
-describe("mapSimpleQuerySearchResults", () => {
-  test.each([
-    [{ hits: { hits: [], total: 0 } }, { items: [], total: 0 }],
-    [
-      { hits: { hits: [{ _source: { id: "event/event-1" } }], total: 100 } },
-      { items: [{ id: "event/event-1" }], total: 100 }
-    ]
-  ])("%o should map to %o", (arg, expected) => {
-    expect(mapper.mapSimpleQuerySearchResults(deepFreeze(arg))).toEqual(
       expected
     );
   });
@@ -310,5 +285,40 @@ describe("mapBasicSearchResults", () => {
     expect(mapper.mapBasicSearchResults(deepFreeze(arg), first)).toEqual(
       expected
     );
+  });
+});
+
+describe("mapEventAdvancedSearchResults", () => {
+  test.each([
+    [
+      {
+        hits: {
+          hits: []
+        }
+      },
+      12,
+      { edges: [], pageInfo: { hasNextPage: false } }
+    ],
+    [
+      {
+        hits: {
+          hits: [{ _source: { id: "event/event-1" }, sort: [123] }]
+        }
+      },
+      12,
+      {
+        edges: [
+          {
+            node: { id: "event/event-1" },
+            cursor: "[123]"
+          }
+        ],
+        pageInfo: { hasNextPage: false }
+      }
+    ]
+  ])("%o with first %d should map to %o", (arg, first, expected) => {
+    expect(
+      mapper.mapEventAdvancedSearchResults(deepFreeze(arg), first)
+    ).toEqual(expected);
   });
 });

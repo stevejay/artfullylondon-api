@@ -6,8 +6,6 @@ import * as entityType from "../../src/types/entity-type";
 import * as talentType from "../../src/types/talent-type";
 import * as occurrenceType from "../../src/types/occurrence-type";
 
-// TODO are these used anymore?
-
 export const TALENT_ACTIVE_CARRIE_CRACKNELL = {
   status: statusType.ACTIVE,
   commonRole: "Director",

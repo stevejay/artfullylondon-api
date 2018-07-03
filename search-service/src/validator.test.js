@@ -1,6 +1,5 @@
 import deepFreeze from "deep-freeze";
 import * as validator from "./validator";
-import * as presetSearchType from "./types/preset-search-type";
 import * as entityType from "./types/entity-type";
 import * as costType from "./types/cost-type";
 import * as bookingType from "./types/booking-type";
@@ -159,32 +158,6 @@ describe("validateEventAdvancedSearchRequest", () => {
     expect(() =>
       validator.validateEventAdvancedSearchRequest(deepFreeze(arg))
     ).toThrow();
-  });
-});
-
-describe("validatePresetSearch", () => {
-  test.each([
-    [
-      {
-        admin: true,
-        name: presetSearchType.TALENT_RELATED_EVENTS,
-        id: "event/event1"
-      }
-    ]
-  ])("%o should validate", arg => {
-    expect(() => validator.validatePresetSearch(deepFreeze(arg))).not.toThrow();
-  });
-
-  test.each([
-    [
-      {
-        admin: true,
-        name: "not-a-preset-type",
-        id: "event/event1"
-      }
-    ]
-  ])("%o should fail to validate", arg => {
-    expect(() => validator.validatePresetSearch(deepFreeze(arg))).toThrow();
   });
 });
 

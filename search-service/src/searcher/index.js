@@ -34,15 +34,3 @@ export async function sitemapEventSearch() {
   const results = await esClient.search(search);
   return mapper.mapSitemapEventSearchResults(results);
 }
-
-export async function presetSearch(params) {
-  switch (params.name) {
-    default:
-      return await presetEventAdvancedSearch(params);
-  }
-}
-
-async function presetEventAdvancedSearch(params) {
-  const presetParams = mapper.mapPresetEventAdvancedSearchParams(params);
-  return await eventAdvancedSearch(presetParams);
-}

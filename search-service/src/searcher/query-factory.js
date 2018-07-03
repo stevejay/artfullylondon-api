@@ -398,7 +398,7 @@ export function createSitemapEventSearch(params) {
       .query(
         esb
           .boolQuery()
-          .filter(createPublicFilter())
+          .filter(esb.termQuery("status", statusType.ACTIVE))
           .should(esb.termQuery("occurrenceType", occurrenceType.CONTINUOUS))
           .should(esb.rangeQuery("dateTo").gte(params.dateTo))
           .minimumShouldMatch(1)
@@ -408,25 +408,4 @@ export function createSitemapEventSearch(params) {
       .source(["id"])
       .toJSON()
   };
-}
-
-export function createEventsByExternalIdsSearch(params) {
-  return {
-    index: searchIndexType.EVENT,
-    type: "doc",
-    body: esb
-      .requestBodySearch()
-      .query(
-        esb.boolQuery().filter(esb.termsQuery("externalEventId", params.ids))
-      )
-      .size(1000)
-      .from(0)
-      .source(["id", "externalEventId"])
-      .toJSON()
-  };
-}
-
-// TODO Remove
-function createPublicFilter() {
-  return esb.termQuery("status", statusType.ACTIVE);
 }

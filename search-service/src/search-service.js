@@ -21,10 +21,3 @@ export async function eventAdvancedSearch(request) {
   const result = await searcher.eventAdvancedSearch(search);
   return { ...result, params: search };
 }
-
-export async function presetSearch(request) {
-  const search = normaliser.normalisePresetSearchRequest(request);
-  validator.validatePresetSearch(search);
-  const result = await searcher.presetSearch(search);
-  return { ...result, params: search };
-}

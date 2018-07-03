@@ -116,10 +116,6 @@ const EVENT_ADVANCED_SEARCH_NORMALISER = {
   ...SKIP_TAKE_NORMALISER
 };
 
-const PRESET_SEARCH_NORMALISER = {
-  admin: ADMIN_FLAG_NORMALISER
-};
-
 export function normaliseAutocompleteSearchRequest(request) {
   return normalise({ ...request }, AUTOCOMPLETE_SEARCH_NORMALISER);
 }
@@ -130,8 +126,4 @@ export function normaliseBasicSearchRequest(request) {
 
 export function normaliseEventAdvancedSearchRequest(request) {
   return normalise({ ...request }, EVENT_ADVANCED_SEARCH_NORMALISER);
-}
-
-export function normalisePresetSearchRequest(request) {
-  return normalise({ ...request }, PRESET_SEARCH_NORMALISER);
 }

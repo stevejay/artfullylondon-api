@@ -5,7 +5,6 @@ export default function(serviceFunc) {
     Promise.all(
       (event.Records || []).map(async record => {
         const message = JSON.parse(record.Sns.Message);
-        log.error(`GOT MESSAGE: ${record.Sns.Message}`);
         return await serviceFunc(message);
       })
     )

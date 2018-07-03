@@ -28,10 +28,14 @@ export function generate(seedData, dateFrom, dateTo) {
               const bankHolidayDate = new Date(bankHoliday);
               if (getISODay(bankHolidayDate) === MONDAY) {
                 result.push(
-                  timeUtils.formatAsISODateString(subDays(bankHolidayDate, 2))
+                  timeUtils.formatAsIsoShortDateString(
+                    subDays(bankHolidayDate, 2)
+                  )
                 );
                 result.push(
-                  timeUtils.formatAsISODateString(subDays(bankHolidayDate, 1))
+                  timeUtils.formatAsIsoShortDateString(
+                    subDays(bankHolidayDate, 1)
+                  )
                 );
               }
               return result;
@@ -86,10 +90,10 @@ export function generate(seedData, dateFrom, dateTo) {
         seedData[namedClosureType.EASTER_SUNDAY].map(sunday => {
           const sundayDate = new Date(sunday);
           return [
-            timeUtils.formatAsISODateString(subDays(sundayDate, 2)),
-            timeUtils.formatAsISODateString(subDays(sundayDate, 1)),
-            timeUtils.formatAsISODateString(sundayDate),
-            timeUtils.formatAsISODateString(addDays(sundayDate, 1))
+            timeUtils.formatAsIsoShortDateString(subDays(sundayDate, 2)),
+            timeUtils.formatAsIsoShortDateString(subDays(sundayDate, 1)),
+            timeUtils.formatAsIsoShortDateString(sundayDate),
+            timeUtils.formatAsIsoShortDateString(addDays(sundayDate, 1))
           ];
         })
       )

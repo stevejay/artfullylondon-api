@@ -3,7 +3,6 @@ import * as entityType from "./types/entity-type";
 import * as costType from "./types/cost-type";
 import * as areaType from "./types/area-type";
 import * as bookingType from "./types/booking-type";
-import * as presetSearchType from "./types/preset-search-type";
 
 const DATE_REGEX = /^[12]\d\d\d-[01]\d-[0123]\d$/;
 const TIME_REGEX = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
@@ -160,16 +159,6 @@ const EVENT_ADVANCED_SEARCH_CONSTRAINT = {
   ...SKIP_TAKE_CONSTRAINT
 };
 
-const PRESET_SEARCH_CONSTRAINT = {
-  name: {
-    presence: true,
-    inclusion: presetSearchType.ALLOWED_VALUES
-  },
-  id: {
-    string: true
-  }
-};
-
 // TODO could create a constraint per entity type.
 const INDEX_DOCUMENT_CONSTRAINT = {
   entityType: {
@@ -211,10 +200,6 @@ export function validateBasicSearchRequest(request) {
 
 export function validateEventAdvancedSearchRequest(request) {
   ensure(request, EVENT_ADVANCED_SEARCH_CONSTRAINT, errorHandler);
-}
-
-export function validatePresetSearch(request) {
-  ensure(request, PRESET_SEARCH_CONSTRAINT, errorHandler);
 }
 
 export function validateIndexDocumentRequest(request) {

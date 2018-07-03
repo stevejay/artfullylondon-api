@@ -2,16 +2,16 @@ import { GraphQLError } from "graphql/error";
 import { GraphQLDate } from "graphql-iso-date";
 import addDays from "date-fns/addDays";
 import GraphQLShortTime from "./graphql-short-time";
-import * as entityType from "../types/entity-type";
-import * as areaType from "../types/area-type";
-import * as searcher from "../searcher";
-import * as timeUtils from "../time-utils";
+import * as entityType from "./types/entity-type";
+import * as areaType from "./types/area-type";
+import * as searcher from "./searcher";
+import * as timeUtils from "./time-utils";
 
 export default {
   IsoShortDate: GraphQLDate,
   ShortTime: GraphQLShortTime,
   AutocompleteNode: {
-    __resolveType(obj /*, context, info*/) {
+    __resolveType(obj) {
       switch (obj.entityType) {
         case entityType.EVENT:
           return "AutocompleteEvent";
@@ -63,8 +63,8 @@ export default {
       const presetParams = {
         ...params,
         area: areaType.CENTRAL,
-        dateFrom: timeUtils.formatAsISODateString(now),
-        dateTo: timeUtils.formatAsISODateString(addDays(now, 14))
+        dateFrom: timeUtils.formatAsIsoShortDateString(now),
+        dateTo: timeUtils.formatAsIsoShortDateString(addDays(now, 14))
       };
       return await searcher.eventAdvancedSearch(presetParams);
     },
@@ -72,8 +72,8 @@ export default {
       const now = timeUtils.getUtcNow();
       const presetParams = {
         ...params,
-        dateFrom: timeUtils.formatAsISODateString(now),
-        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
+        dateFrom: timeUtils.formatAsIsoShortDateString(now),
+        dateTo: timeUtils.formatAsIsoShortDateString(addDays(now, 366))
       };
       return await searcher.eventAdvancedSearch(presetParams);
     },
@@ -81,8 +81,8 @@ export default {
       const now = timeUtils.getUtcNow();
       const presetParams = {
         ...params,
-        dateFrom: timeUtils.formatAsISODateString(now),
-        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
+        dateFrom: timeUtils.formatAsIsoShortDateString(now),
+        dateTo: timeUtils.formatAsIsoShortDateString(addDays(now, 366))
       };
       return await searcher.eventAdvancedSearch(presetParams);
     },
@@ -90,8 +90,8 @@ export default {
       const now = timeUtils.getUtcNow();
       const presetParams = {
         ...params,
-        dateFrom: timeUtils.formatAsISODateString(now),
-        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
+        dateFrom: timeUtils.formatAsIsoShortDateString(now),
+        dateTo: timeUtils.formatAsIsoShortDateString(addDays(now, 366))
       };
       return await searcher.eventAdvancedSearch(presetParams);
     }
