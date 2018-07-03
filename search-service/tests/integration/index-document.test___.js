@@ -1,6 +1,8 @@
 import * as elasticsearch from "../utils/elasticsearch";
 import * as searchIndexType from "../../src/types/search-index-type";
 import * as entityType from "../../src/types/entity-type";
+import * as statusType from "../../src/types/status-type";
+import * as talentType from "../../src/types/talent-type";
 import * as sns from "../utils/sns";
 jest.setTimeout(60000);
 
@@ -25,12 +27,12 @@ describe("index document", () => {
 
   it("should index a talent", async () => {
     const talentToIndex = {
-      status: "Active",
+      status: statusType.ACTIVE,
       commonRole: "Director",
-      entityType: "talent",
-      talentType: "Individual",
+      entityType: entityType.TALENT,
+      talentType: talentType.INDIVIDUAL,
       firstNames: "Carrie",
-      id: "carrie-cracknell",
+      id: "talent/carrie-cracknell",
       lastName: "Cracknell",
       version: 2
     };
@@ -58,17 +60,16 @@ describe("index document", () => {
       })
     );
 
-    const autocompleteId = `talent_${talentToIndex.id}`;
     const autocomplete = await elasticsearch.getDocumentWithRetry(
       searchIndexType.AUTOCOMPLETE,
-      autocompleteId
+      talentToIndex.id
     );
 
     expect(autocomplete).toEqual(
       expect.objectContaining({
         _index: searchIndexType.AUTOCOMPLETE,
         _type: "doc",
-        _id: autocompleteId,
+        _id: talentToIndex.id,
         _version: 2,
         _source: expect.objectContaining({
           entityType: entityType.TALENT,

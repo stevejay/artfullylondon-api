@@ -99,20 +99,28 @@ function getBasicSearchCreationData(type) {
 function createTalentSearch(params) {
   const query = esb.boolQuery();
 
-  params.hasTerm &&
+  if (params.term) {
     query.must(
       esb
         .multiMatchQuery(["firstNames", "lastName"], params.term)
         .type("cross_fields")
     );
+  }
 
-  params.isPublic && query.filter(createPublicFilter());
+  if (params.status) {
+    query.filter(esb.termQuery("status", params.status));
+  }
 
-  return esb
+  const search = esb
     .requestBodySearch()
     .query(query)
-    .size(params.take)
-    .from(params.skip)
+    .size(params.first);
+
+  if (params.after) {
+    search.searchAfter(params.after);
+  }
+
+  return search
     .source([
       "entityType",
       "id",
@@ -129,15 +137,22 @@ function createTalentSearch(params) {
     .sorts([
       esb.sort("_score", "desc"),
       esb.sort("lastName_sort"),
-      esb.sort("firstNames.sort")
+      esb.sort("firstNames.sort"),
+      esb.sort("id")
     ])
     .toJSON();
 }
 
 function createVenueSearch(params) {
   const query = esb.boolQuery();
-  params.hasTerm && query.must(esb.matchQuery("name", params.term));
-  params.isPublic && query.filter(createPublicFilter());
+
+  if (params.term) {
+    query.must(esb.matchQuery("name", params.term));
+  }
+
+  if (params.status) {
+    query.filter(esb.termQuery("status", params.status));
+  }
 
   params.hasLocation &&
     query.filter(
@@ -158,11 +173,16 @@ function createVenueSearch(params) {
         .type("indexed")
     );
 
-  return esb
+  const search = esb
     .requestBodySearch()
     .query(query)
-    .size(params.take)
-    .from(params.skip)
+    .size(params.first);
+
+  if (params.after) {
+    search.searchAfter(params.after);
+  }
+
+  return search
     .source([
       "entityType",
       "id",
@@ -178,20 +198,31 @@ function createVenueSearch(params) {
       "latitude",
       "longitude"
     ])
-    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")])
+    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort"), esb.sort("id")])
     .toJSON();
 }
 
 function createEventSeriesSearch(params) {
   const query = esb.boolQuery();
-  params.hasTerm && query.must(esb.matchQuery("name", params.term));
-  params.isPublic && query.filter(createPublicFilter());
 
-  return esb
+  if (params.term) {
+    query.must(esb.matchQuery("name", params.term));
+  }
+
+  if (params.status) {
+    query.filter(esb.termQuery("status", params.status));
+  }
+
+  const search = esb
     .requestBodySearch()
     .query(query)
-    .size(params.take)
-    .from(params.skip)
+    .size(params.first);
+
+  if (params.after) {
+    search.searchAfter(params.after);
+  }
+
+  return search
     .source([
       "entityType",
       "id",
@@ -205,27 +236,34 @@ function createEventSeriesSearch(params) {
       "occurrence",
       "summary"
     ])
-    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")])
+    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort"), esb.sort("id")])
     .toJSON();
 }
 
 function createEventSearch(params) {
   const query = esb.boolQuery();
 
-  if (params.hasTerm) {
+  if (params.term) {
     query.should(esb.matchQuery("name", params.term));
     query.should(esb.matchQuery("venueName", params.term));
     query.should(esb.matchQuery("summary", params.term));
     query.minimumShouldMatch(1);
   }
 
-  params.isPublic && query.filter(createPublicFilter());
+  if (params.status) {
+    query.filter(esb.termQuery("status", params.status));
+  }
 
-  return esb
+  const search = esb
     .requestBodySearch()
     .query(query)
-    .size(params.take)
-    .from(params.skip)
+    .size(params.first);
+
+  if (params.after) {
+    search.searchAfter(params.after);
+  }
+
+  return search
     .source([
       "entityType",
       "id",
@@ -247,7 +285,7 @@ function createEventSearch(params) {
       "dateFrom",
       "dateTo"
     ])
-    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")])
+    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort"), esb.sort("id")])
     .toJSON();
 }
 
@@ -349,7 +387,11 @@ export function createEventAdvancedSearch(params) {
       .size(params.take)
       .from(params.skip)
       .source(source)
-      .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")])
+      .sorts([
+        esb.sort("_score", "desc"),
+        esb.sort("name_sort"),
+        esb.sort("id")
+      ])
       .toJSON()
   };
 }
@@ -391,6 +433,7 @@ export function createEventsByExternalIdsSearch(params) {
   };
 }
 
+// TODO Remove
 function createPublicFilter() {
   return esb.termQuery("status", statusType.ACTIVE);
 }

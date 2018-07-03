@@ -9,11 +9,18 @@ import * as artsType from "../types/arts-type";
 describe("mapBasicSearchParams", () => {
   test.each([
     [
-      { skip: 0, take: 12 },
+      {},
       {
-        skip: 0,
-        take: 12,
-        hasTerm: false,
+        after: null,
+        first: 12,
+        hasLocation: false
+      }
+    ],
+    [
+      { after: "", first: 12 },
+      {
+        after: null,
+        first: 12,
         hasLocation: false
       }
     ],
@@ -26,8 +33,8 @@ describe("mapBasicSearchParams", () => {
         west: 2.5,
         south: 3.5,
         east: 4.5,
-        skip: 100,
-        take: 50
+        after: '[0.65, "carrie"]',
+        first: 50
       },
       {
         admin: true,
@@ -37,9 +44,8 @@ describe("mapBasicSearchParams", () => {
         west: 2.5,
         south: 3.5,
         east: 4.5,
-        skip: 100,
-        take: 50,
-        hasTerm: true,
+        after: [0.65, "carrie"],
+        first: 50,
         hasLocation: true
       }
     ]
@@ -279,49 +285,63 @@ describe("mapBasicSearchResults", () => {
         responses: []
       },
       12,
-      {
-        items: [],
-        total: 0
-      }
+      { edges: [], pageInfo: { hasNextPage: false } }
     ],
     [
       {
         responses: [
-          { hits: { hits: [{ _source: { id: "event/event-1" } }], total: 100 } }
+          {
+            hits: {
+              hits: [{ _source: { id: "event/event-1" }, sort: [123] }]
+            }
+          }
         ]
       },
       12,
       {
-        items: [{ id: "event/event-1" }],
-        total: 100
+        edges: [
+          {
+            node: { id: "event/event-1" },
+            cursor: "[123]"
+          }
+        ],
+        pageInfo: { hasNextPage: false }
       }
     ],
     [
       {
         responses: [
           {
-            hits: { hits: [{ _source: { id: "event/event-1" } }], total: 100 }
+            hits: { hits: [{ _source: { id: "event/event-1" } }] }
           },
           {
             hits: {
-              hits: [{ _source: { id: "event-series/event-series-1" } }],
-              total: 200
+              hits: [{ _source: { id: "event-series/event-series-1" } }]
             }
           },
           {
-            hits: { hits: [{ _source: { id: "talent/talent-1" } }], total: 300 }
+            hits: { hits: [{ _source: { id: "talent/talent-1" } }] }
           },
-          { hits: { hits: [{ _source: { id: "venue/venue-1" } }], total: 400 } }
+          { hits: { hits: [{ _source: { id: "venue/venue-1" } }] } }
         ]
       },
       2,
       {
-        items: [{ id: "event/event-1" }, { id: "event-series/event-series-1" }],
-        total: 2
+        edges: [
+          {
+            node: { id: "event/event-1" },
+            cursor: ""
+          },
+          {
+            node: { id: "event-series/event-series-1" },
+            cursor: ""
+          }
+        ],
+        pageInfo: { hasNextPage: false }
       }
     ]
-  ])("%o with take %d should map to %o", (arg, take, expected) => {
-    expect(mapper.mapBasicSearchResults(deepFreeze(arg), take)).toEqual(
+  ])("%o with first %d should map to %o", (arg, first, expected) => {
+    expect(mapper.mapBasicSearchResults(deepFreeze(arg), first)).toEqual(
       expected
     );
   });

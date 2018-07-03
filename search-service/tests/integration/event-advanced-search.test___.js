@@ -2,19 +2,20 @@ import * as service from "../utils/service";
 import * as elasticsearch from "../utils/elasticsearch";
 import * as searchIndexType from "../../src/types/search-index-type";
 import * as entityType from "../../src/types/entity-type";
+import * as statusType from "../../src/types/status-type";
 jest.setTimeout(60000);
 
 describe("event advanced search", () => {
   beforeAll(async () => {
     await elasticsearch.createIndex(searchIndexType.EVENT);
     await elasticsearch.indexDocument(searchIndexType.EVENT, {
-      status: "Active",
+      status: statusType.ACTIVE,
       id: "1",
       entityType: entityType.EVENT,
       name: "Foo"
     });
     await elasticsearch.indexDocument(searchIndexType.EVENT, {
-      status: "Active",
+      status: statusType.ACTIVE,
       id: "2",
       entityType: entityType.EVENT,
       name: "Bar"

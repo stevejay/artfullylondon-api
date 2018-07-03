@@ -91,16 +91,15 @@ describe("createBasicSearchSearches", () => {
     const searches = queryFactory.createBasicSearchSearches({
       entityType: entityType.TALENT,
       hasTerm: false,
-      isPublic: false,
-      skip: 10,
-      take: 20
+      hasLocation: false,
+      after: [0.65, "cracknell", "carrie"],
+      first: 20
     });
 
     expect(searches).toEqual([
       { index: searchIndexType.TALENT, type: "doc" },
       {
         size: 20,
-        from: 10,
         _source: [
           "entityType",
           "id",
@@ -114,7 +113,8 @@ describe("createBasicSearchSearches", () => {
           "talentType",
           "commonRole"
         ],
-        sort: [{ _score: "desc" }, "lastName_sort", "firstNames.sort"],
+        sort: [{ _score: "desc" }, "lastName_sort", "firstNames.sort", "id"],
+        search_after: [0.65, "cracknell", "carrie"],
         query: { bool: {} }
       }
     ]);
@@ -123,18 +123,18 @@ describe("createBasicSearchSearches", () => {
   it("should create a maximal talent search", () => {
     const searches = queryFactory.createBasicSearchSearches({
       entityType: entityType.TALENT,
+      status: statusType.ACTIVE,
       term: "foo",
       hasTerm: true,
-      isPublic: true,
-      skip: 10,
-      take: 20
+      hasLocation: false,
+      after: [0.65, "cracknell", "carrie"],
+      first: 20
     });
 
     expect(searches).toEqual([
       { index: searchIndexType.TALENT, type: "doc" },
       {
         size: 20,
-        from: 10,
         _source: [
           "entityType",
           "id",
@@ -148,7 +148,8 @@ describe("createBasicSearchSearches", () => {
           "talentType",
           "commonRole"
         ],
-        sort: [{ _score: "desc" }, "lastName_sort", "firstNames.sort"],
+        sort: [{ _score: "desc" }, "lastName_sort", "firstNames.sort", "id"],
+        search_after: [0.65, "cracknell", "carrie"],
         query: {
           bool: {
             must: {

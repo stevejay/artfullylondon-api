@@ -12,8 +12,10 @@ export async function autocompleteSearch(params) {
 export async function basicSearch(params) {
   const searchParams = mapper.mapBasicSearchParams(params);
   const searches = queryFactory.createBasicSearchSearches(searchParams);
+  console.log("SEARCHES", JSON.stringify(searches)); // eslint-disable-line
   const results = await esClient.multiSearch(searches);
-  return mapper.mapBasicSearchResults(results, params.take);
+  console.log("RESULTS", JSON.stringify(results)); // eslint-disable-line
+  return mapper.mapBasicSearchResults(results, searchParams.first);
 }
 
 export async function eventAdvancedSearch(params) {

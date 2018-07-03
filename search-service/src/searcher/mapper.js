@@ -6,11 +6,14 @@ import * as presetSearchType from "../types/preset-search-type";
 import * as artsType from "../types/arts-type";
 import * as timeUtils from "../time-utils";
 
+const DEFAULT_FIRST = 12;
+
 export function mapBasicSearchParams(params) {
   return {
     ...params,
-    hasLocation: mapHasLocation(params),
-    hasTerm: !!params.term
+    first: params.first || DEFAULT_FIRST,
+    after: mapFromCursorToSort(params.after),
+    hasLocation: mapHasLocation(params)
   };
 }
 
@@ -116,19 +119,37 @@ export function mapAutocompleteSearchResults(result) {
   };
 }
 
-export function mapBasicSearchResults(results, take) {
-  const mapped = results.responses.map(mapSimpleQuerySearchResults);
-  const hasSingleEntityType = mapped.length === 1;
+export function mapBasicSearchResults(result, first) {
+  const edgesList = result.responses.map(response =>
+    response.hits.hits.map(hit => ({
+      node: hit._source,
+      cursor: mapFromSortToCursor(hit.sort)
+    }))
+  );
 
-  const items = hasSingleEntityType
-    ? mapped[0].items
-    : _.take(
-        looseInterleave.apply(null, mapped.map(element => element.items)),
-        take
-      );
+  const hasSingleEntityType = edgesList.length === 1;
+  const edges = hasSingleEntityType
+    ? edgesList[0]
+    : _.take(looseInterleave.apply(null, edgesList), first);
 
-  const total = hasSingleEntityType ? mapped[0].total : items.length;
-  return { results, total };
+  if (hasSingleEntityType) {
+    return {
+      edges,
+      pageInfo: {
+        hasNextPage: edges.length >= first // TODO how to best determine this?
+      }
+    };
+  } else {
+    return {
+      edges: edges.map(edge => ({
+        node: edge.node,
+        cursor: ""
+      })),
+      pageInfo: {
+        hasNextPage: false
+      }
+    };
+  }
 }
 
 export function mapSimpleQuerySearchResults(result) {
@@ -194,4 +215,14 @@ function mapHasLocation(params) {
     _.isFinite(params.east) &&
     _.isFinite(params.west)
   );
+}
+
+function mapFromSortToCursor(sort) {
+  // TODO to base 64
+  return JSON.stringify(sort);
+}
+
+function mapFromCursorToSort(cursor) {
+  // TODO from base 64
+  return _.isEmpty(cursor) ? null : JSON.parse(cursor);
 }

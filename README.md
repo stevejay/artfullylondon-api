@@ -87,6 +87,7 @@ Use the following process to check what software is already running on a given p
 - Upgrade apollo-server-lambda to latest when release candidate finalised.
 - Sort out graphql-service graphql dependency.
 - Use global IDs for graphql.
+- change entityType to entity.
 - GraphQL info links:
   - useful regex /[^\w{}]+/g
   - database request batching https://github.com/facebook/dataloader

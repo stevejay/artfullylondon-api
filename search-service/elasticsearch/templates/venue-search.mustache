@@ -33,7 +33,7 @@
       "filter": [
         { "match_all": {} }
         {{#isPublic}}
-        , { "term": { "status": "Active" } }
+        , { "term": { "status": "ACTIVE" } }
         {{/isPublic}}
         {{#location}}
         , { 

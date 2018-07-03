@@ -35,14 +35,14 @@ enum EventTypeEnum {
   COURSE
 }
 
-interface Autocomplete {
+interface AutocompleteNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
   name: String!
 }
 
-type AutocompleteEvent implements Autocomplete {
+type AutocompleteEvent implements AutocompleteNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
@@ -50,14 +50,14 @@ type AutocompleteEvent implements Autocomplete {
   eventType: EventTypeEnum!
 }
 
-type AutocompleteEventSeries implements Autocomplete {
+type AutocompleteEventSeries implements AutocompleteNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
   name: String!
 }
 
-type AutocompleteVenue implements Autocomplete {
+type AutocompleteVenue implements AutocompleteNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
@@ -67,7 +67,7 @@ type AutocompleteVenue implements Autocomplete {
   postcode: String!
 }
 
-type AutocompleteTalent implements Autocomplete {
+type AutocompleteTalent implements AutocompleteNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
@@ -77,7 +77,59 @@ type AutocompleteTalent implements Autocomplete {
 }
 
 type AutocompleteResult {
-  results: [Autocomplete!]!
+  results: [AutocompleteNode!]!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+}
+
+interface SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+}
+
+type Event implements SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+}
+
+type EventSeries implements SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+}
+
+type Talent implements SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  firstNames: String
+  lastName: String!
+  commonRole: String!
+}
+
+type Venue implements SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+}
+
+type SearchEdge {
+  node: SearchNode!
+  cursor: String!
+}
+
+# TODO cursor should be a custom scalar that serializes to a string.
+
+type SearchConnection {
+  edges: [SearchEdge!]!
+  pageInfo: PageInfo!
 }
 
 type Query {
@@ -85,4 +137,15 @@ type Query {
     term: String!
     entityType: EntityTypeEnum
   ): AutocompleteResult
+  basicSearch(
+    term: String
+    entityType: EntityTypeEnum
+    status: StatusTypeEnum
+    north: Float
+    south: Float
+    east: Float
+    west: Float
+    first: Int
+    after: String
+  ): SearchConnection
 }
