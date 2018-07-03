@@ -10,10 +10,22 @@ const BASIC_SEARCH_QUERY = `
     $term: String,
     $entityType: EntityTypeEnum,
     $status: StatusTypeEnum, 
-    $north: Float, $south: Float, $east: Float, $west: Float,
+    $north: Float,
+    $south: Float,
+    $east: Float,
+    $west: Float,
     $first: Int,
     $after: String) {
-    basicSearch(term: $term, entityType: $entityType, status: $status, north: $north, south: $south, east: $east, west: $west, first: $first, after: $after) {
+    basicSearch(
+      term: $term,
+      entityType: $entityType,
+      status: $status,
+      north: $north,
+      south: $south,
+      east: $east,
+      west: $west,
+      first: $first,
+      after: $after) {
       edges {
         node {
           id

@@ -4,6 +4,7 @@ import looseInterleave from "loose-interleave";
 import * as entityType from "../types/entity-type";
 import * as presetSearchType from "../types/preset-search-type";
 import * as artsType from "../types/arts-type";
+import * as areaType from "../types/area-type";
 import * as timeUtils from "../time-utils";
 
 const DEFAULT_FIRST = 12;
@@ -11,45 +12,25 @@ const DEFAULT_FIRST = 12;
 export function mapBasicSearchParams(params) {
   return {
     ...params,
-    first: params.first || DEFAULT_FIRST,
-    after: mapFromCursorToSort(params.after),
+    ...mapSearchPagingParams(params),
     hasLocation: mapHasLocation(params)
   };
 }
 
 export function mapEventAdvancedSearchParams(params) {
-  const mapped = {
-    ...params,
-    costType: params.costType,
-    bookingType: params.bookingType,
-    tags: mapTagsForEventSearch(params),
-    artsType: mapMediumToCategoryForEventSearch(params)
-  };
-
   return {
-    ...mapped,
-    hasTerm: !!mapped.term,
-    hasArea: !!mapped.area,
-    hasArtsType: !!mapped.artsType,
-    hasCostType: !!mapped.costType,
-    hasBookingType: !!mapped.bookingType,
-    hasVenueId: !!mapped.venueId,
-    hasTalentId: !!mapped.talentId,
-    hasEventSeriesId: !!mapped.eventSeriesId,
-    hasTags: !_.isEmpty(mapped.tags),
-    hasDates: !!mapped.dateFrom || !!mapped.dateTo,
+    ...params,
+    ...mapSearchPagingParams(params),
+    hasLocation: mapHasLocation(params),
+    tags: mapTagsForEventSearch(params),
+    artsType: mapMediumToCategoryForEventSearch(params),
+    hasDates: !!params.dateFrom || !!params.dateTo,
     hasNestedQuery:
-      !!mapped.dateFrom ||
-      !!mapped.dateTo ||
-      !!mapped.timeFrom ||
-      !!mapped.timeTo ||
-      !!mapped.audience,
-    hasDateFrom: !!mapped.dateFrom,
-    hasDateTo: !!mapped.dateTo,
-    hasTimeFrom: !!mapped.timeFrom,
-    hasTimeTo: !!mapped.timeTo,
-    hasAudience: !!mapped.audience,
-    hasLocation: mapHasLocation(mapped)
+      !!params.dateFrom ||
+      !!params.dateTo ||
+      !!params.timeFrom ||
+      !!params.timeTo ||
+      !!params.audience
   };
 }
 
@@ -61,7 +42,7 @@ export function mapPresetEventAdvancedSearchParams(params) {
       return {
         skip: 0,
         take: 24,
-        area: "Central",
+        area: areaType.CENTRAL,
         dateFrom: timeUtils.formatAsISODateString(now),
         dateTo: timeUtils.formatAsISODateString(addDays(now, 14))
       };
@@ -94,18 +75,13 @@ export function mapPresetEventAdvancedSearchParams(params) {
   }
 }
 
-export function mapSitemapEventIdsSearchParams() {
+export function mapSitemapEventSearchParams() {
   const now = timeUtils.getUtcNow();
-
-  return {
-    dateTo: timeUtils.formatAsISODateString(now)
-  };
+  return { dateTo: timeUtils.formatAsISODateString(now) };
 }
 
 export function mapEventsByExternalIdsSearchParams(params) {
-  return {
-    ids: _.without(params.id.split(","), "")
-  };
+  return { ids: _.without(params.id.split(","), "") };
 }
 
 export function mapAutocompleteSearchResults(result) {
@@ -120,6 +96,8 @@ export function mapAutocompleteSearchResults(result) {
 }
 
 export function mapBasicSearchResults(result, first) {
+  // TODO use mapEventAdvancedSearchResults when is single entity search
+
   const edgesList = result.responses.map(response =>
     response.hits.hits.map(hit => ({
       node: hit._source,
@@ -152,6 +130,27 @@ export function mapBasicSearchResults(result, first) {
   }
 }
 
+export function mapEventAdvancedSearchResults(result, first) {
+  const edges = result.hits.hits.map(hit => ({
+    node: hit._source,
+    cursor: mapFromSortToCursor(hit.sort)
+  }));
+
+  return {
+    edges,
+    pageInfo: {
+      hasNextPage: edges.length >= first // TODO how to best determine this?
+    }
+  };
+}
+
+export function mapSitemapEventSearchResults(result) {
+  return {
+    results: result.hits.hits.map(hit => hit._source)
+  };
+}
+
+// TODO remove?
 export function mapSimpleQuerySearchResults(result) {
   return {
     items: result.hits.hits.map(hit => hit._source),
@@ -159,9 +158,9 @@ export function mapSimpleQuerySearchResults(result) {
   };
 }
 
-export function mapEntityCountsSearchResults(results) {
+export function mapEntityCountSearchResults(results) {
   return {
-    items: _
+    results: _
       .zip(
         [
           entityType.EVENT,
@@ -215,6 +214,13 @@ function mapHasLocation(params) {
     _.isFinite(params.east) &&
     _.isFinite(params.west)
   );
+}
+
+function mapSearchPagingParams(params) {
+  return {
+    first: params.first || DEFAULT_FIRST,
+    after: mapFromCursorToSort(params.after)
+  };
 }
 
 function mapFromSortToCursor(sort) {

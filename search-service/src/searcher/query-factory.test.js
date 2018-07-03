@@ -68,10 +68,10 @@ describe("createAutocompleteSearch", () => {
   });
 });
 
-describe("createEntityCountsSearches", () => {
+describe("createEntityCountSearches", () => {
   it("should create the searches", () => {
     const countSearch = { query: { match_all: {} }, from: 0, size: 0 };
-    const searches = queryFactory.createEntityCountsSearches();
+    const searches = queryFactory.createEntityCountSearches();
 
     expect(searches).toEqual([
       { index: searchIndexType.EVENT, type: "doc" },

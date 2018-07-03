@@ -1,8 +1,15 @@
 import { GraphQLError } from "graphql/error";
+import { GraphQLDate } from "graphql-iso-date";
+import addDays from "date-fns/addDays";
+import GraphQLShortTime from "./graphql-short-time";
 import * as entityType from "../types/entity-type";
+import * as areaType from "../types/area-type";
 import * as searcher from "../searcher";
+import * as timeUtils from "../time-utils";
 
 export default {
+  IsoShortDate: GraphQLDate,
+  ShortTime: GraphQLShortTime,
   AutocompleteNode: {
     __resolveType(obj /*, context, info*/) {
       switch (obj.entityType) {
@@ -40,29 +47,53 @@ export default {
       return await searcher.autocompleteSearch(params);
     },
     async basicSearch(obj, params) {
-      const searchResults = await searcher.basicSearch(params); // eslint-disable-line
-      console.log("RESPONSE", JSON.stringify(searchResults)); // eslint-disable-line
-      return searchResults;
-
-      // return {
-      //   edges: [],
-      //   pageInfo: {
-      //     hasNextPage: false
-      //   }
-      // };
-
-      // return {
-      //   edges: [{
-      //     node: SearchNode!
-      //     cursor: String!
-      //   }],
-      //   pageInfo: {
-      //     hasNextPage: Boolean!
-      //   }
-      // }
-
-      // edges: [SearchEdge!]!
-      // pageInfo: PageInfo!
+      return await searcher.basicSearch(params);
+    },
+    async eventAdvancedSearch(obj, params) {
+      return await searcher.eventAdvancedSearch(params);
+    },
+    async entityCount() {
+      return await searcher.entityCountSearch();
+    },
+    async sitemapEvent() {
+      return await searcher.sitemapEventSearch();
+    },
+    async featuredEvents(obj, params) {
+      const now = timeUtils.getUtcNow();
+      const presetParams = {
+        ...params,
+        area: areaType.CENTRAL,
+        dateFrom: timeUtils.formatAsISODateString(now),
+        dateTo: timeUtils.formatAsISODateString(addDays(now, 14))
+      };
+      return await searcher.eventAdvancedSearch(presetParams);
+    },
+    async venueRelatedEvents(obj, params) {
+      const now = timeUtils.getUtcNow();
+      const presetParams = {
+        ...params,
+        dateFrom: timeUtils.formatAsISODateString(now),
+        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
+      };
+      return await searcher.eventAdvancedSearch(presetParams);
+    },
+    async talentRelatedEvents(obj, params) {
+      const now = timeUtils.getUtcNow();
+      const presetParams = {
+        ...params,
+        dateFrom: timeUtils.formatAsISODateString(now),
+        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
+      };
+      return await searcher.eventAdvancedSearch(presetParams);
+    },
+    async eventSeriesRelatedEvents(obj, params) {
+      const now = timeUtils.getUtcNow();
+      const presetParams = {
+        ...params,
+        dateFrom: timeUtils.formatAsISODateString(now),
+        dateTo: timeUtils.formatAsISODateString(addDays(now, 366))
+      };
+      return await searcher.eventAdvancedSearch(presetParams);
     }
   }
 };

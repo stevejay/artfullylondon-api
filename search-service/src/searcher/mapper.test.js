@@ -57,32 +57,27 @@ describe("mapBasicSearchParams", () => {
 describe("mapEventAdvancedSearchParams", () => {
   test.each([
     [
-      { skip: 0, take: 12 },
+      {},
       {
-        skip: 0,
-        take: 12,
-        hasTerm: false,
-        hasArea: false,
-        hasArtsType: false,
-        hasCostType: false,
-        hasBookingType: false,
-        hasVenueId: false,
-        hasTalentId: false,
-        hasEventSeriesId: false,
-        hasTags: false,
+        after: null,
+        first: 12,
         hasDates: false,
         hasNestedQuery: false,
-        hasDateFrom: false,
-        hasDateTo: false,
-        hasTimeFrom: false,
-        hasTimeTo: false,
-        hasAudience: false,
+        hasLocation: false
+      }
+    ],
+    [
+      { after: "", first: 12 },
+      {
+        after: null,
+        first: 12,
+        hasDates: false,
+        hasNestedQuery: false,
         hasLocation: false
       }
     ],
     [
       {
-        admin: true,
         term: "foo",
         dateFrom: "2017-01-01",
         dateTo: "2018-01-01",
@@ -98,14 +93,13 @@ describe("mapEventAdvancedSearchParams", () => {
         west: 2.5,
         south: 3.5,
         east: 4.5,
-        skip: 100,
-        take: 50,
         venueId: "venue/venue1",
         talentId: "talent/talent1",
-        eventSeriesId: "event-series/eventseries1"
+        eventSeriesId: "event-series/eventseries1",
+        after: '[0.65, "carrie"]',
+        first: 50
       },
       {
-        admin: true,
         term: "foo",
         dateFrom: "2017-01-01",
         dateTo: "2018-01-01",
@@ -122,61 +116,33 @@ describe("mapEventAdvancedSearchParams", () => {
         west: 2.5,
         south: 3.5,
         east: 4.5,
-        skip: 100,
-        take: 50,
+        after: [0.65, "carrie"],
+        first: 50,
         venueId: "venue/venue1",
         talentId: "talent/talent1",
         eventSeriesId: "event-series/eventseries1",
-        hasTerm: true,
-        hasArea: true,
-        hasArtsType: false,
-        hasCostType: true,
-        hasBookingType: true,
-        hasVenueId: true,
-        hasTalentId: true,
-        hasEventSeriesId: true,
-        hasTags: true,
         hasDates: true,
         hasNestedQuery: true,
-        hasDateFrom: true,
-        hasDateTo: true,
-        hasTimeFrom: true,
-        hasTimeTo: true,
-        hasAudience: true,
         hasLocation: true
       }
     ],
     [
       {
-        skip: 0,
-        take: 12,
+        after: '[0.65, "carrie"]',
+        first: 50,
         medium: ":all-visual",
         style: "style/contemporary",
         audience: "audience/families"
       },
       {
-        skip: 0,
-        take: 12,
+        after: [0.65, "carrie"],
+        first: 50,
         medium: ":all-visual",
         style: "style/contemporary",
         audience: "audience/families",
         artsType: artsType.VISUAL,
-        hasTerm: false,
-        hasArea: false,
-        hasArtsType: true,
-        hasCostType: false,
-        hasBookingType: false,
-        hasVenueId: false,
-        hasTalentId: false,
-        hasEventSeriesId: false,
-        hasTags: false,
         hasDates: false,
         hasNestedQuery: true,
-        hasDateFrom: false,
-        hasDateTo: false,
-        hasTimeFrom: false,
-        hasTimeTo: false,
-        hasAudience: true,
         hasLocation: false
       }
     ]
@@ -251,7 +217,7 @@ describe("mapSimpleQuerySearchResults", () => {
   });
 });
 
-describe("mapEntityCountsSearchResults", () => {
+describe("mapEntityCountSearchResults", () => {
   test.each([
     [
       {
@@ -263,7 +229,7 @@ describe("mapEntityCountsSearchResults", () => {
         ]
       },
       {
-        items: [
+        results: [
           { entityType: entityType.EVENT, count: 1 },
           { entityType: entityType.EVENT_SERIES, count: 2 },
           { entityType: entityType.TALENT, count: 3 },
@@ -272,7 +238,7 @@ describe("mapEntityCountsSearchResults", () => {
       }
     ]
   ])("%o should map to %o", (arg, expected) => {
-    expect(mapper.mapEntityCountsSearchResults(deepFreeze(arg))).toEqual(
+    expect(mapper.mapEntityCountSearchResults(deepFreeze(arg))).toEqual(
       expected
     );
   });
