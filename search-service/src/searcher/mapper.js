@@ -1,10 +1,18 @@
 import _ from "lodash";
+import simplify from "es-simplify";
 import looseInterleave from "loose-interleave";
 import * as entityType from "../types/entity-type";
 import * as artsType from "../types/arts-type";
 import * as timeUtils from "../time-utils";
 
 const DEFAULT_FIRST = 12;
+
+export function mapAutocompleteSearchParams(params) {
+  return {
+    ...params,
+    term: simplify(params.term)
+  };
+}
 
 export function mapBasicSearchParams(params) {
   return {

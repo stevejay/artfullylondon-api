@@ -6,6 +6,17 @@ import * as bookingType from "../types/booking-type";
 import * as areaType from "../types/area-type";
 import * as artsType from "../types/arts-type";
 
+describe("mapAutocompleteSearchParams", () => {
+  test.each([[{ term: "Foo" }, { term: "foo" }]])(
+    "%o should map to %o",
+    (arg, expected) => {
+      expect(mapper.mapAutocompleteSearchParams(deepFreeze(arg))).toEqual(
+        expected
+      );
+    }
+  );
+});
+
 describe("mapBasicSearchParams", () => {
   test.each([
     [

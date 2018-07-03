@@ -6,6 +6,7 @@ import * as entityType from "../types/entity-type";
 import * as validator from "./validator";
 
 export async function index(request) {
+  validator.validateIndexDocumentRequest(request);
   const builder = new BulkUpdateBuilder();
 
   switch (request.entityType) {

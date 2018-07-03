@@ -1,5 +1,5 @@
 import elasticsearch from "elasticsearch";
-import * as xrayWrapper from "./xray-wrapper";
+import * as xrayWrapper from "./xray-capture-wrapper";
 
 const client = new elasticsearch.Client({
   host: process.env.ELASTICSEARCH_HOST,

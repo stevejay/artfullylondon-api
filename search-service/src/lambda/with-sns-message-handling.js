@@ -8,8 +8,8 @@ export default function(serviceFunc) {
         return await serviceFunc(message);
       })
     )
-      .then(result => {
-        cb(null, result);
+      .then(() => {
+        cb(null, { ok: true });
       })
       .catch(err => {
         log.error(`Error in SNS handler: ${err.message}`);

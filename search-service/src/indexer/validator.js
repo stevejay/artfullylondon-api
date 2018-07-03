@@ -1,4 +1,5 @@
 import { ensure } from "ensure-request";
+import * as entityType from "../types/entity-type";
 
 const DATE_REGEX = /^[12]\d\d\d-[01]\d-[0123]\d$/;
 const TIME_REGEX = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
@@ -251,8 +252,38 @@ const EVENT_CONSTRAINT = {
   }
 };
 
+const INDEX_DOCUMENT_CONSTRAINT = {
+  entityType: {
+    presence: true,
+    inclusion: entityType.ALLOWED_VALUES
+  },
+  entity: {
+    presence: true,
+    object: {
+      id: {
+        string: true,
+        presence: true,
+        format: /^(event|event-series|talent|venue)\/.+/
+      },
+      entityType: {
+        presence: true,
+        inclusion: entityType.ALLOWED_VALUES
+      },
+      version: {
+        number: true,
+        presence: true,
+        numericality: { onlyInteger: true, greaterThanOrEqualTo: 1 }
+      }
+    }
+  }
+};
+
 function errorHandler(errors) {
   throw new Error("[400] Bad Request: " + errors.join("; "));
+}
+
+export function validateIndexDocumentRequest(request) {
+  ensure(request, INDEX_DOCUMENT_CONSTRAINT, errorHandler);
 }
 
 export function validateTalent(talent) {

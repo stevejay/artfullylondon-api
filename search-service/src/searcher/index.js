@@ -3,7 +3,8 @@ import * as mapper from "./mapper";
 import * as queryFactory from "./query-factory";
 
 export async function autocompleteSearch(params) {
-  const search = queryFactory.createAutocompleteSearch(params);
+  const searchParams = mapper.mapAutocompleteSearchParams(params);
+  const search = queryFactory.createAutocompleteSearch(searchParams);
   const results = await esClient.search(search);
   return mapper.mapAutocompleteSearchResults(results);
 }
