@@ -4,17 +4,11 @@ import watchUpdater from "./watch-updater";
 import * as watchMapper from "./watch-mapper";
 
 export async function getWatches(request) {
-  validator.validateGetWatchesRequest(request);
   const dbItem = await watchRepository.tryGetWatchesByTypeForUser(
     request.userId,
     request.entityType
   );
   return watchMapper.mapResponseForSingleWatchType(request.entityType, dbItem);
-}
-
-export async function getAllWatches(request) {
-  const dbItems = await watchRepository.getAllWatchesForUser(request.userId);
-  return watchMapper.mapResponseForAllWatchTypes(dbItems);
 }
 
 export async function updateWatches(request) {
@@ -43,8 +37,6 @@ export async function updateWatches(request) {
       updatedWatches
     );
   }
-
-  return { acknowledged: true };
 }
 
 export async function deleteAllWatches(request) {

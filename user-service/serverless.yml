@@ -68,38 +68,6 @@ custom:
     publicUserTableName: ${self:custom.project}-${self:custom.stage}-publicuser
     watchTableName: ${self:custom.project}-${self:custom.stage}-watch
     preferencesTableName: ${self:custom.project}-${self:custom.stage}-preferences
-    errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
-    standardResponses:
-        headers:
-            Access-Control-Allow-Credentials : "'true'"
-        template: $input.path('$')
-        statusCodes:
-            200:
-                pattern: ''
-                template:
-                    application/json: $input.path("$.body")
-                #headers:
-                #    Cache-Control: integration.response.body.headers.Cache-Control
-            400:
-                pattern: '^\[400\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            401:
-                pattern: '^\[401\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            403:
-                pattern: '^\[403\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            404:
-                pattern: '^\[404\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            500:
-                pattern: '^\[500\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -115,198 +83,32 @@ custom:
 
 functions:
     auth:
-        handler: src/lambda/auth.handler
-    getUser:
-        handler: src/lambda/get-user.handler
+        handler: src/lambda/auth-handler.handler
+    graphql:
+        handler: src/lambda/graphql-handler.handler
         environment:
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
             SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
             SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
         events:
             - http:
-                path: "user"
+                path: graphql
+                method: post
+                cors: true
+                authorizer:
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
+            - http:
+                path: graphql
                 method: get
+                cors: true
                 authorizer:
                     name: auth
                     identitySource: method.request.header.Authorization
                     resultTtlInSeconds: 300
                     type: request
-                cors:
-                    origins:
-                        - "*"
-                    headers:
-                        - Content-Type
-                        - X-Amz-Date
-                        - Authorization
-                        - X-Api-Key
-                        - X-Amz-Security-Token
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "userId": "$context.authorizer.principalId"
-                            }
-                response: ${self:custom.standardResponses}
-    deleteUser:
-        handler: src/lambda/delete-user.handler
-        environment:
-            SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
-            SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
-            SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
-        events:
-            - http:
-                path: "user"
-                method: delete
-                authorizer:
-                    name: auth
-                    identitySource: method.request.header.Authorization
-                    resultTtlInSeconds: 300
-                    type: request
-                cors:
-                    origins:
-                        - "*"
-                    headers:
-                        - Content-Type
-                        - X-Amz-Date
-                        - Authorization
-                        - X-Api-Key
-                        - X-Amz-Security-Token
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "userId": "$context.authorizer.principalId"
-                            }
-                response: ${self:custom.standardResponses}
-    getWatches:
-        handler: src/lambda/get-watches.handler
-        environment:
-            SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
-            SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
-        events:
-            - http:
-                path: "user/watches/{entityType}"
-                method: get
-                authorizer:
-                    name: auth
-                    identitySource: method.request.header.Authorization
-                    resultTtlInSeconds: 300
-                    type: request
-                cors:
-                    origins:
-                        - "*"
-                    headers:
-                        - Content-Type
-                        - X-Amz-Date
-                        - Authorization
-                        - X-Api-Key
-                        - X-Amz-Security-Token
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "userId": "$context.authorizer.principalId",
-                                "entityType": "$input.params('entityType')"
-                            }
-                response: ${self:custom.standardResponses}
-    updateWatches:
-        handler: src/lambda/update-watches.handler
-        environment:
-            SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
-            SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
-        events:
-            - http:
-                path: "user/watches/{entityType}"
-                method: put
-                authorizer:
-                    name: auth
-                    identitySource: method.request.header.Authorization
-                    resultTtlInSeconds: 300
-                    type: request
-                cors:
-                    origins:
-                        - "*"
-                    headers:
-                        - Content-Type
-                        - X-Amz-Date
-                        - Authorization
-                        - X-Api-Key
-                        - X-Amz-Security-Token
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "userId": "$context.authorizer.principalId",
-                                "entityType": "$input.params('entityType')",
-                                "newVersion": $input.json('$.newVersion'),
-                                "changes": $input.json('$.changes')
-                            }
-                response: ${self:custom.standardResponses}
-    getPreferences:
-        handler: src/lambda/get-preferences.handler
-        environment:
-            SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
-        events:
-            - http:
-                path: "user/preferences"
-                method: get
-                authorizer:
-                    name: auth
-                    identitySource: method.request.header.Authorization
-                    resultTtlInSeconds: 300
-                    type: request
-                cors:
-                    origins:
-                        - "*"
-                    headers:
-                        - Content-Type
-                        - X-Amz-Date
-                        - Authorization
-                        - X-Api-Key
-                        - X-Amz-Security-Token
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "userId": "$context.authorizer.principalId"
-                            }
-                response: ${self:custom.standardResponses}
-    updatePreferences:
-        handler: src/lambda/update-preferences.handler
-        environment:
-            SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
-        events:
-            - http:
-                path: "user/preferences"
-                method: put
-                authorizer:
-                    name: auth
-                    identitySource: method.request.header.Authorization
-                    resultTtlInSeconds: 300
-                    type: request
-                cors:
-                    origins:
-                        - "*"
-                    headers:
-                        - Content-Type
-                        - X-Amz-Date
-                        - Authorization
-                        - X-Api-Key
-                        - X-Amz-Security-Token
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "userId": "$context.authorizer.principalId",
-                                "preferences": $input.json('$')
-                            }
-                response: ${self:custom.standardResponses}
 
 resources:
     Resources:

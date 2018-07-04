@@ -22,6 +22,6 @@ function createJWT(userId = "email|cccccccccccccccccccccccc") {
   );
 }
 
-exports.createAuthorizationHeaderValue = function(userId) {
+export function createAuthorizationHeaderValue(userId) {
   return `Bearer ${createJWT(userId)}`;
-};
+}

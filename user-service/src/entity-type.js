@@ -1,7 +1,7 @@
-export const TAG = "tag";
-export const TALENT = "talent";
-export const VENUE = "venue";
-export const EVENT = "event";
-export const EVENT_SERIES = "event-series";
+export const TAG = "TAG";
+export const TALENT = "TALENT";
+export const VENUE = "VENUE";
+export const EVENT = "EVENT";
+export const EVENT_SERIES = "EVENT_SERIES";
 
 export const ALLOWED_VALUES = [TAG, TALENT, VENUE, EVENT, EVENT_SERIES];

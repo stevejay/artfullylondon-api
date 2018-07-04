@@ -1,0 +1,81 @@
+enum EmailFrequencyEnum {
+  DAILY
+  WEEKLY
+  NO_EMAILS
+}
+
+enum EntityTypeEnum {
+  TAG
+  TALENT
+  VENUE
+  EVENT
+  EVENT_SERIES
+}
+
+enum WatchChangeEnum {
+  ADD
+  DELETE
+}
+
+type Preferences {
+  emailFrequency: EmailFrequencyEnum!
+}
+
+type Watch {
+  id: ID!
+  label: String!
+  created: Int!
+}
+
+type WatchList {
+  items: [Watch!]!
+  version: Int!
+}
+
+type WatchSet {
+  tag: WatchList
+  event: WatchList
+  eventSeries: WatchList
+  talent: WatchList
+  venue: WatchList
+}
+
+type Query {
+  preferences: Preferences
+  watches: WatchSet
+}
+
+type DeleteUserOutput {
+  ok: Boolean!
+}
+
+input WatchChangeInput {
+  changeType: WatchChangeEnum
+  id: ID!
+  label: String
+  created: Int
+}
+
+input UpdateWatchesInput {
+  entityType: EntityTypeEnum!
+  newVersion: Int!
+  changes: [WatchChangeInput!]!
+}
+
+type UpdateWatchesOutput {
+  ok: Boolean!
+}
+
+input UpdatePreferencesInput {
+  emailFrequency: EmailFrequencyEnum!
+}
+
+type UpdatePreferencesOutput {
+  ok: Boolean!
+}
+
+type Mutation {
+  deleteUser: DeleteUserOutput
+  updateWatches(input: UpdateWatchesInput!): UpdateWatchesOutput
+  updatePreferences(input: UpdatePreferencesInput!): UpdatePreferencesOutput
+}
