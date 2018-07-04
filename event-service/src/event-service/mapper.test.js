@@ -1,6 +1,19 @@
 import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
 import * as timeUtils from "../entity/time-utils";
+import * as bookingType from "../types/booking-type";
+import * as costType from "../types/cost-type";
+import * as disabledBathroomType from "../types/disabled-bathroom-type";
+import * as entityType from "../types/entity-type";
+import * as eventSeriesType from "../types/event-series-type";
+import * as eventType from "../types/event-type";
+import * as hearingFacilitiesType from "../types/hearing-facilities-type";
+import * as linkType from "../types/link-type";
+import * as occurrenceType from "../types/occurrence-type";
+import * as statusType from "../types/status-type";
+import * as talentType from "../types/talent-type";
+import * as venueType from "../types/venue-type";
+import * as wheelchairAccessType from "../types/wheelchair-access-type";
 
 describe("mapCreateOrUpdateEventRequest", () => {
   beforeEach(() => {
@@ -17,16 +30,16 @@ describe("mapCreateOrUpdateEventRequest", () => {
 
     expect(result).toEqual({
       id: testData.PERFORMANCE_EVENT_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Taming of the Shrew",
-      eventType: "Performance",
-      occurrenceType: "Bounded",
-      bookingType: "NotRequired",
+      eventType: eventType.PERFORMANCE,
+      occurrenceType: occurrenceType.BOUNDED,
+      bookingType: bookingType.NOT_REQUIRED,
       dateFrom: "2016-02-11",
       dateTo: "2016-02-13",
       rating: 3,
       useVenueOpeningTimes: false,
-      costType: "Free",
+      costType: costType.FREE,
       summary: "A Shakespearian classic",
       venueId: testData.EVENT_VENUE_ID,
       version: 4,
@@ -47,16 +60,16 @@ describe("mapCreateOrUpdateEventRequest", () => {
 
     expect(result).toEqual({
       id: testData.PERFORMANCE_EVENT_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Taming of the Shrew",
-      eventType: "Performance",
-      occurrenceType: "Bounded",
+      eventType: eventType.PERFORMANCE,
+      occurrenceType: occurrenceType.BOUNDED,
       dateFrom: "2016-02-11",
       dateTo: "2016-02-13",
-      costType: "Paid",
+      costType: costType.PAID,
       costFrom: 15.5,
       costTo: 35,
-      bookingType: "RequiredForNonMembers",
+      bookingType: bookingType.REQUIRED_FOR_NON_MEMBERS,
       bookingOpens: "2016-02-11",
       summary: "A contemporary update of this Shakespeare classic",
       description:
@@ -65,7 +78,9 @@ describe("mapCreateOrUpdateEventRequest", () => {
       rating: 4,
       minAge: 14,
       maxAge: 18,
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       eventSeriesId: testData.EVENT_EVENT_SERIES_ID,
       venueId: testData.EVENT_VENUE_ID,
       venueGuidance:
@@ -135,17 +150,17 @@ describe("mapCreateOrUpdateEventRequest", () => {
 
     expect(result).toEqual({
       id: testData.EXHIBITION_EVENT_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Taming of the Shrew",
-      eventType: "Exhibition",
-      occurrenceType: "Bounded",
+      eventType: eventType.EXHIBITION,
+      occurrenceType: occurrenceType.BOUNDED,
       dateFrom: "2016-02-11",
       dateTo: "2016-02-13",
-      costType: "Paid",
+      costType: costType.PAID,
       costFrom: 0,
       costTo: 35,
       timedEntry: true,
-      bookingType: "RequiredForNonMembers",
+      bookingType: bookingType.REQUIRED_FOR_NON_MEMBERS,
       bookingOpens: "2016-02-11",
       summary: "A contemporary update of this Shakespeare classic",
       description:
@@ -154,7 +169,9 @@ describe("mapCreateOrUpdateEventRequest", () => {
       rating: 4,
       minAge: 14,
       maxAge: 18,
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       eventSeriesId: testData.EVENT_EVENT_SERIES_ID,
       venueId: testData.EVENT_VENUE_ID,
       venueGuidance:
@@ -208,17 +225,17 @@ describe("mapCreateOrUpdateEventRequest", () => {
 
     expect(result).toEqual({
       id: testData.EXHIBITION_EVENT_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Taming of the Shrew",
-      eventType: "Exhibition",
-      occurrenceType: "Bounded",
+      eventType: eventType.EXHIBITION,
+      occurrenceType: occurrenceType.BOUNDED,
       dateFrom: "2016-02-11",
       dateTo: "2016-02-13",
-      costType: "Paid",
+      costType: costType.PAID,
       costFrom: 0,
       costTo: 35,
       timedEntry: true,
-      bookingType: "RequiredForNonMembers",
+      bookingType: bookingType.REQUIRED_FOR_NON_MEMBERS,
       bookingOpens: "2016-02-11",
       summary: "A contemporary update of this Shakespeare classic",
       description:
@@ -227,7 +244,9 @@ describe("mapCreateOrUpdateEventRequest", () => {
       rating: 4,
       minAge: 14,
       maxAge: 18,
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       eventSeriesId: testData.EVENT_EVENT_SERIES_ID,
       venueId: testData.EVENT_VENUE_ID,
       venueGuidance:
@@ -271,38 +290,38 @@ describe("mapToPublicFullResponse", () => {
 
     const referencedEntities = {
       eventSeries: {
-        entityType: "event-series",
-        eventSeriesType: "Occasional",
+        entityType: entityType.EVENT_SERIES,
+        eventSeriesType: eventSeriesType.OCCASIONAL,
         id: testData.EVENT_EVENT_SERIES_ID,
         name: "Some Event Series",
         occurrence: "Some occurrence",
-        status: "Active",
+        status: statusType.ACTIVE,
         summary: "A summary"
       },
       talents: [
         {
-          entityType: "talent",
+          entityType: entityType.TALENT,
           commonRole: "Foo",
           id: testData.EVENT_TALENT_ID,
           firstNames: "John",
           lastName: "Doe",
-          status: "Active",
-          talentType: "Individual"
+          status: statusType.ACTIVE,
+          talentType: talentType.INDIVIDUAL
         }
       ],
       venue: {
-        entityType: "venue",
-        status: "Active",
-        venueType: "Theatre",
+        entityType: entityType.VENUE,
+        status: statusType.ACTIVE,
+        venueType: venueType.THEATRE,
         id: testData.EVENT_VENUE_ID,
         name: "Almeida Theatre",
         address: "Islington",
         postcode: "N5 2UA",
         latitude: 53,
         longitude: 2,
-        wheelchairAccessType: "FullAccess",
-        disabledBathroomType: "Present",
-        hearingFacilitiesType: "HearingLoops"
+        wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+        disabledBathroomType: disabledBathroomType.PRESENT,
+        hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS
       }
     };
 
@@ -310,17 +329,17 @@ describe("mapToPublicFullResponse", () => {
     const result = mapper.mapToPublicFullResponse(event);
 
     expect(result).toEqual({
-      entityType: "event",
+      entityType: entityType.EVENT,
       isFullEntity: true,
       id: testData.PERFORMANCE_EVENT_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Taming of the Shrew",
-      eventType: "Performance",
-      occurrenceType: "Bounded",
+      eventType: eventType.PERFORMANCE,
+      occurrenceType: occurrenceType.BOUNDED,
       dateFrom: "2016-02-11",
       dateTo: "2016-02-13",
-      costType: "Paid",
-      bookingType: "NotRequired",
+      costType: costType.PAID,
+      bookingType: bookingType.NOT_REQUIRED,
       soldOut: true,
       summary: "A Shakespearian classic",
       description: "A contemporary update of this Shakespearian classic",
@@ -328,29 +347,31 @@ describe("mapToPublicFullResponse", () => {
       rating: 3,
       minAge: 14,
       maxAge: 18,
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       eventSeries: {
-        entityType: "event-series",
-        eventSeriesType: "Occasional",
+        entityType: entityType.EVENT_SERIES,
+        eventSeriesType: eventSeriesType.OCCASIONAL,
         id: testData.EVENT_EVENT_SERIES_ID,
         name: "Some Event Series",
         occurrence: "Some occurrence",
-        status: "Active",
+        status: statusType.ACTIVE,
         summary: "A summary"
       },
       venue: {
-        entityType: "venue",
-        status: "Active",
-        venueType: "Theatre",
+        entityType: entityType.VENUE,
+        status: statusType.ACTIVE,
+        venueType: venueType.THEATRE,
         id: testData.EVENT_VENUE_ID,
         name: "Almeida Theatre",
         address: "Islington",
         postcode: "N5 2UA",
         latitude: 53,
         longitude: 2,
-        wheelchairAccessType: "FullAccess",
-        disabledBathroomType: "Present",
-        hearingFacilitiesType: "HearingLoops"
+        wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+        disabledBathroomType: disabledBathroomType.PRESENT,
+        hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS
       },
       venueId: "almeida-theatre",
       venueName: "Almeida Theatre",
@@ -372,13 +393,13 @@ describe("mapToPublicFullResponse", () => {
       duration: "01:00",
       talents: [
         {
-          entityType: "talent",
+          entityType: entityType.TALENT,
           commonRole: "Foo",
           id: testData.EVENT_TALENT_ID,
           firstNames: "John",
           lastName: "Doe",
-          status: "Active",
-          talentType: "Individual",
+          status: statusType.ACTIVE,
+          talentType: talentType.INDIVIDUAL,
           roles: ["Director"],
           characters: ["Polonius"]
         }
@@ -412,38 +433,38 @@ describe("mapToPublicFullResponse", () => {
 
     const referencedEntities = {
       eventSeries: {
-        entityType: "event-series",
-        eventSeriesType: "Occasional",
+        entityType: entityType.EVENT_SERIES,
+        eventSeriesType: eventSeriesType.OCCASIONAL,
         id: testData.EVENT_EVENT_SERIES_ID,
         name: "Some Event Series",
         occurrence: "Some occurrence",
-        status: "Active",
+        status: statusType.ACTIVE,
         summary: "A summary"
       },
       talents: [
         {
-          entityType: "talent",
+          entityType: entityType.TALENT,
           commonRole: "Foo",
           id: testData.EVENT_TALENT_ID,
           firstNames: "John",
           lastName: "Doe",
-          status: "Active",
-          talentType: "Individual"
+          status: statusType.ACTIVE,
+          talentType: talentType.INDIVIDUAL
         }
       ],
       venue: {
-        entityType: "venue",
-        status: "Active",
-        venueType: "Theatre",
+        entityType: entityType.VENUE,
+        status: statusType.ACTIVE,
+        venueType: venueType.THEATRE,
         id: testData.EVENT_VENUE_ID,
         name: "Almeida Theatre",
         address: "Islington",
         postcode: "N5 2UA",
         latitude: 53,
         longitude: 2,
-        wheelchairAccessType: "FullAccess",
-        disabledBathroomType: "Present",
-        hearingFacilitiesType: "HearingLoops"
+        wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+        disabledBathroomType: disabledBathroomType.PRESENT,
+        hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS
       }
     };
 
@@ -451,17 +472,17 @@ describe("mapToPublicFullResponse", () => {
     const result = mapper.mapToPublicFullResponse(event);
 
     expect(result).toEqual({
-      entityType: "event",
+      entityType: entityType.EVENT,
       isFullEntity: true,
       id: testData.PERFORMANCE_EVENT_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Taming of the Shrew",
-      eventType: "Exhibition",
-      occurrenceType: "Bounded",
+      eventType: eventType.EXHIBITION,
+      occurrenceType: occurrenceType.BOUNDED,
       dateFrom: "2016-02-11",
       dateTo: "2016-02-13",
-      costType: "Paid",
-      bookingType: "NotRequired",
+      costType: costType.PAID,
+      bookingType: bookingType.NOT_REQUIRED,
       timedEntry: true,
       summary: "A Shakespearian classic",
       description: "A contemporary update of this Shakespearian classic",
@@ -469,29 +490,31 @@ describe("mapToPublicFullResponse", () => {
       rating: 3,
       minAge: 14,
       maxAge: 18,
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       eventSeries: {
-        entityType: "event-series",
-        eventSeriesType: "Occasional",
+        entityType: entityType.EVENT_SERIES,
+        eventSeriesType: eventSeriesType.OCCASIONAL,
         id: testData.EVENT_EVENT_SERIES_ID,
         name: "Some Event Series",
         occurrence: "Some occurrence",
-        status: "Active",
+        status: statusType.ACTIVE,
         summary: "A summary"
       },
       venue: {
-        entityType: "venue",
-        status: "Active",
-        venueType: "Theatre",
+        entityType: entityType.VENUE,
+        status: statusType.ACTIVE,
+        venueType: venueType.THEATRE,
         id: testData.EVENT_VENUE_ID,
         name: "Almeida Theatre",
         address: "Islington",
         postcode: "N5 2UA",
         latitude: 53,
         longitude: 2,
-        wheelchairAccessType: "FullAccess",
-        disabledBathroomType: "Present",
-        hearingFacilitiesType: "HearingLoops"
+        wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+        disabledBathroomType: disabledBathroomType.PRESENT,
+        hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS
       },
       venueId: "almeida-theatre",
       venueName: "Almeida Theatre",
@@ -507,13 +530,13 @@ describe("mapToPublicFullResponse", () => {
       duration: "01:00",
       talents: [
         {
-          entityType: "talent",
+          entityType: entityType.TALENT,
           commonRole: "Foo",
           id: testData.EVENT_TALENT_ID,
           firstNames: "John",
           lastName: "Doe",
-          status: "Active",
-          talentType: "Individual",
+          status: statusType.ACTIVE,
+          talentType: talentType.INDIVIDUAL,
           roles: ["Director"]
         }
       ],

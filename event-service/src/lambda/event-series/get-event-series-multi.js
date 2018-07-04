@@ -1,5 +1,5 @@
 import "../xray-setup";
-import withErrorHandling from "../with-error-handling";
+import withErrorHandling from "../___with-error-handling";
 import * as eventSeriesService from "../../event-series-service";
 import * as mapper from "../mapper";
 import convertAsyncToCallback from "../convert-async-to-callback";

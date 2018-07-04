@@ -1,6 +1,6 @@
 import "../xray-setup";
-import withErrorHandling from "../with-error-handling";
-import withWriteAuthorization from "../with-write-authorization";
+import withErrorHandling from "../___with-error-handling";
+import withWriteAuthorization from "../___with-write-authorization";
 import * as talentService from "../../talent-service";
 import convertAsyncToCallback from "../convert-async-to-callback";
 

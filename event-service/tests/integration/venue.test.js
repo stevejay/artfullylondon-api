@@ -6,6 +6,8 @@ import * as dynamodb from "../utils/dynamodb";
 import * as cognitoAuth from "../utils/cognito-auth";
 import * as lambdaUtils from "../utils/lambda";
 import SnsListener from "../utils/serverless-offline-sns-listener";
+import * as entityType from "../../src/types/entity-type";
+import * as statusType from "../../src/types/status-type";
 jest.setTimeout(30000);
 
 describe("venue", () => {
@@ -37,7 +39,7 @@ describe("venue", () => {
           json: true,
           method: "POST",
           headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-          body: { status: "Active" },
+          body: { status: statusType.ACTIVE },
           timeout: 14000
         })
       )
@@ -73,7 +75,7 @@ describe("venue", () => {
     const parsedResponse = lambdaUtils.parseLambdaResponse(response);
     expect(parsedResponse.entity).toEqual(
       expect.objectContaining({
-        status: "Active",
+        status: statusType.ACTIVE,
         postcode: "N1 1TA",
         version: 1
       })
@@ -84,9 +86,9 @@ describe("venue", () => {
     delay(3000);
     expect(snsListener.receivedMessages).toEqual([
       {
-        entityType: "venue",
+        entityType: entityType.VENUE,
         entity: expect.objectContaining({
-          status: "Active",
+          status: statusType.ACTIVE,
           postcode: "N1 1TA",
           version: 1
         })
@@ -108,7 +110,7 @@ describe("venue", () => {
       expect.objectContaining({
         id: testVenueId,
         postcode: "N1 1TA",
-        status: "Active",
+        status: statusType.ACTIVE,
         version: 1
       })
     );
@@ -128,8 +130,8 @@ describe("venue", () => {
       expect.objectContaining({
         id: testVenueId,
         postcode: "N1 1TA",
-        entityType: "venue",
-        status: "Active",
+        entityType: entityType.VENUE,
+        status: statusType.ACTIVE,
         isFullEntity: true
       })
     );
@@ -151,8 +153,8 @@ describe("venue", () => {
       expect.objectContaining({
         id: testVenueId,
         postcode: "N1 1TA",
-        entityType: "venue",
-        status: "Active"
+        entityType: entityType.VENUE,
+        status: statusType.ACTIVE
       })
     );
   });
@@ -192,7 +194,7 @@ describe("venue", () => {
       expect.objectContaining({
         id: testVenueId,
         postcode: "N8 0KL",
-        status: "Active",
+        status: statusType.ACTIVE,
         version: 2
       })
     );
@@ -200,10 +202,10 @@ describe("venue", () => {
     delay(3000);
     expect(snsListener.receivedMessages).toEqual([
       {
-        entityType: "venue",
+        entityType: entityType.VENUE,
         entity: expect.objectContaining({
           postcode: "N8 0KL",
-          status: "Active",
+          status: statusType.ACTIVE,
           version: 2
         })
       }

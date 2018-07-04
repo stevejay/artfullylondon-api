@@ -1,5 +1,5 @@
 import "../xray-setup";
-import withErrorHandling from "../with-error-handling";
+import withErrorHandling from "../___with-error-handling";
 import * as venueService from "../../venue-service";
 import convertAsyncToCallback from "../convert-async-to-callback";
 

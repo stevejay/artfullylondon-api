@@ -1,12 +1,12 @@
-export const THEATRE = "Theatre";
-export const ART_GALLERY = "Art Gallery";
-export const CONCERT_HALL = "Concert Hall";
-export const EXHIBITION_HALL = "Exhibition Hall";
-export const PERFORMING_ARTS_CENTRE = "Performing Arts Centre";
-export const MUSEUM = "Museum";
-export const CHURCH = "Church";
-export const CINEMA = "Cinema";
-export const OTHER = "Other";
+export const THEATRE = "THEATRE";
+export const ART_GALLERY = "ART_GALLERY";
+export const CONCERT_HALL = "CONCERT_HALL";
+export const EXHIBITION_HALL = "EXHIBITION_HALL";
+export const PERFORMING_ARTS_CENTRE = "PERFORMING_ARTS_CENTRE";
+export const MUSEUM = "MUSEUM";
+export const CHURCH = "CHURCH";
+export const CINEMA = "CINEMA";
+export const OTHER = "OTHER";
 
 export const ALLOWED_VALUES = [
   THEATRE,

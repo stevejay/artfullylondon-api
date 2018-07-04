@@ -1,4 +1,4 @@
-import * as auth from "./auth";
+import * as auth from "./___auth";
 import {
   EDITOR_AUTH_TOKEN,
   READONLY_AUTH_TOKEN

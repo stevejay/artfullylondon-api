@@ -7,6 +7,10 @@ import * as cognitoAuth from "../utils/cognito-auth";
 import * as lambdaUtils from "../utils/lambda";
 import * as redisUtils from "../utils/redis";
 import SnsListener from "../utils/serverless-offline-sns-listener";
+import * as entityType from "../../src/types/entity-type";
+import * as linkType from "../../src/types/link-type";
+import * as statusType from "../../src/types/status-type";
+import * as talentType from "../../src/types/talent-type";
 jest.setTimeout(30000);
 
 describe("talent", () => {
@@ -39,7 +43,7 @@ describe("talent", () => {
           json: true,
           method: "POST",
           headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-          body: { status: "Active" },
+          body: { status: statusType.ACTIVE },
           timeout: 14000
         })
       )
@@ -77,9 +81,11 @@ describe("talent", () => {
       expect.objectContaining({
         commonRole: "Poet",
         firstNames: "Byron",
-        links: [{ type: "Homepage", url: "http://www.byronvincent.com/" }],
-        status: "Active",
-        talentType: "Individual",
+        links: [
+          { type: linkType.HOMEPAGE, url: "http://www.byronvincent.com/" }
+        ],
+        status: statusType.ACTIVE,
+        talentType: talentType.INDIVIDUAL,
         version: 1
       })
     );
@@ -89,13 +95,15 @@ describe("talent", () => {
     delay(3000);
     expect(snsListener.receivedMessages).toEqual([
       {
-        entityType: "talent",
+        entityType: entityType.TALENT,
         entity: expect.objectContaining({
           commonRole: "Poet",
           firstNames: "Byron",
-          links: [{ type: "Homepage", url: "http://www.byronvincent.com/" }],
-          status: "Active",
-          talentType: "Individual",
+          links: [
+            { type: linkType.HOMEPAGE, url: "http://www.byronvincent.com/" }
+          ],
+          status: statusType.ACTIVE,
+          talentType: talentType.INDIVIDUAL,
           version: 1
         })
       }
@@ -124,7 +132,7 @@ describe("talent", () => {
       expect.objectContaining({
         id: testTalentId,
         firstNames: "Byron",
-        status: "Active",
+        status: statusType.ACTIVE,
         version: 1
       })
     );
@@ -154,9 +162,9 @@ describe("talent", () => {
         id: testTalentId,
         commonRole: "Poet",
         firstNames: "Byron",
-        status: "Active",
-        talentType: "Individual",
-        entityType: "talent",
+        status: statusType.ACTIVE,
+        talentType: talentType.INDIVIDUAL,
+        entityType: entityType.TALENT,
         isFullEntity: true
       })
     );
@@ -179,9 +187,9 @@ describe("talent", () => {
         id: testTalentId,
         commonRole: "Poet",
         firstNames: "Byron",
-        status: "Active",
-        talentType: "Individual",
-        entityType: "talent"
+        status: statusType.ACTIVE,
+        talentType: talentType.INDIVIDUAL,
+        entityType: entityType.TALENT
       })
     );
   });
@@ -221,7 +229,7 @@ describe("talent", () => {
       expect.objectContaining({
         id: testTalentId,
         firstNames: "Byron New",
-        status: "Active",
+        status: statusType.ACTIVE,
         version: 2
       })
     );
@@ -229,11 +237,11 @@ describe("talent", () => {
     delay(3000);
     expect(snsListener.receivedMessages).toEqual([
       {
-        entityType: "talent",
+        entityType: entityType.TALENT,
         entity: expect.objectContaining({
           id: testTalentId,
           firstNames: "Byron New",
-          status: "Active",
+          status: statusType.ACTIVE,
           version: 2
         })
       }

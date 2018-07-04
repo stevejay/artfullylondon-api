@@ -1,6 +1,6 @@
 import "../xray-setup";
-import withErrorHandling from "../with-error-handling";
-import withWriteAuthorization from "../with-write-authorization";
+import withErrorHandling from "../___with-error-handling";
+import withWriteAuthorization from "../___with-write-authorization";
 import * as eventSeriesService from "../../event-series-service";
 import convertAsyncToCallback from "../convert-async-to-callback";
 

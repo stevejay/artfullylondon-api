@@ -1,6 +1,10 @@
 import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
 import * as timeUtils from "../entity/time-utils";
+import * as entityType from "../types/entity-type";
+import * as eventSeriesType from "../types/event-series-type";
+import * as linkType from "../types/link-type";
+import * as statusType from "../types/status-type";
 
 describe("mapCreateOrUpdateEventSeriesRequest", () => {
   beforeEach(() => {
@@ -18,8 +22,8 @@ describe("mapCreateOrUpdateEventSeriesRequest", () => {
     expect(result).toEqual({
       id: testData.EVENT_SERIES_ID,
       name: "Bang Said The Gun",
-      status: "Active",
-      eventSeriesType: "Occasional",
+      status: statusType.ACTIVE,
+      eventSeriesType: eventSeriesType.OCCASIONAL,
       occurrence: "Third Thursday of each month",
       summary: "A poetry riot",
       description: "Poetry for people who dont like poetry.",
@@ -41,13 +45,15 @@ describe("mapCreateOrUpdateEventSeriesRequest", () => {
     expect(result).toEqual({
       id: testData.EVENT_SERIES_ID,
       name: "Bang Said The Gun",
-      status: "Active",
-      eventSeriesType: "Occasional",
+      status: statusType.ACTIVE,
+      eventSeriesType: eventSeriesType.OCCASIONAL,
       occurrence: "Third Thursday of each month",
       summary: "A poetry riot",
       description: "Poetry for people who dont like poetry.",
       descriptionCredit: "Some description credit",
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "abcd1234abcd1234abcd1234abcd1234",
@@ -71,11 +77,11 @@ describe("mapToPublicSummaryResponse", () => {
     const result = mapper.mapToPublicSummaryResponse(dbItem);
 
     expect(result).toEqual({
-      entityType: "event-series",
+      entityType: entityType.EVENT_SERIES,
       id: testData.EVENT_SERIES_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Bang Said The Gun",
-      eventSeriesType: "Occasional",
+      eventSeriesType: eventSeriesType.OCCASIONAL,
       occurrence: "Third Thursday of each month",
       summary: "A poetry riot",
       image: "abcd1234abcd1234abcd1234abcd1234",
@@ -92,12 +98,12 @@ describe("mapToPublicFullResponse", () => {
     const result = mapper.mapToPublicFullResponse(dbItem);
 
     expect(result).toEqual({
-      entityType: "event-series",
+      entityType: entityType.EVENT_SERIES,
       isFullEntity: true,
       id: testData.EVENT_SERIES_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Bang Said The Gun",
-      eventSeriesType: "Occasional",
+      eventSeriesType: eventSeriesType.OCCASIONAL,
       occurrence: "Third Thursday of each month",
       summary: "A poetry riot",
       image: "abcd1234abcd1234abcd1234abcd1234",
@@ -105,7 +111,9 @@ describe("mapToPublicFullResponse", () => {
       imageRatio: 1.2,
       description: "Poetry for people who dont like poetry.",
       descriptionCredit: "Some description credit",
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "abcd1234abcd1234abcd1234abcd1234",

@@ -1,10 +1,10 @@
-export const WIKIPEDIA = "Wikipedia";
-export const FACEBOOK = "Facebook";
-export const TWITTER = "Twitter";
-export const HOMEPAGE = "Homepage";
-export const ACCESS = "Access";
-export const INSTAGRAM = "Instagram";
-export const BOOKING = "Booking";
+export const WIKIPEDIA = "WIKIPEDIA";
+export const FACEBOOK = "FACEBOOK";
+export const TWITTER = "TWITTER";
+export const HOMEPAGE = "HOMEPAGE";
+export const ACCESS = "ACCESS";
+export const INSTAGRAM = "INSTAGRAM";
+export const BOOKING = "BOOKING";
 
 export const ALLOWED_VALUES = [
   WIKIPEDIA,

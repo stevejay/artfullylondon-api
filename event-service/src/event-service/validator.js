@@ -108,7 +108,7 @@ const EVENT_VALIDATOR = {
     ...entityValidator.REQUIRED_ENUM(occurrenceType.ALLOWED_VALUES),
     dependency: [
       {
-        test: value => value === occurrenceType.ONETIME,
+        test: value => value === occurrenceType.ONE_TIME,
         ensure: (__, attrs) =>
           attrs.dateFrom && attrs.dateFrom === attrs.dateTo,
         message: "Date from must equal date to and both must be given"

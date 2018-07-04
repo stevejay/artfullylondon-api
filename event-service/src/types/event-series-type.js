@@ -1,4 +1,4 @@
-export const SEASON = "Season";
-export const OCCASIONAL = "Occasional";
+export const SEASON = "SEASON";
+export const OCCASIONAL = "OCCASIONAL";
 
 export const ALLOWED_VALUES = [SEASON, OCCASIONAL];

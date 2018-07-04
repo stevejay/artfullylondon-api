@@ -1,6 +1,10 @@
 import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
 import * as timeUtils from "../entity/time-utils";
+import * as entityType from "../types/entity-type";
+import * as linkType from "../types/link-type";
+import * as statusType from "../types/status-type";
+import * as talentType from "../types/talent-type";
 
 describe("mapCreateOrUpdateTalentRequest", () => {
   beforeEach(() => {
@@ -21,12 +25,14 @@ describe("mapCreateOrUpdateTalentRequest", () => {
       id: testData.INDIVIDUAL_TALENT_ID,
       firstNames: "Carrie",
       lastName: "Cracknell",
-      status: "Active",
-      talentType: "Individual",
+      status: statusType.ACTIVE,
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       description: "Wikipedia description",
       descriptionCredit: "Wikipedia credit",
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "0342826208934d90b801e055152f1d0f",
@@ -54,8 +60,8 @@ describe("mapCreateOrUpdateTalentRequest", () => {
       id: testData.INDIVIDUAL_TALENT_ID,
       firstNames: "Carrie",
       lastName: "Cracknell",
-      status: "Active",
-      talentType: "Individual",
+      status: statusType.ACTIVE,
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       version: 3,
       schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
@@ -77,12 +83,14 @@ describe("mapCreateOrUpdateTalentRequest", () => {
     expect(result).toEqual({
       id: testData.GROUP_TALENT_ID,
       lastName: "The Darkness",
-      status: "Active",
-      talentType: "Group",
+      status: statusType.ACTIVE,
+      talentType: talentType.GROUP,
       commonRole: "Artist",
       description: "Wikipedia description",
       descriptionCredit: "Wikipedia credit",
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "0342826208934d90b801e055152f1d0f",
@@ -106,11 +114,11 @@ describe("mapToPublicSummaryResponse", () => {
     const result = mapper.mapToPublicSummaryResponse(dbTalent);
 
     expect(result).toEqual({
-      entityType: "talent",
-      status: "Active",
+      entityType: entityType.TALENT,
+      status: statusType.ACTIVE,
       id: testData.INDIVIDUAL_TALENT_ID,
       lastName: "Cracknell",
-      talentType: "Individual",
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       image: "0342826208934d90b801e055152f1d0f",
       imageCopyright: "Tate Modern",
@@ -125,11 +133,11 @@ describe("mapToPublicSummaryResponse", () => {
     const result = mapper.mapToPublicSummaryResponse(dbTalent);
 
     expect(result).toEqual({
-      entityType: "talent",
-      status: "Active",
+      entityType: entityType.TALENT,
+      status: statusType.ACTIVE,
       id: testData.INDIVIDUAL_TALENT_ID,
       lastName: "Cracknell",
-      talentType: "Individual",
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       firstNames: "Carrie"
     });
@@ -141,11 +149,11 @@ describe("mapToPublicSummaryResponse", () => {
     const result = mapper.mapToPublicSummaryResponse(dbTalent);
 
     expect(result).toEqual({
-      entityType: "talent",
-      status: "Active",
+      entityType: entityType.TALENT,
+      status: statusType.ACTIVE,
       id: testData.GROUP_TALENT_ID,
       lastName: "The Darkness",
-      talentType: "Group",
+      talentType: talentType.GROUP,
       commonRole: "Artist"
     });
   });
@@ -156,12 +164,12 @@ describe("mapToPublicFullResponse", () => {
     const dbTalent = testData.createFullIndividualDbTalent();
     const result = mapper.mapToPublicFullResponse(dbTalent);
     expect(result).toEqual({
-      entityType: "talent",
+      entityType: entityType.TALENT,
       isFullEntity: true,
-      status: "Active",
+      status: statusType.ACTIVE,
       id: testData.INDIVIDUAL_TALENT_ID,
       lastName: "Cracknell",
-      talentType: "Individual",
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       image: "0342826208934d90b801e055152f1d0f",
       imageCopyright: "Tate Modern",
@@ -170,7 +178,9 @@ describe("mapToPublicFullResponse", () => {
       description: "An actor.",
       descriptionCredit: "Description credit",
       weSay: "something",
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "0342826208934d90b801e055152f1d0f",
@@ -186,12 +196,12 @@ describe("mapToPublicFullResponse", () => {
     const dbTalent = testData.createMinimalIndividualDbTalent();
     const result = mapper.mapToPublicFullResponse(dbTalent);
     expect(result).toEqual({
-      entityType: "talent",
+      entityType: entityType.TALENT,
       isFullEntity: true,
-      status: "Active",
+      status: statusType.ACTIVE,
       id: testData.INDIVIDUAL_TALENT_ID,
       lastName: "Cracknell",
-      talentType: "Individual",
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       firstNames: "Carrie",
       version: 3
@@ -202,12 +212,12 @@ describe("mapToPublicFullResponse", () => {
     const dbTalent = testData.createMinimalGroupDbTalent();
     const result = mapper.mapToPublicFullResponse(dbTalent);
     expect(result).toEqual({
-      entityType: "talent",
+      entityType: entityType.TALENT,
       isFullEntity: true,
-      status: "Active",
+      status: statusType.ACTIVE,
       id: testData.GROUP_TALENT_ID,
       lastName: "The Darkness",
-      talentType: "Group",
+      talentType: talentType.GROUP,
       commonRole: "Artist",
       version: 1
     });

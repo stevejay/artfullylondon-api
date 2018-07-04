@@ -4,6 +4,8 @@ import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
 import * as cognitoAuth from "../utils/cognito-auth";
 import SnsListener from "../utils/serverless-offline-sns-listener";
+import * as entityType from "../../src/types/entity-type";
+import * as statusType from "../../src/types/status-type";
 jest.setTimeout(30000);
 
 describe("venue iteration", () => {
@@ -46,16 +48,16 @@ describe("venue iteration", () => {
       json: true,
       method: "POST",
       headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: { status: "Active" },
+      body: { status: statusType.ACTIVE },
       timeout: 14000
     });
 
     await delay(5000);
     expect(snsListener.receivedMessages).toEqual([
       {
-        entityType: "venue",
+        entityType: entityType.VENUE,
         entity: expect.objectContaining({
-          status: "Active",
+          status: statusType.ACTIVE,
           postcode: "N1 1TA",
           version: 1
         })

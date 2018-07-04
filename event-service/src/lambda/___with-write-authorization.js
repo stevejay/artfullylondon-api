@@ -1,4 +1,4 @@
-import * as auth from "./auth";
+import * as auth from "./___auth";
 
 export default function(handler) {
   return async function(event, context) {

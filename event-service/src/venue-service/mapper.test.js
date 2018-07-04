@@ -1,6 +1,14 @@
 import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
 import * as timeUtils from "../entity/time-utils";
+import * as disabledBathroomType from "../types/disabled-bathroom-type";
+import * as entityType from "../types/entity-type";
+import * as hearingFacilitiesType from "../types/hearing-facilities-type";
+import * as linkType from "../types/link-type";
+import * as namedClosureType from "../types/named-closure-type";
+import * as statusType from "../types/status-type";
+import * as venueType from "../types/venue-type";
+import * as wheelchairAccessType from "../types/wheelchair-access-type";
 
 describe("mapCreateOrUpdateVenueRequest", () => {
   beforeEach(() => {
@@ -22,17 +30,17 @@ describe("mapCreateOrUpdateVenueRequest", () => {
     expect(result).toEqual({
       id: testData.FULL_VENUE_ID,
       name: "Tate Modern",
-      status: "Active",
-      venueType: "Art Gallery",
+      status: statusType.ACTIVE,
+      venueType: venueType.ART_GALLERY,
       description: "Wikipedia description",
       descriptionCredit: "Wikipedia credit",
       address: "Bankside\nLondon",
       postcode: "SW1 2ER",
       latitude: 51.5398,
       longitude: -0.109,
-      wheelchairAccessType: "FullAccess",
-      disabledBathroomType: "Present",
-      hearingFacilitiesType: "HearingLoops",
+      wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+      disabledBathroomType: disabledBathroomType.PRESENT,
+      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
       hasPermanentCollection: true,
       email: "boxoffice@tate.co.uk",
       telephone: "020 7359 4404",
@@ -44,8 +52,13 @@ describe("mapCreateOrUpdateVenueRequest", () => {
         { date: "2016-02-12", from: "23:00", to: "23:30" }
       ],
       openingTimesClosures: [{ date: "2016-02-10" }, { date: "2016-02-11" }],
-      namedClosures: ["ChristmasDay", "NewYearsDay"],
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      namedClosures: [
+        namedClosureType.CHRISTMAS_DAY,
+        namedClosureType.NEW_YEARS_DAY
+      ],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "abcd1234abcd1234abcd1234abcd1234",
@@ -73,15 +86,15 @@ describe("mapCreateOrUpdateVenueRequest", () => {
     expect(result).toEqual({
       id: testData.MINIMAL_VENUE_ID,
       name: "Almeida Theatre",
-      status: "Active",
-      venueType: "Theatre",
+      status: statusType.ACTIVE,
+      venueType: venueType.THEATRE,
       address: "Almeida St\nIslington",
       postcode: "N1 1TA",
       latitude: 51.539464,
       longitude: -0.103103,
-      wheelchairAccessType: "FullAccess",
-      disabledBathroomType: "Present",
-      hearingFacilitiesType: "HearingLoops",
+      wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+      disabledBathroomType: disabledBathroomType.PRESENT,
+      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
       hasPermanentCollection: true,
       version: 2,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
@@ -100,17 +113,17 @@ describe("mapToAdminResponse", () => {
     expect(result).toEqual({
       id: testData.FULL_VENUE_ID,
       name: "Tate Modern",
-      status: "Active",
-      venueType: "Art Gallery",
+      status: statusType.ACTIVE,
+      venueType: venueType.ART_GALLERY,
       description: "Some description",
       descriptionCredit: "Some description credit",
       address: "Bankside\nLondon",
       postcode: "SW1 2ER",
       latitude: 51.5398,
       longitude: -0.109,
-      wheelchairAccessType: "FullAccess",
-      disabledBathroomType: "Present",
-      hearingFacilitiesType: "HearingLoops",
+      wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+      disabledBathroomType: disabledBathroomType.PRESENT,
+      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
       hasPermanentCollection: true,
       email: "boxoffice@tate.co.uk",
       telephone: "020 7359 4404",
@@ -122,8 +135,13 @@ describe("mapToAdminResponse", () => {
         { date: "2016-02-12", from: "23:00", to: "23:30" }
       ],
       openingTimesClosures: [{ date: "2016-02-10" }, { date: "2016-02-11" }],
-      namedClosures: ["ChristmasDay", "NewYearsDay"],
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      namedClosures: [
+        namedClosureType.CHRISTMAS_DAY,
+        namedClosureType.NEW_YEARS_DAY
+      ],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "abcd1234abcd1234abcd1234abcd1234",
@@ -148,15 +166,15 @@ describe("mapToAdminResponse", () => {
     expect(result).toEqual({
       id: testData.MINIMAL_VENUE_ID,
       name: "Almeida Theatre",
-      status: "Active",
-      venueType: "Theatre",
+      status: statusType.ACTIVE,
+      venueType: venueType.THEATRE,
       address: "Almeida St\nIslington",
       postcode: "N1 1TA",
       latitude: 51.539464,
       longitude: -0.103103,
-      wheelchairAccessType: "FullAccess",
-      disabledBathroomType: "Present",
-      hearingFacilitiesType: "HearingLoops",
+      wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+      disabledBathroomType: disabledBathroomType.PRESENT,
+      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
       hasPermanentCollection: false,
       version: 1,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
@@ -173,11 +191,11 @@ describe("mapToPublicSummaryResponse", () => {
     const result = mapper.mapToPublicSummaryResponse(item);
 
     expect(result).toEqual({
-      entityType: "venue",
+      entityType: entityType.VENUE,
       id: testData.FULL_VENUE_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Tate Modern",
-      venueType: "Art Gallery",
+      venueType: venueType.ART_GALLERY,
       address: "Bankside\nLondon",
       postcode: "SW1 2ER",
       latitude: 51.5398,
@@ -194,11 +212,11 @@ describe("mapToPublicSummaryResponse", () => {
     const result = mapper.mapToPublicSummaryResponse(item);
 
     expect(result).toEqual({
-      entityType: "venue",
+      entityType: entityType.VENUE,
       id: testData.MINIMAL_VENUE_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Almeida Theatre",
-      venueType: "Theatre",
+      venueType: venueType.THEATRE,
       address: "Almeida St\nIslington",
       postcode: "N1 1TA",
       latitude: 51.539464,
@@ -214,12 +232,12 @@ describe("mapToPublicFullResponse", () => {
     const result = mapper.mapToPublicFullResponse(item);
 
     expect(result).toEqual({
-      entityType: "venue",
+      entityType: entityType.VENUE,
       isFullEntity: true,
       id: testData.FULL_VENUE_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Tate Modern",
-      venueType: "Art Gallery",
+      venueType: venueType.ART_GALLERY,
       address: "Bankside\nLondon",
       postcode: "SW1 2ER",
       latitude: 51.5398,
@@ -227,9 +245,9 @@ describe("mapToPublicFullResponse", () => {
       image: "abcd1234abcd1234abcd1234abcd1234",
       imageCopyright: "Foo",
       imageRatio: 1.2,
-      wheelchairAccessType: "FullAccess",
-      disabledBathroomType: "Present",
-      hearingFacilitiesType: "HearingLoops",
+      wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+      disabledBathroomType: disabledBathroomType.PRESENT,
+      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
       hasPermanentCollection: true,
       description: "Some description",
       descriptionCredit: "Some description credit",
@@ -245,8 +263,13 @@ describe("mapToPublicFullResponse", () => {
         { date: "2016-02-12", from: "23:00", to: "23:30" }
       ],
       openingTimesClosures: [{ date: "2016-02-10" }, { date: "2016-02-11" }],
-      namedClosures: ["ChristmasDay", "NewYearsDay"],
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      namedClosures: [
+        namedClosureType.CHRISTMAS_DAY,
+        namedClosureType.NEW_YEARS_DAY
+      ],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "abcd1234abcd1234abcd1234abcd1234",
@@ -264,19 +287,19 @@ describe("mapToPublicFullResponse", () => {
     const result = mapper.mapToPublicFullResponse(item);
 
     expect(result).toEqual({
-      entityType: "venue",
+      entityType: entityType.VENUE,
       isFullEntity: true,
       id: testData.MINIMAL_VENUE_ID,
-      status: "Active",
+      status: statusType.ACTIVE,
       name: "Almeida Theatre",
-      venueType: "Theatre",
+      venueType: venueType.THEATRE,
       address: "Almeida St\nIslington",
       postcode: "N1 1TA",
       latitude: 51.539464,
       longitude: -0.103103,
-      wheelchairAccessType: "FullAccess",
-      disabledBathroomType: "Present",
-      hearingFacilitiesType: "HearingLoops",
+      wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
+      disabledBathroomType: disabledBathroomType.PRESENT,
+      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
       version: 1
     });
   });

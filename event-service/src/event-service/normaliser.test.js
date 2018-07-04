@@ -1,4 +1,5 @@
 import * as normaliser from "./normaliser";
+import * as linkType from "../types/link-type";
 
 describe("event normaliser", () => {
   it("should apply event normalisers to fully populated params", () => {
@@ -8,7 +9,9 @@ describe("event normaliser", () => {
       description:
         "  <p>A contemporary update of this Shakespeare classic by the acclaimed director Sam Mendes.</p>  ",
       descriptionCredit: "   Some credit   ",
-      links: [{ type: "Wikipedia", url: "   https://en.wikipedia.org/foo   " }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "   https://en.wikipedia.org/foo   " }
+      ],
       duration: "  01:30 ",
       venueGuidance: "  Exhibition is located   ",
       timesRanges: [
@@ -82,7 +85,9 @@ describe("event normaliser", () => {
       description:
         "<p>A contemporary update of this Shakespeare classic by the acclaimed director Sam Mendes.</p>",
       descriptionCredit: "Some credit",
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       duration: "01:30",
       venueGuidance: "Exhibition is located",
       timesRanges: [

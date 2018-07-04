@@ -6,6 +6,12 @@ import * as dynamodb from "../utils/dynamodb";
 import * as cognitoAuth from "../utils/cognito-auth";
 import * as lambdaUtils from "../utils/lambda";
 import SnsListener from "../utils/serverless-offline-sns-listener";
+import * as costType from "../../src/types/cost-type";
+import * as entityType from "../../src/types/entity-type";
+import * as eventSeriesType from "../../src/types/event-series-type";
+import * as eventType from "../../src/types/event-type";
+import * as occurrenceType from "../../src/types/occurrence-type";
+import * as statusType from "../../src/types/status-type";
 jest.setTimeout(30000);
 
 describe("event", () => {
@@ -86,7 +92,7 @@ describe("event", () => {
           json: true,
           method: "POST",
           headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-          body: { status: "Active" },
+          body: { status: statusType.ACTIVE },
           timeout: 14000
         })
       )
@@ -122,10 +128,10 @@ describe("event", () => {
     const parsedResponse = lambdaUtils.parseLambdaResponse(response);
     expect(parsedResponse.entity).toEqual(
       expect.objectContaining({
-        eventType: "Exhibition",
-        occurrenceType: "Bounded",
-        costType: "Free",
-        status: "Active",
+        eventType: eventType.EXHIBITION,
+        occurrenceType: occurrenceType.BOUNDED,
+        costType: costType.FREE,
+        status: statusType.ACTIVE,
         version: 1
       })
     );
@@ -140,12 +146,12 @@ describe("event", () => {
     await delay(5000);
     expect(snsListener.receivedMessages).toEqual([
       {
-        entityType: "event",
+        entityType: entityType.EVENT,
         entity: expect.objectContaining({
-          eventType: "Exhibition",
-          occurrenceType: "Bounded",
-          costType: "Free",
-          status: "Active",
+          eventType: eventType.EXHIBITION,
+          occurrenceType: occurrenceType.BOUNDED,
+          costType: costType.FREE,
+          status: statusType.ACTIVE,
           version: 1
         })
       }
@@ -165,10 +171,10 @@ describe("event", () => {
     expect(parsedResponse.entity).toEqual(
       expect.objectContaining({
         id: testEventId,
-        eventType: "Exhibition",
-        occurrenceType: "Bounded",
-        costType: "Free",
-        status: "Active",
+        eventType: eventType.EXHIBITION,
+        occurrenceType: occurrenceType.BOUNDED,
+        costType: costType.FREE,
+        status: statusType.ACTIVE,
         version: 1
       })
     );
@@ -191,11 +197,11 @@ describe("event", () => {
     expect(parsedResponse.entity).toEqual(
       expect.objectContaining({
         id: testEventId,
-        eventType: "Exhibition",
-        occurrenceType: "Bounded",
-        costType: "Free",
-        entityType: "event",
-        status: "Active",
+        eventType: eventType.EXHIBITION,
+        occurrenceType: occurrenceType.BOUNDED,
+        costType: costType.FREE,
+        entityType: entityType.EVENT,
+        status: statusType.ACTIVE,
         isFullEntity: true
       })
     );
@@ -220,11 +226,11 @@ describe("event", () => {
     expect(parsedResponse.entities[0]).toEqual(
       expect.objectContaining({
         id: testEventId,
-        eventType: "Exhibition",
-        occurrenceType: "Bounded",
-        costType: "Free",
-        entityType: "event",
-        status: "Active"
+        eventType: eventType.EXHIBITION,
+        occurrenceType: occurrenceType.BOUNDED,
+        costType: costType.FREE,
+        entityType: entityType.EVENT,
+        status: statusType.ACTIVE
       })
     );
 
@@ -266,7 +272,7 @@ describe("event", () => {
       expect.objectContaining({
         id: testEventId,
         duration: "02:00",
-        status: "Active",
+        status: statusType.ACTIVE,
         version: 2
       })
     );
@@ -279,11 +285,11 @@ describe("event", () => {
     await delay(5000);
     expect(snsListener.receivedMessages).toEqual([
       {
-        entityType: "event",
+        entityType: entityType.EVENT,
         entity: expect.objectContaining({
           id: testEventId,
           duration: "02:00",
-          status: "Active",
+          status: statusType.ACTIVE,
           version: 2
         })
       }
@@ -324,16 +330,16 @@ describe("event", () => {
     expect(snsListener.receivedMessages).toEqual(
       expect.arrayContaining([
         {
-          entityType: "event",
+          entityType: entityType.EVENT,
           entity: expect.objectContaining({
             id: testEventId,
             duration: "02:00",
-            status: "Active",
+            status: statusType.ACTIVE,
             version: 2
           })
         },
         {
-          entityType: "venue",
+          entityType: entityType.VENUE,
           entity: expect.objectContaining({
             postcode: "N8 0KL",
             version: 2
@@ -356,7 +362,7 @@ describe("event", () => {
       expect.objectContaining({
         id: testEventId,
         duration: "02:00",
-        status: "Active",
+        status: statusType.ACTIVE,
         version: 2,
         postcode: "N8 0KL"
       })
@@ -383,20 +389,20 @@ describe("event", () => {
     expect(snsListener.receivedMessages).toEqual(
       expect.arrayContaining([
         {
-          entityType: "event",
+          entityType: entityType.EVENT,
           entity: expect.objectContaining({
             id: testEventId,
             duration: "02:00",
-            status: "Active",
+            status: statusType.ACTIVE,
             version: 2
           })
         },
         {
-          entityType: "event-series",
+          entityType: entityType.EVENT_SERIES,
           entity: expect.objectContaining({
-            eventSeriesType: "Occasional",
+            eventSeriesType: eventSeriesType.OCCASIONAL,
             summary: "Stand-up poetry New",
-            status: "Active",
+            status: statusType.ACTIVE,
             version: 2
           })
         }
