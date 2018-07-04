@@ -74,6 +74,13 @@ Use the following process to check what software is already running on a given p
 1.  Run the command `netstat -a -n -o`
 1.  In the command output, get PID from the last column and check for it in the Details section of the Windows Task Manager.
 
+#### Checking Dynamodb Local
+
+```
+aws dynamodb list-tables --endpoint-url http://localhost:4569
+aws dynamodb delete-table --endpoint-url http://localhost:4569 --table-name artfullylondon-development-preferences
+```
+
 ## Todo
 
 - Add AWS Cognito serverless configuration to the serverless files? (I think serverless supports AWS Cognito configuration now. Problem is it is not needed locally.)

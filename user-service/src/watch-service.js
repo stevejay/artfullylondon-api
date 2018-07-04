@@ -6,9 +6,9 @@ import * as watchMapper from "./watch-mapper";
 export async function getWatches(request) {
   const dbItem = await watchRepository.tryGetWatchesByTypeForUser(
     request.userId,
-    request.entityType
+    request.watchType
   );
-  return watchMapper.mapResponseForSingleWatchType(request.entityType, dbItem);
+  return watchMapper.mapResponseForSingleWatchType(request.watchType, dbItem);
 }
 
 export async function updateWatches(request) {
@@ -26,14 +26,14 @@ export async function updateWatches(request) {
     await watchRepository.createWatches(
       request.newVersion,
       request.userId,
-      request.entityType,
+      request.watchType,
       updatedWatches
     );
   } else {
     await watchRepository.updateWatches(
       request.newVersion,
       request.userId,
-      request.entityType,
+      request.watchType,
       updatedWatches
     );
   }

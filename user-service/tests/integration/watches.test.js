@@ -1,7 +1,7 @@
 import request from "request-promise-native";
 import uuidv4 from "uuid/v4";
 import * as authUtils from "../utils/auth";
-import * as entityType from "../../src/entity-type";
+import * as watchType from "../../src/watch-type";
 import * as watchChangeType from "../../src/watch-change-type";
 jest.setTimeout(60000);
 
@@ -15,12 +15,12 @@ const EVENT_WATCHES_QUERY = `
 
 const UPDATE_WATCHES_MUTATION = `
 mutation UpdateWatches(
-  $entityType: EntityTypeEnum!,
+  $watchType: WatchTypeEnum!,
   $newVersion: Int!,
   $changes: [WatchChangeInput!]!
 ) {
   updateWatches(
-    input: { entityType: $entityType, newVersion: $newVersion, changes: $changes }
+    input: { watchType: $watchType, newVersion: $newVersion, changes: $changes }
   ) {
     ok
   }
@@ -41,7 +41,7 @@ describe("watches", () => {
       body: {
         query: UPDATE_WATCHES_MUTATION,
         variables: {
-          entityType: entityType.EVENT,
+          watchType: watchType.EVENT,
           newVersion: 1,
           changes: [
             {
@@ -115,7 +115,7 @@ describe("watches", () => {
       body: {
         query: UPDATE_WATCHES_MUTATION,
         variables: {
-          entityType: entityType.EVENT,
+          watchType: watchType.EVENT,
           newVersion: 2,
           changes: [
             {

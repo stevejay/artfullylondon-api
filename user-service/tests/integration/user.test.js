@@ -2,8 +2,6 @@ import request from "request-promise-native";
 import uuidv4 from "uuid/v4";
 import * as authUtils from "../utils/auth";
 import * as emailFrequencyType from "../../src/email-frequency-type";
-import * as entityType from "../../src/entity-type";
-import * as watchChangeType from "../../src/watch-change-type";
 jest.setTimeout(60000);
 
 const USER_QUERY = `

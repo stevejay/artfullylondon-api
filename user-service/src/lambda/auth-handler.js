@@ -1,33 +1,31 @@
 import jwt from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
+import AuthPolicy from "aws-auth-policy";
 import * as log from "loglevel";
 
-function generatePolicy(principalId, methodArn) {
+function getResourceInfoFromMethodArn(methodArn) {
   if (!methodArn) {
-    throw new Error("No methodArn to generate policy");
+    throw new Error("methodArn not found");
   }
-
-  const matches = methodArn.match(
-    /^([^/]+\/(development|staging|production))\//
-  );
-
-  if (!matches) {
-    throw new Error("No match found in methodArn");
-  }
-
+  const arnParts = methodArn.split(":");
+  const apiGatewayParts = arnParts[5].split("/");
   return {
-    principalId,
-    policyDocument: {
-      Version: "2012-10-17",
-      Statement: [
-        {
-          Action: "execute-api:Invoke",
-          Effect: "Allow",
-          Resource: matches[1] + "/*"
-        }
-      ]
-    }
+    accountId: arnParts[4],
+    region: arnParts[3],
+    restApiId: apiGatewayParts[0],
+    stage: apiGatewayParts[1],
+    method: apiGatewayParts[2]
   };
+}
+
+function createPolicy(decodedToken, resourceInfo) {
+  const authPolicy = new AuthPolicy(decodedToken.sub, resourceInfo.accountId, {
+    region: resourceInfo.region,
+    restApiId: resourceInfo.restApiId,
+    stage: resourceInfo.stage
+  });
+  authPolicy.allowMethod(AuthPolicy.HttpVerb.ALL, "/*");
+  return authPolicy.build();
 }
 
 function getKeys(client) {
@@ -103,40 +101,35 @@ function verifyToken(token, signingKeyOrSecret, algorithm, audience) {
   });
 }
 
-async function handlerImpl(event) {
-  try {
-    const authHeader = event.headers
-      ? event.headers.Authorization
-      : event.authorizationToken;
-
-    if (!authHeader) {
-      throw new Error("No auth header");
-    }
-
-    const token = authHeader.replace(/^Bearer /, "");
-    const signatureAlgorithm = process.env.AUTH0_SIGNATURE_ALGORITHM;
-    const signingKeyOrSecret = await getSigningKeyOrSecret(signatureAlgorithm);
-    const decoded = await verifyToken(
-      token,
-      signingKeyOrSecret,
-      signatureAlgorithm,
-      process.env.AUTH0_CLIENT_ID
-    );
-    return { policy: generatePolicy(decoded.sub, event.methodArn) };
-  } catch (err) {
-    log.error(err.message);
-    return { err: new Error("Unauthorized") };
+function getAuthorizationTokenFromEvent(event) {
+  const header = event.headers
+    ? event.headers.Authorization
+    : event.authorizationToken; // TODO remove this?
+  if (!header) {
+    throw new Error("No Authorization header found");
   }
+  return header.replace(/^Bearer /, "");
+}
+
+async function handlerImpl(event) {
+  const token = getAuthorizationTokenFromEvent(event);
+  const signatureAlgorithm = process.env.AUTH0_SIGNATURE_ALGORITHM;
+  const signingKeyOrSecret = await getSigningKeyOrSecret(signatureAlgorithm);
+  const decodedToken = await verifyToken(
+    token,
+    signingKeyOrSecret,
+    signatureAlgorithm,
+    process.env.AUTH0_CLIENT_ID
+  );
+  const resourceInfo = getResourceInfoFromMethodArn(event.methodArn);
+  return createPolicy(decodedToken, resourceInfo);
 }
 
 export function handler(event, context, cb) {
   handlerImpl(event)
-    .then(result => {
-      if (result.err) {
-        cb(result.err);
-      } else {
-        cb(null, result.policy);
-      }
-    })
-    .catch(cb);
+    .then(policy => cb(null, policy))
+    .catch(err => {
+      log.error(err.message);
+      cb(new Error("Unauthorized"));
+    });
 }

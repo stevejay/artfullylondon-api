@@ -920,6 +920,10 @@ auth0@^2.10.0:
     rest-facade "^1.10.1"
     retry "^0.10.1"
 
+aws-auth-policy@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/aws-auth-policy/-/aws-auth-policy-0.1.0.tgz#a6d24cb2d8df52a6da3de4d7aaaf39ec020a6d80"
+
 aws-sdk@^2.228.0, aws-sdk@^2.7.0:
   version "2.243.1"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.243.1.tgz#c47b05431637c572177a1814c724cae8a5ee3f49"

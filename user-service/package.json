@@ -41,6 +41,7 @@
   "dependencies": {
     "apollo-server-lambda": "^2.0.0-rc.6",
     "auth0": "^2.10.0",
+    "aws-auth-policy": "^0.1.0",
     "aws-xray-sdk": "^1.2.0",
     "dynamodb-doc-client-wrapper": "^2.0.1",
     "ensure-request": "^4.0.0",

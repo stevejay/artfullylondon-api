@@ -1,13 +1,13 @@
 import { ensure } from "ensure-request";
 import * as watchChangeType from "./watch-change-type";
-import * as entityType from "./entity-type";
+import * as watchType from "./watch-type";
 
 export const MAX_WATCHES_LENGTH = 200;
 
 const UPDATE_WATCHES_CONSTRAINT = {
-  entityType: {
+  watchType: {
     presence: true,
-    inclusion: entityType.ALLOWED_VALUES
+    inclusion: watchType.ALLOWED_VALUES
   },
   newVersion: {
     presence: true,

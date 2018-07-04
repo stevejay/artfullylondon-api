@@ -4,7 +4,7 @@ enum EmailFrequencyEnum {
   NO_EMAILS
 }
 
-enum EntityTypeEnum {
+enum WatchTypeEnum {
   TAG
   TALENT
   VENUE
@@ -57,7 +57,7 @@ input WatchChangeInput {
 }
 
 input UpdateWatchesInput {
-  entityType: EntityTypeEnum!
+  watchType: WatchTypeEnum!
   newVersion: Int!
   changes: [WatchChangeInput!]!
 }

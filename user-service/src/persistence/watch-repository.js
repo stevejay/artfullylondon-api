@@ -1,11 +1,11 @@
 import dynamodb from "./dynamodb";
-import * as entityType from "../entity-type";
+import * as watchType from "../watch-type";
 
-export function tryGetWatchesByTypeForUser(userId, entityType) {
+export function tryGetWatchesByTypeForUser(userId, watchType) {
   return dynamodb.tryGet({
     TableName: process.env.SERVERLESS_WATCH_TABLE_NAME,
-    Key: { userId, entityType },
-    ProjectionExpression: "entityType, #items, version",
+    Key: { userId, watchType },
+    ProjectionExpression: "watchType, #items, version",
     ExpressionAttributeNames: { "#items": "items" }
   });
 }
@@ -15,15 +15,15 @@ export function getAllWatchesForUser(userId) {
     TableName: process.env.SERVERLESS_WATCH_TABLE_NAME,
     KeyConditionExpression: "userId = :userId",
     ExpressionAttributeValues: { ":userId": userId },
-    ProjectionExpression: "entityType, #items, version",
+    ProjectionExpression: "watchType, #items, version",
     ExpressionAttributeNames: { "#items": "items" }
   });
 }
 
 export function deleteWatchesForUser(userId) {
   // We delete all entity types, but they might not all exist.
-  const deleteRequests = entityType.ALLOWED_VALUES.map(entityType => {
-    return { DeleteRequest: { Key: { userId, entityType } } };
+  const deleteRequests = watchType.ALLOWED_VALUES.map(watchType => {
+    return { DeleteRequest: { Key: { userId, watchType } } };
   });
 
   const params = {
@@ -35,10 +35,10 @@ export function deleteWatchesForUser(userId) {
   return dynamodb.batchWriteBasic(params);
 }
 
-export async function createWatches(newVersion, userId, entityType, items) {
+export async function createWatches(newVersion, userId, watchType, items) {
   const item = {
     userId,
-    entityType,
+    watchType,
     items,
     version: newVersion
   };
@@ -47,14 +47,14 @@ export async function createWatches(newVersion, userId, entityType, items) {
     TableName: process.env.SERVERLESS_WATCH_TABLE_NAME,
     Item: item,
     ConditionExpression:
-      "attribute_not_exists(userId) and attribute_not_exists(entityType)"
+      "attribute_not_exists(userId) and attribute_not_exists(watchType)"
   });
 }
 
-export async function updateWatches(newVersion, userId, entityType, items) {
+export async function updateWatches(newVersion, userId, watchType, items) {
   const item = {
     userId,
-    entityType,
+    watchType,
     items,
     version: newVersion
   };
@@ -63,7 +63,7 @@ export async function updateWatches(newVersion, userId, entityType, items) {
     TableName: process.env.SERVERLESS_WATCH_TABLE_NAME,
     Item: item,
     ConditionExpression:
-      "attribute_exists(userId) and attribute_exists(entityType) and version = :oldVersion",
+      "attribute_exists(userId) and attribute_exists(watchType) and version = :oldVersion",
     ExpressionAttributeValues: { ":oldVersion": newVersion - 1 }
   });
 }

@@ -52,7 +52,7 @@ provider:
                         - ":"
                         - Ref: "AWS::AccountId"
                         - ":table/"
-                        - Ref: "PreferencesDynamoTable"
+                        - Ref: "PreferenceDynamoTable"
 
 plugins:
     - serverless-webpack
@@ -67,7 +67,7 @@ custom:
     region: ${opt:region, self:provider.region}
     publicUserTableName: ${self:custom.project}-${self:custom.stage}-publicuser
     watchTableName: ${self:custom.project}-${self:custom.stage}-watch
-    preferencesTableName: ${self:custom.project}-${self:custom.stage}-preferences
+    preferenceTableName: ${self:custom.project}-${self:custom.stage}-preference
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -89,7 +89,7 @@ functions:
         environment:
             SERVERLESS_PUBLIC_USER_TABLE_NAME: ${self:custom.publicUserTableName}
             SERVERLESS_WATCH_TABLE_NAME: ${self:custom.watchTableName}
-            SERVERLESS_PREFERENCES_TABLE_NAME: ${self:custom.preferencesTableName}
+            SERVERLESS_PREFERENCE_TABLE_NAME: ${self:custom.preferenceTableName}
         events:
             - http:
                 path: graphql
@@ -138,23 +138,23 @@ resources:
                         AttributeName: userId
                         AttributeType: S
                     -
-                        AttributeName: entityType
+                        AttributeName: watchType
                         AttributeType: S
                 KeySchema:
                     -
                         AttributeName: userId
                         KeyType: HASH
                     -
-                        AttributeName: entityType
+                        AttributeName: watchType
                         KeyType: RANGE
                 ProvisionedThroughput:
                     ReadCapacityUnits: 2
                     WriteCapacityUnits: 1
-        PreferencesDynamoTable:
+        PreferenceDynamoTable:
             Type: AWS::DynamoDB::Table
             DeletionPolicy: Retain
             Properties:
-                TableName: ${self:custom.preferencesTableName}
+                TableName: ${self:custom.preferenceTableName}
                 AttributeDefinitions:
                     -
                         AttributeName: userId

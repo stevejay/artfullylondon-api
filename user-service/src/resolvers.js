@@ -1,7 +1,7 @@
 import * as userService from "./user-service";
 import * as preferenceService from "./preference-service";
 import * as watchService from "./watch-service";
-import * as entityType from "./entity-type";
+import * as watchType from "./watch-type";
 
 export default {
   Query: {
@@ -15,31 +15,31 @@ export default {
       async tag() {
         return await watchService.getWatches({
           userId: context.authorizer.principalId,
-          entityType: entityType.TAG
+          watchType: watchType.TAG
         });
       },
       async event() {
         return await watchService.getWatches({
           userId: context.authorizer.principalId,
-          entityType: entityType.EVENT
+          watchType: watchType.EVENT
         });
       },
       async eventSeries() {
         return await watchService.getWatches({
           userId: context.authorizer.principalId,
-          entityType: entityType.EVENT_SERIES
+          watchType: watchType.EVENT_SERIES
         });
       },
       async talent() {
         return await watchService.getWatches({
           userId: context.authorizer.principalId,
-          entityType: entityType.TALENT
+          watchType: watchType.TALENT
         });
       },
       async venue() {
         return await watchService.getWatches({
           userId: context.authorizer.principalId,
-          entityType: entityType.VENUE
+          watchType: watchType.VENUE
         });
       }
     })

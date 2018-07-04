@@ -1,6 +1,5 @@
 import request from "request-promise-native";
 import uuidv4 from "uuid/v4";
-import { sync } from "jest-toolkit";
 import * as authUtils from "../utils/auth";
 import * as emailFrequencyType from "../../src/email-frequency-type";
 jest.setTimeout(60000);
