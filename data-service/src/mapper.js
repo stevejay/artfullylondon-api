@@ -1,5 +1,5 @@
-export function mapToSitemapFileText(results) {
-  return results.items
-    .map(item => `${process.env.SITEMAP_URL_PREFIX}/event/${item.id}`)
+export function mapToSitemapFileText(events) {
+  return events
+    .map(event => `${process.env.SITEMAP_URL_PREFIX}/event/${event.id}`)
     .join("\n");
 }
