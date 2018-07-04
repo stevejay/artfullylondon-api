@@ -418,9 +418,11 @@ describe("mapToPublicFullResponse", () => {
           copyright: "foo"
         }
       ],
-      image: "12345678123456781234567812345678",
-      imageRatio: 1.2,
-      imageCopyright: "foo",
+      mainImage: {
+        id: "12345678123456781234567812345678",
+        ratio: 1.2,
+        copyright: "foo"
+      },
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
       soldOutPerformances: [{ at: "08:00", date: "2016-08-15" }],
@@ -554,9 +556,11 @@ describe("mapToPublicFullResponse", () => {
           copyright: "foo"
         }
       ],
-      image: "12345678123456781234567812345678",
-      imageRatio: 1.2,
-      imageCopyright: "foo",
+      mainImage: {
+        id: "12345678123456781234567812345678",
+        ratio: 1.2,
+        copyright: "foo"
+      },
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
       version: 4
@@ -606,8 +610,10 @@ describe("mapToPublicFullResponse", () => {
       { id: "222222222222222222", ratio: 1.4, copyright: "bar" }
     ]);
 
-    expect(result.image).toEqual("222222222222222222");
-    expect(result.imageRatio).toEqual(1.4);
-    expect(result.imageCopyright).toEqual("bar");
+    expect(result.mainImage).toEqual({
+      id: "222222222222222222",
+      ratio: 1.4,
+      copyright: "bar"
+    });
   });
 });

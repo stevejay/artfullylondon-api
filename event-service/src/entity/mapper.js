@@ -3,10 +3,10 @@ import mappr from "mappr";
 import * as timeUtils from "../entity/time-utils";
 
 export const mapResponseMainImage = mappr({
-  image: "images[0].id",
-  imageCopyright: "images[0].copyright",
-  imageRatio: "images[0].ratio",
-  imageColor: "images[0].dominantColor"
+  mainImage: params =>
+    _.isEmpty(params.images)
+      ? undefined
+      : _.pick(params.images[0], ["id", "ratio", "copyright", "dominantColor"])
 });
 
 export const mapRequestLinks = mappr({

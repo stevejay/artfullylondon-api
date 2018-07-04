@@ -31,9 +31,9 @@ const TALENT_VALIDATOR = {
   links: LINKS,
   images: IMAGES,
   weSay: OPTIONAL_STRING,
+  notes: OPTIONAL_STRING,
   version: REQUIRED_VERSION,
-  createdDate: OPTIONAL_DATE,
-  updatedDate: OPTIONAL_DATE
+  createdDate: OPTIONAL_DATE
 };
 
 function errorHandler(errors) {

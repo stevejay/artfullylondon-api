@@ -41,6 +41,7 @@ describe("mapCreateOrUpdateTalentRequest", () => {
         }
       ],
       weSay: "something",
+      notes: "some notes",
       version: 3,
       schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
       createdDate: "2016-01-10",
@@ -107,12 +108,10 @@ describe("mapCreateOrUpdateTalentRequest", () => {
   });
 });
 
-describe("mapToPublicSummaryResponse", () => {
+describe("mapResponse", () => {
   it("should map a fully populated db item for an individual talent", () => {
     const dbTalent = testData.createFullIndividualDbTalent();
-
-    const result = mapper.mapToPublicSummaryResponse(dbTalent);
-
+    const result = mapper.mapResponse(dbTalent);
     expect(result).toEqual({
       entityType: entityType.TALENT,
       status: statusType.ACTIVE,
@@ -120,60 +119,11 @@ describe("mapToPublicSummaryResponse", () => {
       lastName: "Cracknell",
       talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
-      image: "0342826208934d90b801e055152f1d0f",
-      imageCopyright: "Tate Modern",
-      imageRatio: 1.2,
-      firstNames: "Carrie"
-    });
-  });
-
-  it("should map a minimally populated db item for an individual talent", () => {
-    const dbTalent = testData.createMinimalIndividualDbTalent();
-
-    const result = mapper.mapToPublicSummaryResponse(dbTalent);
-
-    expect(result).toEqual({
-      entityType: entityType.TALENT,
-      status: statusType.ACTIVE,
-      id: testData.INDIVIDUAL_TALENT_ID,
-      lastName: "Cracknell",
-      talentType: talentType.INDIVIDUAL,
-      commonRole: "Actor",
-      firstNames: "Carrie"
-    });
-  });
-
-  it("should map a minimally populated db item for a group talent", () => {
-    const dbTalent = testData.createMinimalGroupDbTalent();
-
-    const result = mapper.mapToPublicSummaryResponse(dbTalent);
-
-    expect(result).toEqual({
-      entityType: entityType.TALENT,
-      status: statusType.ACTIVE,
-      id: testData.GROUP_TALENT_ID,
-      lastName: "The Darkness",
-      talentType: talentType.GROUP,
-      commonRole: "Artist"
-    });
-  });
-});
-
-describe("mapToPublicFullResponse", () => {
-  it("should map a fully populated db item for an individual talent", () => {
-    const dbTalent = testData.createFullIndividualDbTalent();
-    const result = mapper.mapToPublicFullResponse(dbTalent);
-    expect(result).toEqual({
-      entityType: entityType.TALENT,
-      isFullEntity: true,
-      status: statusType.ACTIVE,
-      id: testData.INDIVIDUAL_TALENT_ID,
-      lastName: "Cracknell",
-      talentType: talentType.INDIVIDUAL,
-      commonRole: "Actor",
-      image: "0342826208934d90b801e055152f1d0f",
-      imageCopyright: "Tate Modern",
-      imageRatio: 1.2,
+      mainImage: {
+        id: "0342826208934d90b801e055152f1d0f",
+        copyright: "Tate Modern",
+        ratio: 1.2
+      },
       firstNames: "Carrie",
       description: "An actor.",
       descriptionCredit: "Description credit",
@@ -188,38 +138,45 @@ describe("mapToPublicFullResponse", () => {
           copyright: "Tate Modern"
         }
       ],
-      version: 3
+      version: 3,
+      schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
+      createdDate: "2016-01-10",
+      updatedDate: "2016-01-11"
     });
   });
 
   it("should map a minimally populated db item for an individual talent", () => {
     const dbTalent = testData.createMinimalIndividualDbTalent();
-    const result = mapper.mapToPublicFullResponse(dbTalent);
+    const result = mapper.mapResponse(dbTalent);
     expect(result).toEqual({
       entityType: entityType.TALENT,
-      isFullEntity: true,
       status: statusType.ACTIVE,
       id: testData.INDIVIDUAL_TALENT_ID,
       lastName: "Cracknell",
       talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       firstNames: "Carrie",
-      version: 3
+      version: 3,
+      schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
+      createdDate: "2016-01-10",
+      updatedDate: "2016-01-11"
     });
   });
 
   it("should map a minimally populated db item for a group talent", () => {
     const dbTalent = testData.createMinimalGroupDbTalent();
-    const result = mapper.mapToPublicFullResponse(dbTalent);
+    const result = mapper.mapResponse(dbTalent);
     expect(result).toEqual({
       entityType: entityType.TALENT,
-      isFullEntity: true,
       status: statusType.ACTIVE,
       id: testData.GROUP_TALENT_ID,
       lastName: "The Darkness",
       talentType: talentType.GROUP,
       commonRole: "Artist",
-      version: 1
+      version: 1,
+      schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
+      createdDate: "2016-01-10",
+      updatedDate: "2016-01-11"
     });
   });
 });

@@ -67,7 +67,7 @@ describe("mapCreateOrUpdateVenueRequest", () => {
         }
       ],
       weSay: "something",
-      notes: "hi",
+      notes: "some notes",
       version: 1,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
       createdDate: "2016-01-10",
@@ -150,7 +150,7 @@ describe("mapToAdminResponse", () => {
         }
       ],
       weSay: "something",
-      notes: "hi",
+      notes: "some notes",
       version: 1,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
       createdDate: "2016-01-10",
@@ -200,9 +200,11 @@ describe("mapToPublicSummaryResponse", () => {
       postcode: "SW1 2ER",
       latitude: 51.5398,
       longitude: -0.109,
-      image: "abcd1234abcd1234abcd1234abcd1234",
-      imageCopyright: "Foo",
-      imageRatio: 1.2
+      mainImage: {
+        id: "abcd1234abcd1234abcd1234abcd1234",
+        copyright: "Foo",
+        ratio: 1.2
+      }
     });
   });
 
@@ -242,9 +244,11 @@ describe("mapToPublicFullResponse", () => {
       postcode: "SW1 2ER",
       latitude: 51.5398,
       longitude: -0.109,
-      image: "abcd1234abcd1234abcd1234abcd1234",
-      imageCopyright: "Foo",
-      imageRatio: 1.2,
+      mainImage: {
+        id: "abcd1234abcd1234abcd1234abcd1234",
+        copyright: "Foo",
+        ratio: 1.2
+      },
       wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
       disabledBathroomType: disabledBathroomType.PRESENT,
       hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
@@ -254,7 +258,7 @@ describe("mapToPublicFullResponse", () => {
       email: "boxoffice@tate.co.uk",
       telephone: "020 7359 4404",
       weSay: "something",
-      notes: "hi",
+      notes: "some notes",
       openingTimes: [
         { day: 1, from: "09:00", to: "18:00" },
         { day: 2, from: "09:00", to: "18:00" }

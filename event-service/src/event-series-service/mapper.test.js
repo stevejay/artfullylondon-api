@@ -84,9 +84,11 @@ describe("mapToPublicSummaryResponse", () => {
       eventSeriesType: eventSeriesType.OCCASIONAL,
       occurrence: "Third Thursday of each month",
       summary: "A poetry riot",
-      image: "abcd1234abcd1234abcd1234abcd1234",
-      imageCopyright: "Foo",
-      imageRatio: 1.2
+      mainImage: {
+        id: "abcd1234abcd1234abcd1234abcd1234",
+        copyright: "Foo",
+        ratio: 1.2
+      }
     });
   });
 });
@@ -106,9 +108,11 @@ describe("mapToPublicFullResponse", () => {
       eventSeriesType: eventSeriesType.OCCASIONAL,
       occurrence: "Third Thursday of each month",
       summary: "A poetry riot",
-      image: "abcd1234abcd1234abcd1234abcd1234",
-      imageCopyright: "Foo",
-      imageRatio: 1.2,
+      mainImage: {
+        id: "abcd1234abcd1234abcd1234abcd1234",
+        copyright: "Foo",
+        ratio: 1.2
+      },
       description: "Poetry for people who dont like poetry.",
       descriptionCredit: "Some description credit",
       links: [

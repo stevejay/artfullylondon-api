@@ -23,6 +23,7 @@ export const mapCreateOrUpdateTalentRequest = mappr.compose(
     "commonRole",
     "version",
     "weSay",
+    "notes",
     "description",
     "descriptionCredit"
   ]),
@@ -31,7 +32,7 @@ export const mapCreateOrUpdateTalentRequest = mappr.compose(
   entityMapper.mapRequestImages
 );
 
-export const mapToPublicSummaryResponse = mappr.compose(
+export const mapResponse = mappr.compose(
   () => ({ entityType: entityType.TALENT }),
   fpPick([
     "id",
@@ -39,20 +40,44 @@ export const mapToPublicSummaryResponse = mappr.compose(
     "firstNames",
     "lastName",
     "talentType",
-    "commonRole"
+    "commonRole",
+    "description",
+    "descriptionCredit",
+    "weSay",
+    "notes",
+    "links",
+    "images",
+    "version",
+    "schemeVersion",
+    "createdDate",
+    "updatedDate"
   ]),
   entityMapper.mapResponseMainImage
 );
 
-export const mapToPublicFullResponse = mappr.compose(
-  mapToPublicSummaryResponse,
-  fpPick([
-    "description",
-    "descriptionCredit",
-    "weSay",
-    "links",
-    "images",
-    "version"
-  ]),
-  () => ({ isFullEntity: true })
-);
+// export const mapToPublicSummaryResponse = mappr.compose(
+//   () => ({ entityType: entityType.TALENT }),
+//   fpPick([
+//     "id",
+//     "status",
+//     "firstNames",
+//     "lastName",
+//     "talentType",
+//     "commonRole"
+//   ]),
+//   entityMapper.mapResponseMainImage
+// );
+
+// export const mapToPublicFullResponse = mappr.compose(
+//   mapToPublicSummaryResponse,
+//   fpPick([
+//     "description",
+//     "descriptionCredit",
+//     "weSay",
+//     "notes",
+//     "links",
+//     "images",
+//     "version"
+//   ]),
+//   () => ({ isFullEntity: true })
+// );

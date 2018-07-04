@@ -62,6 +62,7 @@ export const createFullIndividualRequestTalent = () => {
       }
     ],
     weSay: "something",
+    notes: "some notes",
     version: 3,
     createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
@@ -208,7 +209,6 @@ export const createMinimalRequestVenue = () => {
     createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     hasPermanentCollection: true,
-
     description: undefined,
     descriptionCredit: undefined,
     email: undefined,
@@ -257,7 +257,7 @@ export const createFullRequestVenue = () => {
       { id: "abcd1234abcd1234abcd1234abcd1234", ratio: 1.2, copyright: "Foo" }
     ],
     weSay: "something",
-    notes: "hi",
+    notes: "some notes",
     version: 1,
     createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
@@ -319,7 +319,7 @@ export const createFullDbVenue = () => {
       { id: "abcd1234abcd1234abcd1234abcd1234", ratio: 1.2, copyright: "Foo" }
     ],
     weSay: "something",
-    notes: "hi",
+    notes: "some notes",
     version: 1,
     schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
     createdDate: "2016-01-10",
@@ -362,6 +362,7 @@ export const createFullRequestEventSeries = () => {
       { id: "abcd1234abcd1234abcd1234abcd1234", ratio: 1.2, copyright: "Foo" }
     ],
     weSay: "something",
+    notes: "some notes",
     version: 1,
     createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
@@ -399,6 +400,7 @@ export const createFullDbEventSeries = () => {
       { id: "abcd1234abcd1234abcd1234abcd1234", ratio: 1.2, copyright: "Foo" }
     ],
     weSay: "something",
+    notes: "some notes",
     version: 1,
     schemeVersion: eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
     createdDate: "2016-01-10",
@@ -582,6 +584,7 @@ export const createFullPerformanceRequestEvent = () => {
     ],
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
+    notes: "some notes",
     version: 1,
     createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
@@ -652,6 +655,7 @@ export const createFullExhibitionRequestEvent = () => {
     ],
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
+    notes: "some notes",
     version: 1,
     createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
@@ -764,6 +768,7 @@ export const createFullCourseRequestEvent = () => {
     ],
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
+    notes: "some notes",
     version: 1,
     createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
@@ -866,6 +871,7 @@ export const createFullPerformanceDbEvent = () => {
     venueGuidance: "Through the curtains",
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
+    notes: "some notes",
     soldOutPerformances: [{ date: "2016-08-15", at: "08:00" }]
   };
 };
@@ -912,6 +918,7 @@ export const createFullCourseDbEvent = () => {
     venueGuidance: "Through the curtains",
     reviews: [{ source: "The Guardian", rating: 4 }],
     weSay: "something",
+    notes: "some notes",
     soldOutPerformances: [{ date: "2016-08-15", at: "08:00" }]
   };
 };
@@ -960,7 +967,8 @@ export const createFullExhibitionDbEvent = () => {
     duration: "01:00",
     venueGuidance: "Through the curtains",
     reviews: [{ source: "The Guardian", rating: 4 }],
-    weSay: "something"
+    weSay: "something",
+    notes: "some notes"
   };
 };
 

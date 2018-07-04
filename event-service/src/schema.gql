@@ -1,0 +1,274 @@
+scalar IsoShortDate
+scalar ShortTime
+
+enum EntityTypeEnum {
+  TALENT
+  VENUE
+  EVENT
+  EVENT_SERIES
+}
+
+enum StatusTypeEnum {
+  PENDING
+  ACTIVE
+  DELETED
+  MERGED
+}
+
+enum TalentTypeEnum {
+  INDIVIDUAL
+  GROUP
+}
+
+enum LinkTypeEnum {
+  WIKIPEDIA
+  FACEBOOK
+  TWITTER
+  HOMEPAGE
+  ACCESS
+  INSTAGRAM
+  BOOKING
+}
+
+type Link {
+  type: LinkTypeEnum!
+  url: String!
+}
+
+type Image {
+  id: ID!
+  ratio: Float!
+  copyright: String
+  dominantColor: String
+}
+
+interface Entity {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  version: Int!
+  schemeVersion: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+  updatedDate: IsoShortDate!
+  mainImage: Image
+}
+
+type Talent implements Entity {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  version: Int!
+  schemeVersion: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+  updatedDate: IsoShortDate!
+  mainImage: Image
+  firstNames: String
+  lastName: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+  description: String
+  descriptionCredit: String
+}
+
+type Venue implements Entity {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  version: Int!
+  schemeVersion: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+  updatedDate: IsoShortDate!
+  mainImage: Image
+}
+
+type EventSeries implements Entity {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  version: Int!
+  schemeVersion: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+  updatedDate: IsoShortDate!
+  mainImage: Image
+}
+
+type Event implements Entity {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  version: Int!
+  schemeVersion: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+  updatedDate: IsoShortDate!
+  mainImage: Image
+}
+
+type Query {
+  talent(id: ID!): Talent
+  venue(id: ID!): Venue
+  eventSeries(id: ID!): EventSeries
+  event(id: ID!): Event
+}
+
+input LinkInput {
+  type: LinkTypeEnum!
+  url: String!
+}
+
+input ImageInput {
+  id: ID!
+  ratio: Float!
+  copyright: String
+  dominantColor: String
+}
+
+input CreateTalentInput {
+  status: StatusTypeEnum!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  firstNames: String
+  lastName: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+  description: String
+  descriptionCredit: String
+}
+
+type CreateTalentResult {
+  talent: Talent
+}
+
+input UpdateTalentInput {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+  firstNames: String
+  lastName: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+  description: String
+  descriptionCredit: String
+}
+
+type UpdateTalentResult {
+  talent: Talent
+}
+
+input CreateVenueInput {
+  status: StatusTypeEnum!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+}
+
+type CreateVenueResult {
+  venue: Venue
+}
+
+input UpdateVenueInput {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+}
+
+type UpdateVenueResult {
+  venue: Venue
+}
+
+input CreateEventSeriesInput {
+  status: StatusTypeEnum!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+}
+
+type CreateEventSeriesResult {
+  eventSeries: EventSeries
+}
+
+input UpdateEventSeriesInput {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+}
+
+type UpdateEventSeriesResult {
+  eventSeries: EventSeries
+}
+
+input CreateEventInput {
+  status: StatusTypeEnum!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+}
+
+type CreateEventResult {
+  event: Event
+}
+
+input UpdateEventInput {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+}
+
+type UpdateEventResult {
+  event: Event
+}
+
+type Mutation {
+  createTalent(input: CreateTalentInput): CreateTalentResult
+  updateTalent(input: UpdateTalentInput): UpdateTalentResult
+  createVenue(input: CreateVenueInput): CreateVenueResult
+  updateVenue(input: UpdateVenueInput): UpdateVenueResult
+  createEventSeries(input: CreateEventSeriesInput): CreateEventSeriesResult
+  updateEventSeries(input: UpdateEventSeriesInput): UpdateEventSeriesResult
+  createEvent(input: CreateEventInput): CreateEventResult
+  updateEvent(input: UpdateEventInput): UpdateEventResult
+}
