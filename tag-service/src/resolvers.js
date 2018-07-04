@@ -14,7 +14,7 @@ export default {
     })
   },
   Mutation: {
-    createTag: async (__, request, context) => {
+    async createTag(__, request, context) {
       validator.validateUserForMutation(context);
       const tag = normaliser.normaliseCreateTagRequest(request.input.tag);
       validator.validateCreateTagRequest(tag);
@@ -22,7 +22,7 @@ export default {
       await tagRepository.createTag(dbTag);
       return { tag: dbTag };
     },
-    deleteTag: async (__, request, context) => {
+    async deleteTag(__, request, context) {
       validator.validateUserForMutation(context);
       const tag = mapper.mapDeleteTagRequest(request.input.tag);
       await tagRepository.deleteTag(tag.tagType, tag.id);

@@ -90,6 +90,7 @@ Use the following process to check what software is already running on a given p
 - work out how to add cache headers to search responses for non-admin requests.
 - Improve graphql validation to be able to replace my validation
 - Change data service to use graphql to access search service
+- renumber the ports
 - GraphQL info links:
   - useful regex /[^\w{}]+/g
   - database request batching https://github.com/facebook/dataloader

@@ -10,7 +10,6 @@ export const mapImageToResponse = mappr.compose(
     "width",
     "height",
     "dominantColor",
-    "resizeVersion",
     "modifiedDate"
   ]),
   {
