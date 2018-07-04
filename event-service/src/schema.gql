@@ -30,6 +30,86 @@ enum LinkTypeEnum {
   BOOKING
 }
 
+enum EventSeriesTypeEnum {
+  SEASON
+  OCCASIONAL
+}
+
+enum VenueTypeEnum {
+  THEATRE
+  ART_GALLERY
+  CONCERT_HALL
+  EXHIBITION_HALL
+  PERFORMING_ARTS_CENTRE
+  MUSEUM
+  CHURCH
+  CINEMA
+  OTHER
+}
+
+enum WheelchairAccessTypeEnum {
+  FULL_ACCESS
+  PARTIAL_ACCESS
+  NO_ACCESS
+  UNKNOWN
+  NOT_APPLICABLE
+}
+
+enum DisabledBathroomTypeEnum {
+  PRESENT
+  NOT_PRESENT
+  UNKNOWN
+  NOT_APPLICABLE
+}
+
+enum HearingFacilitiesTypeEnum {
+  HEARING_LOOPS
+  PARTIAL_HEARING_LOOPS
+  NO_HEARING_LOOPS
+  UNKNOWN
+  NOT_APPLICABLE
+}
+
+enum NamedClosureTypeEnum {
+  BANK_HOLIDAYS
+  BANK_HOLIDAY_WEEKENDS
+  CHRISTMAS_EVE
+  CHRISTMAS_DAY
+  BOXING_DAY
+  NEW_YEARS_EVE
+  NEW_YEARS_DAY
+  CHRISTMAS_PERIOD
+  EASTER_SUNDAY
+  EASTER_HOLIDAY_PERIOD
+  AUGUST_SATURDAYS
+  ROSH_HASHANAH
+  YOM_KIPPUR
+  AUGUST
+}
+
+enum EventTypeEnum {
+  PERFORMANCE
+  EXHIBITION
+  COURSE
+}
+
+enum OccurrenceTypeEnum {
+  BOUNDED
+  CONTINUOUS
+  ONE_TIME
+}
+
+enum CostTypeEnum {
+  FREE
+  PAID
+}
+
+enum BookingTypeEnum {
+  NOT_REQUIRED
+  REQUIRED
+  REQUIRED_FOR_NON_MEMBERS
+}
+
 type Link {
   type: LinkTypeEnum!
   url: String!
@@ -40,6 +120,66 @@ type Image {
   ratio: Float!
   copyright: String
   dominantColor: String
+}
+
+type DayOpeningTime {
+  day: Int!
+  from: ShortTime!
+  to: ShortTime!
+  timesRangeId: String
+}
+
+type DateOpeningTime {
+  date: IsoShortDate!
+  from: ShortTime!
+  to: ShortTime!
+}
+
+type DateClosedTimeRange {
+  date: IsoShortDate!
+  from: ShortTime
+  to: ShortTime
+}
+
+type DayPerformance {
+  day: Int!
+  at: ShortTime!
+  timesRangeId: String
+}
+
+type DatePerformance {
+  date: IsoShortDate!
+  at: ShortTime!
+}
+
+type SpecialPerformance {
+  date: IsoShortDate!
+  at: ShortTime!
+  audienceTags: [String!]
+}
+
+type DateClosedTimeAt {
+  date: IsoShortDate!
+  at: ShortTime
+}
+
+type SpecialOpeningTime {
+  date: IsoShortDate!
+  from: ShortTime!
+  to: ShortTime!
+  audienceTags: [String!]
+}
+
+type TimesRange {
+  id: ID!
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  label: String!
+}
+
+type Review {
+  source: String!
+  rating: Int!
 }
 
 interface Entity {
@@ -55,6 +195,8 @@ interface Entity {
   createdDate: IsoShortDate!
   updatedDate: IsoShortDate!
   mainImage: Image
+  description: String
+  descriptionCredit: String
 }
 
 type Talent implements Entity {
@@ -70,12 +212,18 @@ type Talent implements Entity {
   createdDate: IsoShortDate!
   updatedDate: IsoShortDate!
   mainImage: Image
+  description: String
+  descriptionCredit: String
   firstNames: String
   lastName: String!
   talentType: TalentTypeEnum!
   commonRole: String!
-  description: String
-  descriptionCredit: String
+}
+
+type EventTalent {
+  talent: Talent
+  roles: [String!]
+  characters: [String!]
 }
 
 type Venue implements Entity {
@@ -91,6 +239,24 @@ type Venue implements Entity {
   createdDate: IsoShortDate!
   updatedDate: IsoShortDate!
   mainImage: Image
+  description: String
+  descriptionCredit: String
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+  wheelchairAccessType: WheelchairAccessTypeEnum!
+  disabledBathroomType: DisabledBathroomTypeEnum!
+  hearingFacilitiesType: HearingFacilitiesTypeEnum!
+  hasPermanentCollection: Boolean!
+  email: String
+  telephone: String
+  openingTimes: [DayOpeningTime!]
+  additionalOpeningTimes: [DateOpeningTime!]
+  openingTimesClosures: [DateClosedTimeRange!]
+  namedClosures: [NamedClosureTypeEnum!]
 }
 
 type EventSeries implements Entity {
@@ -106,6 +272,12 @@ type EventSeries implements Entity {
   createdDate: IsoShortDate!
   updatedDate: IsoShortDate!
   mainImage: Image
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventSeriesType: EventSeriesTypeEnum!
+  occurrence: String!
+  summary: String!
 }
 
 type Event implements Entity {
@@ -121,6 +293,45 @@ type Event implements Entity {
   createdDate: IsoShortDate!
   updatedDate: IsoShortDate!
   mainImage: Image
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventType: EventTypeEnum!
+  occurrenceType: OccurrenceTypeEnum!
+  costType: CostTypeEnum!
+  summary: String!
+  soldOut: Boolean
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  rating: Int!
+  bookingType: BookingTypeEnum!
+  useVenueOpeningTimes: Boolean!
+  timedEntry: Boolean
+  costFrom: Float
+  costTo: Float
+  bookingOpens: IsoShortDate
+  venueGuidance: String
+  duration: ShortTime
+  minAge: Int
+  maxAge: Int
+  timesRanges: [TimesRange!]
+  performances: [DayPerformance!]
+  additionalPerformances: [DatePerformance!]
+  specialPerformances: [SpecialPerformance!]
+  performancesClosures: [DateClosedTimeAt!]
+  soldOutPerformances: [DatePerformance!]
+  openingTimes: [DayOpeningTime!]
+  additionalOpeningTimes: [DateOpeningTime!]
+  specialOpeningTimes: [SpecialOpeningTime!]
+  openingTimesClosures: [DateClosedTimeRange!]
+  audienceTags: [String!]
+  mediumTags: [String!]
+  styleTags: [String!]
+  geoTags: [String!]
+  reviews: [Review!]
+  talents: [EventTalent!]
+  venue: Venue!
+  eventSeries: EventSeries
 }
 
 type Query {
@@ -142,18 +353,84 @@ input ImageInput {
   dominantColor: String
 }
 
+input DayOpeningTimeInput {
+  day: Int!
+  from: ShortTime!
+  to: ShortTime!
+  timesRangeId: String
+}
+
+input DateOpeningTimeInput {
+  date: IsoShortDate!
+  from: ShortTime!
+  to: ShortTime!
+}
+
+input DateClosedTimeRangeInput {
+  date: IsoShortDate!
+  from: ShortTime
+  to: ShortTime
+}
+
+input SpecialOpeningTimeInput {
+  date: IsoShortDate!
+  from: ShortTime!
+  to: ShortTime!
+  audienceTags: [String!]
+}
+
+input TimesRangeInput {
+  id: ID!
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  label: String!
+}
+
+input DayPerformanceInput {
+  day: Int!
+  at: ShortTime!
+  timesRangeId: String
+}
+
+input DatePerformanceInput {
+  date: IsoShortDate!
+  at: ShortTime!
+}
+
+input SpecialPerformanceInput {
+  date: IsoShortDate!
+  at: ShortTime!
+  audienceTags: [String!]
+}
+
+input DateClosedTimeAtInput {
+  date: IsoShortDate!
+  at: ShortTime
+}
+
+input EventTalentInput {
+  id: ID!
+  roles: [String!]
+  characters: [String!]
+}
+
+input ReviewInput {
+  source: String!
+  rating: Int!
+}
+
 input CreateTalentInput {
   status: StatusTypeEnum!
   links: [LinkInput!]
   images: [ImageInput!]
   weSay: String
   notes: String
+  description: String
+  descriptionCredit: String
   firstNames: String
   lastName: String!
   talentType: TalentTypeEnum!
   commonRole: String!
-  description: String
-  descriptionCredit: String
 }
 
 type CreateTalentResult {
@@ -168,13 +445,13 @@ input UpdateTalentInput {
   images: [ImageInput!]
   weSay: String
   notes: String
+  description: String
+  descriptionCredit: String
   createdDate: IsoShortDate!
   firstNames: String
   lastName: String!
   talentType: TalentTypeEnum!
   commonRole: String!
-  description: String
-  descriptionCredit: String
 }
 
 type UpdateTalentResult {
@@ -187,6 +464,24 @@ input CreateVenueInput {
   images: [ImageInput!]
   weSay: String
   notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+  email: String
+  telephone: String
+  wheelchairAccessType: WheelchairAccessTypeEnum!
+  disabledBathroomType: DisabledBathroomTypeEnum!
+  hearingFacilitiesType: HearingFacilitiesTypeEnum!
+  hasPermanentCollection: Boolean!
+  openingTimes: [DayOpeningTimeInput!]
+  additionalOpeningTimes: [DateOpeningTimeInput!]
+  openingTimesClosures: [DateClosedTimeRangeInput!]
+  namedClosures: [NamedClosureTypeEnum!]
 }
 
 type CreateVenueResult {
@@ -201,7 +496,25 @@ input UpdateVenueInput {
   images: [ImageInput!]
   weSay: String
   notes: String
+  description: String
+  descriptionCredit: String
   createdDate: IsoShortDate!
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+  email: String
+  telephone: String
+  wheelchairAccessType: WheelchairAccessTypeEnum!
+  disabledBathroomType: DisabledBathroomTypeEnum!
+  hearingFacilitiesType: HearingFacilitiesTypeEnum!
+  hasPermanentCollection: Boolean!
+  openingTimes: [DayOpeningTimeInput!]
+  additionalOpeningTimes: [DateOpeningTimeInput!]
+  openingTimesClosures: [DateClosedTimeRangeInput!]
+  namedClosures: [NamedClosureTypeEnum!]
 }
 
 type UpdateVenueResult {
@@ -214,6 +527,12 @@ input CreateEventSeriesInput {
   images: [ImageInput!]
   weSay: String
   notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventSeriesType: EventSeriesTypeEnum!
+  occurrence: String!
+  summary: String!
 }
 
 type CreateEventSeriesResult {
@@ -228,7 +547,13 @@ input UpdateEventSeriesInput {
   images: [ImageInput!]
   weSay: String
   notes: String
+  description: String
+  descriptionCredit: String
   createdDate: IsoShortDate!
+  name: String!
+  eventSeriesType: EventSeriesTypeEnum!
+  occurrence: String!
+  summary: String!
 }
 
 type UpdateEventSeriesResult {
@@ -241,6 +566,45 @@ input CreateEventInput {
   images: [ImageInput!]
   weSay: String
   notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventType: EventTypeEnum!
+  occurrenceType: OccurrenceTypeEnum!
+  costType: CostTypeEnum!
+  summary: String!
+  rating: Int!
+  bookingType: BookingTypeEnum!
+  venueId: ID!
+  eventSeriesId: ID
+  useVenueOpeningTimes: Boolean!
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  costFrom: Float
+  costTo: Float
+  bookingOpens: IsoShortDate
+  venueGuidance: String
+  duration: ShortTime
+  minAge: Int
+  maxAge: Int
+  soldOut: Boolean
+  timedEntry: Boolean
+  timesRanges: [TimesRangeInput!]
+  performances: [DayPerformanceInput!]
+  additionalPerformances: [DatePerformanceInput!]
+  specialPerformances: [SpecialPerformanceInput!]
+  performancesClosures: [DateClosedTimeAtInput!]
+  soldOutPerformances: [DatePerformanceInput!]
+  openingTimes: [DayOpeningTimeInput!]
+  additionalOpeningTimes: [DateOpeningTimeInput!]
+  specialOpeningTimes: [SpecialOpeningTimeInput!]
+  openingTimesClosures: [DateClosedTimeRangeInput!]
+  audienceTags: [String!]
+  mediumTags: [String!]
+  styleTags: [String!]
+  geoTags: [String!]
+  talents: [EventTalentInput!]
+  reviews: [ReviewInput!]
 }
 
 type CreateEventResult {
@@ -255,7 +619,46 @@ input UpdateEventInput {
   images: [ImageInput!]
   weSay: String
   notes: String
+  description: String
+  descriptionCredit: String
   createdDate: IsoShortDate!
+  name: String!
+  eventType: EventTypeEnum!
+  occurrenceType: OccurrenceTypeEnum!
+  costType: CostTypeEnum!
+  summary: String!
+  rating: Int!
+  bookingType: BookingTypeEnum!
+  venueId: ID!
+  eventSeriesId: ID
+  useVenueOpeningTimes: Boolean!
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  costFrom: Float
+  costTo: Float
+  bookingOpens: IsoShortDate
+  venueGuidance: String
+  duration: ShortTime
+  minAge: Int
+  maxAge: Int
+  soldOut: Boolean
+  timedEntry: Boolean
+  timesRanges: [TimesRangeInput!]
+  performances: [DayPerformanceInput!]
+  additionalPerformances: [DatePerformanceInput!]
+  specialPerformances: [SpecialPerformanceInput!]
+  performancesClosures: [DateClosedTimeAtInput!]
+  soldOutPerformances: [DatePerformanceInput!]
+  openingTimes: [DayOpeningTimeInput!]
+  additionalOpeningTimes: [DateOpeningTimeInput!]
+  specialOpeningTimes: [SpecialOpeningTimeInput!]
+  openingTimesClosures: [DateClosedTimeRangeInput!]
+  audienceTags: [String!]
+  mediumTags: [String!]
+  styleTags: [String!]
+  geoTags: [String!]
+  talents: [EventTalentInput!]
+  reviews: [ReviewInput!]
 }
 
 type UpdateEventResult {

@@ -201,8 +201,7 @@ describe("event", () => {
         occurrenceType: occurrenceType.BOUNDED,
         costType: costType.FREE,
         entityType: entityType.EVENT,
-        status: statusType.ACTIVE,
-        isFullEntity: true
+        status: statusType.ACTIVE
       })
     );
 

@@ -68,11 +68,10 @@ const VENUE_VALIDATOR = {
   links: entityValidator.LINKS,
   images: entityValidator.IMAGES,
   weSay: entityValidator.OPTIONAL_STRING,
-  hasPermanentCollection: entityValidator.REQUIRED_BOOL,
   notes: entityValidator.OPTIONAL_STRING,
+  hasPermanentCollection: entityValidator.REQUIRED_BOOL,
   version: entityValidator.REQUIRED_VERSION,
-  createdDate: entityValidator.OPTIONAL_DATE,
-  updatedDate: entityValidator.OPTIONAL_DATE
+  createdDate: entityValidator.OPTIONAL_DATE
 };
 
 function errorHandler(errors) {

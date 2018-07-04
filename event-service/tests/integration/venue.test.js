@@ -131,8 +131,7 @@ describe("venue", () => {
         id: testVenueId,
         postcode: "N1 1TA",
         entityType: entityType.VENUE,
-        status: statusType.ACTIVE,
-        isFullEntity: true
+        status: statusType.ACTIVE
       })
     );
   });

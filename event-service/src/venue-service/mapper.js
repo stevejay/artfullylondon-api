@@ -44,12 +44,7 @@ export const mapCreateOrUpdateVenueRequest = mappr.compose(
   }
 );
 
-export const mapToAdminResponse = venue => ({
-  ...venue,
-  hasPermanentCollection: !!venue.hasPermanentCollection
-});
-
-export const mapToPublicSummaryResponse = mappr.compose(
+export const mapResponse = mappr.compose(
   () => ({ entityType: entityType.VENUE }),
   fpPick([
     "id",
@@ -59,14 +54,7 @@ export const mapToPublicSummaryResponse = mappr.compose(
     "address",
     "postcode",
     "latitude",
-    "longitude"
-  ]),
-  entityMapper.mapResponseMainImage
-);
-
-export const mapToPublicFullResponse = mappr.compose(
-  mapToPublicSummaryResponse,
-  fpPick([
+    "longitude",
     "description",
     "descriptionCredit",
     "weSay",
@@ -83,7 +71,10 @@ export const mapToPublicFullResponse = mappr.compose(
     "additionalOpeningTimes",
     "openingTimesClosures",
     "namedClosures",
-    "version"
+    "version",
+    "schemeVersion",
+    "createdDate",
+    "updatedDate"
   ]),
-  () => ({ isFullEntity: true })
+  entityMapper.mapResponseMainImage
 );

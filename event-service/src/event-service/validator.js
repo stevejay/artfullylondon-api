@@ -289,7 +289,7 @@ const EVENT_VALIDATOR = {
     each: {
       object: {
         date: entityValidator.REQUIRED_DATE,
-        at: entityValidator.OPTIONAL_DATE
+        at: entityValidator.OPTIONAL_TIME
       }
     }
   },
@@ -357,8 +357,7 @@ const EVENT_VALIDATOR = {
     }
   },
   version: entityValidator.REQUIRED_VERSION,
-  createdDate: entityValidator.OPTIONAL_DATE,
-  updatedDate: entityValidator.OPTIONAL_DATE
+  createdDate: entityValidator.OPTIONAL_DATE
 };
 
 function errorHandler(errors) {

@@ -136,8 +136,7 @@ describe("event series", () => {
         eventSeriesType: eventSeriesType.OCCASIONAL,
         summary: "Stand-up poetry",
         entityType: entityType.EVENT_SERIES,
-        status: statusType.ACTIVE,
-        isFullEntity: true
+        status: statusType.ACTIVE
       })
     );
   });

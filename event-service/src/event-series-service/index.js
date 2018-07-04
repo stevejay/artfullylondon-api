@@ -3,23 +3,11 @@ import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as notifier from "../notifier";
-import * as entityType from "../types/entity-type";
 import * as eventRepository from "../persistence/event-repository";
-import * as cacher from "../cacher";
 
 export async function get(params) {
-  const eventSeries = await eventSeriesRepository.get(params.id, false);
-  return { entity: mapper.mapToPublicFullResponse(eventSeries) };
-}
-
-export async function getForEdit(params) {
-  const eventSeries = await eventSeriesRepository.get(params.id, true);
-  return { entity: eventSeries };
-}
-
-export async function getMulti(params) {
-  const eventSeries = await eventSeriesRepository.getMulti(params.ids);
-  return { entities: eventSeries.map(mapper.mapToPublicSummaryResponse) };
+  const dbEventSeries = await eventSeriesRepository.get(params.id, false);
+  return mapper.mapResponse(dbEventSeries);
 }
 
 export async function createOrUpdate(params) {
@@ -37,8 +25,7 @@ export async function createOrUpdate(params) {
     await Promise.all(eventIds.map(notifier.updateEvent));
   }
   await notifier.indexEntity(mapper.mapToPublicFullResponse(dbEventSeries));
-  await cacher.clearEntityEtag(entityType.EVENT_SERIES, dbEventSeries.id);
-  return { entity: dbEventSeries };
+  return mapper.mapResponse(dbEventSeries);
 }
 
 export async function getNextId(lastId) {

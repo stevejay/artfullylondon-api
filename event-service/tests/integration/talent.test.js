@@ -164,8 +164,7 @@ describe("talent", () => {
         firstNames: "Byron",
         status: statusType.ACTIVE,
         talentType: talentType.INDIVIDUAL,
-        entityType: entityType.TALENT,
-        isFullEntity: true
+        entityType: entityType.TALENT
       })
     );
   });

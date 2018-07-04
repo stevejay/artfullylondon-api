@@ -20,28 +20,33 @@ export const mapCreateOrUpdateEventSeriesRequest = mappr.compose(
     "version",
     "description",
     "descriptionCredit",
-    "weSay"
+    "weSay",
+    "notes"
   ]),
   entityMapper.mapRequestEditDates,
   entityMapper.mapRequestLinks,
   entityMapper.mapRequestImages
 );
 
-export const mapToPublicSummaryResponse = mappr.compose(
+export const mapResponse = mappr.compose(
   () => ({ entityType: entityType.EVENT_SERIES }),
-  fpPick(["id", "status", "name", "eventSeriesType", "occurrence", "summary"]),
-  entityMapper.mapResponseMainImage
-);
-
-export const mapToPublicFullResponse = mappr.compose(
-  mapToPublicSummaryResponse,
   fpPick([
+    "id",
+    "status",
+    "name",
+    "eventSeriesType",
+    "occurrence",
+    "summary",
     "description",
     "descriptionCredit",
     "weSay",
+    "notes",
     "links",
     "images",
-    "version"
+    "version",
+    "schemeVersion",
+    "createdDate",
+    "updatedDate"
   ]),
-  () => ({ isFullEntity: true })
+  entityMapper.mapResponseMainImage
 );

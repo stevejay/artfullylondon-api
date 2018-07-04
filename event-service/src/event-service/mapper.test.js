@@ -129,6 +129,7 @@ describe("mapCreateOrUpdateEventRequest", () => {
       ],
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
+      notes: "some notes",
       soldOutPerformances: [{ at: "15:00", date: "2016-02-11" }],
       soldOut: false,
       version: 1,
@@ -207,6 +208,7 @@ describe("mapCreateOrUpdateEventRequest", () => {
       ],
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
+      notes: "some notes",
       version: 1,
       schemeVersion: mapper.CURRENT_EVENT_SCHEME_VERSION,
       createdDate: "2016-01-10",
@@ -275,6 +277,7 @@ describe("mapCreateOrUpdateEventRequest", () => {
       ],
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
+      notes: "some notes",
       version: 1,
       schemeVersion: mapper.CURRENT_EVENT_SCHEME_VERSION,
       createdDate: "2016-01-10",
@@ -283,7 +286,7 @@ describe("mapCreateOrUpdateEventRequest", () => {
   });
 });
 
-describe("mapToPublicFullResponse", () => {
+describe("mapResponse", () => {
   it("should map performance event with all referenced entities", () => {
     const dbItem = testData.createFullPerformanceDbEvent();
     dbItem.talents[0].characters = ["Polonius"];
@@ -326,11 +329,10 @@ describe("mapToPublicFullResponse", () => {
     };
 
     const event = mapper.mergeReferencedEntities(dbItem, referencedEntities);
-    const result = mapper.mapToPublicFullResponse(event);
+    const result = mapper.mapResponse(event);
 
     expect(result).toEqual({
       entityType: entityType.EVENT,
-      isFullEntity: true,
       id: testData.PERFORMANCE_EVENT_ID,
       status: statusType.ACTIVE,
       name: "Taming of the Shrew",
@@ -373,11 +375,6 @@ describe("mapToPublicFullResponse", () => {
         disabledBathroomType: disabledBathroomType.PRESENT,
         hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS
       },
-      venueId: "almeida-theatre",
-      venueName: "Almeida Theatre",
-      postcode: "N5 2UA",
-      latitude: 53,
-      longitude: 2,
       venueGuidance: "Through the curtains",
       useVenueOpeningTimes: false,
       timesRanges: [
@@ -425,6 +422,7 @@ describe("mapToPublicFullResponse", () => {
       },
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
+      notes: "some notes",
       soldOutPerformances: [{ at: "08:00", date: "2016-08-15" }],
       version: 4
     });
@@ -471,11 +469,10 @@ describe("mapToPublicFullResponse", () => {
     };
 
     const event = mapper.mergeReferencedEntities(dbItem, referencedEntities);
-    const result = mapper.mapToPublicFullResponse(event);
+    const result = mapper.mapResponse(event);
 
     expect(result).toEqual({
       entityType: entityType.EVENT,
-      isFullEntity: true,
       id: testData.PERFORMANCE_EVENT_ID,
       status: statusType.ACTIVE,
       name: "Taming of the Shrew",
@@ -518,11 +515,6 @@ describe("mapToPublicFullResponse", () => {
         disabledBathroomType: disabledBathroomType.PRESENT,
         hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS
       },
-      venueId: "almeida-theatre",
-      venueName: "Almeida Theatre",
-      postcode: "N5 2UA",
-      latitude: 53,
-      longitude: 2,
       venueGuidance: "Through the curtains",
       useVenueOpeningTimes: false,
       openingTimes: [{ day: 7, from: "12:00", to: "16:00" }],
@@ -563,6 +555,7 @@ describe("mapToPublicFullResponse", () => {
       },
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
+      notes: "some notes",
       version: 4
     });
   });
@@ -583,7 +576,7 @@ describe("mapToPublicFullResponse", () => {
     };
 
     const event = mapper.mergeReferencedEntities(dbItem, referencedEntities);
-    const result = mapper.mapToPublicFullResponse(event);
+    const result = mapper.mapResponse(event);
 
     expect(result.description).toEqual("Series description");
     expect(result.descriptionCredit).toEqual("Series credit");
@@ -604,7 +597,7 @@ describe("mapToPublicFullResponse", () => {
     };
 
     const event = mapper.mergeReferencedEntities(dbItem, referencedEntities);
-    const result = mapper.mapToPublicFullResponse(event);
+    const result = mapper.mapResponse(event);
 
     expect(result.images).toEqual([
       { id: "222222222222222222", ratio: 1.4, copyright: "bar" }

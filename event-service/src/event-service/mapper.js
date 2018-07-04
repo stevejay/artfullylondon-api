@@ -120,6 +120,7 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
     "venueGuidance",
     "duration",
     "weSay",
+    "notes",
     "minAge",
     "maxAge",
     "soldOut",
@@ -171,34 +172,20 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
   entityMapper.mapRequestImages
 );
 
-export const mapToPublicSummaryResponse = mappr.compose(
-  () => ({ entityType: entityType.EVENT }),
-  fpPick([
-    "id",
-    "status",
-    "name",
-    "eventType",
-    "occurrenceType",
-    "costType",
-    "summary",
-    "soldOut",
-    "dateFrom",
-    "dateTo"
-  ]),
-  {
-    venueName: "venue.name",
-    venueId: "venue.id",
-    postcode: "venue.postcode",
-    latitude: "venue.latitude",
-    longitude: "venue.longitude"
-  },
-  entityMapper.mapResponseMainImage
-);
-
-export const mapToPublicFullResponse = mappr(
+export const mapResponse = mappr(
   mappr.compose(
-    mapToPublicSummaryResponse,
+    () => ({ entityType: entityType.EVENT }),
     fpPick([
+      "id",
+      "status",
+      "name",
+      "eventType",
+      "occurrenceType",
+      "costType",
+      "summary",
+      "soldOut",
+      "dateFrom",
+      "dateTo",
       "rating",
       "bookingType",
       "useVenueOpeningTimes",
@@ -206,12 +193,12 @@ export const mapToPublicFullResponse = mappr(
       "costFrom",
       "costTo",
       "bookingOpens",
-      "eventSeriesId",
       "venueGuidance",
       "duration",
       "description",
       "descriptionCredit",
       "weSay",
+      "notes",
       "minAge",
       "maxAge",
       "timesRanges",
@@ -235,11 +222,16 @@ export const mapToPublicFullResponse = mappr(
       "links",
       "images",
       "version"
-    ]),
-    () => ({ isFullEntity: true })
+    ])
+    // {
+    //   venueName: "venue.name",
+    //   venueId: "venue.id",
+    //   postcode: "venue.postcode",
+    //   latitude: "venue.latitude",
+    //   longitude: "venue.longitude"
+    // }
   ),
   fixUpEventValuesFromReferencedEntities,
-  // We redo this mapping in case images are now coming from a referenced entity:
   event => {
     return {
       ...event,
@@ -250,7 +242,6 @@ export const mapToPublicFullResponse = mappr(
 
 export function mergeReferencedEntities(event, referencedEntities) {
   const talentsIdMap = _.keyBy(referencedEntities.talents, "id");
-
   const result = {
     ...event,
     venue: referencedEntities.venue,
@@ -262,7 +253,6 @@ export function mergeReferencedEntities(event, referencedEntities) {
           ...talent
         }))
   };
-
   delete result.eventSeriesId;
   delete result.venueId;
   return result;
@@ -274,16 +264,13 @@ export function fixUpEventValuesFromReferencedEntities(event) {
   if (result.eventSeries) {
     if (!result.description) {
       // use the event series description if the event has none
-
       if (result.eventSeries.description) {
         result.description = event.eventSeries.description;
-
         if (result.eventSeries.descriptionCredit) {
           result.descriptionCredit = result.eventSeries.descriptionCredit;
         }
       }
     }
-
     if (_.isEmpty(result.images)) {
       // use the event series images if the event has none
       if (!_.isEmpty(result.eventSeries.images)) {

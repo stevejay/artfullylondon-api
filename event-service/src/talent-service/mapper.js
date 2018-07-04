@@ -54,30 +54,3 @@ export const mapResponse = mappr.compose(
   ]),
   entityMapper.mapResponseMainImage
 );
-
-// export const mapToPublicSummaryResponse = mappr.compose(
-//   () => ({ entityType: entityType.TALENT }),
-//   fpPick([
-//     "id",
-//     "status",
-//     "firstNames",
-//     "lastName",
-//     "talentType",
-//     "commonRole"
-//   ]),
-//   entityMapper.mapResponseMainImage
-// );
-
-// export const mapToPublicFullResponse = mappr.compose(
-//   mapToPublicSummaryResponse,
-//   fpPick([
-//     "description",
-//     "descriptionCredit",
-//     "weSay",
-//     "notes",
-//     "links",
-//     "images",
-//     "version"
-//   ]),
-//   () => ({ isFullEntity: true })
-// );
