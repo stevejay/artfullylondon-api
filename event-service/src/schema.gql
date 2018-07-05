@@ -221,9 +221,10 @@ type Talent implements Entity {
 }
 
 type EventTalent {
-  talent: Talent
+  id: ID!
   roles: [String!]
   characters: [String!]
+  talent: Talent!
 }
 
 type Venue implements Entity {

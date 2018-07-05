@@ -223,13 +223,6 @@ export const mapResponse = mappr(
       "images",
       "version"
     ])
-    // {
-    //   venueName: "venue.name",
-    //   venueId: "venue.id",
-    //   postcode: "venue.postcode",
-    //   latitude: "venue.latitude",
-    //   longitude: "venue.longitude"
-    // }
   ),
   fixUpEventValuesFromReferencedEntities,
   event => {
