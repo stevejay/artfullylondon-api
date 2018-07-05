@@ -10,6 +10,10 @@ export async function get(params) {
   return mapper.mapResponse(dbTalent);
 }
 
+export async function getForEdit(params) {
+  return await talentRepository.get(params.id, true);
+}
+
 export async function createOrUpdate(params) {
   let talent = normaliser.normaliseCreateOrUpdateTalentRequest(params);
   validator.validateCreateOrUpdateTalentRequest(talent);

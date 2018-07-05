@@ -4,7 +4,6 @@ import * as timeUtils from "../entity/time-utils";
 import * as bookingType from "../types/booking-type";
 import * as costType from "../types/cost-type";
 import * as disabledBathroomType from "../types/disabled-bathroom-type";
-import * as entityType from "../types/entity-type";
 import * as eventSeriesType from "../types/event-series-type";
 import * as eventType from "../types/event-type";
 import * as hearingFacilitiesType from "../types/hearing-facilities-type";
@@ -287,13 +286,12 @@ describe("mapCreateOrUpdateEventRequest", () => {
 });
 
 describe("mapResponse", () => {
-  it("should map performance event with all referenced entities", () => {
+  it("should map a performance event with all referenced entities", () => {
     const dbItem = testData.createFullPerformanceDbEvent();
     dbItem.talents[0].characters = ["Polonius"];
 
     const referencedEntities = {
       eventSeries: {
-        entityType: entityType.EVENT_SERIES,
         eventSeriesType: eventSeriesType.OCCASIONAL,
         id: testData.EVENT_EVENT_SERIES_ID,
         name: "Some Event Series",
@@ -303,7 +301,6 @@ describe("mapResponse", () => {
       },
       talents: [
         {
-          entityType: entityType.TALENT,
           commonRole: "Foo",
           id: testData.EVENT_TALENT_ID,
           firstNames: "John",
@@ -313,7 +310,6 @@ describe("mapResponse", () => {
         }
       ],
       venue: {
-        entityType: entityType.VENUE,
         status: statusType.ACTIVE,
         venueType: venueType.THEATRE,
         id: testData.EVENT_VENUE_ID,
@@ -332,7 +328,6 @@ describe("mapResponse", () => {
     const result = mapper.mapResponse(event);
 
     expect(result).toEqual({
-      entityType: entityType.EVENT,
       id: testData.PERFORMANCE_EVENT_ID,
       status: statusType.ACTIVE,
       name: "Taming of the Shrew",
@@ -353,7 +348,6 @@ describe("mapResponse", () => {
         { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
       ],
       eventSeries: {
-        entityType: entityType.EVENT_SERIES,
         eventSeriesType: eventSeriesType.OCCASIONAL,
         id: testData.EVENT_EVENT_SERIES_ID,
         name: "Some Event Series",
@@ -362,7 +356,6 @@ describe("mapResponse", () => {
         summary: "A summary"
       },
       venue: {
-        entityType: entityType.VENUE,
         status: statusType.ACTIVE,
         venueType: venueType.THEATRE,
         id: testData.EVENT_VENUE_ID,
@@ -390,13 +383,14 @@ describe("mapResponse", () => {
       duration: "01:00",
       talents: [
         {
-          entityType: entityType.TALENT,
-          commonRole: "Foo",
-          id: testData.EVENT_TALENT_ID,
-          firstNames: "John",
-          lastName: "Doe",
-          status: statusType.ACTIVE,
-          talentType: talentType.INDIVIDUAL,
+          talent: {
+            commonRole: "Foo",
+            id: testData.EVENT_TALENT_ID,
+            firstNames: "John",
+            lastName: "Doe",
+            status: statusType.ACTIVE,
+            talentType: talentType.INDIVIDUAL
+          },
           roles: ["Director"],
           characters: ["Polonius"]
         }
@@ -423,17 +417,15 @@ describe("mapResponse", () => {
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
       notes: "some notes",
-      soldOutPerformances: [{ at: "08:00", date: "2016-08-15" }],
-      version: 4
+      soldOutPerformances: [{ at: "08:00", date: "2016-08-15" }]
     });
   });
 
-  it("should map exhibition event with all referenced entities", () => {
+  it("should map an exhibition event with all referenced entities", () => {
     const dbItem = testData.createFullExhibitionDbEvent();
 
     const referencedEntities = {
       eventSeries: {
-        entityType: entityType.EVENT_SERIES,
         eventSeriesType: eventSeriesType.OCCASIONAL,
         id: testData.EVENT_EVENT_SERIES_ID,
         name: "Some Event Series",
@@ -443,7 +435,6 @@ describe("mapResponse", () => {
       },
       talents: [
         {
-          entityType: entityType.TALENT,
           commonRole: "Foo",
           id: testData.EVENT_TALENT_ID,
           firstNames: "John",
@@ -453,7 +444,6 @@ describe("mapResponse", () => {
         }
       ],
       venue: {
-        entityType: entityType.VENUE,
         status: statusType.ACTIVE,
         venueType: venueType.THEATRE,
         id: testData.EVENT_VENUE_ID,
@@ -472,7 +462,6 @@ describe("mapResponse", () => {
     const result = mapper.mapResponse(event);
 
     expect(result).toEqual({
-      entityType: entityType.EVENT,
       id: testData.PERFORMANCE_EVENT_ID,
       status: statusType.ACTIVE,
       name: "Taming of the Shrew",
@@ -493,7 +482,6 @@ describe("mapResponse", () => {
         { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
       ],
       eventSeries: {
-        entityType: entityType.EVENT_SERIES,
         eventSeriesType: eventSeriesType.OCCASIONAL,
         id: testData.EVENT_EVENT_SERIES_ID,
         name: "Some Event Series",
@@ -502,7 +490,6 @@ describe("mapResponse", () => {
         summary: "A summary"
       },
       venue: {
-        entityType: entityType.VENUE,
         status: statusType.ACTIVE,
         venueType: venueType.THEATRE,
         id: testData.EVENT_VENUE_ID,
@@ -524,13 +511,14 @@ describe("mapResponse", () => {
       duration: "01:00",
       talents: [
         {
-          entityType: entityType.TALENT,
-          commonRole: "Foo",
-          id: testData.EVENT_TALENT_ID,
-          firstNames: "John",
-          lastName: "Doe",
-          status: statusType.ACTIVE,
-          talentType: talentType.INDIVIDUAL,
+          talent: {
+            commonRole: "Foo",
+            id: testData.EVENT_TALENT_ID,
+            firstNames: "John",
+            lastName: "Doe",
+            status: statusType.ACTIVE,
+            talentType: talentType.INDIVIDUAL
+          },
           roles: ["Director"]
         }
       ],
@@ -555,12 +543,11 @@ describe("mapResponse", () => {
       },
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
-      notes: "some notes",
-      version: 4
+      notes: "some notes"
     });
   });
 
-  it("should use description from event series", () => {
+  it("should use the description from event series", () => {
     const dbItem = testData.createFullPerformanceDbEvent();
     delete dbItem.description;
 
@@ -582,7 +569,7 @@ describe("mapResponse", () => {
     expect(result.descriptionCredit).toEqual("Series credit");
   });
 
-  it("should use images from event series", () => {
+  it("should use the images from event series", () => {
     const dbItem = testData.createFullPerformanceDbEvent();
     delete dbItem.images;
 

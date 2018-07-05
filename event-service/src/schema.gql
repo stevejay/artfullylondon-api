@@ -1,13 +1,6 @@
 scalar IsoShortDate
 scalar ShortTime
 
-enum EntityTypeEnum {
-  TALENT
-  VENUE
-  EVENT
-  EVENT_SERIES
-}
-
 enum StatusTypeEnum {
   PENDING
   ACTIVE
@@ -122,6 +115,11 @@ type Image {
   dominantColor: String
 }
 
+type Tag {
+  id: ID!
+  label: String!
+}
+
 type DayOpeningTime {
   day: Int!
   from: ShortTime!
@@ -155,7 +153,7 @@ type DatePerformance {
 type SpecialPerformance {
   date: IsoShortDate!
   at: ShortTime!
-  audienceTags: [String!]
+  audienceTags: [Tag!]
 }
 
 type DateClosedTimeAt {
@@ -167,7 +165,7 @@ type SpecialOpeningTime {
   date: IsoShortDate!
   from: ShortTime!
   to: ShortTime!
-  audienceTags: [String!]
+  audienceTags: [Tag!]
 }
 
 type TimesRange {
@@ -184,33 +182,41 @@ type Review {
 
 interface Entity {
   id: ID!
-  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  # version: Int!
+  # schemeVersion: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  # createdDate: IsoShortDate!
+  # updatedDate: IsoShortDate!
+  mainImage: Image
+  description: String
+  descriptionCredit: String
+}
+
+interface EntityForEdit {
+  id: ID!
   status: StatusTypeEnum!
   version: Int!
-  schemeVersion: Int!
+  # schemeVersion: Int!
   links: [Link!]
   images: [Image!]
   weSay: String
   notes: String
   createdDate: IsoShortDate!
-  updatedDate: IsoShortDate!
-  mainImage: Image
   description: String
   descriptionCredit: String
 }
 
 type Talent implements Entity {
   id: ID!
-  entityType: EntityTypeEnum!
   status: StatusTypeEnum!
-  version: Int!
-  schemeVersion: Int!
   links: [Link!]
   images: [Image!]
   weSay: String
   notes: String
-  createdDate: IsoShortDate!
-  updatedDate: IsoShortDate!
   mainImage: Image
   description: String
   descriptionCredit: String
@@ -220,26 +226,72 @@ type Talent implements Entity {
   commonRole: String!
 }
 
-type EventTalent {
+type TalentForEdit implements EntityForEdit {
   id: ID!
-  roles: [String!]
-  characters: [String!]
-  talent: Talent!
-}
-
-type Venue implements Entity {
-  id: ID!
-  entityType: EntityTypeEnum!
   status: StatusTypeEnum!
   version: Int!
-  schemeVersion: Int!
   links: [Link!]
   images: [Image!]
   weSay: String
   notes: String
   createdDate: IsoShortDate!
-  updatedDate: IsoShortDate!
+  description: String
+  descriptionCredit: String
+  firstNames: String
+  lastName: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+}
+
+type EventTalent {
+  roles: [String!]
+  characters: [String!]
+  talent: Talent!
+}
+
+type EventTalentForEdit {
+  roles: [String!]
+  characters: [String!]
+  id: ID!
+}
+
+type Venue implements Entity {
+  id: ID!
+  status: StatusTypeEnum!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
   mainImage: Image
+  description: String
+  descriptionCredit: String
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+  wheelchairAccessType: WheelchairAccessTypeEnum!
+  disabledBathroomType: DisabledBathroomTypeEnum!
+  hearingFacilitiesType: HearingFacilitiesTypeEnum!
+  hasPermanentCollection: Boolean!
+  email: String
+  telephone: String
+  openingTimes: [DayOpeningTime!]
+  additionalOpeningTimes: [DateOpeningTime!]
+  openingTimesClosures: [DateClosedTimeRange!]
+  namedClosures: [NamedClosureTypeEnum!]
+}
+
+type VenueForEdit implements EntityForEdit {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
   description: String
   descriptionCredit: String
   name: String!
@@ -262,17 +314,29 @@ type Venue implements Entity {
 
 type EventSeries implements Entity {
   id: ID!
-  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  mainImage: Image
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventSeriesType: EventSeriesTypeEnum!
+  occurrence: String!
+  summary: String!
+}
+
+type EventSeriesForEdit implements EntityForEdit {
+  id: ID!
   status: StatusTypeEnum!
   version: Int!
-  schemeVersion: Int!
   links: [Link!]
   images: [Image!]
   weSay: String
   notes: String
   createdDate: IsoShortDate!
-  updatedDate: IsoShortDate!
-  mainImage: Image
   description: String
   descriptionCredit: String
   name: String!
@@ -283,16 +347,11 @@ type EventSeries implements Entity {
 
 type Event implements Entity {
   id: ID!
-  entityType: EntityTypeEnum!
   status: StatusTypeEnum!
-  version: Int!
-  schemeVersion: Int!
   links: [Link!]
   images: [Image!]
   weSay: String
   notes: String
-  createdDate: IsoShortDate!
-  updatedDate: IsoShortDate!
   mainImage: Image
   description: String
   descriptionCredit: String
@@ -325,21 +384,75 @@ type Event implements Entity {
   additionalOpeningTimes: [DateOpeningTime!]
   specialOpeningTimes: [SpecialOpeningTime!]
   openingTimesClosures: [DateClosedTimeRange!]
-  audienceTags: [String!]
-  mediumTags: [String!]
-  styleTags: [String!]
-  geoTags: [String!]
+  audienceTags: [Tag!]
+  mediumTags: [Tag!]
+  styleTags: [Tag!]
+  geoTags: [Tag!]
   reviews: [Review!]
   talents: [EventTalent!]
   venue: Venue!
   eventSeries: EventSeries
 }
 
+type EventForEdit implements EntityForEdit {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  createdDate: IsoShortDate!
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventType: EventTypeEnum!
+  occurrenceType: OccurrenceTypeEnum!
+  costType: CostTypeEnum!
+  summary: String!
+  soldOut: Boolean
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  rating: Int!
+  bookingType: BookingTypeEnum!
+  useVenueOpeningTimes: Boolean!
+  timedEntry: Boolean
+  costFrom: Float
+  costTo: Float
+  bookingOpens: IsoShortDate
+  venueGuidance: String
+  duration: ShortTime
+  minAge: Int
+  maxAge: Int
+  timesRanges: [TimesRange!]
+  performances: [DayPerformance!]
+  additionalPerformances: [DatePerformance!]
+  specialPerformances: [SpecialPerformance!]
+  performancesClosures: [DateClosedTimeAt!]
+  soldOutPerformances: [DatePerformance!]
+  openingTimes: [DayOpeningTime!]
+  additionalOpeningTimes: [DateOpeningTime!]
+  specialOpeningTimes: [SpecialOpeningTime!]
+  openingTimesClosures: [DateClosedTimeRange!]
+  audienceTags: [Tag!]
+  mediumTags: [Tag!]
+  styleTags: [Tag!]
+  geoTags: [Tag!]
+  reviews: [Review!]
+  talents: [EventTalentForEdit!]
+  venueId: ID!
+  eventSeriesId: ID
+}
+
 type Query {
   talent(id: ID!): Talent
+  talentForEdit(id: ID!): TalentForEdit
   venue(id: ID!): Venue
+  venueForEdit(id: ID!): VenueForEdit
   eventSeries(id: ID!): EventSeries
+  eventSeriesForEdit(id: ID!): EventSeriesForEdit
   event(id: ID!): Event
+  eventForEdit(id: ID!): EventForEdit
 }
 
 input LinkInput {
@@ -352,6 +465,11 @@ input ImageInput {
   ratio: Float!
   copyright: String
   dominantColor: String
+}
+
+input TagInput {
+  id: ID!
+  label: String!
 }
 
 input DayOpeningTimeInput {
@@ -377,7 +495,7 @@ input SpecialOpeningTimeInput {
   date: IsoShortDate!
   from: ShortTime!
   to: ShortTime!
-  audienceTags: [String!]
+  audienceTags: [TagInput!]
 }
 
 input TimesRangeInput {
@@ -401,7 +519,7 @@ input DatePerformanceInput {
 input SpecialPerformanceInput {
   date: IsoShortDate!
   at: ShortTime!
-  audienceTags: [String!]
+  audienceTags: [TagInput!]
 }
 
 input DateClosedTimeAtInput {
@@ -600,10 +718,10 @@ input CreateEventInput {
   additionalOpeningTimes: [DateOpeningTimeInput!]
   specialOpeningTimes: [SpecialOpeningTimeInput!]
   openingTimesClosures: [DateClosedTimeRangeInput!]
-  audienceTags: [String!]
-  mediumTags: [String!]
-  styleTags: [String!]
-  geoTags: [String!]
+  audienceTags: [TagInput!]
+  mediumTags: [TagInput!]
+  styleTags: [TagInput!]
+  geoTags: [TagInput!]
   talents: [EventTalentInput!]
   reviews: [ReviewInput!]
 }
@@ -654,10 +772,10 @@ input UpdateEventInput {
   additionalOpeningTimes: [DateOpeningTimeInput!]
   specialOpeningTimes: [SpecialOpeningTimeInput!]
   openingTimesClosures: [DateClosedTimeRangeInput!]
-  audienceTags: [String!]
-  mediumTags: [String!]
-  styleTags: [String!]
-  geoTags: [String!]
+  audienceTags: [TagInput!]
+  mediumTags: [TagInput!]
+  styleTags: [TagInput!]
+  geoTags: [TagInput!]
   talents: [EventTalentInput!]
   reviews: [ReviewInput!]
 }

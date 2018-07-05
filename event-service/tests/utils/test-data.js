@@ -23,8 +23,8 @@ export const NORMAL_ADMIN_USER_REQUEST_HEADERS = {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiY29nbml0bzp1c2VybmFtZSI6IlN0ZXZlIn0.zD8h7GMwyhBnY4ijQzmBaTl57wscAWKCyBuvCOMVRCA"
 };
 
-export const INDIVIDUAL_TALENT_ID = "carrie-cracknell-actor";
-export const GROUP_TALENT_ID = "the-darkness-artist";
+export const INDIVIDUAL_TALENT_ID = "talent/carrie-cracknell-actor";
+export const GROUP_TALENT_ID = "talent/the-darkness-artist";
 
 export const createMinimalIndividualRequestTalent = () => {
   return {
@@ -190,8 +190,8 @@ export const createMinimalGroupDbTalent = () => {
   };
 };
 
-export const MINIMAL_VENUE_ID = "almeida-theatre";
-export const FULL_VENUE_ID = "tate-modern";
+export const MINIMAL_VENUE_ID = "venue/almeida-theatre";
+export const FULL_VENUE_ID = "venue/tate-modern";
 
 export const createMinimalRequestVenue = () => {
   return {
@@ -327,7 +327,7 @@ export const createFullDbVenue = () => {
   };
 };
 
-export const EVENT_SERIES_ID = "bang-said-the-gun";
+export const EVENT_SERIES_ID = "event-series/bang-said-the-gun";
 
 export const createMinimalRequestEventSeries = () => {
   return {
@@ -408,12 +408,15 @@ export const createFullDbEventSeries = () => {
   };
 };
 
-export const PERFORMANCE_EVENT_ID = "almeida-theatre/2016/taming-of-the-shrew";
-export const EXHIBITION_EVENT_ID = "almeida-theatre/2016/taming-of-the-shrew";
-export const COURSE_EVENT_ID = "photographers-gallery/2017/taking-pictures";
-export const EVENT_EVENT_SERIES_ID = "some-event-series";
-export const EVENT_VENUE_ID = "almeida-theatre";
-export const EVENT_TALENT_ID = "john-doe";
+export const PERFORMANCE_EVENT_ID =
+  "event/almeida-theatre/2016/taming-of-the-shrew";
+export const EXHIBITION_EVENT_ID =
+  "event/almeida-theatre/2016/taming-of-the-shrew";
+export const COURSE_EVENT_ID =
+  "event/photographers-gallery/2017/taking-pictures";
+export const EVENT_EVENT_SERIES_ID = "event-series/some-event-series";
+export const EVENT_VENUE_ID = "venue/almeida-theatre";
+export const EVENT_TALENT_ID = "talent/john-doe";
 
 export const createMinimalPerformanceRequestEvent = () => {
   return {

@@ -8,7 +8,9 @@ export const CURRENT_EVENT_SERIES_SCHEME_VERSION = 1;
 
 export const mapCreateOrUpdateEventSeriesRequest = mappr.compose(
   params => ({
-    id: params.id || idGenerator.generateFromName(params.name),
+    id:
+      params.id ||
+      idGenerator.generateFromName(params.name, entityType.EVENT_SERIES),
     schemeVersion: CURRENT_EVENT_SERIES_SCHEME_VERSION
   }),
   fpPick([
@@ -29,7 +31,6 @@ export const mapCreateOrUpdateEventSeriesRequest = mappr.compose(
 );
 
 export const mapResponse = mappr.compose(
-  () => ({ entityType: entityType.EVENT_SERIES }),
   fpPick([
     "id",
     "status",
@@ -42,11 +43,7 @@ export const mapResponse = mappr.compose(
     "weSay",
     "notes",
     "links",
-    "images",
-    "version",
-    "schemeVersion",
-    "createdDate",
-    "updatedDate"
+    "images"
   ]),
   entityMapper.mapResponseMainImage
 );

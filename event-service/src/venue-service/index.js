@@ -11,6 +11,10 @@ export async function get(params) {
   return mapper.mapResponse(dbVenue);
 }
 
+export async function getForEdit(params) {
+  return await venueRepository.get(params.id, true);
+}
+
 export async function createOrUpdate(params) {
   let venue = normaliser.normaliseCreateOrUpdateVenueRequest(params);
   validator.validateCreateOrUpdateVenueRequest(venue);

@@ -1,7 +1,6 @@
 import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
 import * as timeUtils from "../entity/time-utils";
-import * as entityType from "../types/entity-type";
 import * as eventSeriesType from "../types/event-series-type";
 import * as linkType from "../types/link-type";
 import * as statusType from "../types/status-type";
@@ -76,7 +75,6 @@ describe("mapResponse", () => {
     const dbItem = testData.createFullDbEventSeries();
     const result = mapper.mapResponse(dbItem);
     expect(result).toEqual({
-      entityType: entityType.EVENT_SERIES,
       id: testData.EVENT_SERIES_ID,
       status: statusType.ACTIVE,
       name: "Bang Said The Gun",
@@ -101,11 +99,7 @@ describe("mapResponse", () => {
         }
       ],
       weSay: "something",
-      notes: "some notes",
-      version: 1,
-      schemeVersion: mapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
-      createdDate: "2016-01-10",
-      updatedDate: "2016-01-11"
+      notes: "some notes"
     });
   });
 });

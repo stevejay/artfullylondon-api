@@ -11,20 +11,28 @@ export default {
   ShortTime: GraphQLShortTime,
   Query: {
     async talent(__, params) {
-      const talent = await talentService.get(params);
-      return talent;
+      return await talentService.get(params);
+    },
+    async talentForEdit(__, params) {
+      return await talentService.getForEdit(params);
     },
     async venue(__, params) {
-      const venue = await venueService.get(params);
-      return venue;
+      return await venueService.get(params);
+    },
+    async venueForEdit(__, params) {
+      return await venueService.getForEdit(params);
     },
     async eventSeries(__, params) {
-      const eventSeries = await eventSeriesService.get(params);
-      return eventSeries;
+      return await eventSeriesService.get(params);
+    },
+    async eventSeriesForEdit(__, params) {
+      return await eventSeriesService.getForEdit(params);
     },
     async event(__, params) {
-      const event = await eventService.get(params);
-      return event;
+      return await eventService.get(params);
+    },
+    async eventForEdit(__, params) {
+      return await eventService.getForEdit(params);
     }
   },
   Mutation: {

@@ -10,6 +10,10 @@ export async function get(params) {
   return mapper.mapResponse(dbEventSeries);
 }
 
+export async function getForEdit(params) {
+  return await eventSeriesRepository.get(params.id, true);
+}
+
 export async function createOrUpdate(params) {
   const eventSeries = normaliser.normaliseCreateOrUpdateEventSeriesRequest(
     params

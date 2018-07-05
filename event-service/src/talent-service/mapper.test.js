@@ -1,7 +1,6 @@
 import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
 import * as timeUtils from "../entity/time-utils";
-import * as entityType from "../types/entity-type";
 import * as linkType from "../types/link-type";
 import * as statusType from "../types/status-type";
 import * as talentType from "../types/talent-type";
@@ -113,7 +112,6 @@ describe("mapResponse", () => {
     const dbTalent = testData.createFullIndividualDbTalent();
     const result = mapper.mapResponse(dbTalent);
     expect(result).toEqual({
-      entityType: entityType.TALENT,
       status: statusType.ACTIVE,
       id: testData.INDIVIDUAL_TALENT_ID,
       lastName: "Cracknell",
@@ -137,11 +135,7 @@ describe("mapResponse", () => {
           ratio: 1.2,
           copyright: "Tate Modern"
         }
-      ],
-      version: 3,
-      schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
-      updatedDate: "2016-01-11"
+      ]
     });
   });
 
@@ -149,17 +143,12 @@ describe("mapResponse", () => {
     const dbTalent = testData.createMinimalIndividualDbTalent();
     const result = mapper.mapResponse(dbTalent);
     expect(result).toEqual({
-      entityType: entityType.TALENT,
       status: statusType.ACTIVE,
       id: testData.INDIVIDUAL_TALENT_ID,
       lastName: "Cracknell",
       talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
-      firstNames: "Carrie",
-      version: 3,
-      schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
-      updatedDate: "2016-01-11"
+      firstNames: "Carrie"
     });
   });
 
@@ -167,16 +156,11 @@ describe("mapResponse", () => {
     const dbTalent = testData.createMinimalGroupDbTalent();
     const result = mapper.mapResponse(dbTalent);
     expect(result).toEqual({
-      entityType: entityType.TALENT,
       status: statusType.ACTIVE,
       id: testData.GROUP_TALENT_ID,
       lastName: "The Darkness",
       talentType: talentType.GROUP,
-      commonRole: "Artist",
-      version: 1,
-      schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
-      updatedDate: "2016-01-11"
+      commonRole: "Artist"
     });
   });
 });

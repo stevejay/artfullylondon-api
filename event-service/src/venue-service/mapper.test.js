@@ -2,7 +2,6 @@ import * as testData from "../../tests/utils/test-data";
 import * as mapper from "./mapper";
 import * as timeUtils from "../entity/time-utils";
 import * as disabledBathroomType from "../types/disabled-bathroom-type";
-import * as entityType from "../types/entity-type";
 import * as hearingFacilitiesType from "../types/hearing-facilities-type";
 import * as linkType from "../types/link-type";
 import * as namedClosureType from "../types/named-closure-type";
@@ -105,7 +104,6 @@ describe("mapResponse", () => {
     const item = testData.createFullDbVenue();
     const result = mapper.mapResponse(item);
     expect(result).toEqual({
-      entityType: entityType.VENUE,
       id: testData.FULL_VENUE_ID,
       status: statusType.ACTIVE,
       name: "Tate Modern",
@@ -150,11 +148,7 @@ describe("mapResponse", () => {
           ratio: 1.2,
           copyright: "Foo"
         }
-      ],
-      version: 1,
-      schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
-      createdDate: "2016-01-10",
-      updatedDate: "2016-01-11"
+      ]
     });
   });
 
@@ -162,7 +156,6 @@ describe("mapResponse", () => {
     const item = testData.createMinimalDbVenue();
     const result = mapper.mapResponse(item);
     expect(result).toEqual({
-      entityType: entityType.VENUE,
       id: testData.MINIMAL_VENUE_ID,
       status: statusType.ACTIVE,
       name: "Almeida Theatre",
@@ -173,11 +166,7 @@ describe("mapResponse", () => {
       longitude: -0.103103,
       wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
       disabledBathroomType: disabledBathroomType.PRESENT,
-      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
-      version: 1,
-      schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
-      createdDate: "2016-01-10",
-      updatedDate: "2016-01-11"
+      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS
     });
   });
 });

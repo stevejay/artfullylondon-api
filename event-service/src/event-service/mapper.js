@@ -2,9 +2,11 @@ import _ from "lodash";
 import fpPick from "lodash/fp/pick";
 import mappr from "mappr";
 import * as entityMapper from "../entity/mapper";
+import * as venueMapper from "../venue-service/mapper";
+import * as eventSeriesMapper from "../event-series-service/mapper";
+import * as talentMapper from "../talent-service/mapper";
 import * as idGenerator from "../entity/id-generator";
 import * as eventType from "../types/event-type";
-import * as entityType from "../types/entity-type";
 
 export const CURRENT_EVENT_SCHEME_VERSION = 4;
 
@@ -174,7 +176,6 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
 
 export const mapResponse = mappr(
   mappr.compose(
-    () => ({ entityType: entityType.EVENT }),
     fpPick([
       "id",
       "status",
@@ -215,40 +216,46 @@ export const mapResponse = mappr(
       "mediumTags",
       "styleTags",
       "geoTags",
-      "talents",
-      "venue",
-      "eventSeries",
       "reviews",
       "links",
-      "images",
-      "version"
-    ])
+      "images"
+    ]),
+    {
+      venue: params => venueMapper.mapResponse(params.venue),
+      eventSeries: params =>
+        params.eventSeries
+          ? eventSeriesMapper.mapResponse(params.eventSeries)
+          : undefined,
+      talents: params =>
+        _.isEmpty(params.talents)
+          ? undefined
+          : params.talents.map(talent => ({
+              roles: talent.roles,
+              characters: talent.characters,
+              talent: talentMapper.mapResponse(talent.talent)
+            }))
+    }
   ),
   fixUpEventValuesFromReferencedEntities,
-  event => {
-    return {
-      ...event,
-      ...entityMapper.mapResponseMainImage(event)
-    };
-  }
+  event => ({
+    ...event,
+    ...entityMapper.mapResponseMainImage(event)
+  })
 );
 
 export function mergeReferencedEntities(event, referencedEntities) {
   const talentsIdMap = _.keyBy(referencedEntities.talents, "id");
-  const result = {
+  return {
     ...event,
     venue: referencedEntities.venue,
     eventSeries: referencedEntities.eventSeries || undefined,
     talents: _.isEmpty(event.talents)
       ? undefined
       : event.talents.map(talent => ({
-          ...talentsIdMap[talent.id],
-          ...talent
+          ...talent,
+          talent: talentsIdMap[talent.id]
         }))
   };
-  delete result.eventSeriesId;
-  delete result.venueId;
-  return result;
 }
 
 export function fixUpEventValuesFromReferencedEntities(event) {

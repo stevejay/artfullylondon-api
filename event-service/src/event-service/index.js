@@ -14,16 +14,20 @@ export async function get(params) {
   return mapper.mapResponse(dbEvent);
 }
 
+export async function getForEdit(params) {
+  return await eventRepository.get(params.id, true);
+}
+
 export async function createOrUpdate(params) {
   const event = normaliser.normaliseCreateOrUpdateEventRequest(params);
   validator.validateCreateOrUpdateEventRequest(event);
-  const referencedEntities = await eventRepository.getReferencedEntities(
-    event,
-    false
-  );
   let dbEvent = mapper.mapCreateOrUpdateEventRequest(event);
   await eventRepository.createOrUpdate(dbEvent);
   await notifier.updateEvent(dbEvent.id);
+  const referencedEntities = await eventRepository.getReferencedEntities(
+    dbEvent,
+    false
+  );
   dbEvent = mapper.mergeReferencedEntities(dbEvent, referencedEntities);
   return mapper.mapResponse(dbEvent);
 }
