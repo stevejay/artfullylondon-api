@@ -1,10 +1,10 @@
-// import { GraphQLError } from "graphql/error";
 import { GraphQLDate } from "graphql-iso-date";
 import GraphQLShortTime from "./graphql-short-time";
 import * as talentService from "./talent-service";
 import * as venueService from "./venue-service";
 import * as eventSeriesService from "./event-series-service";
 import * as eventService from "./event-service";
+import * as validator from "./validator";
 
 export default {
   IsoShortDate: GraphQLDate,
@@ -36,35 +36,43 @@ export default {
     }
   },
   Mutation: {
-    async createTalent(__, params) {
+    async createTalent(__, params, context) {
+      validator.validateUserForMutation(context);
       const talent = await talentService.createOrUpdate(params.input);
       return { talent };
     },
-    async updateTalent(__, params) {
+    async updateTalent(__, params, context) {
+      validator.validateUserForMutation(context);
       const talent = await talentService.createOrUpdate(params.input);
       return { talent };
     },
-    async createVenue(__, params) {
+    async createVenue(__, params, context) {
+      validator.validateUserForMutation(context);
       const venue = await venueService.createOrUpdate(params.input);
       return { venue };
     },
-    async updateVenue(__, params) {
+    async updateVenue(__, params, context) {
+      validator.validateUserForMutation(context);
       const venue = await venueService.createOrUpdate(params.input);
       return { venue };
     },
-    async createEventSeries(__, params) {
+    async createEventSeries(__, params, context) {
+      validator.validateUserForMutation(context);
       const eventSeries = await eventSeriesService.createOrUpdate(params.input);
       return { eventSeries };
     },
-    async updateEventSeries(__, params) {
+    async updateEventSeries(__, params, context) {
+      validator.validateUserForMutation(context);
       const eventSeries = await eventSeriesService.createOrUpdate(params.input);
       return { eventSeries };
     },
-    async createEvent(__, params) {
+    async createEvent(__, params, context) {
+      validator.validateUserForMutation(context);
       const event = await eventService.createOrUpdate(params.input);
       return { event };
     },
-    async updateEvent(__, params) {
+    async updateEvent(__, params, context) {
+      validator.validateUserForMutation(context);
       const event = await eventService.createOrUpdate(params.input);
       return { event };
     }

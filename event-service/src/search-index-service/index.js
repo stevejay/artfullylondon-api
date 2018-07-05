@@ -18,7 +18,10 @@ export async function updateEventSearchIndex(message) {
     true
   );
   dbEvent = eventMapper.mergeReferencedEntities(dbEvent, referencedEntities);
-  await notifier.indexEntity(eventMapper.mapToPublicFullResponse(dbEvent));
+  await notifier.indexEntity(
+    eventMapper.mapResponse(dbEvent),
+    entityType.EVENT
+  );
   await cacher.clearEntityEtag(entityType.EVENT, dbEvent.id);
 }
 
@@ -37,7 +40,7 @@ export async function processRefreshSearchIndexMessage(message) {
   if (nextEntityId) {
     try {
       const result = await service.get({ id: nextEntityId });
-      await notifier.indexEntity(result.entity);
+      await notifier.indexEntity(result.entity, entityType.EVENT);
     } catch (err) {
       await iterationLogRepository.addErrorToLog(
         message.actionId,

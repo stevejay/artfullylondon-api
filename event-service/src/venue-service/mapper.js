@@ -11,6 +11,7 @@ export const mapCreateOrUpdateVenueRequest = mappr.compose(
   params => ({
     id:
       params.id || idGenerator.generateFromName(params.name, entityType.VENUE),
+    version: params.version || 1,
     schemeVersion: CURRENT_VENUE_SCHEME_VERSION
   }),
   fpPick([
@@ -70,7 +71,8 @@ export const mapResponse = mappr.compose(
     "openingTimes",
     "additionalOpeningTimes",
     "openingTimesClosures",
-    "namedClosures"
+    "namedClosures",
+    "version"
   ]),
   entityMapper.mapResponseMainImage
 );

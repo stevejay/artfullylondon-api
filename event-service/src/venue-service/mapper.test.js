@@ -67,7 +67,6 @@ describe("mapCreateOrUpdateVenueRequest", () => {
       notes: "some notes",
       version: 1,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -93,7 +92,6 @@ describe("mapCreateOrUpdateVenueRequest", () => {
       hasPermanentCollection: true,
       version: 2,
       schemeVersion: mapper.CURRENT_VENUE_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -148,7 +146,8 @@ describe("mapResponse", () => {
           ratio: 1.2,
           copyright: "Foo"
         }
-      ]
+      ],
+      version: 1
     });
   });
 
@@ -166,7 +165,8 @@ describe("mapResponse", () => {
       longitude: -0.103103,
       wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
       disabledBathroomType: disabledBathroomType.PRESENT,
-      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS
+      hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
+      version: 1
     });
   });
 });

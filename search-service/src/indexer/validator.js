@@ -82,7 +82,6 @@ const EACH_DATE_OPTIONAL_AT_CONSTRAINT = {
 };
 
 const ENTITY_BASIC_CONSTRAINT = {
-  entityType: REQUIRED_STRING,
   id: REQUIRED_STRING,
   status: REQUIRED_STRING,
   version: REQUIRED_NUMBER,
@@ -264,10 +263,6 @@ const INDEX_DOCUMENT_CONSTRAINT = {
         string: true,
         presence: true,
         format: /^(event|event-series|talent|venue)\/.+/
-      },
-      entityType: {
-        presence: true,
-        inclusion: entityType.ALLOWED_VALUES
       },
       version: {
         number: true,

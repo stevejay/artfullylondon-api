@@ -70,8 +70,7 @@ const VENUE_VALIDATOR = {
   weSay: entityValidator.OPTIONAL_STRING,
   notes: entityValidator.OPTIONAL_STRING,
   hasPermanentCollection: entityValidator.REQUIRED_BOOL,
-  version: entityValidator.REQUIRED_VERSION,
-  createdDate: entityValidator.OPTIONAL_DATE
+  version: entityValidator.OPTIONAL_VERSION
 };
 
 function errorHandler(errors) {

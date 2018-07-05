@@ -34,7 +34,6 @@ export const createMinimalIndividualRequestTalent = () => {
     talentType: talentType.INDIVIDUAL,
     commonRole: "Actor",
     version: 3,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     description: undefined,
     descriptionCredit: undefined,
@@ -64,7 +63,6 @@ export const createFullIndividualRequestTalent = () => {
     weSay: "something",
     notes: "some notes",
     version: 3,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -76,7 +74,6 @@ export const createMinimalGroupRequestTalent = () => {
     talentType: talentType.GROUP,
     commonRole: "Artist",
     version: 3,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     firstNames: undefined,
     description: undefined,
@@ -105,7 +102,6 @@ export const createFullGroupRequestTalent = () => {
     ],
     weSay: "something",
     version: 3,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -120,7 +116,6 @@ export const createMinimalIndividualDbTalent = () => {
     commonRole: "Actor",
     version: 3,
     schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -146,7 +141,6 @@ export const createFullIndividualDbTalent = () => {
     weSay: "something",
     version: 3,
     schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -171,7 +165,6 @@ export const createFullGroupDbTalent = () => {
     weSay: "something",
     version: 3,
     schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -185,7 +178,6 @@ export const createMinimalGroupDbTalent = () => {
     commonRole: "Artist",
     version: 1,
     schemeVersion: talentMapper.CURRENT_TALENT_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -206,7 +198,6 @@ export const createMinimalRequestVenue = () => {
     disabledBathroomType: disabledBathroomType.PRESENT,
     hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
     version: 2,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     hasPermanentCollection: true,
     description: undefined,
@@ -259,7 +250,6 @@ export const createFullRequestVenue = () => {
     weSay: "something",
     notes: "some notes",
     version: 1,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -279,7 +269,6 @@ export const createMinimalDbVenue = () => {
     hearingFacilitiesType: hearingFacilitiesType.HEARING_LOOPS,
     version: 1,
     schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -322,7 +311,6 @@ export const createFullDbVenue = () => {
     notes: "some notes",
     version: 1,
     schemeVersion: venueMapper.CURRENT_VENUE_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -338,7 +326,6 @@ export const createMinimalRequestEventSeries = () => {
     summary: "A poetry riot",
     description: "Poetry for people who dont like poetry.",
     version: 1,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
 
     descriptionCredit: undefined,
@@ -364,7 +351,6 @@ export const createFullRequestEventSeries = () => {
     weSay: "something",
     notes: "some notes",
     version: 1,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -380,7 +366,6 @@ export const createMinimalDbEventSeries = () => {
     description: "Poetry for people who dont like poetry.",
     version: 1,
     schemeVersion: eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -403,7 +388,6 @@ export const createFullDbEventSeries = () => {
     notes: "some notes",
     version: 1,
     schemeVersion: eventSeriesMapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11"
   };
 };
@@ -436,7 +420,6 @@ export const createMinimalPerformanceRequestEvent = () => {
     description: undefined,
     venueId: EVENT_VENUE_ID,
     version: 4,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     costFrom: undefined,
     costTo: undefined,
@@ -486,7 +469,6 @@ export const createMinimalExhibitionRequestEvent = () => {
     description: undefined,
     venueId: EVENT_VENUE_ID,
     version: 4,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     costFrom: undefined,
     costTo: undefined,
@@ -589,7 +571,6 @@ export const createFullPerformanceRequestEvent = () => {
     weSay: "something",
     notes: "some notes",
     version: 1,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     soldOutPerformances: [
       {
@@ -660,7 +641,6 @@ export const createFullExhibitionRequestEvent = () => {
     weSay: "something",
     notes: "some notes",
     version: 1,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     soldOutPerformances: undefined
   };
@@ -684,7 +664,6 @@ export const createMinimalCourseRequestEvent = () => {
     description: undefined,
     venueId: EVENT_VENUE_ID,
     version: 4,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     costFrom: undefined,
     costTo: undefined,
@@ -773,7 +752,6 @@ export const createFullCourseRequestEvent = () => {
     weSay: "something",
     notes: "some notes",
     version: 1,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     soldOutPerformances: undefined
   };
@@ -795,7 +773,6 @@ export const createMinimalPerformanceDbEvent = () => {
     summary: "A Shakespearian classic",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     venueId: EVENT_VENUE_ID
   };
@@ -817,7 +794,6 @@ export const createMinimalCourseDbEvent = () => {
     summary: "A Shakespearian classic",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     venueId: EVENT_VENUE_ID
   };
@@ -844,7 +820,6 @@ export const createFullPerformanceDbEvent = () => {
     descriptionCredit: "Description credit",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     timesRanges: [
       {
@@ -900,7 +875,6 @@ export const createFullCourseDbEvent = () => {
     descriptionCredit: "Description credit",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     additionalPerformances: [{ date: "2016-08-15", at: "08:00" }],
     talents: [{ id: EVENT_TALENT_ID, roles: ["Director"] }],
@@ -947,7 +921,6 @@ export const createFullExhibitionDbEvent = () => {
     descriptionCredit: "Description credit",
     version: 4,
     schemeVersion: eventMapper.CURRENT_EVENT_SCHEME_VERSION,
-    createdDate: "2016-01-10",
     updatedDate: "2016-01-11",
     openingTimes: [{ day: 7, from: "12:00", to: "16:00" }],
     additionalOpeningTimes: [

@@ -4,6 +4,7 @@ import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as enhancer from "../enhancer";
 import * as notifier from "../notifier";
+import * as entityType from "../types/entity-type";
 
 export async function get(params) {
   const dbTalent = await talentRepository.get(params.id, false);
@@ -20,8 +21,9 @@ export async function createOrUpdate(params) {
   talent = await enhancer.enhanceDescription(talent);
   const dbTalent = mapper.mapCreateOrUpdateTalentRequest(talent);
   await talentRepository.createOrUpdate(dbTalent);
-  await notifier.indexEntity(mapper.mapToPublicFullResponse(dbTalent));
-  return mapper.mapResponse(dbTalent);
+  const response = mapper.mapResponse(dbTalent);
+  await notifier.indexEntity(response, entityType.TALENT);
+  return response;
 }
 
 export async function getNextId(lastId) {

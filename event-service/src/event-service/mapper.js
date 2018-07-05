@@ -97,6 +97,7 @@ const mapReviews = mappr({
 export const mapCreateOrUpdateEventRequest = mappr.compose(
   params => ({
     id: params.id || idGenerator.generateFromEvent(params),
+    version: params.version || 1,
     schemeVersion: CURRENT_EVENT_SCHEME_VERSION
   }),
   fpPick([
@@ -218,7 +219,8 @@ export const mapResponse = mappr(
       "geoTags",
       "reviews",
       "links",
-      "images"
+      "images",
+      "version"
     ]),
     {
       venue: params => venueMapper.mapResponse(params.venue),

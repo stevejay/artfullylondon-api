@@ -28,7 +28,6 @@ describe("mapCreateOrUpdateEventSeriesRequest", () => {
       description: "Poetry for people who dont like poetry.",
       version: 1,
       schemeVersion: mapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -64,7 +63,6 @@ describe("mapCreateOrUpdateEventSeriesRequest", () => {
       notes: "some notes",
       version: 1,
       schemeVersion: mapper.CURRENT_EVENT_SERIES_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -99,7 +97,8 @@ describe("mapResponse", () => {
         }
       ],
       weSay: "something",
-      notes: "some notes"
+      notes: "some notes",
+      version: 1
     });
   });
 });

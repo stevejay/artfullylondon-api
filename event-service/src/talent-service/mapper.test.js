@@ -43,7 +43,6 @@ describe("mapCreateOrUpdateTalentRequest", () => {
       notes: "some notes",
       version: 3,
       schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -65,7 +64,6 @@ describe("mapCreateOrUpdateTalentRequest", () => {
       commonRole: "Actor",
       version: 3,
       schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -101,7 +99,6 @@ describe("mapCreateOrUpdateTalentRequest", () => {
       weSay: "something",
       version: 3,
       schemeVersion: mapper.CURRENT_TALENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -135,7 +132,8 @@ describe("mapResponse", () => {
           ratio: 1.2,
           copyright: "Tate Modern"
         }
-      ]
+      ],
+      version: 3
     });
   });
 
@@ -148,7 +146,8 @@ describe("mapResponse", () => {
       lastName: "Cracknell",
       talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
-      firstNames: "Carrie"
+      firstNames: "Carrie",
+      version: 3
     });
   });
 
@@ -160,7 +159,8 @@ describe("mapResponse", () => {
       id: testData.GROUP_TALENT_ID,
       lastName: "The Darkness",
       talentType: talentType.GROUP,
-      commonRole: "Artist"
+      commonRole: "Artist",
+      version: 1
     });
   });
 });

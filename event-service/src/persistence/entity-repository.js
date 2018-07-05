@@ -1,18 +1,25 @@
 import dynamodb from "./dynamodb";
 
-export function write(tableName, entity) {
-  return entity.version === 1
-    ? dynamodb.put({
-        TableName: tableName,
-        Item: entity,
-        ConditionExpression: "attribute_not_exists(id)"
-      })
-    : dynamodb.put({
-        TableName: tableName,
-        Item: entity,
-        ConditionExpression: "attribute_exists(id) and version = :oldVersion",
-        ExpressionAttributeValues: { ":oldVersion": entity.version - 1 }
-      });
+export async function write(tableName, entity) {
+  try {
+    return entity.version === 1
+      ? await dynamodb.put({
+          TableName: tableName,
+          Item: entity,
+          ConditionExpression: "attribute_not_exists(id)"
+        })
+      : await dynamodb.put({
+          TableName: tableName,
+          Item: entity,
+          ConditionExpression: "attribute_exists(id) and version = :oldVersion",
+          ExpressionAttributeValues: { ":oldVersion": entity.version - 1 }
+        });
+  } catch (err) {
+    if (err.code === "ConditionalCheckFailedException") {
+      throw new Error("[400] Stale Data");
+    }
+    throw err;
+  }
 }
 
 export function get(tableName, id, consistentRead) {

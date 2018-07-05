@@ -9,6 +9,7 @@ export const CURRENT_TALENT_SCHEME_VERSION = 2;
 export const mapCreateOrUpdateTalentRequest = mappr.compose(
   params => ({
     id: params.id || idGenerator.generateFromTalent(params),
+    version: params.version || 1,
     schemeVersion: CURRENT_TALENT_SCHEME_VERSION,
     firstNames:
       params.talentType === talentType.INDIVIDUAL && params.firstNames
@@ -20,7 +21,6 @@ export const mapCreateOrUpdateTalentRequest = mappr.compose(
     "lastName",
     "talentType",
     "commonRole",
-    "version",
     "weSay",
     "notes",
     "description",
@@ -44,7 +44,8 @@ export const mapResponse = mappr.compose(
     "weSay",
     "notes",
     "links",
-    "images"
+    "images",
+    "version"
   ]),
   entityMapper.mapResponseMainImage
 );

@@ -9,7 +9,6 @@ import * as eventType from "../../types/event-type";
 describe("mapTalentForTalentIndex", () => {
   it("should map a talent with an image", () => {
     const talent = {
-      entityType: entityType.TALENT,
       id: "talent/talent-1",
       status: statusType.ACTIVE,
       firstNames: "Cherry",
@@ -54,7 +53,6 @@ describe("mapTalentForTalentIndex", () => {
 
   it("should map a talent with no image", () => {
     const talent = {
-      entityType: entityType.TALENT,
       id: "talent/talent-1",
       status: statusType.ACTIVE,
       firstNames: "Cherry",
@@ -83,7 +81,6 @@ describe("mapTalentForTalentIndex", () => {
 describe("mapTalentForAutocompleteIndex", () => {
   it("should map an individual", () => {
     const talent = {
-      entityType: entityType.TALENT,
       id: "talent/talent-1",
       status: statusType.ACTIVE,
       firstNames: "Cherry",
@@ -111,7 +108,6 @@ describe("mapTalentForAutocompleteIndex", () => {
 describe("mapEventSeriesForEventSeriesIndex", () => {
   it("should map an event series", () => {
     const eventSeries = {
-      entityType: entityType.EVENT_SERIES,
       id: "event-series-1",
       status: statusType.ACTIVE,
       name: "Bang Said The Gun",
@@ -140,7 +136,6 @@ describe("mapEventSeriesForEventSeriesIndex", () => {
 describe("mapEventSeriesForAutocompleteIndex", () => {
   it("should map an event series", () => {
     const eventSeries = {
-      entityType: entityType.EVENT_SERIES,
       id: "event-series-1",
       status: statusType.ACTIVE,
       name: "Bang Said The Gun",
@@ -166,7 +161,6 @@ describe("mapEventSeriesForAutocompleteIndex", () => {
 describe("mapVenueForVenueIndex", () => {
   it("should map a venue", () => {
     const venue = {
-      entityType: entityType.VENUE,
       id: "venue/venue-1",
       status: statusType.ACTIVE,
       name: "Almeida Theatre",
@@ -200,7 +194,6 @@ describe("mapVenueForVenueIndex", () => {
 describe("mapVenueForAutocompleteIndex", () => {
   it("should map a venue", () => {
     const venue = {
-      entityType: entityType.VENUE,
       id: "venue/venue-1",
       status: statusType.ACTIVE,
       name: "Almeida Theatre",
@@ -231,7 +224,6 @@ describe("mapVenueForAutocompleteIndex", () => {
 describe("mapEventForAutocompleteIndex", () => {
   it("should map an event", () => {
     const event = {
-      entityType: entityType.EVENT,
       id: "event/event-1",
       status: statusType.ACTIVE,
       name: "The Merchant of Venice",

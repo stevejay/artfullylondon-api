@@ -356,8 +356,7 @@ const EVENT_VALIDATOR = {
       message: "Can only have sold out performances if event is a performance"
     }
   },
-  version: entityValidator.REQUIRED_VERSION,
-  createdDate: entityValidator.OPTIONAL_DATE
+  version: entityValidator.OPTIONAL_VERSION
 };
 
 function errorHandler(errors) {

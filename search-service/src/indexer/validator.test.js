@@ -10,7 +10,6 @@ describe("validateIndexDocumentRequest", () => {
           entityType: entityType.TALENT,
           entity: {
             id: "talent/talent1",
-            entityType: entityType.TALENT,
             version: 1
           }
         }
@@ -29,7 +28,6 @@ describe("validateIndexDocumentRequest", () => {
           entityType: "not-a-type",
           entity: {
             id: "talent/talent1",
-            entityType: entityType.TALENT,
             version: 2
           }
         }

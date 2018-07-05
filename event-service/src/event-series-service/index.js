@@ -4,6 +4,7 @@ import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as notifier from "../notifier";
 import * as eventRepository from "../persistence/event-repository";
+import * as entityType from "../types/entity-type";
 
 export async function get(params) {
   const dbEventSeries = await eventSeriesRepository.get(params.id, false);
@@ -28,8 +29,9 @@ export async function createOrUpdate(params) {
     );
     await Promise.all(eventIds.map(notifier.updateEvent));
   }
-  await notifier.indexEntity(mapper.mapToPublicFullResponse(dbEventSeries));
-  return mapper.mapResponse(dbEventSeries);
+  const response = mapper.mapResponse(dbEventSeries);
+  await notifier.indexEntity(response, entityType.EVENT_SERIES);
+  return response;
 }
 
 export async function getNextId(lastId) {

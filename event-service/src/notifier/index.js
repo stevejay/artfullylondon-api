@@ -6,15 +6,11 @@ const EVENT_UPDATED_TOPIC_ARN = process.env.SERVERLESS_EVENT_UPDATED_TOPIC_ARN;
 const REFRESH_SEARCH_INDEX_TOPIC_ARN =
   process.env.SERVERLESS_REFRESH_SEARCH_INDEX_TOPIC_ARN;
 
-export async function indexEntity(entity) {
-  if (!entity || !entity.entityType) {
+export async function indexEntity(entity, entityType) {
+  if (!entity || !entityType) {
     throw new Error("notifier:indexEntity - invalid entity");
   }
-
-  await snsClient.notify(
-    { entityType: entity.entityType, entity },
-    INDEX_DOCUMENT_TOPIC_ARN
-  );
+  await snsClient.notify({ entityType, entity }, INDEX_DOCUMENT_TOPIC_ARN);
 }
 
 export async function updateEvent(eventId) {

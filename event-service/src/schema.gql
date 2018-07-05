@@ -180,37 +180,31 @@ type Review {
   rating: Int!
 }
 
-interface Entity {
-  id: ID!
-  status: StatusTypeEnum!
-  # version: Int!
-  # schemeVersion: Int!
-  links: [Link!]
-  images: [Image!]
-  weSay: String
-  notes: String
-  # createdDate: IsoShortDate!
-  # updatedDate: IsoShortDate!
-  mainImage: Image
-  description: String
-  descriptionCredit: String
-}
+# interface Entity {
+#   id: ID!
+#   status: StatusTypeEnum!
+#   links: [Link!]
+#   images: [Image!]
+#   weSay: String
+#   notes: String
+#   mainImage: Image
+#   description: String
+#   descriptionCredit: String
+# }
 
-interface EntityForEdit {
-  id: ID!
-  status: StatusTypeEnum!
-  version: Int!
-  # schemeVersion: Int!
-  links: [Link!]
-  images: [Image!]
-  weSay: String
-  notes: String
-  createdDate: IsoShortDate!
-  description: String
-  descriptionCredit: String
-}
+# interface EntityForEdit {
+#   id: ID!
+#   status: StatusTypeEnum!
+#   version: Int!
+#   links: [Link!]
+#   images: [Image!]
+#   weSay: String
+#   notes: String
+#   description: String
+#   descriptionCredit: String
+# }
 
-type Talent implements Entity {
+type Talent {
   id: ID!
   status: StatusTypeEnum!
   links: [Link!]
@@ -226,7 +220,7 @@ type Talent implements Entity {
   commonRole: String!
 }
 
-type TalentForEdit implements EntityForEdit {
+type TalentForEdit {
   id: ID!
   status: StatusTypeEnum!
   version: Int!
@@ -234,7 +228,6 @@ type TalentForEdit implements EntityForEdit {
   images: [Image!]
   weSay: String
   notes: String
-  createdDate: IsoShortDate!
   description: String
   descriptionCredit: String
   firstNames: String
@@ -255,7 +248,7 @@ type EventTalentForEdit {
   id: ID!
 }
 
-type Venue implements Entity {
+type Venue {
   id: ID!
   status: StatusTypeEnum!
   links: [Link!]
@@ -283,7 +276,7 @@ type Venue implements Entity {
   namedClosures: [NamedClosureTypeEnum!]
 }
 
-type VenueForEdit implements EntityForEdit {
+type VenueForEdit {
   id: ID!
   status: StatusTypeEnum!
   version: Int!
@@ -291,7 +284,6 @@ type VenueForEdit implements EntityForEdit {
   images: [Image!]
   weSay: String
   notes: String
-  createdDate: IsoShortDate!
   description: String
   descriptionCredit: String
   name: String!
@@ -312,7 +304,7 @@ type VenueForEdit implements EntityForEdit {
   namedClosures: [NamedClosureTypeEnum!]
 }
 
-type EventSeries implements Entity {
+type EventSeries {
   id: ID!
   status: StatusTypeEnum!
   links: [Link!]
@@ -328,7 +320,7 @@ type EventSeries implements Entity {
   summary: String!
 }
 
-type EventSeriesForEdit implements EntityForEdit {
+type EventSeriesForEdit {
   id: ID!
   status: StatusTypeEnum!
   version: Int!
@@ -336,7 +328,6 @@ type EventSeriesForEdit implements EntityForEdit {
   images: [Image!]
   weSay: String
   notes: String
-  createdDate: IsoShortDate!
   description: String
   descriptionCredit: String
   name: String!
@@ -345,7 +336,7 @@ type EventSeriesForEdit implements EntityForEdit {
   summary: String!
 }
 
-type Event implements Entity {
+type Event {
   id: ID!
   status: StatusTypeEnum!
   links: [Link!]
@@ -394,7 +385,7 @@ type Event implements Entity {
   eventSeries: EventSeries
 }
 
-type EventForEdit implements EntityForEdit {
+type EventForEdit {
   id: ID!
   status: StatusTypeEnum!
   version: Int!
@@ -402,7 +393,6 @@ type EventForEdit implements EntityForEdit {
   images: [Image!]
   weSay: String
   notes: String
-  createdDate: IsoShortDate!
   description: String
   descriptionCredit: String
   name: String!
@@ -566,7 +556,6 @@ input UpdateTalentInput {
   notes: String
   description: String
   descriptionCredit: String
-  createdDate: IsoShortDate!
   firstNames: String
   lastName: String!
   talentType: TalentTypeEnum!
@@ -617,7 +606,6 @@ input UpdateVenueInput {
   notes: String
   description: String
   descriptionCredit: String
-  createdDate: IsoShortDate!
   name: String!
   venueType: VenueTypeEnum!
   address: String!
@@ -668,7 +656,6 @@ input UpdateEventSeriesInput {
   notes: String
   description: String
   descriptionCredit: String
-  createdDate: IsoShortDate!
   name: String!
   eventSeriesType: EventSeriesTypeEnum!
   occurrence: String!
@@ -740,7 +727,6 @@ input UpdateEventInput {
   notes: String
   description: String
   descriptionCredit: String
-  createdDate: IsoShortDate!
   name: String!
   eventType: EventTypeEnum!
   occurrenceType: OccurrenceTypeEnum!

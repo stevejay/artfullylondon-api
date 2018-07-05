@@ -25,12 +25,9 @@ export const mapRequestImages = mappr({
         )
 });
 
-export const mapRequestEditDates = params => {
+export const mapRequestEditDates = () => {
   const dateToday = timeUtils.getCreatedDateForDB();
-  return {
-    createdDate: params.createdDate || dateToday,
-    updatedDate: dateToday
-  };
+  return { updatedDate: dateToday };
 };
 
 export function mapRequestOpeningTimes(params) {

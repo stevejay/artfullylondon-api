@@ -4,6 +4,7 @@ import mappr from "mappr";
 import latinize from "latinize";
 import simplify from "es-simplify";
 import * as bookingType from "../../types/booking-type";
+import * as entityType from "../../types/entity-type";
 import * as geoMappings from "./geo-mappings";
 import * as tagMappings from "./tag-mappings";
 import * as datesMappings from "./dates-mappings";
@@ -38,8 +39,8 @@ function mapNameToSortName(entity) {
 }
 
 export const mapTalentForTalentIndex = mappr.compose(
+  () => ({ entityType: entityType.TALENT }),
   fpPick([
-    "entityType",
     "id",
     "status",
     "firstNames",
@@ -53,7 +54,8 @@ export const mapTalentForTalentIndex = mappr.compose(
 );
 
 export const mapTalentForAutocompleteIndex = mappr.compose(
-  fpPick(["entityType", "id", "status", "talentType", "commonRole", "version"]),
+  () => ({ entityType: entityType.TALENT }),
+  fpPick(["id", "status", "talentType", "commonRole", "version"]),
   talent => {
     const output = mapTalentName(talent);
     const simplifiedLastName = simplify(talent.lastName);
@@ -69,8 +71,8 @@ export const mapTalentForAutocompleteIndex = mappr.compose(
 );
 
 export const mapVenueForVenueIndex = mappr.compose(
+  () => ({ entityType: entityType.VENUE }),
   fpPick([
-    "entityType",
     "id",
     "status",
     "name",
@@ -89,15 +91,8 @@ export const mapVenueForVenueIndex = mappr.compose(
 );
 
 export const mapVenueForAutocompleteIndex = mappr.compose(
-  fpPick([
-    "entityType",
-    "id",
-    "status",
-    "version",
-    "venueType",
-    "address",
-    "postcode"
-  ]),
+  () => ({ entityType: entityType.VENUE }),
+  fpPick(["id", "status", "version", "venueType", "address", "postcode"]),
   venue => {
     const simplifiedName = simplify(venue.name);
     return {
@@ -111,8 +106,8 @@ export const mapVenueForAutocompleteIndex = mappr.compose(
 );
 
 export const mapEventSeriesForEventSeriesIndex = mappr.compose(
+  () => ({ entityType: entityType.EVENT_SERIES }),
   fpPick([
-    "entityType",
     "id",
     "status",
     "name",
@@ -126,7 +121,8 @@ export const mapEventSeriesForEventSeriesIndex = mappr.compose(
 );
 
 export const mapEventSeriesForAutocompleteIndex = mappr.compose(
-  fpPick(["entityType", "id", "status", "version"]),
+  () => ({ entityType: entityType.EVENT_SERIES }),
+  fpPick(["id", "status", "version"]),
   eventSeries => {
     const simplifiedName = simplify(eventSeries.name);
     return {
@@ -140,8 +136,8 @@ export const mapEventSeriesForAutocompleteIndex = mappr.compose(
 );
 
 export const mapEventForEventIndex = mappr.compose(
+  () => ({ entityType: entityType.EVENT }),
   fpPick([
-    "entityType",
     "id",
     "status",
     "name",
@@ -184,7 +180,8 @@ export const mapEventForEventIndex = mappr.compose(
 );
 
 export const mapEventForAutocompleteIndex = mappr.compose(
-  fpPick(["entityType", "id", "status", "version", "eventType"]),
+  () => ({ entityType: entityType.EVENT }),
+  fpPick(["id", "status", "version", "eventType"]),
   event => {
     const simplifiedName = simplify(event.name);
     const simplifiedVenueName = simplify(event.venue.name);

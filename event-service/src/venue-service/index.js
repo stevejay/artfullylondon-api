@@ -5,6 +5,7 @@ import * as mapper from "./mapper";
 import * as enhancer from "../enhancer";
 import * as eventRepository from "../persistence/event-repository";
 import * as notifier from "../notifier";
+import * as entityType from "../types/entity-type";
 
 export async function get(params) {
   const dbVenue = await venueRepository.get(params.id, false);
@@ -26,8 +27,9 @@ export async function createOrUpdate(params) {
     const eventIds = await eventRepository.getEventIdsByVenue(dbVenue.id);
     await Promise.all(eventIds.map(notifier.updateEvent));
   }
-  await notifier.indexEntity(mapper.mapToPublicFullResponse(dbVenue));
-  return mapper.mapResponse(dbVenue);
+  const response = mapper.mapResponse(dbVenue);
+  await notifier.indexEntity(response, entityType.VENUE);
+  return response;
 }
 
 export async function getNextId(lastId) {

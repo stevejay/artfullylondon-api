@@ -43,7 +43,6 @@ describe("mapCreateOrUpdateEventRequest", () => {
       venueId: testData.EVENT_VENUE_ID,
       version: 4,
       schemeVersion: mapper.CURRENT_EVENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -133,7 +132,6 @@ describe("mapCreateOrUpdateEventRequest", () => {
       soldOut: false,
       version: 1,
       schemeVersion: mapper.CURRENT_EVENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -210,7 +208,6 @@ describe("mapCreateOrUpdateEventRequest", () => {
       notes: "some notes",
       version: 1,
       schemeVersion: mapper.CURRENT_EVENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -279,7 +276,6 @@ describe("mapCreateOrUpdateEventRequest", () => {
       notes: "some notes",
       version: 1,
       schemeVersion: mapper.CURRENT_EVENT_SCHEME_VERSION,
-      createdDate: "2016-01-10",
       updatedDate: "2016-01-11"
     });
   });
@@ -417,7 +413,8 @@ describe("mapResponse", () => {
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
       notes: "some notes",
-      soldOutPerformances: [{ at: "08:00", date: "2016-08-15" }]
+      soldOutPerformances: [{ at: "08:00", date: "2016-08-15" }],
+      version: 4
     });
   });
 
@@ -543,7 +540,8 @@ describe("mapResponse", () => {
       },
       reviews: [{ source: "The Guardian", rating: 4 }],
       weSay: "something",
-      notes: "some notes"
+      notes: "some notes",
+      version: 4
     });
   });
 

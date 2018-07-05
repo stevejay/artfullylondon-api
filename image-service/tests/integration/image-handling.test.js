@@ -75,7 +75,7 @@ describe("image handling", () => {
   });
 
   afterAll(async () => {
-    await mockJwksServer.stop();
+    mockJwksServer.stop();
     await s3Utils.deleteBucket(ORIGINAL_BUCKET_NAME);
     await s3Utils.deleteBucket(RESIZED_BUCKET_NAME);
   });
