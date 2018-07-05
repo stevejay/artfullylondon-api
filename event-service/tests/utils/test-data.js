@@ -6,7 +6,6 @@ import * as eventMapper from "../../src/event-service/mapper";
 import * as bookingType from "../../src/types/booking-type";
 import * as costType from "../../src/types/cost-type";
 import * as disabledBathroomType from "../../src/types/disabled-bathroom-type";
-import * as entityType from "../../src/types/entity-type";
 import * as eventSeriesType from "../../src/types/event-series-type";
 import * as eventType from "../../src/types/event-type";
 import * as hearingFacilitiesType from "../../src/types/hearing-facilities-type";
@@ -1025,8 +1024,7 @@ export function createNewEventBody(venueId, talentId, eventSeriesId) {
     eventType: eventType.EXHIBITION,
     occurrenceType: occurrenceType.BOUNDED,
     costType: costType.FREE,
-    summary:
-      "An exhibition of paintings and the rarely seen drawings of the pioneering and visionary architect Zaha Hadid",
+    summary: "An exhibition of paintings by Zaha Hadid",
     dateFrom: "2017-01-13",
     dateTo: "2017-02-12",
     rating: 3,
@@ -1045,9 +1043,7 @@ export function createNewEventBody(venueId, talentId, eventSeriesId) {
       { id: "style/contemporary", label: "contemporary" },
       { id: "style/neo-futurist", label: "neo-futurist" }
     ],
-    talents: [
-      { entityType: entityType.TALENT, id: talentId, roles: ["Artist"] }
-    ],
+    talents: [{ id: talentId, roles: ["Artist"] }],
     links: [
       {
         type: linkType.HOMEPAGE,

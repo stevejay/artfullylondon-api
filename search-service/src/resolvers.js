@@ -1,15 +1,23 @@
 import { GraphQLError } from "graphql/error";
-import { GraphQLDate } from "graphql-iso-date";
+import { RegexType } from "@okgrow/graphql-scalars";
 import addDays from "date-fns/addDays";
-import GraphQLShortTime from "./graphql-short-time";
 import * as entityType from "./types/entity-type";
 import * as areaType from "./types/area-type";
 import * as searcher from "./searcher";
 import * as timeUtils from "./time-utils";
 
+const IsoShortDate = new RegexType(
+  "IsoShortDate",
+  /^[12]\d\d\d-[01]\d-[0123]\d$/
+);
+const ShortTime = new RegexType(
+  "ShortTime",
+  /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/
+);
+
 export default {
-  IsoShortDate: GraphQLDate,
-  ShortTime: GraphQLShortTime,
+  IsoShortDate,
+  ShortTime,
   AutocompleteNode: {
     __resolveType(obj) {
       switch (obj.entityType) {

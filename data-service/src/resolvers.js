@@ -1,7 +1,12 @@
-import { GraphQLDate } from "graphql-iso-date";
+import { RegexType } from "@okgrow/graphql-scalars";
+
+const IsoShortDate = new RegexType(
+  "IsoShortDate",
+  /^[12]\d\d\d-[01]\d-[0123]\d$/
+);
 
 export default {
-  IsoShortDate: GraphQLDate,
+  IsoShortDate,
   Query: {
     heroImage: () => ({
       name: "shoreditch-graffiti",

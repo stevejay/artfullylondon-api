@@ -40,6 +40,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "@okgrow/graphql-scalars": "^0.4.0",
     "apollo-server-lambda": "^2.0.0-rc.5",
     "aws-xray-sdk": "^1.2.0",
     "date-fns": "^2.0.0-alpha.10",
@@ -49,7 +50,6 @@
     "es-bulk-update-builder": "^1.0.0",
     "es-simplify": "^1.0.6",
     "graphql": "^0.13.2",
-    "graphql-iso-date": "^3.5.0",
     "graphql-tools": "^3.0.4",
     "latinize": "^0.4.0",
     "lodash": "^4.17.10",

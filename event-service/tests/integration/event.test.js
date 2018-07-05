@@ -5,7 +5,6 @@ import * as dynamodb from "../utils/dynamodb";
 import SnsListener from "../utils/serverless-offline-sns-listener";
 import * as costType from "../../src/types/cost-type";
 import * as entityType from "../../src/types/entity-type";
-import * as eventSeriesType from "../../src/types/event-series-type";
 import * as eventType from "../../src/types/event-type";
 import * as occurrenceType from "../../src/types/occurrence-type";
 import * as statusType from "../../src/types/status-type";
@@ -19,6 +18,17 @@ const EVENT_QUERY = `
       id
       name
       summary
+      venue {
+        id
+      }
+      eventSeries {
+        id
+      }
+      talents {
+        talent {
+          id
+        }
+      }
     }
   }
 `;
@@ -30,6 +40,11 @@ const EVENT_FOR_EDIT_QUERY = `
       name
       summary
       version
+      venueId
+      eventSeriesId
+      talents {
+        id
+      }
     }
   }
 `;
@@ -131,6 +146,17 @@ const CREATE_EVENT_MUTATION = `
         id
         name
         summary
+        venue {
+          id
+        }
+        eventSeries {
+          id
+        }
+        talents {
+          talent {
+            id
+          }
+        }
       }
     }
   }
@@ -237,6 +263,151 @@ const UPDATE_EVENT_MUTATION = `
         id
         name
         summary
+        venue {
+          id
+        }
+        eventSeries {
+          id
+        }
+        talents {
+          talent {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
+
+const CREATE_TALENT_MUTATION = `
+  mutation CreateTalent(
+    $status: StatusTypeEnum!
+    $links: [LinkInput!]
+    $images: [ImageInput!]
+    $weSay: String
+    $notes: String
+    $description: String
+    $descriptionCredit: String
+    $firstNames: String
+    $lastName: String!
+    $talentType: TalentTypeEnum!
+    $commonRole: String!
+  ) {
+    createTalent(input: {
+      status: $status
+      links: $links
+      images: $images
+      weSay: $weSay
+      notes: $notes
+      description: $description
+      descriptionCredit: $descriptionCredit
+      firstNames: $firstNames
+      lastName: $lastName
+      talentType: $talentType
+      commonRole: $commonRole
+    }) {
+      talent {
+        id
+        firstNames
+        lastName
+        commonRole
+      }
+    }
+  }
+`;
+
+const CREATE_VENUE_MUTATION = `
+  mutation CreateVenue(
+    $status: StatusTypeEnum!
+    $links: [LinkInput!]
+    $images: [ImageInput!]
+    $weSay: String
+    $notes: String
+    $description: String
+    $descriptionCredit: String
+    $name: String!
+    $venueType: VenueTypeEnum!
+    $address: String!
+    $postcode: String!
+    $latitude: Float!
+    $longitude: Float!
+    $email: String
+    $telephone: String
+    $wheelchairAccessType: WheelchairAccessTypeEnum!
+    $disabledBathroomType: DisabledBathroomTypeEnum!
+    $hearingFacilitiesType: HearingFacilitiesTypeEnum!
+    $hasPermanentCollection: Boolean!
+    $openingTimes: [DayOpeningTimeInput!]
+    $additionalOpeningTimes: [DateOpeningTimeInput!]
+    $openingTimesClosures: [DateClosedTimeRangeInput!]
+    $namedClosures: [NamedClosureTypeEnum!]
+  ) {
+    createVenue(input: {
+      status: $status
+      links: $links
+      images: $images
+      weSay: $weSay
+      notes: $notes
+      description: $description
+      descriptionCredit: $descriptionCredit
+      name: $name
+      venueType: $venueType
+      address: $address
+      postcode: $postcode
+      latitude: $latitude
+      longitude: $longitude
+      email: $email
+      telephone: $telephone
+      wheelchairAccessType: $wheelchairAccessType
+      disabledBathroomType: $disabledBathroomType
+      hearingFacilitiesType: $hearingFacilitiesType
+      hasPermanentCollection: $hasPermanentCollection
+      openingTimes: $openingTimes
+      additionalOpeningTimes: $additionalOpeningTimes
+      openingTimesClosures: $openingTimesClosures
+      namedClosures: $namedClosures
+    }) {
+      venue {
+        id
+        name
+        venueType
+        postcode
+      }
+    }
+  }
+`;
+
+const CREATE_EVENT_SERIES_MUTATION = `
+  mutation CreateEventSeries(
+    $status: StatusTypeEnum!
+    $links: [LinkInput!]
+    $images: [ImageInput!]
+    $weSay: String
+    $notes: String
+    $description: String
+    $descriptionCredit: String
+    $name: String!
+    $eventSeriesType: EventSeriesTypeEnum!
+    $occurrence: String!
+    $summary: String!
+  ) {
+    createEventSeries(input: {
+      status: $status
+      links: $links
+      images: $images
+      weSay: $weSay
+      notes: $notes
+      description: $description
+      descriptionCredit: $descriptionCredit
+      name: $name
+      eventSeriesType: $eventSeriesType
+      occurrence: $occurrence
+      summary: $summary
+    }) {
+      eventSeries {
+        id
+        name
+        summary
       }
     }
   }
@@ -267,40 +438,46 @@ describe("event", () => {
     await dynamodb.truncateAllTables();
 
     let response = await request({
-      uri: "http://localhost:3014/admin/venue",
+      uri: "http://localhost:3014/graphql",
       json: true,
       method: "POST",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: testVenueBody,
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: CREATE_VENUE_MUTATION,
+        variables: testVenueBody
+      },
       timeout: 14000
     });
 
-    let parsedResponse = lambdaUtils.parseLambdaResponse(response);
-    testVenueId = parsedResponse.entity.id;
+    testVenueId = response.data.createVenue.venue.id;
 
     response = await request({
-      uri: "http://localhost:3014/admin/talent",
+      uri: "http://localhost:3014/graphql",
       json: true,
       method: "POST",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: testTalentBody,
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: CREATE_TALENT_MUTATION,
+        variables: testTalentBody
+      },
       timeout: 14000
     });
 
-    parsedResponse = lambdaUtils.parseLambdaResponse(response);
-    testTalentId = parsedResponse.entity.id;
+    testTalentId = response.data.createTalent.talent.id;
 
     response = await request({
-      uri: "http://localhost:3014/admin/event-series",
+      uri: "http://localhost:3014/graphql",
       json: true,
       method: "POST",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: testEventSeriesBody,
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: CREATE_EVENT_SERIES_MUTATION,
+        variables: testEventSeriesBody
+      },
       timeout: 14000
     });
 
-    parsedResponse = lambdaUtils.parseLambdaResponse(response);
-    testEventSeriesId = parsedResponse.entity.id;
+    testEventSeriesId = response.data.createEventSeries.eventSeries.id;
 
     testEventBody = testData.createNewEventBody(
       testVenueId,
@@ -314,63 +491,65 @@ describe("event", () => {
     await snsListener.stopListening();
   });
 
-  it("should fail to create an invalid event", async () => {
-    expect(
-      await sync(
-        request({
-          uri: "http://localhost:3014/admin/event",
-          json: true,
-          method: "POST",
-          headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-          body: { status: statusType.ACTIVE },
-          timeout: 14000
-        })
-      )
-    ).toThrow(/Name can't be blank/);
-  });
-
   it("should fail to create an event when the user is the readonly user", async () => {
-    expect(
-      await sync(
-        request({
-          uri: "http://localhost:3014/admin/event",
-          json: true,
-          method: "POST",
-          headers: { Authorization: cognitoAuth.READONLY_AUTH_TOKEN },
-          body: testEventBody,
-          timeout: 14000
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: CREATE_EVENT_MUTATION,
+        variables: testEventBody
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        createEvent: null
+      },
+      errors: [
+        expect.objectContaining({
+          message: expect.stringContaining(
+            "User not authorized for requested action"
+          )
         })
-      )
-    ).toThrow(/readonly user cannot modify system/);
+      ]
+    });
   });
 
   it("should create a valid event", async () => {
     snsListener.clearReceivedMessages();
     const response = await request({
-      uri: "http://localhost:3014/admin/event",
+      uri: "http://localhost:3014/graphql",
       json: true,
       method: "POST",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: testEventBody,
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: CREATE_EVENT_MUTATION,
+        variables: testEventBody
+      },
       timeout: 14000
     });
 
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response);
-    expect(parsedResponse.entity).toEqual(
-      expect.objectContaining({
-        eventType: eventType.EXHIBITION,
-        occurrenceType: occurrenceType.BOUNDED,
-        costType: costType.FREE,
-        status: statusType.ACTIVE,
-        version: 1
-      })
-    );
+    expect(response).toEqual({
+      data: {
+        createEvent: {
+          event: expect.objectContaining({
+            summary: "An exhibition of paintings by Zaha Hadid",
+            venue: {
+              id: testVenueId
+            },
+            eventSeries: {
+              id: testEventSeriesId
+            },
+            talents: [{ talent: { id: testTalentId } }]
+          })
+        }
+      }
+    });
 
-    expect(parsedResponse.entity.venue.id).toEqual(testVenueId);
-    expect(parsedResponse.entity.talents[0].id).toEqual(testTalentId);
-    expect(parsedResponse.entity.eventSeries.id).toEqual(testEventSeriesId);
-
-    testEventId = parsedResponse.entity.id;
+    testEventId = response.data.createEvent.event.id;
 
     // Allow time for the SNS search index update message to be processed.
     await delay(5000);
@@ -382,133 +561,128 @@ describe("event", () => {
           occurrenceType: occurrenceType.BOUNDED,
           costType: costType.FREE,
           status: statusType.ACTIVE,
+          summary: "An exhibition of paintings by Zaha Hadid",
           version: 1
         })
       }
     ]);
   });
 
-  it("should get the event without cache control headers when using the admin api", async () => {
+  it("should get the event", async () => {
     const response = await request({
-      uri: "http://localhost:3014/admin/event/" + testEventId,
+      uri: "http://localhost:3014/graphql",
       json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
-
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
-    expect(parsedResponse.entity).toEqual(
-      expect.objectContaining({
-        id: testEventId,
-        eventType: eventType.EXHIBITION,
-        occurrenceType: occurrenceType.BOUNDED,
-        costType: costType.FREE,
-        status: statusType.ACTIVE,
-        version: 1
-      })
-    );
-
-    expect(parsedResponse.entity.venue.id).toEqual(testVenueId);
-    expect(parsedResponse.entity.talents[0].id).toEqual(testTalentId);
-    expect(parsedResponse.entity.eventSeries.id).toEqual(testEventSeriesId);
-  });
-
-  it("should get the event with cache control headers when using the public api", async () => {
-    const response = await request({
-      uri: "http://localhost:3014/public/event/" + testEventId,
-      json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
-
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
-    expect(parsedResponse.entity).toEqual(
-      expect.objectContaining({
-        id: testEventId,
-        eventType: eventType.EXHIBITION,
-        occurrenceType: occurrenceType.BOUNDED,
-        costType: costType.FREE,
-        entityType: entityType.EVENT,
-        status: statusType.ACTIVE
-      })
-    );
-
-    expect(parsedResponse.entity.venue.id).toEqual(testVenueId);
-    expect(parsedResponse.entity.talents[0].id).toEqual(testTalentId);
-    expect(parsedResponse.entity.eventSeries.id).toEqual(testEventSeriesId);
-  });
-
-  it("should get the event using the get multi endpoint", async () => {
-    const response = await request({
-      uri:
-        "http://localhost:3014/public/event?ids=" +
-        encodeURIComponent(testEventId),
-      json: true,
-      method: "GET",
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: EVENT_QUERY,
+        variables: { id: testEventId }
+      },
       timeout: 14000
     });
 
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response);
-    expect(parsedResponse.entities.length).toEqual(1);
-    expect(parsedResponse.entities[0]).toEqual(
-      expect.objectContaining({
-        id: testEventId,
-        eventType: eventType.EXHIBITION,
-        occurrenceType: occurrenceType.BOUNDED,
-        costType: costType.FREE,
-        entityType: entityType.EVENT,
-        status: statusType.ACTIVE
-      })
-    );
+    expect(response).toEqual({
+      data: {
+        event: expect.objectContaining({
+          id: testEventId,
+          summary: "An exhibition of paintings by Zaha Hadid",
+          venue: {
+            id: testVenueId
+          },
+          eventSeries: {
+            id: testEventSeriesId
+          },
+          talents: [{ talent: { id: testTalentId } }]
+        })
+      }
+    });
+  });
 
-    expect(parsedResponse.entities[0].venueId).toEqual(testVenueId);
+  it("should get the event for edit", async () => {
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: EVENT_FOR_EDIT_QUERY,
+        variables: { id: testEventId }
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        eventForEdit: expect.objectContaining({
+          id: testEventId,
+          summary: "An exhibition of paintings by Zaha Hadid",
+          version: 1,
+          venueId: testVenueId,
+          eventSeriesId: testEventSeriesId,
+          talents: [{ id: testTalentId }]
+        })
+      }
+    });
   });
 
   it("should reject a stale update to the event", async () => {
-    expect(
-      await sync(
-        request({
-          uri: "http://localhost:3014/admin/event/" + testEventId,
-          json: true,
-          method: "PUT",
-          headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-          body: testEventBody,
-          timeout: 14000
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: UPDATE_EVENT_MUTATION,
+        variables: {
+          ...testEventBody,
+          version: 1,
+          id: testEventId
+        }
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        updateEvent: null
+      },
+      errors: [
+        expect.objectContaining({
+          message: expect.stringContaining("Stale Data")
         })
-      )
-    ).toThrow(/Stale Data/);
+      ]
+    });
   });
 
   it("should accept a valid update to the event", async () => {
     snsListener.clearReceivedMessages();
     const response = await request({
-      uri: "http://localhost:3014/admin/event/" + testEventId,
+      uri: "http://localhost:3014/graphql",
       json: true,
-      method: "PUT",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
+      method: "POST",
+      headers: { Authorization: authUtils.createEditorAuthToken() },
       body: {
-        ...testEventBody,
-        duration: "02:00",
-        version: 2
+        query: UPDATE_EVENT_MUTATION,
+        variables: {
+          ...testEventBody,
+          summary: "New summary",
+          version: 2,
+          id: testEventId
+        }
       },
       timeout: 14000
     });
 
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response);
-    expect(parsedResponse.entity).toEqual(
-      expect.objectContaining({
-        id: testEventId,
-        duration: "02:00",
-        status: statusType.ACTIVE,
-        version: 2
-      })
-    );
-
-    expect(parsedResponse.entity.venue.id).toEqual(testVenueId);
-    expect(parsedResponse.entity.talents[0].id).toEqual(testTalentId);
-    expect(parsedResponse.entity.eventSeries.id).toEqual(testEventSeriesId);
+    expect(response).toEqual({
+      data: {
+        updateEvent: {
+          event: expect.objectContaining({
+            id: testEventId,
+            summary: "New summary"
+          })
+        }
+      }
+    });
 
     // Allow time for the SNS search index update message to be processed.
     await delay(5000);
@@ -517,8 +691,7 @@ describe("event", () => {
         entityType: entityType.EVENT,
         entity: expect.objectContaining({
           id: testEventId,
-          duration: "02:00",
-          status: statusType.ACTIVE,
+          summary: "New summary",
           version: 2
         })
       }
@@ -526,116 +699,127 @@ describe("event", () => {
   });
 
   it("should fail to get a non-existent event", async () => {
-    expect(
-      await sync(
-        request({
-          uri: "http://localhost:3014/public/event/does/not/exist",
-          json: true,
-          method: "GET",
-          timeout: 14000,
-          resolveWithFullResponse: true
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: EVENT_QUERY,
+        variables: { id: "event/foo/2018/does-not-exist" }
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        event: null
+      },
+      errors: [
+        expect.objectContaining({
+          message: expect.stringContaining("Not Found")
         })
-      )
-    ).toThrow(/Entity Not Found/);
+      ]
+    });
   });
 
-  it("should update the event when the venue entity updates", async () => {
-    snsListener.clearReceivedMessages();
-    let response = await request({
-      uri: "http://localhost:3014/admin/venue/" + testVenueId,
-      json: true,
-      method: "PUT",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: {
-        ...testVenueBody,
-        postcode: "N8 0KL",
-        version: 2
-      },
-      timeout: 14000
-    });
+  // it("should update the event when the venue entity updates", async () => {
+  //   snsListener.clearReceivedMessages();
+  //   let response = await request({
+  //     uri: "http://localhost:3014/admin/venue/" + testVenueId,
+  //     json: true,
+  //     method: "PUT",
+  //     headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
+  //     body: {
+  //       ...testVenueBody,
+  //       postcode: "N8 0KL",
+  //       version: 2
+  //     },
+  //     timeout: 14000
+  //   });
 
-    // Allow time for the search index update message to be processed.
-    await delay(5000);
-    expect(snsListener.receivedMessages).toEqual(
-      expect.arrayContaining([
-        {
-          entityType: entityType.EVENT,
-          entity: expect.objectContaining({
-            id: testEventId,
-            duration: "02:00",
-            status: statusType.ACTIVE,
-            version: 2
-          })
-        },
-        {
-          entityType: entityType.VENUE,
-          entity: expect.objectContaining({
-            postcode: "N8 0KL",
-            version: 2
-          })
-        }
-      ])
-    );
+  //   // Allow time for the search index update message to be processed.
+  //   await delay(5000);
+  //   expect(snsListener.receivedMessages).toEqual(
+  //     expect.arrayContaining([
+  //       {
+  //         entityType: entityType.EVENT,
+  //         entity: expect.objectContaining({
+  //           id: testEventId,
+  //           duration: "02:00",
+  //           status: statusType.ACTIVE,
+  //           version: 2
+  //         })
+  //       },
+  //       {
+  //         entityType: entityType.VENUE,
+  //         entity: expect.objectContaining({
+  //           postcode: "N8 0KL",
+  //           version: 2
+  //         })
+  //       }
+  //     ])
+  //   );
 
-    // Check the event was updated:
-    response = await request({
-      uri: "http://localhost:3014/public/event/" + testEventId,
-      json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
+  //   // Check the event was updated:
+  //   response = await request({
+  //     uri: "http://localhost:3014/public/event/" + testEventId,
+  //     json: true,
+  //     method: "GET",
+  //     timeout: 14000,
+  //     resolveWithFullResponse: true
+  //   });
 
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
-    expect(parsedResponse.entity).toEqual(
-      expect.objectContaining({
-        id: testEventId,
-        duration: "02:00",
-        status: statusType.ACTIVE,
-        version: 2,
-        postcode: "N8 0KL"
-      })
-    );
-  });
+  //   const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
+  //   expect(parsedResponse.entity).toEqual(
+  //     expect.objectContaining({
+  //       id: testEventId,
+  //       duration: "02:00",
+  //       status: statusType.ACTIVE,
+  //       version: 2,
+  //       postcode: "N8 0KL"
+  //     })
+  //   );
+  // });
 
-  it("should update the event when the event series entity updates", async () => {
-    snsListener.clearReceivedMessages();
-    await request({
-      uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
-      json: true,
-      method: "PUT",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: {
-        ...testEventSeriesBody,
-        summary: "Stand-up poetry New",
-        version: 2
-      },
-      timeout: 14000
-    });
+  // it("should update the event when the event series entity updates", async () => {
+  //   snsListener.clearReceivedMessages();
+  //   await request({
+  //     uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
+  //     json: true,
+  //     method: "PUT",
+  //     headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
+  //     body: {
+  //       ...testEventSeriesBody,
+  //       summary: "Stand-up poetry New",
+  //       version: 2
+  //     },
+  //     timeout: 14000
+  //   });
 
-    // Allow time for the search index update message to be processed.
-    await delay(5000);
-    expect(snsListener.receivedMessages).toEqual(
-      expect.arrayContaining([
-        {
-          entityType: entityType.EVENT,
-          entity: expect.objectContaining({
-            id: testEventId,
-            duration: "02:00",
-            status: statusType.ACTIVE,
-            version: 2
-          })
-        },
-        {
-          entityType: entityType.EVENT_SERIES,
-          entity: expect.objectContaining({
-            eventSeriesType: eventSeriesType.OCCASIONAL,
-            summary: "Stand-up poetry New",
-            status: statusType.ACTIVE,
-            version: 2
-          })
-        }
-      ])
-    );
-  });
+  //   // Allow time for the search index update message to be processed.
+  //   await delay(5000);
+  //   expect(snsListener.receivedMessages).toEqual(
+  //     expect.arrayContaining([
+  //       {
+  //         entityType: entityType.EVENT,
+  //         entity: expect.objectContaining({
+  //           id: testEventId,
+  //           duration: "02:00",
+  //           status: statusType.ACTIVE,
+  //           version: 2
+  //         })
+  //       },
+  //       {
+  //         entityType: entityType.EVENT_SERIES,
+  //         entity: expect.objectContaining({
+  //           eventSeriesType: eventSeriesType.OCCASIONAL,
+  //           summary: "Stand-up poetry New",
+  //           status: statusType.ACTIVE,
+  //           version: 2
+  //         })
+  //       }
+  //     ])
+  //   );
+  // });
 });

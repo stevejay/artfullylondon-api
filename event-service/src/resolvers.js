@@ -1,14 +1,23 @@
-import { GraphQLDate } from "graphql-iso-date";
-import GraphQLShortTime from "./graphql-short-time";
+import { RegularExpression } from "@okgrow/graphql-scalars";
 import * as talentService from "./talent-service";
 import * as venueService from "./venue-service";
 import * as eventSeriesService from "./event-series-service";
 import * as eventService from "./event-service";
 import * as validator from "./validator";
 
+const IsoShortDate = new RegularExpression(
+  "IsoShortDate",
+  /^[12]\d\d\d-[01]\d-[0123]\d$/
+);
+
+const ShortTime = new RegularExpression(
+  "ShortTime",
+  /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/
+);
+
 export default {
-  IsoShortDate: GraphQLDate,
-  ShortTime: GraphQLShortTime,
+  IsoShortDate,
+  ShortTime,
   Query: {
     async talent(__, params) {
       return await talentService.get(params);

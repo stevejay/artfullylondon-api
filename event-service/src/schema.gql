@@ -170,8 +170,8 @@ type SpecialOpeningTime {
 
 type TimesRange {
   id: ID!
-  dateFrom: IsoShortDate
-  dateTo: IsoShortDate
+  dateFrom: IsoShortDate!
+  dateTo: IsoShortDate!
   label: String!
 }
 
@@ -490,8 +490,8 @@ input SpecialOpeningTimeInput {
 
 input TimesRangeInput {
   id: ID!
-  dateFrom: IsoShortDate
-  dateTo: IsoShortDate
+  dateFrom: IsoShortDate!
+  dateTo: IsoShortDate!
   label: String!
 }
 
