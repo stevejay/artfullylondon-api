@@ -1,6 +1,13 @@
 scalar IsoShortDate
 scalar ShortTime
 
+enum EntityTypeEnum {
+  TALENT
+  VENUE
+  EVENT
+  EVENT_SERIES
+}
+
 enum StatusTypeEnum {
   PENDING
   ACTIVE
@@ -770,6 +777,14 @@ type UpdateEventResult {
   event: Event
 }
 
+input RefreshSearchIndexInput {
+  entityType: EntityTypeEnum!
+}
+
+type RefreshSearchIndexResult {
+  ok: Boolean
+}
+
 type Mutation {
   createTalent(input: CreateTalentInput): CreateTalentResult
   updateTalent(input: UpdateTalentInput): UpdateTalentResult
@@ -779,4 +794,5 @@ type Mutation {
   updateEventSeries(input: UpdateEventSeriesInput): UpdateEventSeriesResult
   createEvent(input: CreateEventInput): CreateEventResult
   updateEvent(input: UpdateEventInput): UpdateEventResult
+  refreshSearchIndex(input: RefreshSearchIndexInput): RefreshSearchIndexResult
 }

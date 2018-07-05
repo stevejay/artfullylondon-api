@@ -10,408 +10,18 @@ import * as occurrenceType from "../../src/types/occurrence-type";
 import * as statusType from "../../src/types/status-type";
 import MockJwksServer from "../utils/mock-jwks-server";
 import * as authUtils from "../utils/authentication";
+import {
+  CREATE_EVENT_SERIES_MUTATION,
+  UPDATE_EVENT_SERIES_MUTATION,
+  EVENT_QUERY,
+  EVENT_FOR_EDIT_QUERY,
+  CREATE_EVENT_MUTATION,
+  UPDATE_EVENT_MUTATION,
+  CREATE_TALENT_MUTATION,
+  CREATE_VENUE_MUTATION,
+  UPDATE_VENUE_MUTATION
+} from "./queries";
 jest.setTimeout(30000);
-
-const EVENT_QUERY = `
-  query GetEvent($id: ID!) {
-    event(id: $id) {
-      id
-      name
-      summary
-      venue {
-        id
-      }
-      eventSeries {
-        id
-      }
-      talents {
-        talent {
-          id
-        }
-      }
-    }
-  }
-`;
-
-const EVENT_FOR_EDIT_QUERY = `
-  query GetEventForEdit($id: ID!) {
-    eventForEdit(id: $id) {
-      id
-      name
-      summary
-      version
-      venueId
-      eventSeriesId
-      talents {
-        id
-      }
-    }
-  }
-`;
-
-const CREATE_EVENT_MUTATION = `
-  mutation CreateEvent(
-    $status: StatusTypeEnum!
-    $links: [LinkInput!]
-    $images: [ImageInput!]
-    $weSay: String
-    $notes: String
-    $description: String
-    $descriptionCredit: String
-    $name: String!
-    $eventType: EventTypeEnum!
-    $occurrenceType: OccurrenceTypeEnum!
-    $costType: CostTypeEnum!
-    $summary: String!
-    $rating: Int!
-    $bookingType: BookingTypeEnum!
-    $venueId: ID!
-    $eventSeriesId: ID
-    $useVenueOpeningTimes: Boolean!
-    $dateFrom: IsoShortDate
-    $dateTo: IsoShortDate
-    $costFrom: Float
-    $costTo: Float
-    $bookingOpens: IsoShortDate
-    $venueGuidance: String
-    $duration: ShortTime
-    $minAge: Int
-    $maxAge: Int
-    $soldOut: Boolean
-    $timedEntry: Boolean
-    $timesRanges: [TimesRangeInput!]
-    $performances: [DayPerformanceInput!]
-    $additionalPerformances: [DatePerformanceInput!]
-    $specialPerformances: [SpecialPerformanceInput!]
-    $performancesClosures: [DateClosedTimeAtInput!]
-    $soldOutPerformances: [DatePerformanceInput!]
-    $openingTimes: [DayOpeningTimeInput!]
-    $additionalOpeningTimes: [DateOpeningTimeInput!]
-    $specialOpeningTimes: [SpecialOpeningTimeInput!]
-    $openingTimesClosures: [DateClosedTimeRangeInput!]
-    $audienceTags: [TagInput!]
-    $mediumTags: [TagInput!]
-    $styleTags: [TagInput!]
-    $geoTags: [TagInput!]
-    $talents: [EventTalentInput!]
-    $reviews: [ReviewInput!]
-  ) {
-    createEvent(input: {
-      status: $status
-      links: $links
-      images: $images
-      weSay: $weSay
-      notes: $notes
-      description: $description
-      descriptionCredit: $descriptionCredit
-      name: $name
-      eventType: $eventType
-      occurrenceType: $occurrenceType
-      costType: $costType
-      summary: $summary
-      rating: $rating
-      bookingType: $bookingType
-      venueId: $venueId
-      eventSeriesId: $eventSeriesId
-      useVenueOpeningTimes: $useVenueOpeningTimes
-      dateFrom: $dateFrom
-      dateTo: $dateTo
-      costFrom: $costFrom
-      costTo: $costTo
-      bookingOpens: $bookingOpens
-      venueGuidance: $venueGuidance
-      duration: $duration
-      minAge: $minAge
-      maxAge: $maxAge
-      soldOut: $soldOut
-      timedEntry: $timedEntry
-      timesRanges: $timesRanges
-      performances: $performances
-      additionalPerformances: $additionalPerformances
-      specialPerformances: $specialPerformances
-      performancesClosures: $performancesClosures
-      soldOutPerformances: $soldOutPerformances
-      openingTimes: $openingTimes
-      additionalOpeningTimes: $additionalOpeningTimes
-      specialOpeningTimes: $specialOpeningTimes
-      openingTimesClosures: $openingTimesClosures
-      audienceTags: $audienceTags
-      mediumTags: $mediumTags
-      styleTags: $styleTags
-      geoTags: $geoTags
-      talents: $talents
-      reviews: $reviews
-    }) {
-      event {
-        id
-        name
-        summary
-        venue {
-          id
-        }
-        eventSeries {
-          id
-        }
-        talents {
-          talent {
-            id
-          }
-        }
-      }
-    }
-  }
-`;
-
-const UPDATE_EVENT_MUTATION = `
-  mutation UpdateEvent(
-    $id: ID!
-    $status: StatusTypeEnum!
-    $version: Int!
-    $links: [LinkInput!]
-    $images: [ImageInput!]
-    $weSay: String
-    $notes: String
-    $description: String
-    $descriptionCredit: String
-    $name: String!
-    $eventType: EventTypeEnum!
-    $occurrenceType: OccurrenceTypeEnum!
-    $costType: CostTypeEnum!
-    $summary: String!
-    $rating: Int!
-    $bookingType: BookingTypeEnum!
-    $venueId: ID!
-    $eventSeriesId: ID
-    $useVenueOpeningTimes: Boolean!
-    $dateFrom: IsoShortDate
-    $dateTo: IsoShortDate
-    $costFrom: Float
-    $costTo: Float
-    $bookingOpens: IsoShortDate
-    $venueGuidance: String
-    $duration: ShortTime
-    $minAge: Int
-    $maxAge: Int
-    $soldOut: Boolean
-    $timedEntry: Boolean
-    $timesRanges: [TimesRangeInput!]
-    $performances: [DayPerformanceInput!]
-    $additionalPerformances: [DatePerformanceInput!]
-    $specialPerformances: [SpecialPerformanceInput!]
-    $performancesClosures: [DateClosedTimeAtInput!]
-    $soldOutPerformances: [DatePerformanceInput!]
-    $openingTimes: [DayOpeningTimeInput!]
-    $additionalOpeningTimes: [DateOpeningTimeInput!]
-    $specialOpeningTimes: [SpecialOpeningTimeInput!]
-    $openingTimesClosures: [DateClosedTimeRangeInput!]
-    $audienceTags: [TagInput!]
-    $mediumTags: [TagInput!]
-    $styleTags: [TagInput!]
-    $geoTags: [TagInput!]
-    $talents: [EventTalentInput!]
-    $reviews: [ReviewInput!]
-  ) {
-    updateEvent(input: {
-      id: $id
-      status: $status
-      version: $version
-      links: $links
-      images: $images
-      weSay: $weSay
-      notes: $notes
-      description: $description
-      descriptionCredit: $descriptionCredit
-      name: $name
-      eventType: $eventType
-      occurrenceType: $occurrenceType
-      costType: $costType
-      summary: $summary
-      rating: $rating
-      bookingType: $bookingType
-      venueId: $venueId
-      eventSeriesId: $eventSeriesId
-      useVenueOpeningTimes: $useVenueOpeningTimes
-      dateFrom: $dateFrom
-      dateTo: $dateTo
-      costFrom: $costFrom
-      costTo: $costTo
-      bookingOpens: $bookingOpens
-      venueGuidance: $venueGuidance
-      duration: $duration
-      minAge: $minAge
-      maxAge: $maxAge
-      soldOut: $soldOut
-      timedEntry: $timedEntry
-      timesRanges: $timesRanges
-      performances: $performances
-      additionalPerformances: $additionalPerformances
-      specialPerformances: $specialPerformances
-      performancesClosures: $performancesClosures
-      soldOutPerformances: $soldOutPerformances
-      openingTimes: $openingTimes
-      additionalOpeningTimes: $additionalOpeningTimes
-      specialOpeningTimes: $specialOpeningTimes
-      openingTimesClosures: $openingTimesClosures
-      audienceTags: $audienceTags
-      mediumTags: $mediumTags
-      styleTags: $styleTags
-      geoTags: $geoTags
-      talents: $talents
-      reviews: $reviews
-    }) {
-      event {
-        id
-        name
-        summary
-        venue {
-          id
-        }
-        eventSeries {
-          id
-        }
-        talents {
-          talent {
-            id
-          }
-        }
-      }
-    }
-  }
-`;
-
-const CREATE_TALENT_MUTATION = `
-  mutation CreateTalent(
-    $status: StatusTypeEnum!
-    $links: [LinkInput!]
-    $images: [ImageInput!]
-    $weSay: String
-    $notes: String
-    $description: String
-    $descriptionCredit: String
-    $firstNames: String
-    $lastName: String!
-    $talentType: TalentTypeEnum!
-    $commonRole: String!
-  ) {
-    createTalent(input: {
-      status: $status
-      links: $links
-      images: $images
-      weSay: $weSay
-      notes: $notes
-      description: $description
-      descriptionCredit: $descriptionCredit
-      firstNames: $firstNames
-      lastName: $lastName
-      talentType: $talentType
-      commonRole: $commonRole
-    }) {
-      talent {
-        id
-        firstNames
-        lastName
-        commonRole
-      }
-    }
-  }
-`;
-
-const CREATE_VENUE_MUTATION = `
-  mutation CreateVenue(
-    $status: StatusTypeEnum!
-    $links: [LinkInput!]
-    $images: [ImageInput!]
-    $weSay: String
-    $notes: String
-    $description: String
-    $descriptionCredit: String
-    $name: String!
-    $venueType: VenueTypeEnum!
-    $address: String!
-    $postcode: String!
-    $latitude: Float!
-    $longitude: Float!
-    $email: String
-    $telephone: String
-    $wheelchairAccessType: WheelchairAccessTypeEnum!
-    $disabledBathroomType: DisabledBathroomTypeEnum!
-    $hearingFacilitiesType: HearingFacilitiesTypeEnum!
-    $hasPermanentCollection: Boolean!
-    $openingTimes: [DayOpeningTimeInput!]
-    $additionalOpeningTimes: [DateOpeningTimeInput!]
-    $openingTimesClosures: [DateClosedTimeRangeInput!]
-    $namedClosures: [NamedClosureTypeEnum!]
-  ) {
-    createVenue(input: {
-      status: $status
-      links: $links
-      images: $images
-      weSay: $weSay
-      notes: $notes
-      description: $description
-      descriptionCredit: $descriptionCredit
-      name: $name
-      venueType: $venueType
-      address: $address
-      postcode: $postcode
-      latitude: $latitude
-      longitude: $longitude
-      email: $email
-      telephone: $telephone
-      wheelchairAccessType: $wheelchairAccessType
-      disabledBathroomType: $disabledBathroomType
-      hearingFacilitiesType: $hearingFacilitiesType
-      hasPermanentCollection: $hasPermanentCollection
-      openingTimes: $openingTimes
-      additionalOpeningTimes: $additionalOpeningTimes
-      openingTimesClosures: $openingTimesClosures
-      namedClosures: $namedClosures
-    }) {
-      venue {
-        id
-        name
-        venueType
-        postcode
-      }
-    }
-  }
-`;
-
-const CREATE_EVENT_SERIES_MUTATION = `
-  mutation CreateEventSeries(
-    $status: StatusTypeEnum!
-    $links: [LinkInput!]
-    $images: [ImageInput!]
-    $weSay: String
-    $notes: String
-    $description: String
-    $descriptionCredit: String
-    $name: String!
-    $eventSeriesType: EventSeriesTypeEnum!
-    $occurrence: String!
-    $summary: String!
-  ) {
-    createEventSeries(input: {
-      status: $status
-      links: $links
-      images: $images
-      weSay: $weSay
-      notes: $notes
-      description: $description
-      descriptionCredit: $descriptionCredit
-      name: $name
-      eventSeriesType: $eventSeriesType
-      occurrence: $occurrence
-      summary: $summary
-    }) {
-      eventSeries {
-        id
-        name
-        summary
-      }
-    }
-  }
-`;
 
 describe("event", () => {
   const mockJwksServer = new MockJwksServer();
@@ -723,103 +333,88 @@ describe("event", () => {
     });
   });
 
-  // it("should update the event when the venue entity updates", async () => {
-  //   snsListener.clearReceivedMessages();
-  //   let response = await request({
-  //     uri: "http://localhost:3014/admin/venue/" + testVenueId,
-  //     json: true,
-  //     method: "PUT",
-  //     headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-  //     body: {
-  //       ...testVenueBody,
-  //       postcode: "N8 0KL",
-  //       version: 2
-  //     },
-  //     timeout: 14000
-  //   });
+  it("should reindex the event when the venue entity updates", async () => {
+    snsListener.clearReceivedMessages();
+    await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: UPDATE_VENUE_MUTATION,
+        variables: {
+          ...testVenueBody,
+          postcode: "N8 0KL",
+          version: 2,
+          id: testVenueId
+        }
+      },
+      timeout: 14000
+    });
 
-  //   // Allow time for the search index update message to be processed.
-  //   await delay(5000);
-  //   expect(snsListener.receivedMessages).toEqual(
-  //     expect.arrayContaining([
-  //       {
-  //         entityType: entityType.EVENT,
-  //         entity: expect.objectContaining({
-  //           id: testEventId,
-  //           duration: "02:00",
-  //           status: statusType.ACTIVE,
-  //           version: 2
-  //         })
-  //       },
-  //       {
-  //         entityType: entityType.VENUE,
-  //         entity: expect.objectContaining({
-  //           postcode: "N8 0KL",
-  //           version: 2
-  //         })
-  //       }
-  //     ])
-  //   );
+    // Allow time for the search index update message to be processed.
+    await delay(5000);
+    expect(snsListener.receivedMessages).toEqual(
+      expect.arrayContaining([
+        {
+          entityType: entityType.VENUE,
+          entity: expect.objectContaining({
+            postcode: "N8 0KL",
+            version: 2
+          })
+        },
+        {
+          entityType: entityType.EVENT,
+          entity: expect.objectContaining({
+            id: testEventId,
+            status: statusType.ACTIVE,
+            version: 2
+          })
+        }
+      ])
+    );
+  });
 
-  //   // Check the event was updated:
-  //   response = await request({
-  //     uri: "http://localhost:3014/public/event/" + testEventId,
-  //     json: true,
-  //     method: "GET",
-  //     timeout: 14000,
-  //     resolveWithFullResponse: true
-  //   });
+  it("should reindex the event when the event series entity updates", async () => {
+    snsListener.clearReceivedMessages();
+    await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: UPDATE_EVENT_SERIES_MUTATION,
+        variables: {
+          ...testEventSeriesBody,
+          summary: "Stand-up poetry New",
+          version: 2,
+          id: testEventSeriesId
+        }
+      },
+      timeout: 14000
+    });
 
-  //   const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
-  //   expect(parsedResponse.entity).toEqual(
-  //     expect.objectContaining({
-  //       id: testEventId,
-  //       duration: "02:00",
-  //       status: statusType.ACTIVE,
-  //       version: 2,
-  //       postcode: "N8 0KL"
-  //     })
-  //   );
-  // });
-
-  // it("should update the event when the event series entity updates", async () => {
-  //   snsListener.clearReceivedMessages();
-  //   await request({
-  //     uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
-  //     json: true,
-  //     method: "PUT",
-  //     headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-  //     body: {
-  //       ...testEventSeriesBody,
-  //       summary: "Stand-up poetry New",
-  //       version: 2
-  //     },
-  //     timeout: 14000
-  //   });
-
-  //   // Allow time for the search index update message to be processed.
-  //   await delay(5000);
-  //   expect(snsListener.receivedMessages).toEqual(
-  //     expect.arrayContaining([
-  //       {
-  //         entityType: entityType.EVENT,
-  //         entity: expect.objectContaining({
-  //           id: testEventId,
-  //           duration: "02:00",
-  //           status: statusType.ACTIVE,
-  //           version: 2
-  //         })
-  //       },
-  //       {
-  //         entityType: entityType.EVENT_SERIES,
-  //         entity: expect.objectContaining({
-  //           eventSeriesType: eventSeriesType.OCCASIONAL,
-  //           summary: "Stand-up poetry New",
-  //           status: statusType.ACTIVE,
-  //           version: 2
-  //         })
-  //       }
-  //     ])
-  //   );
-  // });
+    // Allow time for the search index update message to be processed.
+    await delay(5000);
+    expect(snsListener.receivedMessages).toEqual(
+      expect.arrayContaining([
+        {
+          entityType: entityType.EVENT,
+          entity: expect.objectContaining({
+            id: testEventId,
+            status: statusType.ACTIVE,
+            version: 2
+          })
+        },
+        {
+          entityType: entityType.EVENT_SERIES,
+          entity: expect.objectContaining({
+            summary: "Stand-up poetry New",
+            status: statusType.ACTIVE,
+            version: 2
+          })
+        }
+      ])
+    );
+  });
 });

@@ -3,6 +3,7 @@ import * as talentService from "./talent-service";
 import * as venueService from "./venue-service";
 import * as eventSeriesService from "./event-series-service";
 import * as eventService from "./event-service";
+import * as searchIndexService from "./search-index-service";
 import * as validator from "./validator";
 
 const IsoShortDate = new RegularExpression(
@@ -84,6 +85,11 @@ export default {
       validator.validateUserForMutation(context);
       const event = await eventService.createOrUpdate(params.input);
       return { event };
+    },
+    async refreshSearchIndex(__, params, context) {
+      validator.validateUserForMutation(context);
+      await searchIndexService.refreshSearchIndex(params.input);
+      return { ok: true };
     }
   }
 };

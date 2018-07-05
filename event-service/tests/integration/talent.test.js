@@ -7,108 +7,13 @@ import SnsListener from "../utils/serverless-offline-sns-listener";
 import * as entityType from "../../src/types/entity-type";
 import MockJwksServer from "../utils/mock-jwks-server";
 import * as authUtils from "../utils/authentication";
+import {
+  TALENT_QUERY,
+  TALENT_FOR_EDIT_QUERY,
+  CREATE_TALENT_MUTATION,
+  UPDATE_TALENT_MUTATION
+} from "./queries";
 jest.setTimeout(30000);
-
-const TALENT_QUERY = `
-  query GetTalent($id: ID!) {
-    talent(id: $id) {
-      id
-      firstNames
-      lastName
-      commonRole
-    }
-  }
-`;
-
-const TALENT_FOR_EDIT_QUERY = `
-  query GetTalentForEdit($id: ID!) {
-    talentForEdit(id: $id) {
-      id
-      firstNames
-      lastName
-      commonRole
-      version
-    }
-  }
-`;
-
-const CREATE_TALENT_MUTATION = `
-  mutation CreateTalent(
-    $status: StatusTypeEnum!
-    $links: [LinkInput!]
-    $images: [ImageInput!]
-    $weSay: String
-    $notes: String
-    $description: String
-    $descriptionCredit: String
-    $firstNames: String
-    $lastName: String!
-    $talentType: TalentTypeEnum!
-    $commonRole: String!
-  ) {
-    createTalent(input: {
-      status: $status
-      links: $links
-      images: $images
-      weSay: $weSay
-      notes: $notes
-      description: $description
-      descriptionCredit: $descriptionCredit
-      firstNames: $firstNames
-      lastName: $lastName
-      talentType: $talentType
-      commonRole: $commonRole
-    }) {
-      talent {
-        id
-        firstNames
-        lastName
-        commonRole
-      }
-    }
-  }
-`;
-
-const UPDATE_TALENT_MUTATION = `
-  mutation UpdateTalent(
-    $id: ID!
-    $status: StatusTypeEnum!
-    $version: Int!
-    $links: [LinkInput!]
-    $images: [ImageInput!]
-    $weSay: String
-    $notes: String
-    $description: String
-    $descriptionCredit: String
-    $firstNames: String
-    $lastName: String!
-    $talentType: TalentTypeEnum!
-    $commonRole: String!
-  ) {
-    updateTalent(input: {
-      id: $id
-      status: $status
-      version: $version
-      links: $links
-      images: $images
-      weSay: $weSay
-      notes: $notes
-      description: $description
-      descriptionCredit: $descriptionCredit
-      firstNames: $firstNames
-      lastName: $lastName
-      talentType: $talentType
-      commonRole: $commonRole
-    }) {
-      talent {
-        id
-        firstNames
-        lastName
-        commonRole
-      }
-    }
-  }
-`;
 
 describe("talent", () => {
   const mockJwksServer = new MockJwksServer();

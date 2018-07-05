@@ -2,17 +2,24 @@ import request from "request-promise-native";
 import delay from "delay";
 import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
-import * as cognitoAuth from "../utils/cognito-auth";
 import SnsListener from "../utils/serverless-offline-sns-listener";
 import * as entityType from "../../src/types/entity-type";
 import * as statusType from "../../src/types/status-type";
+import MockJwksServer from "../utils/mock-jwks-server";
+import * as authUtils from "../utils/authentication";
+import {
+  CREATE_VENUE_MUTATION,
+  REFRESH_SEARCH_INDEX_MUTATION
+} from "./queries";
 jest.setTimeout(30000);
 
 describe("venue iteration", () => {
+  const mockJwksServer = new MockJwksServer();
   let snsListener = null;
   const testVenueBody = testData.createNewVenueBody();
 
   beforeAll(async () => {
+    mockJwksServer.start(3021);
     await dynamodb.truncateAllTables();
 
     snsListener = new SnsListener({
@@ -25,11 +32,14 @@ describe("venue iteration", () => {
     );
 
     await request({
-      uri: "http://localhost:3014/admin/venue",
+      uri: "http://localhost:3014/graphql",
       json: true,
       method: "POST",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: testVenueBody,
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: CREATE_VENUE_MUTATION,
+        variables: testVenueBody
+      },
       timeout: 14000
     });
 
@@ -38,21 +48,31 @@ describe("venue iteration", () => {
   });
 
   afterAll(async () => {
+    mockJwksServer.stop();
     await snsListener.stopListening();
   });
 
   it("should iterate the venues to index them", async () => {
     snsListener.clearReceivedMessages();
-    await request({
-      uri: "http://localhost:3014/admin/search/refresh/venue",
+    let response = await request({
+      uri: "http://localhost:3014/graphql",
       json: true,
       method: "POST",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: { status: statusType.ACTIVE },
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: REFRESH_SEARCH_INDEX_MUTATION,
+        variables: { entityType: entityType.VENUE }
+      },
       timeout: 14000
     });
 
-    await delay(5000);
+    expect(response).toEqual({
+      data: {
+        refreshSearchIndex: { ok: true }
+      }
+    });
+
+    await delay(3000);
     expect(snsListener.receivedMessages).toEqual([
       {
         entityType: entityType.VENUE,
@@ -64,12 +84,12 @@ describe("venue iteration", () => {
       }
     ]);
 
-    const response = await dynamodb.getAllIterationLogs(
+    response = await dynamodb.getAllIterationLogs(
       "artfullylondon-development-event-iteration-log"
     );
     expect(response).toEqual([
       expect.objectContaining({
-        actionId: "venue refresh",
+        actionId: `${entityType.VENUE} refresh`,
         completed: true,
         errors: []
       })
