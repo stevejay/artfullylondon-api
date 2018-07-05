@@ -1,10 +1,7 @@
-import { sync } from "jest-toolkit";
 import request from "request-promise-native";
 import delay from "delay";
 import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
-import * as cognitoAuth from "../utils/cognito-auth";
-import * as lambdaUtils from "../utils/lambda";
 import SnsListener from "../utils/serverless-offline-sns-listener";
 import * as costType from "../../src/types/cost-type";
 import * as entityType from "../../src/types/entity-type";
@@ -12,9 +9,241 @@ import * as eventSeriesType from "../../src/types/event-series-type";
 import * as eventType from "../../src/types/event-type";
 import * as occurrenceType from "../../src/types/occurrence-type";
 import * as statusType from "../../src/types/status-type";
+import MockJwksServer from "../utils/mock-jwks-server";
+import * as authUtils from "../utils/authentication";
 jest.setTimeout(30000);
 
+const EVENT_QUERY = `
+  query GetEvent($id: ID!) {
+    event(id: $id) {
+      id
+      name
+      summary
+    }
+  }
+`;
+
+const EVENT_FOR_EDIT_QUERY = `
+  query GetEventForEdit($id: ID!) {
+    eventForEdit(id: $id) {
+      id
+      name
+      summary
+      version
+    }
+  }
+`;
+
+const CREATE_EVENT_MUTATION = `
+  mutation CreateEvent(
+    $status: StatusTypeEnum!
+    $links: [LinkInput!]
+    $images: [ImageInput!]
+    $weSay: String
+    $notes: String
+    $description: String
+    $descriptionCredit: String
+    $name: String!
+    $eventType: EventTypeEnum!
+    $occurrenceType: OccurrenceTypeEnum!
+    $costType: CostTypeEnum!
+    $summary: String!
+    $rating: Int!
+    $bookingType: BookingTypeEnum!
+    $venueId: ID!
+    $eventSeriesId: ID
+    $useVenueOpeningTimes: Boolean!
+    $dateFrom: IsoShortDate
+    $dateTo: IsoShortDate
+    $costFrom: Float
+    $costTo: Float
+    $bookingOpens: IsoShortDate
+    $venueGuidance: String
+    $duration: ShortTime
+    $minAge: Int
+    $maxAge: Int
+    $soldOut: Boolean
+    $timedEntry: Boolean
+    $timesRanges: [TimesRangeInput!]
+    $performances: [DayPerformanceInput!]
+    $additionalPerformances: [DatePerformanceInput!]
+    $specialPerformances: [SpecialPerformanceInput!]
+    $performancesClosures: [DateClosedTimeAtInput!]
+    $soldOutPerformances: [DatePerformanceInput!]
+    $openingTimes: [DayOpeningTimeInput!]
+    $additionalOpeningTimes: [DateOpeningTimeInput!]
+    $specialOpeningTimes: [SpecialOpeningTimeInput!]
+    $openingTimesClosures: [DateClosedTimeRangeInput!]
+    $audienceTags: [TagInput!]
+    $mediumTags: [TagInput!]
+    $styleTags: [TagInput!]
+    $geoTags: [TagInput!]
+    $talents: [EventTalentInput!]
+    $reviews: [ReviewInput!]
+  ) {
+    createEvent(input: {
+      status: $status
+      links: $links
+      images: $images
+      weSay: $weSay
+      notes: $notes
+      description: $description
+      descriptionCredit: $descriptionCredit
+      name: $name
+      eventType: $eventType
+      occurrenceType: $occurrenceType
+      costType: $costType
+      summary: $summary
+      rating: $rating
+      bookingType: $bookingType
+      venueId: $venueId
+      eventSeriesId: $eventSeriesId
+      useVenueOpeningTimes: $useVenueOpeningTimes
+      dateFrom: $dateFrom
+      dateTo: $dateTo
+      costFrom: $costFrom
+      costTo: $costTo
+      bookingOpens: $bookingOpens
+      venueGuidance: $venueGuidance
+      duration: $duration
+      minAge: $minAge
+      maxAge: $maxAge
+      soldOut: $soldOut
+      timedEntry: $timedEntry
+      timesRanges: $timesRanges
+      performances: $performances
+      additionalPerformances: $additionalPerformances
+      specialPerformances: $specialPerformances
+      performancesClosures: $performancesClosures
+      soldOutPerformances: $soldOutPerformances
+      openingTimes: $openingTimes
+      additionalOpeningTimes: $additionalOpeningTimes
+      specialOpeningTimes: $specialOpeningTimes
+      openingTimesClosures: $openingTimesClosures
+      audienceTags: $audienceTags
+      mediumTags: $mediumTags
+      styleTags: $styleTags
+      geoTags: $geoTags
+      talents: $talents
+      reviews: $reviews
+    }) {
+      event {
+        id
+        name
+        summary
+      }
+    }
+  }
+`;
+
+const UPDATE_EVENT_MUTATION = `
+  mutation UpdateEvent(
+    $id: ID!
+    $status: StatusTypeEnum!
+    $version: Int!
+    $links: [LinkInput!]
+    $images: [ImageInput!]
+    $weSay: String
+    $notes: String
+    $description: String
+    $descriptionCredit: String
+    $name: String!
+    $eventType: EventTypeEnum!
+    $occurrenceType: OccurrenceTypeEnum!
+    $costType: CostTypeEnum!
+    $summary: String!
+    $rating: Int!
+    $bookingType: BookingTypeEnum!
+    $venueId: ID!
+    $eventSeriesId: ID
+    $useVenueOpeningTimes: Boolean!
+    $dateFrom: IsoShortDate
+    $dateTo: IsoShortDate
+    $costFrom: Float
+    $costTo: Float
+    $bookingOpens: IsoShortDate
+    $venueGuidance: String
+    $duration: ShortTime
+    $minAge: Int
+    $maxAge: Int
+    $soldOut: Boolean
+    $timedEntry: Boolean
+    $timesRanges: [TimesRangeInput!]
+    $performances: [DayPerformanceInput!]
+    $additionalPerformances: [DatePerformanceInput!]
+    $specialPerformances: [SpecialPerformanceInput!]
+    $performancesClosures: [DateClosedTimeAtInput!]
+    $soldOutPerformances: [DatePerformanceInput!]
+    $openingTimes: [DayOpeningTimeInput!]
+    $additionalOpeningTimes: [DateOpeningTimeInput!]
+    $specialOpeningTimes: [SpecialOpeningTimeInput!]
+    $openingTimesClosures: [DateClosedTimeRangeInput!]
+    $audienceTags: [TagInput!]
+    $mediumTags: [TagInput!]
+    $styleTags: [TagInput!]
+    $geoTags: [TagInput!]
+    $talents: [EventTalentInput!]
+    $reviews: [ReviewInput!]
+  ) {
+    updateEvent(input: {
+      id: $id
+      status: $status
+      version: $version
+      links: $links
+      images: $images
+      weSay: $weSay
+      notes: $notes
+      description: $description
+      descriptionCredit: $descriptionCredit
+      name: $name
+      eventType: $eventType
+      occurrenceType: $occurrenceType
+      costType: $costType
+      summary: $summary
+      rating: $rating
+      bookingType: $bookingType
+      venueId: $venueId
+      eventSeriesId: $eventSeriesId
+      useVenueOpeningTimes: $useVenueOpeningTimes
+      dateFrom: $dateFrom
+      dateTo: $dateTo
+      costFrom: $costFrom
+      costTo: $costTo
+      bookingOpens: $bookingOpens
+      venueGuidance: $venueGuidance
+      duration: $duration
+      minAge: $minAge
+      maxAge: $maxAge
+      soldOut: $soldOut
+      timedEntry: $timedEntry
+      timesRanges: $timesRanges
+      performances: $performances
+      additionalPerformances: $additionalPerformances
+      specialPerformances: $specialPerformances
+      performancesClosures: $performancesClosures
+      soldOutPerformances: $soldOutPerformances
+      openingTimes: $openingTimes
+      additionalOpeningTimes: $additionalOpeningTimes
+      specialOpeningTimes: $specialOpeningTimes
+      openingTimesClosures: $openingTimesClosures
+      audienceTags: $audienceTags
+      mediumTags: $mediumTags
+      styleTags: $styleTags
+      geoTags: $geoTags
+      talents: $talents
+      reviews: $reviews
+    }) {
+      event {
+        id
+        name
+        summary
+      }
+    }
+  }
+`;
+
 describe("event", () => {
+  const mockJwksServer = new MockJwksServer();
   let testVenueId = null;
   let testTalentId = null;
   let testEventSeriesId = null;
@@ -26,6 +255,15 @@ describe("event", () => {
   let testEventBody = null;
 
   beforeAll(async () => {
+    snsListener = new SnsListener({
+      endpoint: "http://127.0.0.1:4002",
+      region: "eu-west-1"
+    });
+    await snsListener.startListening(
+      "arn:aws:sns:eu-west-1:1111111111111:IndexDocument-development",
+      3019
+    );
+    mockJwksServer.start(3021);
     await dynamodb.truncateAllTables();
 
     let response = await request({
@@ -69,18 +307,10 @@ describe("event", () => {
       testTalentId,
       testEventSeriesId
     );
-
-    snsListener = new SnsListener({
-      endpoint: "http://127.0.0.1:4002",
-      region: "eu-west-1"
-    });
-    await snsListener.startListening(
-      "arn:aws:sns:eu-west-1:1111111111111:IndexDocument-development",
-      3019
-    );
   });
 
   afterAll(async () => {
+    mockJwksServer.stop();
     await snsListener.stopListening();
   });
 

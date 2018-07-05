@@ -20,6 +20,18 @@ const TALENT_QUERY = `
   }
 `;
 
+const TALENT_FOR_EDIT_QUERY = `
+  query GetTalentForEdit($id: ID!) {
+    talentForEdit(id: $id) {
+      id
+      firstNames
+      lastName
+      commonRole
+      version
+    }
+  }
+`;
+
 const CREATE_TALENT_MUTATION = `
   mutation CreateTalent(
     $status: StatusTypeEnum!
@@ -209,6 +221,31 @@ describe("talent", () => {
           id: testTalentId,
           firstNames: "Byron",
           commonRole: "Poet"
+        })
+      }
+    });
+  });
+
+  it("should get the talent for edit", async () => {
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: TALENT_FOR_EDIT_QUERY,
+        variables: { id: testTalentId }
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        talentForEdit: expect.objectContaining({
+          id: testTalentId,
+          firstNames: "Byron",
+          commonRole: "Poet",
+          version: 1
         })
       }
     });
