@@ -10,9 +10,7 @@ async function getJWKSJson(uri) {
 }
 
 function getAuthorizationTokenFromEvent(event) {
-  const header = event.headers
-    ? event.headers.Authorization
-    : event.authorizationToken; // TODO remove this?
+  const header = event.headers.Authorization;
   if (!header) {
     throw new Error("No Authorization header found");
   }

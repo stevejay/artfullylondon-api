@@ -1,8 +1,9 @@
 import request from "request-promise-native";
 import uuidv4 from "uuid/v4";
-import * as authUtils from "../utils/auth";
 import * as watchType from "../../src/watch-type";
 import * as watchChangeType from "../../src/watch-change-type";
+import * as authUtils from "../utils/authentication";
+import MockJwksServer from "../utils/mock-jwks-server";
 jest.setTimeout(60000);
 
 const EVENT_WATCHES_QUERY = `
@@ -29,15 +30,22 @@ mutation UpdateWatches(
 
 describe("watches", () => {
   const userId = uuidv4();
+  const mockJwksServer = new MockJwksServer();
+
+  beforeAll(async () => {
+    mockJwksServer.start(3021);
+  });
+
+  afterAll(async () => {
+    mockJwksServer.stop();
+  });
 
   it("should update event watches", async () => {
     const response = await request({
       uri: "http://localhost:3012/graphql",
       json: true,
       method: "POST",
-      headers: {
-        Authorization: authUtils.createAuthorizationHeaderValue(userId)
-      },
+      headers: { Authorization: authUtils.createAuthToken(userId) },
       body: {
         query: UPDATE_WATCHES_MUTATION,
         variables: {
@@ -76,9 +84,7 @@ describe("watches", () => {
       uri: "http://localhost:3012/graphql",
       json: true,
       method: "POST",
-      headers: {
-        Authorization: authUtils.createAuthorizationHeaderValue(userId)
-      },
+      headers: { Authorization: authUtils.createAuthToken(userId) },
       body: { query: EVENT_WATCHES_QUERY },
       timeout: 30000
     });
@@ -109,9 +115,7 @@ describe("watches", () => {
       uri: "http://localhost:3012/graphql",
       json: true,
       method: "POST",
-      headers: {
-        Authorization: authUtils.createAuthorizationHeaderValue(userId)
-      },
+      headers: { Authorization: authUtils.createAuthToken(userId) },
       body: {
         query: UPDATE_WATCHES_MUTATION,
         variables: {
@@ -140,9 +144,7 @@ describe("watches", () => {
       uri: "http://localhost:3012/graphql",
       json: true,
       method: "POST",
-      headers: {
-        Authorization: authUtils.createAuthorizationHeaderValue(userId)
-      },
+      headers: { Authorization: authUtils.createAuthToken(userId) },
       body: { query: EVENT_WATCHES_QUERY },
       timeout: 30000
     });

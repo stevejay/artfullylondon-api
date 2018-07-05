@@ -55,7 +55,7 @@ describe("schema stitching", () => {
     `;
 
     const result = await request({
-      uri: "http://localhost:3017/graphql",
+      uri: "http://localhost:3015/graphql",
       json: true,
       method: "POST",
       headers: { Authorization: "Bearer aaaaaaaaaaaaaaaa" },

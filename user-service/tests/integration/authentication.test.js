@@ -1,5 +1,6 @@
 import request from "request-promise-native";
 import { sync } from "jest-toolkit";
+import MockJwksServer from "../utils/mock-jwks-server";
 jest.setTimeout(60000);
 
 const PREFERENCES_QUERY = `
@@ -11,6 +12,16 @@ const PREFERENCES_QUERY = `
 `;
 
 describe("authentication", () => {
+  const mockJwksServer = new MockJwksServer();
+
+  beforeAll(async () => {
+    mockJwksServer.start(3021);
+  });
+
+  afterAll(async () => {
+    mockJwksServer.stop();
+  });
+
   it("should fail to read preferences when authentication fails", async () => {
     expect(
       await sync(

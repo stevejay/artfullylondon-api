@@ -1,40 +1,14 @@
 import "./xray-setup";
-import { AwsJwtVerifier } from "aws-jwt-verifier";
+import * as jwksClient from "./jwks-client";
 import AuthPolicy from "aws-auth-policy";
-import request from "request-promise-native";
 import * as log from "loglevel";
 
-// TODO cache the response
-async function getJWKSJson(uri) {
-  return await request({ uri, json: false, method: "GET" });
-}
-
-function getAuthorizationTokenFromEvent(event) {
-  const header = event.headers
-    ? event.headers.Authorization
-    : event.authorizationToken; // TODO remove this?
+function getAuthorizationToken(event) {
+  const header = event.headers.Authorization;
   if (!header) {
     throw new Error("No Authorization header found");
   }
   return header.replace(/^Bearer /, "");
-}
-
-function verifyJWT(token, jwksJson) {
-  const awsJwtVerifier = new AwsJwtVerifier({
-    jwksJson,
-    tokenType: process.env.AUTH_JWT_TOKEN_TYPE,
-    iss: process.env.AUTH_JWT_ISSUER
-  });
-  const result = awsJwtVerifier.verify(token);
-  if (result.is_ok()) {
-    const decodedToken = result.unwrap();
-    if (decodedToken.payload.aud !== process.env.AUTH_JWT_AUDIENCE) {
-      throw new Error("Authorization header is not for expected audience");
-    }
-    return decodedToken;
-  } else {
-    throw new Error(result.unwrap_err());
-  }
 }
 
 function getResourceInfoFromMethodArn(methodArn) {
@@ -52,8 +26,8 @@ function getResourceInfoFromMethodArn(methodArn) {
   };
 }
 
-function createPolicy(decodedToken, resourceInfo) {
-  const authPolicy = new AuthPolicy(decodedToken.sub, resourceInfo.accountId, {
+function createPolicy(payload, resourceInfo) {
+  const authPolicy = new AuthPolicy(payload.sub, resourceInfo.accountId, {
     region: resourceInfo.region,
     restApiId: resourceInfo.restApiId,
     stage: resourceInfo.stage
@@ -62,33 +36,33 @@ function createPolicy(decodedToken, resourceInfo) {
   return authPolicy.build();
 }
 
-function addContextToPolicy(decodedToken, policy) {
+function addContextToPolicy(payload, policy) {
   return {
     ...policy,
     context: {
-      cognitoUsername: decodedToken.payload["cognito:username"],
-      isEditor: (decodedToken.payload["cognito:groups"] || []).includes(
-        "editors"
-      )
-    },
-    principalId: decodedToken.payload.sub
+      cognitoUsername: payload["cognito:username"],
+      isEditor: (payload["cognito:groups"] || []).includes("editors")
+    }
   };
 }
 
 async function handlerImpl(event) {
-  const jwksJson = await getJWKSJson(process.env.AUTH_JWKS_URL);
-  const token = getAuthorizationTokenFromEvent(event);
-  const decodedToken = verifyJWT(token, jwksJson);
+  const token = getAuthorizationToken(event);
+  const payload = await jwksClient.verifyJWT(token, {
+    algorithms: ["RS256"],
+    audience: process.env.AUTH_JWT_AUDIENCE,
+    issuer: process.env.AUTH_JWT_ISSUER
+  });
   const resourceInfo = getResourceInfoFromMethodArn(event.methodArn);
-  const policy = createPolicy(decodedToken, resourceInfo);
-  return addContextToPolicy(decodedToken, policy);
+  const policy = createPolicy(payload, resourceInfo);
+  return addContextToPolicy(payload, policy);
 }
 
 export function handler(event, context, cb) {
   handlerImpl(event)
     .then(policy => cb(null, policy))
     .catch(err => {
-      log.error(err.message);
+      log.error(err.message, err.stack);
       cb(new Error("Unauthorized"));
     });
 }

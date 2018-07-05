@@ -65,6 +65,18 @@ Each service requires an `env.yml` file to exist that is populated with the appr
 
 The `env.template.yml` contains the required values for the Development environment when those values are not secrets. Values with the text `<INSERT>` need to be replaced.
 
+#### Localhost Ports
+
+- 3010 Data Service
+- 3011 Tag Service
+- 3012 User Service
+- 3013 Search Service
+- 3014 Event Service
+- 3015 GraphQL Service
+- 3016 Image Service
+- 3019 Mock SNS Listener
+- 3021 Mock JWKS Server
+
 ### Troubleshooting
 
 #### Port Conflicts on Windows
@@ -84,25 +96,18 @@ aws dynamodb delete-table --endpoint-url http://localhost:4569 --table-name artf
 ## Todo
 
 - Add AWS Cognito serverless configuration to the serverless files? (I think serverless supports AWS Cognito configuration now. Problem is it is not needed locally.)
-- Is there an encoding issue with params in lambda integration when using serverless local?
 - See about CORS origin restrictions for getting images from resized and original S3 buckets.
-- Improve error handling on iterators.
-- Do full validation of entities to index that are received by search service?
-- Check further on the search service integration test flakiness.
 - DLQs: https://serverless.com/framework/docs/providers/aws/guide/functions/
 - IfNoneMatch bad string problem when sending etag in request.
 - Upgrade apollo-server-lambda to latest when release candidate finalised.
 - Sort out graphql-service graphql dependency.
-- change entityType to entity?
-- work out how to add cache headers to search responses for non-admin requests.
-- Improve graphql validation to be able to replace my validation
-- Change data service to use graphql to access search service
-- renumber the ports
+- Improve graphql validation to be able to partially replace the legacy validation.
+- Remove redis.
 - GraphQL info links:
-  - useful regex /[^\w{}]+/g
-  - database request batching https://github.com/facebook/dataloader
-  - paging: https://graphql.github.io/learn/pagination/
+  - Useful regex /[^\w{}]+/g
+  - Database request batching https://github.com/facebook/dataloader
   - https://www.apollographql.com/engine
+- Fix Jest not reporting correct line numbers (transpilation issue).
 
 ## Info
 
