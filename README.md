@@ -1,6 +1,6 @@
 # Artfully London API
 
-The main back-end code for the Artfully London website. An example of a back-end implemented entirely using AWS Lambda nanoservices, all written in Node.js and deployed using the Serverless framework.
+The main back-end code for the Artfully London website. An example of a GraphQL back-end implemented entirely using AWS Lambda nanoservices, written in Node.js and deployed using the Serverless framework.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -16,14 +16,11 @@ This repository contains the API that supports this functionality. It is compose
 - Search Service - Indexing and searching of the API entities using Elasticsearch
 - Tag Service - CRUD operations for the types of event tags (medium, style, geo and audience), stored using DynamoDB
 - User Service - CRUD operations for the watches and preferences the users have, stored using DynamoDB
+- GraphQL Service - Stitches together all the above services so that there is a single GraphQL service for the entire system. There are two GraphQL endpoints, one for the services required by the public site (Data, Search and User) and one for the services required by the admin site (Data, Event, Image, Search and Tag).
 
 ### Authentication
 
 Admin user authentication is handled using AWS Cognito while public user authentication is handled using Auth0. (Passwordless authentication was required for public users and AWS Cognito does not support that authentication method, as of June 2018.)
-
-### Caching
-
-Etags are used in the Event Service to support caching in the browser. The Etag value for an entity request is calculated when it is returned. The value is stored in Redis for recall when a subsequent request with an Etag is made.
 
 ## Development
 
