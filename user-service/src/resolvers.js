@@ -11,38 +11,42 @@ export default {
       });
     },
     // TODO make a single call to the db.
-    watches: (__, ___, context) => ({
-      async tag() {
-        return await watchService.getWatches({
-          userId: context.authorizer.principalId,
-          watchType: watchType.TAG
-        });
-      },
-      async event() {
-        return await watchService.getWatches({
-          userId: context.authorizer.principalId,
-          watchType: watchType.EVENT
-        });
-      },
-      async eventSeries() {
-        return await watchService.getWatches({
-          userId: context.authorizer.principalId,
-          watchType: watchType.EVENT_SERIES
-        });
-      },
-      async talent() {
-        return await watchService.getWatches({
-          userId: context.authorizer.principalId,
-          watchType: watchType.TALENT
-        });
-      },
-      async venue() {
-        return await watchService.getWatches({
-          userId: context.authorizer.principalId,
-          watchType: watchType.VENUE
-        });
-      }
-    })
+    watches: (__, ___, context, info) => {
+      console.log("INFO", JSON.stringify(info));
+
+      return {
+        async tag() {
+          return await watchService.getWatches({
+            userId: context.authorizer.principalId,
+            watchType: watchType.TAG
+          });
+        },
+        async event() {
+          return await watchService.getWatches({
+            userId: context.authorizer.principalId,
+            watchType: watchType.EVENT
+          });
+        },
+        async eventSeries() {
+          return await watchService.getWatches({
+            userId: context.authorizer.principalId,
+            watchType: watchType.EVENT_SERIES
+          });
+        },
+        async talent() {
+          return await watchService.getWatches({
+            userId: context.authorizer.principalId,
+            watchType: watchType.TALENT
+          });
+        },
+        async venue() {
+          return await watchService.getWatches({
+            userId: context.authorizer.principalId,
+            watchType: watchType.VENUE
+          });
+        }
+      };
+    }
   },
   Mutation: {
     async deleteUser(__, ___, context) {
@@ -50,11 +54,11 @@ export default {
       return { ok: true };
     },
     async updateWatches(__, request, context) {
-      await watchService.updateWatches({
+      const updatedWatches = await watchService.updateWatches({
         ...request.input,
         userId: context.authorizer.principalId
       });
-      return { ok: true };
+      return { watches: updatedWatches };
     },
     async updatePreferences(__, request, context) {
       await preferenceService.updatePreferences({

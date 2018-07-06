@@ -14,14 +14,12 @@ export async function getWatches(request) {
 export async function updateWatches(request) {
   validator.validateUpdateWatchesRequest(request);
   const currentWatches = await getWatches(request);
-
   const updatedWatches = watchUpdater(
     currentWatches.version,
     request.newVersion,
     currentWatches.items,
     request.changes
   );
-
   if (currentWatches.version === watchMapper.INITIAL_VERSION_NUMBER) {
     await watchRepository.createWatches(
       request.newVersion,
@@ -37,6 +35,10 @@ export async function updateWatches(request) {
       updatedWatches
     );
   }
+  return {
+    items: updatedWatches,
+    version: request.newVersion
+  };
 }
 
 export async function deleteAllWatches(request) {

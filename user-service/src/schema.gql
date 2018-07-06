@@ -69,7 +69,7 @@ input UpdatePreferencesInput {
 }
 
 type UpdatePreferencesOutput {
-  ok: Boolean!
+  ok: Boolean
 }
 
 type Mutation {

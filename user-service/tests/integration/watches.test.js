@@ -23,7 +23,10 @@ mutation UpdateWatches(
   updateWatches(
     input: { watchType: $watchType, newVersion: $newVersion, changes: $changes }
   ) {
-    ok
+    watches {
+      items { id, label },
+      version
+    }
   }
 }
 `;
@@ -71,7 +74,19 @@ describe("watches", () => {
     expect(response).toEqual({
       data: {
         updateWatches: {
-          ok: true
+          watches: {
+            version: 1,
+            items: [
+              {
+                id: "1111",
+                label: "Label 1111"
+              },
+              {
+                id: "2222",
+                label: "Label 2222"
+              }
+            ]
+          }
         }
       }
     });
@@ -133,7 +148,15 @@ describe("watches", () => {
     expect(response).toEqual({
       data: {
         updateWatches: {
-          ok: true
+          watches: {
+            version: 2,
+            items: [
+              {
+                id: "2222",
+                label: "Label 2222"
+              }
+            ]
+          }
         }
       }
     });
