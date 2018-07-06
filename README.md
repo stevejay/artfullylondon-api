@@ -105,7 +105,7 @@ aws dynamodb delete-table --endpoint-url http://localhost:4569 --table-name artf
   - Database request batching https://github.com/facebook/dataloader
   - https://www.apollographql.com/engine
 - Fix Jest not reporting correct line numbers (transpilation issue).
-- Look into using [yup](https://www.npmjs.com/package/yup) for validation.
+- Look into using [joi](https://github.com/hapijs/joi) or [yup](https://www.npmjs.com/package/yup) for validation.
 
 ## Info
 
