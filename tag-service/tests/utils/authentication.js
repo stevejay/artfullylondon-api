@@ -39,7 +39,6 @@ function createJWT(isEditor) {
       "cognito:groups": isEditor ? ["editors"] : ["readers"],
       email_verified: true,
       event_id: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
-      token_use: DEV_ENV_VARS.AUTH_JWT_TOKEN_TYPE,
       auth_time: 1111111111,
       iss: DEV_ENV_VARS.AUTH_JWT_ISSUER,
       "cognito:username": "steve",
