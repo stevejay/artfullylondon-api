@@ -1,24 +1,14 @@
 import * as mapper from "./mapper";
+import * as tagType from "./tag-type";
 
 describe("mapCreateTagRequest", () => {
   it("should map correctly", () => {
-    const request = { tagType: "geo", label: "usa" };
+    const request = { tagType: tagType.GEO, label: "usa" };
     const result = mapper.mapCreateTagRequest(request);
     expect(result).toEqual({
+      tagType: tagType.GEO,
       id: "geo/usa",
-      tagType: "geo",
       label: "usa"
-    });
-  });
-});
-
-describe("mapDeleteTagRequest", () => {
-  it("should map correctly", () => {
-    const request = { id: "geo/usa" };
-    const result = mapper.mapDeleteTagRequest(request);
-    expect(result).toEqual({
-      id: "geo/usa",
-      tagType: "geo"
     });
   });
 });

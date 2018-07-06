@@ -1,5 +1,9 @@
 import slug from "limax";
 
-export function createFromLabel(prefix, label) {
-  return `${prefix}/${slug(label, { maintainCase: false })}`;
+const SLUG_OPTIONS = {
+  maintainCase: false
+};
+
+export function createTagId(tagType, label) {
+  return `${slug(tagType, SLUG_OPTIONS)}/${slug(label, SLUG_OPTIONS)}`;
 }

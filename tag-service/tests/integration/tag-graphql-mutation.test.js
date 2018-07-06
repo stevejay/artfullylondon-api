@@ -2,6 +2,7 @@ import request from "request-promise-native";
 import { truncateTagTable } from "../utils/dynamodb";
 import * as authUtils from "../utils/authentication";
 import MockJwksServer from "../utils/mock-jwks-server";
+import * as tagType from "../../src/tag-type";
 jest.setTimeout(60000);
 
 describe("tag graphql querying", () => {
@@ -24,7 +25,7 @@ describe("tag graphql querying", () => {
       headers: { Authorization: authUtils.createEditorAuthToken() },
       body: {
         query:
-          'mutation { createTag(input: { tag: { tagType: geo, label: "USA" } }) { tag { tagType, id, label } } }'
+          'mutation { createTag(input: { tagType: GEO, label: "USA" }) { tag { tagType, id, label } } }'
       },
       timeout: 30000
     });
@@ -35,7 +36,7 @@ describe("tag graphql querying", () => {
           tag: {
             id: "geo/usa",
             label: "usa",
-            tagType: "geo"
+            tagType: tagType.GEO
           }
         }
       }
@@ -50,7 +51,7 @@ describe("tag graphql querying", () => {
       headers: { Authorization: authUtils.createReaderAuthToken() },
       body: {
         query:
-          'mutation { createTag(input: { tag: { tagType: geo, label: "Mexico" } }) { tag { tagType, id, label } } }'
+          'mutation { createTag(input: { tagType: GEO, label: "Mexico" }) { tag { tagType, id, label } } }'
       },
       timeout: 30000
     });
@@ -76,7 +77,7 @@ describe("tag graphql querying", () => {
       headers: { Authorization: authUtils.createReaderAuthToken() },
       body: {
         query:
-          'mutation { deleteTag(input: { tag: { id: "geo/usa" } }) { ok } }'
+          'mutation { deleteTag(input: { tagType: GEO, id: "geo/usa" }) { ok } }'
       },
       timeout: 30000
     });
@@ -102,7 +103,7 @@ describe("tag graphql querying", () => {
       headers: { Authorization: authUtils.createEditorAuthToken() },
       body: {
         query:
-          'mutation { deleteTag(input: { tag: { id: "geo/usa" } }) { ok } }'
+          'mutation { deleteTag(input: { tagType: GEO, id: "geo/usa" }) { ok } }'
       },
       timeout: 30000
     });

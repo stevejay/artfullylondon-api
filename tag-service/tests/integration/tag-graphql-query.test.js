@@ -2,6 +2,7 @@ import request from "request-promise-native";
 import { addToTable, truncateTagTable } from "../utils/dynamodb";
 import MockJwksServer from "../utils/mock-jwks-server";
 import * as authUtils from "../utils/authentication";
+import * as tagType from "../../src/tag-type";
 jest.setTimeout(60000);
 
 describe("tag graphql querying", () => {
@@ -10,12 +11,12 @@ describe("tag graphql querying", () => {
   beforeAll(async () => {
     await truncateTagTable("artfullylondon-development-tag");
     await addToTable("artfullylondon-development-tag", {
-      tagType: "audience",
+      tagType: tagType.AUDIENCE,
       id: "audience/families",
       label: "families"
     });
     await addToTable("artfullylondon-development-tag", {
-      tagType: "geo",
+      tagType: tagType.GEO,
       id: "geo/usa",
       label: "usa"
     });
@@ -79,7 +80,7 @@ describe("tag graphql querying", () => {
         tags: {
           geo: [
             {
-              tagType: "geo",
+              tagType: tagType.GEO,
               id: "geo/usa",
               label: "usa"
             }
