@@ -1,5 +1,5 @@
 import { ensure } from "ensure-request";
-import * as imageType from "../types/image-type";
+import * as imageType from "../image-type";
 
 const IMAGE_VALIDATOR = {
   type: {

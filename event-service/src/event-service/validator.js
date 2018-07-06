@@ -5,7 +5,6 @@ import * as eventType from "../types/event-type";
 import * as occurrenceType from "../types/occurrence-type";
 import * as costType from "../types/cost-type";
 import * as bookingType from "../types/booking-type";
-import * as tagType from "../types/tag-type";
 import * as statusType from "../types/status-type";
 
 const PERFORMANCES_WITH_DATE_AT_ORDER = (current, next) =>
@@ -52,14 +51,14 @@ const ADDITIONAL_PERFORMANCES = {
   }
 };
 
-const OPTIONAL_TAGS = tagType => ({
+const OPTIONAL_TAGS = type => ({
   array: true,
   length: { minimum: 1, maximum: 20 },
   each: {
     object: {
       id: {
         ...entityValidator.REQUIRED_STRING,
-        format: new RegExp(`^${tagType}\\/`)
+        format: new RegExp(`^${type}\\/`)
       },
       label: {
         ...entityValidator.REQUIRED_STRING,
@@ -251,7 +250,7 @@ const EVENT_VALIDATOR = {
     each: {
       object: {
         ...entityValidator.ADDITIONAL_OPENING_TIMES.each.object,
-        audienceTags: OPTIONAL_TAGS(tagType.AUDIENCE)
+        audienceTags: OPTIONAL_TAGS("audience")
       }
     }
   },
@@ -276,7 +275,7 @@ const EVENT_VALIDATOR = {
     each: {
       object: {
         ...ADDITIONAL_PERFORMANCES.each.object,
-        audienceTags: OPTIONAL_TAGS(tagType.AUDIENCE)
+        audienceTags: OPTIONAL_TAGS("audience")
       }
     }
   },
@@ -323,10 +322,10 @@ const EVENT_VALIDATOR = {
       }
     }
   },
-  audienceTags: OPTIONAL_TAGS(tagType.AUDIENCE),
-  geoTags: OPTIONAL_TAGS(tagType.GEO),
-  mediumTags: OPTIONAL_TAGS(tagType.MEDIUM),
-  styleTags: OPTIONAL_TAGS(tagType.STYLE),
+  audienceTags: OPTIONAL_TAGS("audience"),
+  geoTags: OPTIONAL_TAGS("geo"),
+  mediumTags: OPTIONAL_TAGS("medium"),
+  styleTags: OPTIONAL_TAGS("style"),
   links: entityValidator.LINKS,
   images: entityValidator.IMAGES,
   reviews: {

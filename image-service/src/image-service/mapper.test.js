@@ -1,5 +1,5 @@
 import * as mapper from "./mapper";
-import * as imageType from "../types/image-type";
+import * as imageType from "../image-type";
 
 describe("mapImageDataToDb", () => {
   it("should map the image data", () => {

@@ -1,6 +1,6 @@
 import deepFreeze from "deep-freeze-strict";
 import * as normaliser from "./normaliser";
-import * as imageType from "../types/image-type";
+import * as imageType from "../image-type";
 
 describe("normaliseAddImageRequest", () => {
   test.each([

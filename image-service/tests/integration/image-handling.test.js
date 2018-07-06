@@ -4,7 +4,7 @@ import delay from "delay";
 import * as authUtils from "../utils/authentication";
 import * as dynamodbUtils from "../utils/dynamodb";
 import * as s3Utils from "../utils/s3";
-import * as imageType from "../../src/types/image-type";
+import * as imageType from "../../src/image-type";
 import MockJwksServer from "../utils/mock-jwks-server";
 jest.setTimeout(60000);
 

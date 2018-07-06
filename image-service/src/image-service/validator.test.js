@@ -1,5 +1,5 @@
 import * as validator from "./validator";
-import * as imageType from "../types/image-type";
+import * as imageType from "../image-type";
 
 describe("validateAddImageRequest", () => {
   it("should allow a valid request", () => {
