@@ -55,14 +55,12 @@ describe("watches", () => {
             {
               changeType: watchChangeType.ADD,
               id: "1111",
-              label: "Label 1111",
-              created: 1111
+              label: "Label 1111"
             },
             {
               changeType: watchChangeType.ADD,
               id: "2222",
-              label: "Label 2222",
-              created: 2222
+              label: "Label 2222"
             }
           ]
         }

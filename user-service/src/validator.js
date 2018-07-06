@@ -25,9 +25,9 @@ const UPDATE_WATCHES_CONSTRAINT = {
           inclusion: watchChangeType.ALLOWED_VALUES,
           dependency: {
             test: value => value === watchChangeType.ADD,
-            ensure: (_, attrs) => !!attrs.label && attrs.created > 0,
+            ensure: (_, attrs) => !!attrs.label
             message:
-              'label and created cannot be blank when changeType is "ADD"'
+              'label cannot be blank when changeType is "ADD"'
           }
         },
         id: {
@@ -38,10 +38,6 @@ const UPDATE_WATCHES_CONSTRAINT = {
         label: {
           string: true,
           length: { minimum: 1, maximum: 300 }
-        },
-        created: {
-          number: true,
-          numericality: { onlyInteger: true, greaterThan: 0 }
         }
       }
     }

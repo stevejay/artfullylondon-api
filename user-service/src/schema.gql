@@ -24,7 +24,6 @@ type Preferences {
 type Watch {
   id: ID!
   label: String!
-  created: Int!
 }
 
 type WatchList {
@@ -53,7 +52,6 @@ input WatchChangeInput {
   changeType: WatchChangeEnum
   id: ID!
   label: String
-  created: Int
 }
 
 input UpdateWatchesInput {
@@ -63,7 +61,7 @@ input UpdateWatchesInput {
 }
 
 type UpdateWatchesOutput {
-  ok: Boolean!
+  watches: WatchList
 }
 
 input UpdatePreferencesInput {

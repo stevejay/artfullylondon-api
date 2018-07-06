@@ -6,7 +6,7 @@ describe("mapResponseForSingleWatchType", () => {
     const dbItem = {
       watchType: watchType.EVENT,
       version: 1,
-      items: [{ id: 1, label: "a", created: 1111 }]
+      items: [{ id: 1, label: "a" }]
     };
 
     const result = watchMapper.mapResponseForSingleWatchType(
@@ -48,7 +48,7 @@ describe("mapResponseForAllWatchTypes", () => {
       {
         watchType: watchType.EVENT,
         version: 1,
-        items: [{ id: 1, label: "a", created: 1111 }]
+        items: [{ id: 1, label: "a" }]
       }
     ]);
     expect(result).toEqual({
@@ -59,7 +59,7 @@ describe("mapResponseForAllWatchTypes", () => {
         {
           watchType: watchType.EVENT,
           version: 1,
-          items: [{ id: 1, label: "a", created: 1111 }]
+          items: [{ id: 1, label: "a" }]
         },
         { watchType: watchType.EVENT_SERIES, version: 0, items: [] }
       ])
