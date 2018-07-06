@@ -1,11 +1,12 @@
 import "./xray-setup";
 import { ApolloServer } from "apollo-server-lambda";
 import { mergeSchemas } from "graphql-tools";
-import tagServiceSchema from "./tag-service-schema";
 import dataServiceSchema from "./data-service-schema";
+import searchServiceSchema from "./search-service-schema";
+import userServiceSchema from "./user-service-schema";
 
 const schema = mergeSchemas({
-  schemas: [tagServiceSchema(), dataServiceSchema()]
+  schemas: [dataServiceSchema(), searchServiceSchema(), userServiceSchema()]
 });
 
 const server = new ApolloServer({

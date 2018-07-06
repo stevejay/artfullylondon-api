@@ -32,14 +32,25 @@ custom:
         packager: 'yarn'
 
 functions:
-    graphql:
-        handler: src/graphql-handler.handler
+    publicGraphql:
+        handler: src/public-graphql-handler.handler
         events:
             - http:
-                path: graphql
+                path: public/graphql
                 method: post
                 cors: true
             - http:
-                path: graphql
+                path: public/graphql
+                method: get
+                cors: true
+    adminGraphql:
+        handler: src/admin-graphql-handler.handler
+        events:
+            - http:
+                path: admin/graphql
+                method: post
+                cors: true
+            - http:
+                path: admin/graphql
                 method: get
                 cors: true
