@@ -1,6 +1,6 @@
-import { RegexType } from "@okgrow/graphql-scalars";
+import { RegularExpression } from "@okgrow/graphql-scalars";
 
-const IsoShortDate = new RegexType(
+const IsoShortDate = new RegularExpression(
   "IsoShortDate",
   /^[12]\d\d\d-[01]\d-[0123]\d$/
 );

@@ -1,16 +1,17 @@
 import { GraphQLError } from "graphql/error";
-import { RegexType } from "@okgrow/graphql-scalars";
+import { RegularExpression } from "@okgrow/graphql-scalars";
 import addDays from "date-fns/addDays";
 import * as entityType from "./types/entity-type";
 import * as areaType from "./types/area-type";
 import * as searcher from "./searcher";
 import * as timeUtils from "./time-utils";
 
-const IsoShortDate = new RegexType(
+const IsoShortDate = new RegularExpression(
   "IsoShortDate",
   /^[12]\d\d\d-[01]\d-[0123]\d$/
 );
-const ShortTime = new RegexType(
+
+const ShortTime = new RegularExpression(
   "ShortTime",
   /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/
 );
