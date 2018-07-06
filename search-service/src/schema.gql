@@ -1,0 +1,297 @@
+scalar IsoShortDate
+scalar ShortTime
+
+enum EntityTypeEnum {
+  EVENT
+  EVENT_SERIES
+  TALENT
+  VENUE
+}
+
+enum StatusTypeEnum {
+  PENDING
+  ACTIVE
+  DELETED
+  MERGED
+}
+
+enum VenueTypeEnum {
+  THEATRE
+  ART_GALLERY
+  CONCERT_HALL
+  EXHIBITION_HALL
+  PERFORMING_ARTS_CENTRE
+  MUSEUM
+  CHURCH
+  CINEMA
+  OTHER
+}
+
+enum TalentTypeEnum {
+  INDIVIDUAL
+  GROUP
+}
+
+enum EventTypeEnum {
+  PERFORMANCE
+  EXHIBITION
+  COURSE
+}
+
+enum OccurrenceTypeEnum {
+  BOUNDED
+  CONTINUOUS
+  ONE_TIME
+}
+
+enum CostTypeEnum {
+  FREE
+  PAID
+}
+
+enum AreaTypeEnum {
+  CENTRAL
+  EAST
+  WEST
+  NORTH
+  SOUTH_EAST
+  SOUTH_WEST
+}
+
+enum BookingTypeEnum {
+  NOT_REQUIRED
+  REQUIRED
+  REQUIRED_FOR_NON_MEMBERS
+}
+
+enum EventSeriesTypeEnum {
+  SEASON
+  OCCASIONAL
+}
+
+interface AutocompleteNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+}
+
+type AutocompleteEvent implements AutocompleteNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+  eventType: EventTypeEnum!
+}
+
+type AutocompleteEventSeries implements AutocompleteNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+}
+
+type AutocompleteVenue implements AutocompleteNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+}
+
+type AutocompleteTalent implements AutocompleteNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  name: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+}
+
+type AutocompleteResult {
+  results: [AutocompleteNode!]!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+}
+
+interface SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  image: String
+  imageCopyright: String
+  imageRatio: Float
+  imageColor: String
+}
+
+type EventDate {
+  date: IsoShortDate!
+  from: ShortTime!
+  to: ShortTime
+  tags: [String!]
+}
+
+type Event implements SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  image: String
+  imageCopyright: String
+  imageRatio: Float
+  imageColor: String
+  name: String!
+  eventType: EventTypeEnum!
+  occurrenceType: OccurrenceTypeEnum!
+  costType: CostTypeEnum!
+  summary: String
+  venueId: ID!
+  venueName: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  dates: [EventDate!]
+  externalEventId: String
+}
+
+type EventSeries implements SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  image: String
+  imageCopyright: String
+  imageRatio: Float
+  imageColor: String
+  name: String!
+  eventSeriesType: EventSeriesTypeEnum!
+  occurrence: String
+  summary: String
+}
+
+type Talent implements SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  image: String
+  imageCopyright: String
+  imageRatio: Float
+  imageColor: String
+  firstNames: String
+  lastName: String!
+  commonRole: String!
+  talentType: TalentTypeEnum!
+}
+
+type Venue implements SearchNode {
+  id: ID!
+  entityType: EntityTypeEnum!
+  status: StatusTypeEnum!
+  image: String
+  imageCopyright: String
+  imageRatio: Float
+  imageColor: String
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+type SearchEdge {
+  node: SearchNode!
+  cursor: String!
+}
+
+type SearchConnection {
+  edges: [SearchEdge!]!
+  pageInfo: PageInfo!
+}
+
+type EventAdvancedSearchEdge {
+  node: Event!
+  cursor: String!
+}
+
+type EventAdvancedSearchConnection {
+  edges: [EventAdvancedSearchEdge!]!
+  pageInfo: PageInfo!
+}
+
+type EntityCount {
+  entityType: EntityTypeEnum!
+  count: Int!
+}
+
+type EntityCountResult {
+  results: [EntityCount!]!
+}
+
+type SitemapEventResult {
+  results: [Event!]!
+}
+
+type Query {
+  autocompleteSearch(
+    term: String!
+    entityType: EntityTypeEnum
+  ): AutocompleteResult
+  basicSearch(
+    term: String
+    entityType: EntityTypeEnum
+    status: StatusTypeEnum
+    north: Float
+    south: Float
+    east: Float
+    west: Float
+    first: Int
+    after: String
+  ): SearchConnection
+  eventAdvancedSearch(
+    term: String
+    status: StatusTypeEnum
+    area: AreaTypeEnum
+    costType: CostTypeEnum
+    bookingType: BookingTypeEnum
+    venueId: ID
+    talentId: ID
+    eventSeriesId: ID
+    externalEventIds: [ID!]
+    medium: String
+    style: String
+    audience: String
+    dateFrom: IsoShortDate
+    dateTo: IsoShortDate
+    timeFrom: ShortTime
+    timeTo: ShortTime
+    north: Float
+    south: Float
+    east: Float
+    west: Float
+    first: Int
+    after: String
+  ): EventAdvancedSearchConnection
+  entityCount: EntityCountResult
+  sitemapEvent: SitemapEventResult
+  featuredEvents(first: Int, after: String): EventAdvancedSearchConnection
+  venueRelatedEvents(
+    venueId: ID!
+    first: Int
+    after: String
+  ): EventAdvancedSearchConnection
+  talentRelatedEvents(
+    talentId: ID!
+    first: Int
+    after: String
+  ): EventAdvancedSearchConnection
+  eventSeriesRelatedEvents(
+    eventSeriesId: ID!
+    first: Int
+    after: String
+  ): EventAdvancedSearchConnection
+}

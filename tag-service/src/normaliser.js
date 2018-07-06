@@ -1,10 +1,6 @@
 import normalise from "normalise-request";
 
 const normaliser = {
-  type: {
-    trim: true,
-    toLowerCase: true
-  },
   label: {
     trim: true,
     toLowerCase: true,

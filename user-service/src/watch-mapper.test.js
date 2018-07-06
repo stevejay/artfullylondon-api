@@ -1,21 +1,28 @@
 import * as watchMapper from "./watch-mapper";
+import * as watchType from "./watch-type";
 
 describe("mapResponseForSingleWatchType", () => {
   it("should map a db item", () => {
     const dbItem = {
-      entityType: "event",
+      watchType: watchType.EVENT,
       version: 1,
-      items: [{ id: 1, label: "a", created: 1111 }]
+      items: [{ id: 1, label: "a" }]
     };
 
-    const result = watchMapper.mapResponseForSingleWatchType("event", dbItem);
+    const result = watchMapper.mapResponseForSingleWatchType(
+      watchType.EVENT,
+      dbItem
+    );
     expect(result).toEqual(dbItem);
   });
 
   it("should handle no db item", () => {
-    const result = watchMapper.mapResponseForSingleWatchType("event", null);
+    const result = watchMapper.mapResponseForSingleWatchType(
+      watchType.EVENT,
+      null
+    );
     expect(result).toEqual({
-      entityType: "event",
+      watchType: watchType.EVENT,
       version: 0,
       items: []
     });
@@ -27,11 +34,11 @@ describe("mapResponseForAllWatchTypes", () => {
     const result = watchMapper.mapResponseForAllWatchTypes([]);
     expect(result).toEqual({
       watches: expect.arrayContaining([
-        { entityType: "tag", version: 0, items: [] },
-        { entityType: "talent", version: 0, items: [] },
-        { entityType: "venue", version: 0, items: [] },
-        { entityType: "event", version: 0, items: [] },
-        { entityType: "event-series", version: 0, items: [] }
+        { watchType: watchType.TAG, version: 0, items: [] },
+        { watchType: watchType.TALENT, version: 0, items: [] },
+        { watchType: watchType.VENUE, version: 0, items: [] },
+        { watchType: watchType.EVENT, version: 0, items: [] },
+        { watchType: watchType.EVENT_SERIES, version: 0, items: [] }
       ])
     });
   });
@@ -39,22 +46,22 @@ describe("mapResponseForAllWatchTypes", () => {
   it("should handle some db items", () => {
     const result = watchMapper.mapResponseForAllWatchTypes([
       {
-        entityType: "event",
+        watchType: watchType.EVENT,
         version: 1,
-        items: [{ id: 1, label: "a", created: 1111 }]
+        items: [{ id: 1, label: "a" }]
       }
     ]);
     expect(result).toEqual({
       watches: expect.arrayContaining([
-        { entityType: "tag", version: 0, items: [] },
-        { entityType: "talent", version: 0, items: [] },
-        { entityType: "venue", version: 0, items: [] },
+        { watchType: watchType.TAG, version: 0, items: [] },
+        { watchType: watchType.TALENT, version: 0, items: [] },
+        { watchType: watchType.VENUE, version: 0, items: [] },
         {
-          entityType: "event",
+          watchType: watchType.EVENT,
           version: 1,
-          items: [{ id: 1, label: "a", created: 1111 }]
+          items: [{ id: 1, label: "a" }]
         },
-        { entityType: "event-series", version: 0, items: [] }
+        { watchType: watchType.EVENT_SERIES, version: 0, items: [] }
       ])
     });
   });

@@ -1,0 +1,56 @@
+service: artfullylondon-graphql-service
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+package:
+    individually: true
+
+provider:
+    name: aws
+    runtime: nodejs8.10
+    region: eu-west-1
+    tracing: true
+    environment: ${file(env.yml):${self:custom.stage}}
+    iamManagedPolicies:
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+
+plugins:
+    - serverless-webpack
+    - serverless-pseudo-parameters
+    - serverless-plugin-tracing
+    - serverless-offline
+
+custom:
+    project: artfullylondon
+    stage: "${opt:stage}"
+    region: "${opt:region, self:provider.region}"
+    webpack:
+        webpackConfig: ./webpack.config.js
+        includeModules:
+            forceExclude:
+                - aws-sdk
+        packager: 'yarn'
+
+functions:
+    publicGraphql:
+        handler: src/public-graphql-handler.handler
+        events:
+            - http:
+                path: public/graphql
+                method: post
+                cors: true
+            - http:
+                path: public/graphql
+                method: get
+                cors: true
+    adminGraphql:
+        handler: src/admin-graphql-handler.handler
+        events:
+            - http:
+                path: admin/graphql
+                method: post
+                cors: true
+            - http:
+                path: admin/graphql
+                method: get
+                cors: true

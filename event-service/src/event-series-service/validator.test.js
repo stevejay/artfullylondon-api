@@ -78,12 +78,4 @@ describe("event series validator", () => {
       "[400] Bad Request: Description is too short (minimum length is 1)"
     );
   });
-
-  it("should fail a null version", () => {
-    const params = testData.createMinimalRequestEventSeries();
-    params.version = null;
-    expect(() =>
-      validator.validateCreateOrUpdateEventSeriesRequest(params)
-    ).toThrow("[400] Bad Request: Version can't be blank");
-  });
 });

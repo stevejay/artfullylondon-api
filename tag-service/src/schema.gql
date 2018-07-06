@@ -1,0 +1,46 @@
+enum TagTypeEnum {
+  MEDIUM
+  STYLE
+  GEO
+  AUDIENCE
+}
+
+type Tag {
+  tagType: TagTypeEnum!
+  id: ID!
+  label: String!
+}
+
+type TagSet {
+  medium: [Tag!]
+  style: [Tag!]
+  geo: [Tag!]
+  audience: [Tag!]
+}
+
+type Query {
+  tags: TagSet!
+}
+
+input CreateTagInput {
+  tagType: TagTypeEnum!
+  label: String!
+}
+
+type CreateTagOutput {
+  tag: Tag
+}
+
+input DeleteTagInput {
+  tagType: TagTypeEnum!
+  id: ID!
+}
+
+type DeleteTagOutput {
+  ok: Boolean
+}
+
+type Mutation {
+  createTag(input: CreateTagInput!): CreateTagOutput
+  deleteTag(input: DeleteTagInput!): DeleteTagOutput
+}

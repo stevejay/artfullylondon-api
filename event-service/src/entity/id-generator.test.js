@@ -1,58 +1,20 @@
 import * as idGenerator from "./id-generator";
+import * as entityType from "../types/entity-type";
 
 describe("generateFromName", () => {
-  describe("with no entropy", () => {
-    const tests = [
-      { arg: "Foo Bar", expected: "foo-bar" },
-      { arg: "/Foo/Bar/", expected: "foo-bar" },
-      { arg: "Foo/Bar", expected: "foo-bar" },
-      { arg: "12345", expected: "12345" },
-      { arg: "Tüni_c_ 77 //   brave", expected: "tueni_c_-77-brave" },
-      { arg: "this |+ that", expected: "this-or-that" },
-      { arg: "this + that", expected: "this-that" },
-      { arg: "this, that", expected: "this-that" },
-      { arg: "one/ Two,three/four", expected: "one-two-three-four" }
-    ];
-
-    tests.map(test => {
-      it(`should return ${JSON.stringify(
-        test.expected
-      )} when passed ${JSON.stringify(test.arg)}`, () => {
-        const result = idGenerator.generateFromName(test.arg, false);
-        expect(result).toEqual(test.expected);
-      });
-    });
-  });
-
-  describe("with required entropy", () => {
-    const tests = [
-      { arg: "farm", expected: "farm" },
-      { arg: "T", expected: "t" }
-    ];
-
-    tests.map(test => {
-      it(`should return ${JSON.stringify(
-        test.expected
-      )} when passed ${JSON.stringify(test.arg)}`, () => {
-        const result = idGenerator.generateFromName(test.arg, false);
-        expect(result).toContain(test.expected);
-        expect(result.length).toEqual(test.expected.length + 4);
-      });
-    });
-  });
-
-  describe("with forced entropy", () => {
-    const tests = [{ arg: "long identifier", expected: "long-identifier" }];
-
-    tests.map(test => {
-      it(`should return ${JSON.stringify(
-        test.expected
-      )} when passed ${JSON.stringify(test.arg)}`, () => {
-        const result = idGenerator.generateFromName(test.arg, true);
-        expect(result).toContain(test.expected);
-        expect(result.length).toEqual(test.expected.length + 4);
-      });
-    });
+  test.each([
+    ["Foo Bar", entityType.TALENT, "talent/foo-bar"],
+    ["/Foo/Bar/", entityType.EVENT_SERIES, "event-series/foo-bar"],
+    ["Foo/Bar", entityType.VENUE, "venue/foo-bar"],
+    ["12345", entityType.EVENT, "event/12345"],
+    ["Tüni_c_ 77 //   brave", entityType.TALENT, "talent/tueni_c_-77-brave"],
+    ["this |+ that", entityType.TALENT, "talent/this-or-that"],
+    ["this + that", entityType.TALENT, "talent/this-that"],
+    ["this, that", entityType.TALENT, "talent/this-that"],
+    ["one/ Two,three/four", entityType.TALENT, "talent/one-two-three-four"]
+  ])("%s for entity %s should create id %s", (name, entityType, expected) => {
+    const result = idGenerator.generateFromName(name, entityType);
+    expect(result).toEqual(expected);
   });
 });
 
@@ -64,21 +26,21 @@ describe("generateFromTalent", () => {
         lastName: "Arbril",
         commonRole: "Actor"
       },
-      expected: "john-luther-arbril-actor"
+      expected: "talent/john-luther-arbril-actor"
     },
     {
       talent: {
         lastName: "Arbril",
         commonRole: "Actor"
       },
-      expected: "arbril-actor"
+      expected: "talent/arbril-actor"
     },
     {
       talent: {
         lastName: "Arb/ri,l",
         commonRole: "Actor"
       },
-      expected: "arb-ri-l-actor"
+      expected: "talent/arb-ri-l-actor"
     }
   ];
 
@@ -97,16 +59,20 @@ describe("generateFromEvent", () => {
 
   const tests = [
     {
-      arg: { venueId: "foo", dateFrom: "2015-09-18", name: "Baritone" },
-      expected: "foo/2015/baritone"
+      arg: { venueId: "venue/foo", dateFrom: "2015-09-18", name: "Baritone" },
+      expected: "event/foo/2015/baritone"
     },
     {
-      arg: { venue: { id: "foo" }, dateFrom: "2015-09-18", name: "Baritone" },
-      expected: "foo/2015/baritone"
+      arg: {
+        venue: { id: "venue/foo" },
+        dateFrom: "2015-09-18",
+        name: "Baritone"
+      },
+      expected: "event/foo/2015/baritone"
     },
     {
-      arg: { venueId: "foo", dateFrom: null, name: "Baritone" },
-      expected: "foo/" + nowYear + "/baritone"
+      arg: { venueId: "venue/foo", dateFrom: null, name: "Baritone" },
+      expected: "event/foo/" + nowYear + "/baritone"
     }
   ];
 

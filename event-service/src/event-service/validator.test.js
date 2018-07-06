@@ -1,7 +1,11 @@
 import * as testData from "../../tests/utils/test-data";
 import * as validator from "./validator";
+import * as bookingType from "../types/booking-type";
+import * as costType from "../types/cost-type";
+import * as eventType from "../types/event-type";
+import * as occurrenceType from "../types/occurrence-type";
 
-describe ('event validator', () => {
+describe("event validator", () => {
   it("should pass fully populated performance event params", () => {
     const params = testData.createFullPerformanceRequestEvent();
     expect(() =>
@@ -32,8 +36,8 @@ describe ('event validator', () => {
 
   it("should pass a bounded performance", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Performance";
-    params.occurrenceType = "Bounded";
+    params.eventType = eventType.PERFORMANCE;
+    params.occurrenceType = occurrenceType.BOUNDED;
     params.dateFrom = "2016-09-17";
     params.dateTo = "2016-09-25";
 
@@ -44,8 +48,8 @@ describe ('event validator', () => {
 
   it("should fail a bounded performance without dates", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Performance";
-    params.occurrenceType = "Bounded";
+    params.eventType = eventType.PERFORMANCE;
+    params.occurrenceType = occurrenceType.BOUNDED;
     params.dateFrom = params.dateTo = undefined;
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
@@ -55,8 +59,8 @@ describe ('event validator', () => {
 
   it("should fail a bounded performance with partial dates", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Performance";
-    params.occurrenceType = "Bounded";
+    params.eventType = eventType.PERFORMANCE;
+    params.occurrenceType = occurrenceType.BOUNDED;
     params.dateFrom = "2016-09-17";
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
@@ -66,8 +70,8 @@ describe ('event validator', () => {
 
   it("should pass a continuous performance", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Performance";
-    params.occurrenceType = "Continuous";
+    params.eventType = eventType.PERFORMANCE;
+    params.occurrenceType = occurrenceType.CONTINUOUS;
     params.dateFrom = params.dateTo = undefined;
 
     expect(() =>
@@ -77,8 +81,8 @@ describe ('event validator', () => {
 
   it("should fail a continuous performance with dates", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Performance";
-    params.occurrenceType = "Continuous";
+    params.eventType = eventType.PERFORMANCE;
+    params.occurrenceType = occurrenceType.CONTINUOUS;
     params.dateFrom = "2016-09-17";
     params.dateTo = "2016-09-25";
 
@@ -89,8 +93,8 @@ describe ('event validator', () => {
 
   it("should pass a one-time performance", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Performance";
-    params.occurrenceType = "OneTime";
+    params.eventType = eventType.PERFORMANCE;
+    params.occurrenceType = occurrenceType.ONE_TIME;
     params.dateFrom = params.dateTo = "2016-09-25";
 
     expect(() =>
@@ -100,8 +104,8 @@ describe ('event validator', () => {
 
   it("should fail a one-time performance without dates", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Performance";
-    params.occurrenceType = "OneTime";
+    params.eventType = eventType.PERFORMANCE;
+    params.occurrenceType = occurrenceType.ONE_TIME;
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
       "[400] Bad Request: Date from must equal date to and both must be given"
@@ -110,8 +114,8 @@ describe ('event validator', () => {
 
   it("should fail a one-time performance with dates apart", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Performance";
-    params.occurrenceType = "OneTime";
+    params.eventType = eventType.PERFORMANCE;
+    params.occurrenceType = occurrenceType.ONE_TIME;
     params.dateFrom = "2016-09-17";
     params.dateTo = "2016-09-25";
 
@@ -122,8 +126,8 @@ describe ('event validator', () => {
 
   it("should pass a bounded exhibition", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Exhibition";
-    params.occurrenceType = "Bounded";
+    params.eventType = eventType.EXHIBITION;
+    params.occurrenceType = occurrenceType.BOUNDED;
     params.dateFrom = "2016-09-17";
     params.dateTo = "2016-09-25";
 
@@ -134,8 +138,8 @@ describe ('event validator', () => {
 
   it("should fail a bounded exhibition without dates", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Exhibition";
-    params.occurrenceType = "Bounded";
+    params.eventType = eventType.EXHIBITION;
+    params.occurrenceType = occurrenceType.BOUNDED;
     params.dateFrom = params.dateTo = undefined;
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
@@ -145,8 +149,8 @@ describe ('event validator', () => {
 
   it("should fail a bounded exhibition with partial dates", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Exhibition";
-    params.occurrenceType = "Bounded";
+    params.eventType = eventType.EXHIBITION;
+    params.occurrenceType = occurrenceType.BOUNDED;
     params.dateFrom = undefined;
     params.dateTo = "2016-09-25";
 
@@ -157,8 +161,8 @@ describe ('event validator', () => {
 
   it("should fail a one-time exhibition", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Exhibition";
-    params.occurrenceType = "OneTime";
+    params.eventType = eventType.EXHIBITION;
+    params.occurrenceType = occurrenceType.ONE_TIME;
     params.dateFrom = params.dateTo = "2016-09-25";
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
@@ -168,8 +172,8 @@ describe ('event validator', () => {
 
   it("should pass a continuous exhibition", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Exhibition";
-    params.occurrenceType = "Continuous";
+    params.eventType = eventType.EXHIBITION;
+    params.occurrenceType = occurrenceType.CONTINUOUS;
     params.dateFrom = params.dateTo = undefined;
 
     expect(() =>
@@ -179,8 +183,8 @@ describe ('event validator', () => {
 
   it("should fail a continuous exhibition with dates", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.eventType = "Exhibition";
-    params.occurrenceType = "Continuous";
+    params.eventType = eventType.EXHIBITION;
+    params.occurrenceType = occurrenceType.CONTINUOUS;
     params.dateFrom = "2016-09-17";
     params.dateTo = "2016-09-25";
 
@@ -191,7 +195,7 @@ describe ('event validator', () => {
 
   it("should pass a free event", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.costType = "Free";
+    params.costType = costType.FREE;
 
     expect(() =>
       validator.validateCreateOrUpdateEventRequest(params)
@@ -200,7 +204,7 @@ describe ('event validator', () => {
 
   it("should fail a free event with cost range", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.costType = "Free";
+    params.costType = costType.FREE;
     params.costFrom = 3.99;
     params.costTo = 4.99;
 
@@ -211,7 +215,7 @@ describe ('event validator', () => {
 
   it("should pass a paid event with cost range", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.costType = "Paid";
+    params.costType = costType.PAID;
     params.costFrom = 3.99;
     params.costTo = 4.99;
 
@@ -222,7 +226,7 @@ describe ('event validator', () => {
 
   it("should fail a paid event with no cost range", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.costType = "Paid";
+    params.costType = costType.PAID;
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
       "[400] Bad Request: Cost to must be greater than or equal to cost from and both must be given"
@@ -231,7 +235,7 @@ describe ('event validator', () => {
 
   it("should fail a paid event with partial cost range", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.costType = "Paid";
+    params.costType = costType.PAID;
     params.costFrom = 3.99;
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
@@ -241,7 +245,7 @@ describe ('event validator', () => {
 
   it("should pass an event that does not require booking", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.bookingType = "NotRequired";
+    params.bookingType = bookingType.NOT_REQUIRED;
 
     expect(() =>
       validator.validateCreateOrUpdateEventRequest(params)
@@ -250,7 +254,7 @@ describe ('event validator', () => {
 
   it("should fail an event that does not require booking but that has a booking date", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.bookingType = "NotRequired";
+    params.bookingType = bookingType.NOT_REQUIRED;
     params.bookingOpens = "2016-03-15";
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
@@ -260,7 +264,7 @@ describe ('event validator', () => {
 
   it("should pass an event that requires booking", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.bookingType = "Required";
+    params.bookingType = bookingType.REQUIRED;
     params.bookingOpens = "2016-03-15";
 
     expect(() =>
@@ -270,7 +274,7 @@ describe ('event validator', () => {
 
   it("should not fail an event that requires booking but that has no booking date", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.bookingType = "Required";
+    params.bookingType = bookingType.REQUIRED;
 
     expect(() =>
       validator.validateCreateOrUpdateEventRequest(params)
@@ -279,7 +283,7 @@ describe ('event validator', () => {
 
   it("should pass an event that requires booking for non-members", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.bookingType = "RequiredForNonMembers";
+    params.bookingType = bookingType.REQUIRED_FOR_NON_MEMBERS;
     params.bookingOpens = "2016-03-15";
 
     expect(() =>
@@ -289,7 +293,7 @@ describe ('event validator', () => {
 
   it("should not fail an event that requires booking for non-members but that has no booking date", () => {
     const params = testData.createMinimalPerformanceRequestEvent();
-    params.bookingType = "RequiredForNonMembers";
+    params.bookingType = bookingType.REQUIRED_FOR_NON_MEMBERS;
 
     expect(() =>
       validator.validateCreateOrUpdateEventRequest(params)
@@ -394,7 +398,7 @@ describe ('event validator', () => {
 
   it("should fail a course event with continuous occurrence type", () => {
     const params = testData.createMinimalCourseRequestEvent();
-    params.occurrenceType = "Continuous";
+    params.occurrenceType = occurrenceType.CONTINUOUS;
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
       "[400] Bad Request: Occurrence type is not valid for course event"
@@ -403,7 +407,7 @@ describe ('event validator', () => {
 
   it("should fail a course event with one-time occurrence type", () => {
     const params = testData.createMinimalCourseRequestEvent();
-    params.occurrenceType = "OneTime";
+    params.occurrenceType = occurrenceType.ONE_TIME;
 
     expect(() => validator.validateCreateOrUpdateEventRequest(params)).toThrow(
       "[400] Bad Request: Occurrence type is not valid for course event"

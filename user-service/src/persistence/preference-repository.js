@@ -2,26 +2,23 @@ import dynamodb from "./dynamodb";
 
 export function deletePreferencesForUser(userId) {
   return dynamodb.delete({
-    TableName: process.env.SERVERLESS_PREFERENCES_TABLE_NAME,
-    Key: { userId },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    TableName: process.env.SERVERLESS_PREFERENCE_TABLE_NAME,
+    Key: { userId }
   });
 }
 
 export function tryGetPreferencesForUser(userId) {
   return dynamodb.tryGet({
-    TableName: process.env.SERVERLESS_PREFERENCES_TABLE_NAME,
+    TableName: process.env.SERVERLESS_PREFERENCE_TABLE_NAME,
     Key: { userId },
-    ProjectionExpression: "emailFrequency",
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    ProjectionExpression: "emailFrequency"
   });
 }
 
 export function updatePreferencesForUser(userId, preferences) {
   return dynamodb.put({
-    TableName: process.env.SERVERLESS_PREFERENCES_TABLE_NAME,
+    TableName: process.env.SERVERLESS_PREFERENCE_TABLE_NAME,
     Key: { userId },
-    Item: { ...preferences, userId },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    Item: { ...preferences, userId }
   });
 }

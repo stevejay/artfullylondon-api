@@ -5,54 +5,31 @@ import * as mapper from "./mapper";
 import * as notifier from "../notifier";
 
 export async function get(params) {
-  let event = await eventRepository.get(params.id, false);
+  let dbEvent = await eventRepository.get(params.id, false);
   const referencedEntities = await eventRepository.getReferencedEntities(
-    event,
+    dbEvent,
     false
   );
-  event = mapper.mergeReferencedEntities(event, referencedEntities);
-  return { entity: mapper.mapToPublicFullResponse(event) };
+  dbEvent = mapper.mergeReferencedEntities(dbEvent, referencedEntities);
+  return mapper.mapResponse(dbEvent);
 }
 
 export async function getForEdit(params) {
-  let event = await eventRepository.get(params.id, true);
-  const referencedEntities = await eventRepository.getReferencedEntities(
-    event,
-    false
-  );
-  event = mapper.mergeReferencedEntities(event, referencedEntities);
-  return { entity: event };
-}
-
-export async function getMulti(params) {
-  let events = await eventRepository.getMulti(params.ids);
-
-  events = await Promise.all(
-    events.map(async event => {
-      const referencedEntities = await eventRepository.getReferencedEntities(
-        event,
-        false
-      );
-      return mapper.mergeReferencedEntities(event, referencedEntities);
-    })
-  );
-
-  return { entities: events.map(mapper.mapToPublicSummaryResponse) };
+  return await eventRepository.get(params.id, true);
 }
 
 export async function createOrUpdate(params) {
   const event = normaliser.normaliseCreateOrUpdateEventRequest(params);
   validator.validateCreateOrUpdateEventRequest(event);
-  const referencedEntities = await eventRepository.getReferencedEntities(
-    event,
-    false
-  );
-  const dbEvent = mapper.mapCreateOrUpdateEventRequest(event);
+  let dbEvent = mapper.mapCreateOrUpdateEventRequest(event);
   await eventRepository.createOrUpdate(dbEvent);
   await notifier.updateEvent(dbEvent.id);
-  return {
-    entity: mapper.mergeReferencedEntities(dbEvent, referencedEntities)
-  };
+  const referencedEntities = await eventRepository.getReferencedEntities(
+    dbEvent,
+    false
+  );
+  dbEvent = mapper.mergeReferencedEntities(dbEvent, referencedEntities);
+  return mapper.mapResponse(dbEvent);
 }
 
 export async function getNextId(lastId) {

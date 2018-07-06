@@ -3,24 +3,17 @@ import * as normaliser from "./normaliser";
 import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as enhancer from "../enhancer";
-import * as entityType from "../types/entity-type";
 import * as eventRepository from "../persistence/event-repository";
 import * as notifier from "../notifier";
-import * as cacher from "../cacher";
+import * as entityType from "../types/entity-type";
 
 export async function get(params) {
-  const venue = await venueRepository.get(params.id, false);
-  return { entity: mapper.mapToPublicFullResponse(venue) };
+  const dbVenue = await venueRepository.get(params.id, false);
+  return mapper.mapResponse(dbVenue);
 }
 
 export async function getForEdit(params) {
-  const venue = await venueRepository.get(params.id, true);
-  return { entity: mapper.mapToAdminResponse(venue) };
-}
-
-export async function getMulti(params) {
-  const venues = await venueRepository.getMulti(params.ids);
-  return { entities: venues.map(mapper.mapToPublicSummaryResponse) };
+  return await venueRepository.get(params.id, true);
 }
 
 export async function createOrUpdate(params) {
@@ -34,9 +27,9 @@ export async function createOrUpdate(params) {
     const eventIds = await eventRepository.getEventIdsByVenue(dbVenue.id);
     await Promise.all(eventIds.map(notifier.updateEvent));
   }
-  await notifier.indexEntity(mapper.mapToPublicFullResponse(dbVenue));
-  await cacher.clearEntityEtag(entityType.VENUE, dbVenue.id);
-  return { entity: dbVenue };
+  const response = mapper.mapResponse(dbVenue);
+  await notifier.indexEntity(response, entityType.VENUE);
+  return response;
 }
 
 export async function getNextId(lastId) {

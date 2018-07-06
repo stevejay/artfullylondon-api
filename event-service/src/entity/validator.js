@@ -69,9 +69,8 @@ export const REQUIRED_DAY_NUMBER = {
   }
 };
 
-export const REQUIRED_VERSION = {
+export const OPTIONAL_VERSION = {
   number: true,
-  presence: true,
   numericality: { onlyInteger: true, greaterThanOrEqualTo: 1 }
 };
 

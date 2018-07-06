@@ -1,27 +1,17 @@
 import * as validator from "./validator";
-
-describe("validateGetTagsByTypeRequest", () => {
-  it("should allow a valid request", () => {
-    const request = { type: "audience" };
-    expect(() => validator.validateGetTagsByTypeRequest(request)).not.toThrow();
-  });
-
-  it("should throw on an invalid request", () => {
-    const request = { type: "invalid" };
-    expect(() => validator.validateGetTagsByTypeRequest(request)).toThrow(
-      /Bad Request/
-    );
-  });
-});
+import * as tagType from "./tag-type";
 
 describe("validateCreateTagRequest", () => {
   it("should allow a valid request", () => {
-    const request = { type: "audience", label: "Families" };
+    const request = { tagType: tagType.AUDIENCE, label: "Families" };
     expect(() => validator.validateCreateTagRequest(request)).not.toThrow();
   });
 
   it("should throw on an invalid request", () => {
-    const request = { type: "invalid", label: "Families" };
+    const request = {
+      tagType: tagType.AUDIENCE,
+      label: "FamiliesFamiliesFamiliesFamiliesFamiliesFamiliesFamilies"
+    };
     expect(() => validator.validateCreateTagRequest(request)).toThrow(
       /Bad Request/
     );

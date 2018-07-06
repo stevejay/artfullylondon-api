@@ -4,6 +4,6 @@ export function getUtcNow() {
   return new Date(Date.now());
 }
 
-export function formatAsISODateString(date) {
+export function formatAsIsoShortDateString(date) {
   return format(date, "yyyy-MM-dd");
 }

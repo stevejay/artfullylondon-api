@@ -1,6 +1,6 @@
 # Artfully London API
 
-The main back-end code for the Artfully London website. An example of a back-end implemented entirely using AWS Lambda nanoservices, all written in Node.js and deployed using the Serverless framework.
+The main back-end code for the Artfully London website. An example of a GraphQL back-end implemented entirely using AWS Lambda nanoservices, written in Node.js and deployed using the Serverless framework.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -16,14 +16,11 @@ This repository contains the API that supports this functionality. It is compose
 - Search Service - Indexing and searching of the API entities using Elasticsearch
 - Tag Service - CRUD operations for the types of event tags (medium, style, geo and audience), stored using DynamoDB
 - User Service - CRUD operations for the watches and preferences the users have, stored using DynamoDB
+- GraphQL Service - Stitches together all the above services so that there is a single GraphQL service for the entire system. There are two GraphQL endpoints, one for the services required by the public site (Data, Search and User) and one for the services required by the admin site (Data, Event, Image, Search and Tag).
 
 ### Authentication
 
 Admin user authentication is handled using AWS Cognito while public user authentication is handled using Auth0. (Passwordless authentication was required for public users and AWS Cognito does not support that authentication method, as of June 2018.)
-
-### Caching
-
-Etags are used in the Event Service to support caching in the browser. The Etag value for an entity request is calculated when it is returned. The value is stored in Redis for recall when a subsequent request with an Etag is made.
 
 ## Development
 
@@ -65,6 +62,18 @@ Each service requires an `env.yml` file to exist that is populated with the appr
 
 The `env.template.yml` contains the required values for the Development environment when those values are not secrets. Values with the text `<INSERT>` need to be replaced.
 
+#### Localhost Ports
+
+- 3010 Data Service
+- 3011 Tag Service
+- 3012 User Service
+- 3013 Search Service
+- 3014 Event Service
+- 3015 GraphQL Service
+- 3016 Image Service
+- 3019 Mock SNS Listener
+- 3021 Mock JWKS Server
+
 ### Troubleshooting
 
 #### Port Conflicts on Windows
@@ -74,16 +83,29 @@ Use the following process to check what software is already running on a given p
 1.  Run the command `netstat -a -n -o`
 1.  In the command output, get PID from the last column and check for it in the Details section of the Windows Task Manager.
 
+#### Checking Dynamodb Local
+
+```
+aws dynamodb list-tables --endpoint-url http://localhost:4569
+aws dynamodb delete-table --endpoint-url http://localhost:4569 --table-name artfullylondon-development-preferences
+```
+
 ## Todo
 
 - Add AWS Cognito serverless configuration to the serverless files? (I think serverless supports AWS Cognito configuration now. Problem is it is not needed locally.)
-- Is there an encoding issue with params in lambda integration when using serverless local?
 - See about CORS origin restrictions for getting images from resized and original S3 buckets.
-- Improve error handling on iterators.
-- Do full validation of entities to index that are received by search service?
-- Check further on the search service integration test flakiness.
 - DLQs: https://serverless.com/framework/docs/providers/aws/guide/functions/
 - IfNoneMatch bad string problem when sending etag in request.
+- Upgrade apollo-server-lambda to latest when release candidate finalised.
+- Sort out graphql-service graphql dependency.
+- Improve graphql validation to be able to partially replace the legacy validation.
+- Remove redis.
+- GraphQL info links:
+  - Useful regex /[^\w{}]+/g
+  - Database request batching https://github.com/facebook/dataloader
+  - https://www.apollographql.com/engine
+- Fix Jest not reporting correct line numbers (transpilation issue).
+- Look into using [joi](https://github.com/hapijs/joi) or [yup](https://www.npmjs.com/package/yup) for validation.
 
 ## Info
 

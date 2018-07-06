@@ -2,7 +2,6 @@ import fpPick from "lodash/fp/pick";
 import mappr from "mappr";
 import * as entityMapper from "../entity/mapper";
 import * as talentType from "../types/talent-type";
-import * as entityType from "../types/entity-type";
 import * as idGenerator from "../entity/id-generator";
 
 export const CURRENT_TALENT_SCHEME_VERSION = 2;
@@ -10,6 +9,7 @@ export const CURRENT_TALENT_SCHEME_VERSION = 2;
 export const mapCreateOrUpdateTalentRequest = mappr.compose(
   params => ({
     id: params.id || idGenerator.generateFromTalent(params),
+    version: params.version || 1,
     schemeVersion: CURRENT_TALENT_SCHEME_VERSION,
     firstNames:
       params.talentType === talentType.INDIVIDUAL && params.firstNames
@@ -21,8 +21,8 @@ export const mapCreateOrUpdateTalentRequest = mappr.compose(
     "lastName",
     "talentType",
     "commonRole",
-    "version",
     "weSay",
+    "notes",
     "description",
     "descriptionCredit"
   ]),
@@ -31,28 +31,21 @@ export const mapCreateOrUpdateTalentRequest = mappr.compose(
   entityMapper.mapRequestImages
 );
 
-export const mapToPublicSummaryResponse = mappr.compose(
-  () => ({ entityType: entityType.TALENT }),
+export const mapResponse = mappr.compose(
   fpPick([
     "id",
     "status",
     "firstNames",
     "lastName",
     "talentType",
-    "commonRole"
-  ]),
-  entityMapper.mapResponseMainImage
-);
-
-export const mapToPublicFullResponse = mappr.compose(
-  mapToPublicSummaryResponse,
-  fpPick([
+    "commonRole",
     "description",
     "descriptionCredit",
     "weSay",
+    "notes",
     "links",
     "images",
     "version"
   ]),
-  () => ({ isFullEntity: true })
+  entityMapper.mapResponseMainImage
 );

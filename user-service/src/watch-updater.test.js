@@ -7,16 +7,14 @@ describe("watch updater", () => {
       {
         changeType: watchChangeType.ADD,
         id: 1,
-        label: "a",
-        created: 1111
+        label: "a"
       }
     ]);
 
     expect(result).toEqual([
       {
         id: 1,
-        label: "a",
-        created: 1111
+        label: "a"
       }
     ]);
   });
@@ -28,16 +26,14 @@ describe("watch updater", () => {
       [
         {
           id: 1,
-          label: "a",
-          created: 1111
+          label: "a"
         }
       ],
       [
         {
           changeType: watchChangeType.ADD,
           id: 2,
-          label: "b",
-          created: 2222
+          label: "b"
         }
       ]
     );
@@ -45,13 +41,11 @@ describe("watch updater", () => {
     expect(result).toEqual([
       {
         id: 1,
-        label: "a",
-        created: 1111
+        label: "a"
       },
       {
         id: 2,
-        label: "b",
-        created: 2222
+        label: "b"
       }
     ]);
   });
@@ -63,13 +57,11 @@ describe("watch updater", () => {
       [
         {
           id: 1,
-          label: "a",
-          created: 1111
+          label: "a"
         },
         {
           id: 2,
-          label: "b",
-          created: 2222
+          label: "b"
         }
       ],
       [
@@ -83,8 +75,7 @@ describe("watch updater", () => {
     expect(result).toEqual([
       {
         id: 1,
-        label: "a",
-        created: 1111
+        label: "a"
       }
     ]);
   });
@@ -96,8 +87,7 @@ describe("watch updater", () => {
       [
         {
           id: 1,
-          label: "a",
-          created: 1111
+          label: "a"
         }
       ],
       [
@@ -119,16 +109,14 @@ describe("watch updater", () => {
         [
           {
             id: 1,
-            label: "a",
-            created: 1111
+            label: "a"
           }
         ],
         [
           {
             changeType: watchChangeType.ADD,
             id: 2,
-            label: "b",
-            created: 2222
+            label: "b"
           }
         ]
       )

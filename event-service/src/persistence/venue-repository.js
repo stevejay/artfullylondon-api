@@ -19,8 +19,7 @@ export async function getMulti(ids) {
           "#n": "name"
         }
       }
-    },
-    ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+    }
   });
 
   return response.Responses[VENUE_TABLE_NAME];

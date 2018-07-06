@@ -21,16 +21,16 @@ export default function(currentVersion, newVersion, watches, changes) {
       if (change.changeType === watchChangeType.ADD) {
         if (!existingIdsLookup[change.id]) {
           existingIdsLookup[change.id] = true;
-
           updatedWatches.push({
             id: change.id,
-            label: change.label,
-            created: change.created
+            label: change.label
           });
         }
-      } else if (existingIdsLookup[change.id]) {
-        delete existingIdsLookup[change.id];
-        updatedWatches = updatedWatches.filter(item => item.id !== change.id);
+      } else if (change.changeType === watchChangeType.DELETE) {
+        if (existingIdsLookup[change.id]) {
+          delete existingIdsLookup[change.id];
+          updatedWatches = updatedWatches.filter(item => item.id !== change.id);
+        }
       }
     });
   }

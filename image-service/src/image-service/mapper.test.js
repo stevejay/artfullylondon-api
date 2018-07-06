@@ -1,9 +1,10 @@
 import * as mapper from "./mapper";
+import * as imageType from "../types/image-type";
 
 describe("mapImageDataToDb", () => {
   it("should map the image data", () => {
     const request = {
-      imageType: "venue",
+      imageType: imageType.VENUE,
       id: "image-1",
       mimeType: "image/png",
       sourceUrl: "http://test.com/image.png",
@@ -16,7 +17,7 @@ describe("mapImageDataToDb", () => {
     const result = mapper.mapImageDataToDb(request);
 
     expect(result).toEqual({
-      imageType: "venue",
+      imageType: imageType.VENUE,
       id: "image-1",
       mimeType: "image/png",
       sourceUrl: "http://test.com/image.png",
@@ -34,7 +35,7 @@ describe("mapImageDataToDb", () => {
 describe("mapImageToResponse", () => {
   it("should map an image", () => {
     const image = {
-      imageType: "venue",
+      imageType: imageType.VENUE,
       id: "image-1",
       mimeType: "image/png",
       sourceUrl: "http://test.com/image.png",
@@ -48,7 +49,7 @@ describe("mapImageToResponse", () => {
     const result = mapper.mapImageToResponse(image);
 
     expect(result).toEqual({
-      imageType: "venue",
+      imageType: imageType.VENUE,
       id: "image-1",
       mimeType: "image/png",
       sourceUrl: "http://test.com/image.png",
@@ -63,7 +64,7 @@ describe("mapImageToResponse", () => {
 
   it("should map a minimal image", function() {
     const image = {
-      imageType: "venue",
+      imageType: imageType.VENUE,
       id: "image-1",
       mimeType: "image/png",
       sourceUrl: "http://test.com/image.png",

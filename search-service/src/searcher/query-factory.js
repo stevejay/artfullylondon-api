@@ -1,6 +1,9 @@
+import _ from "lodash";
 import esb from "elastic-builder";
 import * as searchIndexType from "../types/search-index-type";
 import * as entityType from "../types/entity-type";
+import * as statusType from "../types/status-type";
+import * as occurrenceType from "../types/occurrence-type";
 
 export function createAutocompleteSearch(params) {
   const suggest = esb
@@ -14,7 +17,7 @@ export function createAutocompleteSearch(params) {
     .size(5)
     .fuzzy(true);
 
-  if (params.singleEntitySearch) {
+  if (params.entityType) {
     suggest.contexts("entityType", [params.entityType]);
     fuzzySuggest.contexts("entityType", [params.entityType]);
   }
@@ -31,7 +34,7 @@ export function createAutocompleteSearch(params) {
   };
 }
 
-export function createEntityCountsSearches() {
+export function createEntityCountSearches() {
   const searches = [];
 
   [
@@ -85,35 +88,39 @@ function getBasicSearchCreationData(type) {
     case entityType.EVENT:
     case entityType.EVENT_SERIES:
       return [BASIC_SEARCH_DATA[type]];
-    case entityType.ALL:
+    default:
       return [
         BASIC_SEARCH_DATA[entityType.TALENT],
         BASIC_SEARCH_DATA[entityType.VENUE],
         BASIC_SEARCH_DATA[entityType.EVENT_SERIES],
         BASIC_SEARCH_DATA[entityType.EVENT]
       ];
-    default:
-      throw new Error(`entity type value out of range: ${type}`);
   }
 }
 
 function createTalentSearch(params) {
   const query = esb.boolQuery();
 
-  params.hasTerm &&
+  if (params.term) {
     query.must(
       esb
         .multiMatchQuery(["firstNames", "lastName"], params.term)
         .type("cross_fields")
     );
+  }
 
-  params.isPublic && query.filter(createPublicFilter());
+  params.status && query.filter(esb.termQuery("status", params.status));
 
-  return esb
+  const search = esb
     .requestBodySearch()
     .query(query)
-    .size(params.take)
-    .from(params.skip)
+    .size(params.first);
+
+  if (params.after) {
+    search.searchAfter(params.after);
+  }
+
+  return search
     .source([
       "entityType",
       "id",
@@ -130,15 +137,20 @@ function createTalentSearch(params) {
     .sorts([
       esb.sort("_score", "desc"),
       esb.sort("lastName_sort"),
-      esb.sort("firstNames.sort")
+      esb.sort("firstNames.sort"),
+      esb.sort("id")
     ])
     .toJSON();
 }
 
 function createVenueSearch(params) {
   const query = esb.boolQuery();
-  params.hasTerm && query.must(esb.matchQuery("name", params.term));
-  params.isPublic && query.filter(createPublicFilter());
+
+  if (params.term) {
+    query.must(esb.matchQuery("name", params.term));
+  }
+
+  params.status && query.filter(esb.termQuery("status", params.status));
 
   params.hasLocation &&
     query.filter(
@@ -159,11 +171,16 @@ function createVenueSearch(params) {
         .type("indexed")
     );
 
-  return esb
+  const search = esb
     .requestBodySearch()
     .query(query)
-    .size(params.take)
-    .from(params.skip)
+    .size(params.first);
+
+  if (params.after) {
+    search.searchAfter(params.after);
+  }
+
+  return search
     .source([
       "entityType",
       "id",
@@ -179,20 +196,29 @@ function createVenueSearch(params) {
       "latitude",
       "longitude"
     ])
-    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")])
+    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort"), esb.sort("id")])
     .toJSON();
 }
 
 function createEventSeriesSearch(params) {
   const query = esb.boolQuery();
-  params.hasTerm && query.must(esb.matchQuery("name", params.term));
-  params.isPublic && query.filter(createPublicFilter());
 
-  return esb
+  if (params.term) {
+    query.must(esb.matchQuery("name", params.term));
+  }
+
+  params.status && query.filter(esb.termQuery("status", params.status));
+
+  const search = esb
     .requestBodySearch()
     .query(query)
-    .size(params.take)
-    .from(params.skip)
+    .size(params.first);
+
+  if (params.after) {
+    search.searchAfter(params.after);
+  }
+
+  return search
     .source([
       "entityType",
       "id",
@@ -206,27 +232,32 @@ function createEventSeriesSearch(params) {
       "occurrence",
       "summary"
     ])
-    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")])
+    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort"), esb.sort("id")])
     .toJSON();
 }
 
 function createEventSearch(params) {
   const query = esb.boolQuery();
 
-  if (params.hasTerm) {
+  if (params.term) {
     query.should(esb.matchQuery("name", params.term));
     query.should(esb.matchQuery("venueName", params.term));
     query.should(esb.matchQuery("summary", params.term));
     query.minimumShouldMatch(1);
   }
 
-  params.isPublic && query.filter(createPublicFilter());
+  params.status && query.filter(esb.termQuery("status", params.status));
 
-  return esb
+  const search = esb
     .requestBodySearch()
     .query(query)
-    .size(params.take)
-    .from(params.skip)
+    .size(params.first);
+
+  if (params.after) {
+    search.searchAfter(params.after);
+  }
+
+  return search
     .source([
       "entityType",
       "id",
@@ -248,46 +279,45 @@ function createEventSearch(params) {
       "dateFrom",
       "dateTo"
     ])
-    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")])
+    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort"), esb.sort("id")])
     .toJSON();
 }
 
 export function createEventAdvancedSearch(params) {
   const query = esb.boolQuery();
 
-  if (params.hasTerm) {
+  if (params.term) {
     query.should(esb.matchQuery("name", params.term));
     query.should(esb.matchQuery("venueName", params.term));
     query.should(esb.matchQuery("summary", params.term));
     query.minimumShouldMatch(1);
   }
 
-  params.isPublic && query.filter(createPublicFilter());
-  params.hasArea && query.filter(esb.termQuery("area", params.area));
-  params.hasArtsType &&
-    query.filter(esb.termQuery("artsType", params.artsType));
-  params.hasCostType &&
-    query.filter(esb.termQuery("costType", params.costType));
-  params.hasBookingType &&
+  params.status && query.filter(esb.termQuery("status", params.status));
+  params.area && query.filter(esb.termQuery("area", params.area));
+  params.artsType && query.filter(esb.termQuery("artsType", params.artsType));
+  params.costType && query.filter(esb.termQuery("costType", params.costType));
+  params.bookingType &&
     query.filter(esb.termQuery("bookingType", params.bookingType));
-  params.hasVenueId && query.filter(esb.termQuery("venueId", params.venueId));
-  params.hasTalentId &&
-    query.filter(esb.termQuery("talentId", params.talentId));
-  params.hasEventSeriesId &&
+  params.venueId && query.filter(esb.termQuery("venueId", params.venueId));
+  params.talentId && query.filter(esb.termQuery("talentId", params.talentId));
+  params.eventSeriesId &&
     query.filter(esb.termQuery("eventSeriesId", params.eventSeriesId));
-  params.hasTags && query.filter(esb.termsQuery("tags", params.tags));
+  !_.isEmpty(params.tags) && query.filter(esb.termsQuery("tags", params.tags));
+  params.externalEventIds &&
+    query.filter(esb.termsQuery("externalEventId", params.externalEventIds));
 
   if (params.hasNestedQuery) {
     const nestedQuery = esb.boolQuery();
-    params.hasAudience &&
+    params.audience &&
       nestedQuery.filter(esb.termQuery("dates.tags", params.audience));
-    params.hasDateFrom &&
+    params.dateFrom &&
       nestedQuery.filter(esb.rangeQuery("dates.date").gte(params.dateFrom));
-    params.hasDateTo &&
+    params.dateTo &&
       nestedQuery.filter(esb.rangeQuery("dates.date").lte(params.dateTo));
-    params.hasTimeFrom &&
+    params.timeFrom &&
       nestedQuery.filter(esb.rangeQuery("dates.to").gt(params.timeFrom));
-    params.hasTimeTo &&
+    params.timeTo &&
       nestedQuery.filter(esb.rangeQuery("dates.from").lte(params.timeTo));
 
     query.filter(
@@ -341,21 +371,25 @@ export function createEventAdvancedSearch(params) {
 
   params.hasDates && source.push("dates");
 
+  const search = esb
+    .requestBodySearch()
+    .query(query)
+    .source(source)
+    .sorts([esb.sort("_score", "desc"), esb.sort("name_sort"), esb.sort("id")])
+    .size(params.first);
+
+  if (params.after) {
+    search.searchAfter(params.after);
+  }
+
   return {
     index: searchIndexType.EVENT,
     type: "doc",
-    body: esb
-      .requestBodySearch()
-      .query(query)
-      .size(params.take)
-      .from(params.skip)
-      .source(source)
-      .sorts([esb.sort("_score", "desc"), esb.sort("name_sort")])
-      .toJSON()
+    body: search.toJSON()
   };
 }
 
-export function createSitemapEventIdsSearch(params) {
+export function createSitemapEventSearch(params) {
   return {
     index: searchIndexType.EVENT,
     type: "doc",
@@ -364,8 +398,8 @@ export function createSitemapEventIdsSearch(params) {
       .query(
         esb
           .boolQuery()
-          .filter(createPublicFilter())
-          .should(esb.termQuery("occurrenceType", "Continuous"))
+          .filter(esb.termQuery("status", statusType.ACTIVE))
+          .should(esb.termQuery("occurrenceType", occurrenceType.CONTINUOUS))
           .should(esb.rangeQuery("dateTo").gte(params.dateTo))
           .minimumShouldMatch(1)
       )
@@ -374,24 +408,4 @@ export function createSitemapEventIdsSearch(params) {
       .source(["id"])
       .toJSON()
   };
-}
-
-export function createEventsByExternalIdsSearch(params) {
-  return {
-    index: searchIndexType.EVENT,
-    type: "doc",
-    body: esb
-      .requestBodySearch()
-      .query(
-        esb.boolQuery().filter(esb.termsQuery("externalEventId", params.ids))
-      )
-      .size(1000)
-      .from(0)
-      .source(["id", "externalEventId"])
-      .toJSON()
-  };
-}
-
-function createPublicFilter() {
-  return esb.termQuery("status", "Active");
 }

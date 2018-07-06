@@ -16,9 +16,7 @@ const EVENT_SERIES_CONSTRAINT = {
   links: entityValidator.LINKS,
   images: entityValidator.IMAGES,
   weSay: entityValidator.OPTIONAL_STRING,
-  version: entityValidator.REQUIRED_VERSION,
-  createdDate: entityValidator.OPTIONAL_DATE,
-  updatedDate: entityValidator.OPTIONAL_DATE
+  version: entityValidator.OPTIONAL_VERSION
 };
 
 function errorHandler(errors) {

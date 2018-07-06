@@ -1,11 +1,6 @@
-export const TAG_TYPE_MEDIUM = "medium";
-export const TAG_TYPE_STYLE = "style";
-export const TAG_TYPE_GEO = "geo";
-export const TAG_TYPE_AUDIENCE = "audience";
+export const MEDIUM = "MEDIUM";
+export const STYLE = "STYLE";
+export const GEO = "GEO";
+export const AUDIENCE = "AUDIENCE";
 
-export const ALLOWED_TAG_TYPES = [
-  TAG_TYPE_MEDIUM,
-  TAG_TYPE_STYLE,
-  TAG_TYPE_GEO,
-  TAG_TYPE_AUDIENCE
-];
+export const ALLOWED_TAG_TYPES = [MEDIUM, STYLE, GEO, AUDIENCE];

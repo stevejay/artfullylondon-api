@@ -2,11 +2,10 @@ import _ from "lodash";
 import { ensure } from "ensure-request";
 import {
   REQUIRED_ENUM,
-  OPTIONAL_DATE,
   OPTIONAL_STRING,
   OPTIONAL_LONG_STRING,
   REQUIRED_STRING,
-  REQUIRED_VERSION,
+  OPTIONAL_VERSION,
   LINKS,
   IMAGES
 } from "../entity/validator";
@@ -31,9 +30,8 @@ const TALENT_VALIDATOR = {
   links: LINKS,
   images: IMAGES,
   weSay: OPTIONAL_STRING,
-  version: REQUIRED_VERSION,
-  createdDate: OPTIONAL_DATE,
-  updatedDate: OPTIONAL_DATE
+  notes: OPTIONAL_STRING,
+  version: OPTIONAL_VERSION
 };
 
 function errorHandler(errors) {

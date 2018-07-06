@@ -1,20 +1,26 @@
-import { sync } from "jest-toolkit";
 import request from "request-promise-native";
 import delay from "delay";
 import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
-import * as cognitoAuth from "../utils/cognito-auth";
-import * as lambdaUtils from "../utils/lambda";
 import SnsListener from "../utils/serverless-offline-sns-listener";
+import * as entityType from "../../src/types/entity-type";
+import MockJwksServer from "../utils/mock-jwks-server";
+import * as authUtils from "../utils/authentication";
+import {
+  EVENT_SERIES_QUERY,
+  EVENT_SERIES_FOR_EDIT_QUERY,
+  CREATE_EVENT_SERIES_MUTATION,
+  UPDATE_EVENT_SERIES_MUTATION
+} from "./queries";
 jest.setTimeout(30000);
 
 describe("event series", () => {
+  const mockJwksServer = new MockJwksServer();
   let testEventSeriesId = null;
   let snsListener = null;
   const testEventSeriesBody = testData.createNewEventSeriesBody();
 
   beforeAll(async () => {
-    await dynamodb.truncateAllTables();
     snsListener = new SnsListener({
       endpoint: "http://127.0.0.1:4002",
       region: "eu-west-1"
@@ -23,193 +29,194 @@ describe("event series", () => {
       "arn:aws:sns:eu-west-1:1111111111111:IndexDocument-development",
       3019
     );
+    mockJwksServer.start(3021);
+    await dynamodb.truncateAllTables();
   });
 
   afterAll(async () => {
+    mockJwksServer.stop();
     await snsListener.stopListening();
   });
 
-  it("should fail to create an invalid event series", async () => {
-    expect(
-      await sync(
-        request({
-          uri: "http://localhost:3014/admin/event-series",
-          json: true,
-          method: "POST",
-          headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-          body: { status: "Active" },
-          timeout: 14000
-        })
-      )
-    ).toThrow(/Name can't be blank/);
-  });
-
   it("should fail to create an event series when the user is the readonly user", async () => {
-    expect(
-      await sync(
-        request({
-          uri: "http://localhost:3014/admin/event-series",
-          json: true,
-          method: "POST",
-          headers: { Authorization: cognitoAuth.READONLY_AUTH_TOKEN },
-          body: testEventSeriesBody,
-          timeout: 14000
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: CREATE_EVENT_SERIES_MUTATION,
+        variables: testEventSeriesBody
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        createEventSeries: null
+      },
+      errors: [
+        expect.objectContaining({
+          message: expect.stringContaining(
+            "User not authorized for requested action"
+          )
         })
-      )
-    ).toThrow(/readonly user cannot modify system/);
+      ]
+    });
   });
 
   it("should create a valid event series", async () => {
     snsListener.clearReceivedMessages();
     const response = await request({
-      uri: "http://localhost:3014/admin/event-series",
+      uri: "http://localhost:3014/graphql",
       json: true,
       method: "POST",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-      body: testEventSeriesBody,
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: CREATE_EVENT_SERIES_MUTATION,
+        variables: testEventSeriesBody
+      },
       timeout: 14000
     });
 
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response);
-    expect(parsedResponse.entity).toEqual(
-      expect.objectContaining({
-        eventSeriesType: "Occasional",
-        summary: "Stand-up poetry",
-        status: "Active",
-        version: 1
-      })
-    );
+    expect(response).toEqual({
+      data: {
+        createEventSeries: {
+          eventSeries: expect.objectContaining({
+            summary: "Stand-up poetry"
+          })
+        }
+      }
+    });
 
-    testEventSeriesId = parsedResponse.entity.id;
+    testEventSeriesId = response.data.createEventSeries.eventSeries.id;
 
-    delay(3000);
+    await delay(3000);
     expect(snsListener.receivedMessages).toEqual([
       {
-        entityType: "event-series",
+        entityType: entityType.EVENT_SERIES,
         entity: expect.objectContaining({
-          eventSeriesType: "Occasional",
+          id: testEventSeriesId,
           summary: "Stand-up poetry",
-          status: "Active",
           version: 1
         })
       }
     ]);
   });
 
-  it("should get the event series without cache control headers when using the admin api", async () => {
+  it("should get the event series", async () => {
     const response = await request({
-      uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
+      uri: "http://localhost:3014/graphql",
       json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
-
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
-    expect(parsedResponse.entity).toEqual(
-      expect.objectContaining({
-        id: testEventSeriesId,
-        eventSeriesType: "Occasional",
-        summary: "Stand-up poetry",
-        status: "Active",
-        version: 1
-      })
-    );
-  });
-
-  it("should get the event series with cache control headers when using the public api", async () => {
-    const response = await request({
-      uri: "http://localhost:3014/public/event-series/" + testEventSeriesId,
-      json: true,
-      method: "GET",
-      timeout: 14000,
-      resolveWithFullResponse: true
-    });
-
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response.body);
-    expect(parsedResponse.entity).toEqual(
-      expect.objectContaining({
-        id: testEventSeriesId,
-        eventSeriesType: "Occasional",
-        summary: "Stand-up poetry",
-        entityType: "event-series",
-        status: "Active",
-        isFullEntity: true
-      })
-    );
-  });
-
-  it("should get the event series using the get multi endpoint", async () => {
-    const response = await request({
-      uri:
-        "http://localhost:3014/public/event-series?ids=" +
-        encodeURIComponent(testEventSeriesId),
-      json: true,
-      method: "GET",
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: EVENT_SERIES_QUERY,
+        variables: { id: testEventSeriesId }
+      },
       timeout: 14000
     });
 
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response);
-    expect(parsedResponse.entities.length).toEqual(1);
-    expect(parsedResponse.entities[0]).toEqual(
-      expect.objectContaining({
-        id: testEventSeriesId,
-        eventSeriesType: "Occasional",
-        summary: "Stand-up poetry",
-        entityType: "event-series",
-        status: "Active"
-      })
-    );
+    expect(response).toEqual({
+      data: {
+        eventSeries: expect.objectContaining({
+          id: testEventSeriesId,
+          summary: "Stand-up poetry"
+        })
+      }
+    });
+  });
+
+  it("should get the event series for edit", async () => {
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: EVENT_SERIES_FOR_EDIT_QUERY,
+        variables: { id: testEventSeriesId }
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        eventSeriesForEdit: expect.objectContaining({
+          id: testEventSeriesId,
+          summary: "Stand-up poetry",
+          version: 1
+        })
+      }
+    });
   });
 
   it("should reject a stale update to the event series", async () => {
-    expect(
-      await sync(
-        request({
-          uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
-          json: true,
-          method: "PUT",
-          headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
-          body: testEventSeriesBody,
-          timeout: 14000
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createEditorAuthToken() },
+      body: {
+        query: UPDATE_EVENT_SERIES_MUTATION,
+        variables: {
+          ...testEventSeriesBody,
+          version: 1,
+          id: testEventSeriesId
+        }
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        updateEventSeries: null
+      },
+      errors: [
+        expect.objectContaining({
+          message: expect.stringContaining("Stale Data")
         })
-      )
-    ).toThrow(/Stale Data/);
+      ]
+    });
   });
 
   it("should accept a valid update to the event series", async () => {
     snsListener.clearReceivedMessages();
     const response = await request({
-      uri: "http://localhost:3014/admin/event-series/" + testEventSeriesId,
+      uri: "http://localhost:3014/graphql",
       json: true,
-      method: "PUT",
-      headers: { Authorization: cognitoAuth.EDITOR_AUTH_TOKEN },
+      method: "POST",
+      headers: { Authorization: authUtils.createEditorAuthToken() },
       body: {
-        ...testEventSeriesBody,
-        summary: "Stand-up poetry New",
-        version: 2
+        query: UPDATE_EVENT_SERIES_MUTATION,
+        variables: {
+          ...testEventSeriesBody,
+          summary: "Stand-up poetry New",
+          version: 2,
+          id: testEventSeriesId
+        }
       },
       timeout: 14000
     });
 
-    const parsedResponse = lambdaUtils.parseLambdaResponse(response);
-    expect(parsedResponse.entity).toEqual(
-      expect.objectContaining({
-        id: testEventSeriesId,
-        summary: "Stand-up poetry New",
-        status: "Active",
-        version: 2
-      })
-    );
+    expect(response).toEqual({
+      data: {
+        updateEventSeries: {
+          eventSeries: expect.objectContaining({
+            id: testEventSeriesId,
+            summary: "Stand-up poetry New"
+          })
+        }
+      }
+    });
 
-    delay(3000);
+    await delay(3000);
     expect(snsListener.receivedMessages).toEqual([
       {
-        entityType: "event-series",
+        entityType: entityType.EVENT_SERIES,
         entity: expect.objectContaining({
-          eventSeriesType: "Occasional",
+          id: testEventSeriesId,
           summary: "Stand-up poetry New",
-          status: "Active",
           version: 2
         })
       }
@@ -217,16 +224,27 @@ describe("event series", () => {
   });
 
   it("should fail to get a non-existent event series", async () => {
-    expect(
-      await sync(
-        request({
-          uri: "http://localhost:3014/public/event-series/does-not-exist",
-          json: true,
-          method: "GET",
-          timeout: 14000,
-          resolveWithFullResponse: true
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: EVENT_SERIES_QUERY,
+        variables: { id: "event-series/does-not-exist" }
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        eventSeries: null
+      },
+      errors: [
+        expect.objectContaining({
+          message: expect.stringContaining("Not Found")
         })
-      )
-    ).toThrow(/Entity Not Found/);
+      ]
+    });
   });
 });

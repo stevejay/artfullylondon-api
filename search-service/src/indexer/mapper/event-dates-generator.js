@@ -58,7 +58,7 @@ export function createInitialDatesLookup(dateRange) {
   let loopDate = dateRange.from;
 
   do {
-    result[timeUtils.formatAsISODateString(loopDate)] = {
+    result[timeUtils.formatAsIsoShortDateString(loopDate)] = {
       day: getISODay(loopDate),
       times: []
     };

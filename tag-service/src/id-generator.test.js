@@ -1,18 +1,11 @@
 import * as idGenerator from "./id-generator";
+import * as tagType from "./tag-type";
 
-describe("createFromLabel", () => {
+describe("createTagId", () => {
   test.each([
-    ["geo", "Furious Five", "geo/furious-five"],
-    ["medium", "theatre", "medium/theatre"]
-  ])(".createFromLabel(%s, %s)", (prefix, label, expected) => {
-    expect(idGenerator.createFromLabel(prefix, label)).toEqual(expected);
-  });
-});
-
-describe("join", () => {
-  it("should return valid id from id parts", () => {
-    expect(idGenerator.join("medium", "theatre", "immersive")).toEqual(
-      "medium/theatre/immersive"
-    );
+    [tagType.GEO, "Furious Five", "geo/furious-five"],
+    [tagType.MEDIUM, "theatre", "medium/theatre"]
+  ])(".createTagId(%s, %s)", (type, label, expected) => {
+    expect(idGenerator.createTagId(type, label)).toEqual(expected);
   });
 });

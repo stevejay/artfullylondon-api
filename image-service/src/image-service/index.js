@@ -30,7 +30,7 @@ export async function startReprocessingImages() {
     ITERATE_IMAGES_ACTION_ID
   );
   await notifier.startReprocessingImages(iterationId);
-  return { acknowledged: true };
+  return { iteration: { actionId: ITERATE_IMAGES_ACTION_ID, iterationId } };
 }
 
 // TODO improve error handling here:

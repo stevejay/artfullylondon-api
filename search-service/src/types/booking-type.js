@@ -1,6 +1,6 @@
-export const NOT_REQUIRED = "NotRequired";
-export const REQUIRED = "Required";
-export const REQUIRED_FOR_NON_MEMBERS = "RequiredForNonMembers";
+export const NOT_REQUIRED = "NOT_REQUIRED";
+export const REQUIRED = "REQUIRED";
+export const REQUIRED_FOR_NON_MEMBERS = "REQUIRED_FOR_NON_MEMBERS";
 
 export const ALLOWED_VALUES = [
   NOT_REQUIRED,

@@ -1,0 +1,798 @@
+scalar IsoShortDate
+scalar ShortTime
+
+enum EntityTypeEnum {
+  TALENT
+  VENUE
+  EVENT
+  EVENT_SERIES
+}
+
+enum StatusTypeEnum {
+  PENDING
+  ACTIVE
+  DELETED
+  MERGED
+}
+
+enum TalentTypeEnum {
+  INDIVIDUAL
+  GROUP
+}
+
+enum LinkTypeEnum {
+  WIKIPEDIA
+  FACEBOOK
+  TWITTER
+  HOMEPAGE
+  ACCESS
+  INSTAGRAM
+  BOOKING
+}
+
+enum EventSeriesTypeEnum {
+  SEASON
+  OCCASIONAL
+}
+
+enum VenueTypeEnum {
+  THEATRE
+  ART_GALLERY
+  CONCERT_HALL
+  EXHIBITION_HALL
+  PERFORMING_ARTS_CENTRE
+  MUSEUM
+  CHURCH
+  CINEMA
+  OTHER
+}
+
+enum WheelchairAccessTypeEnum {
+  FULL_ACCESS
+  PARTIAL_ACCESS
+  NO_ACCESS
+  UNKNOWN
+  NOT_APPLICABLE
+}
+
+enum DisabledBathroomTypeEnum {
+  PRESENT
+  NOT_PRESENT
+  UNKNOWN
+  NOT_APPLICABLE
+}
+
+enum HearingFacilitiesTypeEnum {
+  HEARING_LOOPS
+  PARTIAL_HEARING_LOOPS
+  NO_HEARING_LOOPS
+  UNKNOWN
+  NOT_APPLICABLE
+}
+
+enum NamedClosureTypeEnum {
+  BANK_HOLIDAYS
+  BANK_HOLIDAY_WEEKENDS
+  CHRISTMAS_EVE
+  CHRISTMAS_DAY
+  BOXING_DAY
+  NEW_YEARS_EVE
+  NEW_YEARS_DAY
+  CHRISTMAS_PERIOD
+  EASTER_SUNDAY
+  EASTER_HOLIDAY_PERIOD
+  AUGUST_SATURDAYS
+  ROSH_HASHANAH
+  YOM_KIPPUR
+  AUGUST
+}
+
+enum EventTypeEnum {
+  PERFORMANCE
+  EXHIBITION
+  COURSE
+}
+
+enum OccurrenceTypeEnum {
+  BOUNDED
+  CONTINUOUS
+  ONE_TIME
+}
+
+enum CostTypeEnum {
+  FREE
+  PAID
+}
+
+enum BookingTypeEnum {
+  NOT_REQUIRED
+  REQUIRED
+  REQUIRED_FOR_NON_MEMBERS
+}
+
+type Link {
+  type: LinkTypeEnum!
+  url: String!
+}
+
+type Image {
+  id: ID!
+  ratio: Float!
+  copyright: String
+  dominantColor: String
+}
+
+type Tag {
+  id: ID!
+  label: String!
+}
+
+type DayOpeningTime {
+  day: Int!
+  from: ShortTime!
+  to: ShortTime!
+  timesRangeId: String
+}
+
+type DateOpeningTime {
+  date: IsoShortDate!
+  from: ShortTime!
+  to: ShortTime!
+}
+
+type DateClosedTimeRange {
+  date: IsoShortDate!
+  from: ShortTime
+  to: ShortTime
+}
+
+type DayPerformance {
+  day: Int!
+  at: ShortTime!
+  timesRangeId: String
+}
+
+type DatePerformance {
+  date: IsoShortDate!
+  at: ShortTime!
+}
+
+type SpecialPerformance {
+  date: IsoShortDate!
+  at: ShortTime!
+  audienceTags: [Tag!]
+}
+
+type DateClosedTimeAt {
+  date: IsoShortDate!
+  at: ShortTime
+}
+
+type SpecialOpeningTime {
+  date: IsoShortDate!
+  from: ShortTime!
+  to: ShortTime!
+  audienceTags: [Tag!]
+}
+
+type TimesRange {
+  id: ID!
+  dateFrom: IsoShortDate!
+  dateTo: IsoShortDate!
+  label: String!
+}
+
+type Review {
+  source: String!
+  rating: Int!
+}
+
+# interface Entity {
+#   id: ID!
+#   status: StatusTypeEnum!
+#   links: [Link!]
+#   images: [Image!]
+#   weSay: String
+#   notes: String
+#   mainImage: Image
+#   description: String
+#   descriptionCredit: String
+# }
+
+# interface EntityForEdit {
+#   id: ID!
+#   status: StatusTypeEnum!
+#   version: Int!
+#   links: [Link!]
+#   images: [Image!]
+#   weSay: String
+#   notes: String
+#   description: String
+#   descriptionCredit: String
+# }
+
+type Talent {
+  id: ID!
+  status: StatusTypeEnum!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  mainImage: Image
+  description: String
+  descriptionCredit: String
+  firstNames: String
+  lastName: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+}
+
+type TalentForEdit {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  firstNames: String
+  lastName: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+}
+
+type EventTalent {
+  roles: [String!]
+  characters: [String!]
+  talent: Talent!
+}
+
+type EventTalentForEdit {
+  roles: [String!]
+  characters: [String!]
+  id: ID!
+}
+
+type Venue {
+  id: ID!
+  status: StatusTypeEnum!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  mainImage: Image
+  description: String
+  descriptionCredit: String
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+  wheelchairAccessType: WheelchairAccessTypeEnum!
+  disabledBathroomType: DisabledBathroomTypeEnum!
+  hearingFacilitiesType: HearingFacilitiesTypeEnum!
+  hasPermanentCollection: Boolean!
+  email: String
+  telephone: String
+  openingTimes: [DayOpeningTime!]
+  additionalOpeningTimes: [DateOpeningTime!]
+  openingTimesClosures: [DateClosedTimeRange!]
+  namedClosures: [NamedClosureTypeEnum!]
+}
+
+type VenueForEdit {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+  wheelchairAccessType: WheelchairAccessTypeEnum!
+  disabledBathroomType: DisabledBathroomTypeEnum!
+  hearingFacilitiesType: HearingFacilitiesTypeEnum!
+  hasPermanentCollection: Boolean!
+  email: String
+  telephone: String
+  openingTimes: [DayOpeningTime!]
+  additionalOpeningTimes: [DateOpeningTime!]
+  openingTimesClosures: [DateClosedTimeRange!]
+  namedClosures: [NamedClosureTypeEnum!]
+}
+
+type EventSeries {
+  id: ID!
+  status: StatusTypeEnum!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  mainImage: Image
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventSeriesType: EventSeriesTypeEnum!
+  occurrence: String!
+  summary: String!
+}
+
+type EventSeriesForEdit {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventSeriesType: EventSeriesTypeEnum!
+  occurrence: String!
+  summary: String!
+}
+
+type Event {
+  id: ID!
+  status: StatusTypeEnum!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  mainImage: Image
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventType: EventTypeEnum!
+  occurrenceType: OccurrenceTypeEnum!
+  costType: CostTypeEnum!
+  summary: String!
+  soldOut: Boolean
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  rating: Int!
+  bookingType: BookingTypeEnum!
+  useVenueOpeningTimes: Boolean!
+  timedEntry: Boolean
+  costFrom: Float
+  costTo: Float
+  bookingOpens: IsoShortDate
+  venueGuidance: String
+  duration: ShortTime
+  minAge: Int
+  maxAge: Int
+  timesRanges: [TimesRange!]
+  performances: [DayPerformance!]
+  additionalPerformances: [DatePerformance!]
+  specialPerformances: [SpecialPerformance!]
+  performancesClosures: [DateClosedTimeAt!]
+  soldOutPerformances: [DatePerformance!]
+  openingTimes: [DayOpeningTime!]
+  additionalOpeningTimes: [DateOpeningTime!]
+  specialOpeningTimes: [SpecialOpeningTime!]
+  openingTimesClosures: [DateClosedTimeRange!]
+  audienceTags: [Tag!]
+  mediumTags: [Tag!]
+  styleTags: [Tag!]
+  geoTags: [Tag!]
+  reviews: [Review!]
+  talents: [EventTalent!]
+  venue: Venue!
+  eventSeries: EventSeries
+}
+
+type EventForEdit {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [Link!]
+  images: [Image!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventType: EventTypeEnum!
+  occurrenceType: OccurrenceTypeEnum!
+  costType: CostTypeEnum!
+  summary: String!
+  soldOut: Boolean
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  rating: Int!
+  bookingType: BookingTypeEnum!
+  useVenueOpeningTimes: Boolean!
+  timedEntry: Boolean
+  costFrom: Float
+  costTo: Float
+  bookingOpens: IsoShortDate
+  venueGuidance: String
+  duration: ShortTime
+  minAge: Int
+  maxAge: Int
+  timesRanges: [TimesRange!]
+  performances: [DayPerformance!]
+  additionalPerformances: [DatePerformance!]
+  specialPerformances: [SpecialPerformance!]
+  performancesClosures: [DateClosedTimeAt!]
+  soldOutPerformances: [DatePerformance!]
+  openingTimes: [DayOpeningTime!]
+  additionalOpeningTimes: [DateOpeningTime!]
+  specialOpeningTimes: [SpecialOpeningTime!]
+  openingTimesClosures: [DateClosedTimeRange!]
+  audienceTags: [Tag!]
+  mediumTags: [Tag!]
+  styleTags: [Tag!]
+  geoTags: [Tag!]
+  reviews: [Review!]
+  talents: [EventTalentForEdit!]
+  venueId: ID!
+  eventSeriesId: ID
+}
+
+type Query {
+  talent(id: ID!): Talent
+  talentForEdit(id: ID!): TalentForEdit
+  venue(id: ID!): Venue
+  venueForEdit(id: ID!): VenueForEdit
+  eventSeries(id: ID!): EventSeries
+  eventSeriesForEdit(id: ID!): EventSeriesForEdit
+  event(id: ID!): Event
+  eventForEdit(id: ID!): EventForEdit
+}
+
+input LinkInput {
+  type: LinkTypeEnum!
+  url: String!
+}
+
+input ImageInput {
+  id: ID!
+  ratio: Float!
+  copyright: String
+  dominantColor: String
+}
+
+input TagInput {
+  id: ID!
+  label: String!
+}
+
+input DayOpeningTimeInput {
+  day: Int!
+  from: ShortTime!
+  to: ShortTime!
+  timesRangeId: String
+}
+
+input DateOpeningTimeInput {
+  date: IsoShortDate!
+  from: ShortTime!
+  to: ShortTime!
+}
+
+input DateClosedTimeRangeInput {
+  date: IsoShortDate!
+  from: ShortTime
+  to: ShortTime
+}
+
+input SpecialOpeningTimeInput {
+  date: IsoShortDate!
+  from: ShortTime!
+  to: ShortTime!
+  audienceTags: [TagInput!]
+}
+
+input TimesRangeInput {
+  id: ID!
+  dateFrom: IsoShortDate!
+  dateTo: IsoShortDate!
+  label: String!
+}
+
+input DayPerformanceInput {
+  day: Int!
+  at: ShortTime!
+  timesRangeId: String
+}
+
+input DatePerformanceInput {
+  date: IsoShortDate!
+  at: ShortTime!
+}
+
+input SpecialPerformanceInput {
+  date: IsoShortDate!
+  at: ShortTime!
+  audienceTags: [TagInput!]
+}
+
+input DateClosedTimeAtInput {
+  date: IsoShortDate!
+  at: ShortTime
+}
+
+input EventTalentInput {
+  id: ID!
+  roles: [String!]
+  characters: [String!]
+}
+
+input ReviewInput {
+  source: String!
+  rating: Int!
+}
+
+input CreateTalentInput {
+  status: StatusTypeEnum!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  firstNames: String
+  lastName: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+}
+
+type CreateTalentResult {
+  talent: Talent
+}
+
+input UpdateTalentInput {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  firstNames: String
+  lastName: String!
+  talentType: TalentTypeEnum!
+  commonRole: String!
+}
+
+type UpdateTalentResult {
+  talent: Talent
+}
+
+input CreateVenueInput {
+  status: StatusTypeEnum!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+  email: String
+  telephone: String
+  wheelchairAccessType: WheelchairAccessTypeEnum!
+  disabledBathroomType: DisabledBathroomTypeEnum!
+  hearingFacilitiesType: HearingFacilitiesTypeEnum!
+  hasPermanentCollection: Boolean!
+  openingTimes: [DayOpeningTimeInput!]
+  additionalOpeningTimes: [DateOpeningTimeInput!]
+  openingTimesClosures: [DateClosedTimeRangeInput!]
+  namedClosures: [NamedClosureTypeEnum!]
+}
+
+type CreateVenueResult {
+  venue: Venue
+}
+
+input UpdateVenueInput {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  venueType: VenueTypeEnum!
+  address: String!
+  postcode: String!
+  latitude: Float!
+  longitude: Float!
+  email: String
+  telephone: String
+  wheelchairAccessType: WheelchairAccessTypeEnum!
+  disabledBathroomType: DisabledBathroomTypeEnum!
+  hearingFacilitiesType: HearingFacilitiesTypeEnum!
+  hasPermanentCollection: Boolean!
+  openingTimes: [DayOpeningTimeInput!]
+  additionalOpeningTimes: [DateOpeningTimeInput!]
+  openingTimesClosures: [DateClosedTimeRangeInput!]
+  namedClosures: [NamedClosureTypeEnum!]
+}
+
+type UpdateVenueResult {
+  venue: Venue
+}
+
+input CreateEventSeriesInput {
+  status: StatusTypeEnum!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventSeriesType: EventSeriesTypeEnum!
+  occurrence: String!
+  summary: String!
+}
+
+type CreateEventSeriesResult {
+  eventSeries: EventSeries
+}
+
+input UpdateEventSeriesInput {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventSeriesType: EventSeriesTypeEnum!
+  occurrence: String!
+  summary: String!
+}
+
+type UpdateEventSeriesResult {
+  eventSeries: EventSeries
+}
+
+input CreateEventInput {
+  status: StatusTypeEnum!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventType: EventTypeEnum!
+  occurrenceType: OccurrenceTypeEnum!
+  costType: CostTypeEnum!
+  summary: String!
+  rating: Int!
+  bookingType: BookingTypeEnum!
+  venueId: ID!
+  eventSeriesId: ID
+  useVenueOpeningTimes: Boolean!
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  costFrom: Float
+  costTo: Float
+  bookingOpens: IsoShortDate
+  venueGuidance: String
+  duration: ShortTime
+  minAge: Int
+  maxAge: Int
+  soldOut: Boolean
+  timedEntry: Boolean
+  timesRanges: [TimesRangeInput!]
+  performances: [DayPerformanceInput!]
+  additionalPerformances: [DatePerformanceInput!]
+  specialPerformances: [SpecialPerformanceInput!]
+  performancesClosures: [DateClosedTimeAtInput!]
+  soldOutPerformances: [DatePerformanceInput!]
+  openingTimes: [DayOpeningTimeInput!]
+  additionalOpeningTimes: [DateOpeningTimeInput!]
+  specialOpeningTimes: [SpecialOpeningTimeInput!]
+  openingTimesClosures: [DateClosedTimeRangeInput!]
+  audienceTags: [TagInput!]
+  mediumTags: [TagInput!]
+  styleTags: [TagInput!]
+  geoTags: [TagInput!]
+  talents: [EventTalentInput!]
+  reviews: [ReviewInput!]
+}
+
+type CreateEventResult {
+  event: Event
+}
+
+input UpdateEventInput {
+  id: ID!
+  status: StatusTypeEnum!
+  version: Int!
+  links: [LinkInput!]
+  images: [ImageInput!]
+  weSay: String
+  notes: String
+  description: String
+  descriptionCredit: String
+  name: String!
+  eventType: EventTypeEnum!
+  occurrenceType: OccurrenceTypeEnum!
+  costType: CostTypeEnum!
+  summary: String!
+  rating: Int!
+  bookingType: BookingTypeEnum!
+  venueId: ID!
+  eventSeriesId: ID
+  useVenueOpeningTimes: Boolean!
+  dateFrom: IsoShortDate
+  dateTo: IsoShortDate
+  costFrom: Float
+  costTo: Float
+  bookingOpens: IsoShortDate
+  venueGuidance: String
+  duration: ShortTime
+  minAge: Int
+  maxAge: Int
+  soldOut: Boolean
+  timedEntry: Boolean
+  timesRanges: [TimesRangeInput!]
+  performances: [DayPerformanceInput!]
+  additionalPerformances: [DatePerformanceInput!]
+  specialPerformances: [SpecialPerformanceInput!]
+  performancesClosures: [DateClosedTimeAtInput!]
+  soldOutPerformances: [DatePerformanceInput!]
+  openingTimes: [DayOpeningTimeInput!]
+  additionalOpeningTimes: [DateOpeningTimeInput!]
+  specialOpeningTimes: [SpecialOpeningTimeInput!]
+  openingTimesClosures: [DateClosedTimeRangeInput!]
+  audienceTags: [TagInput!]
+  mediumTags: [TagInput!]
+  styleTags: [TagInput!]
+  geoTags: [TagInput!]
+  talents: [EventTalentInput!]
+  reviews: [ReviewInput!]
+}
+
+type UpdateEventResult {
+  event: Event
+}
+
+input RefreshSearchIndexInput {
+  entityType: EntityTypeEnum!
+}
+
+type RefreshSearchIndexResult {
+  ok: Boolean
+}
+
+type Mutation {
+  createTalent(input: CreateTalentInput): CreateTalentResult
+  updateTalent(input: UpdateTalentInput): UpdateTalentResult
+  createVenue(input: CreateVenueInput): CreateVenueResult
+  updateVenue(input: UpdateVenueInput): UpdateVenueResult
+  createEventSeries(input: CreateEventSeriesInput): CreateEventSeriesResult
+  updateEventSeries(input: UpdateEventSeriesInput): UpdateEventSeriesResult
+  createEvent(input: CreateEventInput): CreateEventResult
+  updateEvent(input: UpdateEventInput): UpdateEventResult
+  refreshSearchIndex(input: RefreshSearchIndexInput): RefreshSearchIndexResult
+}

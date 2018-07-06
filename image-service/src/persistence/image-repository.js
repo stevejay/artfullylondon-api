@@ -1,8 +1,7 @@
 import dynamodb from "./dynamodb";
 
 const BASIC_REQUEST = {
-  TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME,
-  ReturnConsumedCapacity: process.env.RETURN_CONSUMED_CAPACITY
+  TableName: process.env.SERVERLESS_IMAGE_TABLE_NAME
 };
 
 export async function getImage(imageId) {

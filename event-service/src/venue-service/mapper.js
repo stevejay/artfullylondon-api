@@ -9,7 +9,9 @@ export const CURRENT_VENUE_SCHEME_VERSION = 4;
 
 export const mapCreateOrUpdateVenueRequest = mappr.compose(
   params => ({
-    id: params.id || idGenerator.generateFromName(params.name),
+    id:
+      params.id || idGenerator.generateFromName(params.name, entityType.VENUE),
+    version: params.version || 1,
     schemeVersion: CURRENT_VENUE_SCHEME_VERSION
   }),
   fpPick([
@@ -44,13 +46,7 @@ export const mapCreateOrUpdateVenueRequest = mappr.compose(
   }
 );
 
-export const mapToAdminResponse = venue => ({
-  ...venue,
-  hasPermanentCollection: !!venue.hasPermanentCollection
-});
-
-export const mapToPublicSummaryResponse = mappr.compose(
-  () => ({ entityType: entityType.VENUE }),
+export const mapResponse = mappr.compose(
   fpPick([
     "id",
     "status",
@@ -59,14 +55,7 @@ export const mapToPublicSummaryResponse = mappr.compose(
     "address",
     "postcode",
     "latitude",
-    "longitude"
-  ]),
-  entityMapper.mapResponseMainImage
-);
-
-export const mapToPublicFullResponse = mappr.compose(
-  mapToPublicSummaryResponse,
-  fpPick([
+    "longitude",
     "description",
     "descriptionCredit",
     "weSay",
@@ -85,5 +74,5 @@ export const mapToPublicFullResponse = mappr.compose(
     "namedClosures",
     "version"
   ]),
-  () => ({ isFullEntity: true })
+  entityMapper.mapResponseMainImage
 );

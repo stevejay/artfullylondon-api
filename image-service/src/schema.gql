@@ -1,0 +1,51 @@
+enum ImageTypeEnum {
+  EVENT
+  EVENT_SERIES
+  TALENT
+  VENUE
+}
+
+type Image {
+  id: ID!
+  imageType: ImageTypeEnum!
+  sourceUrl: String!
+  mimeType: String!
+  width: Int!
+  height: Int!
+  dominantColor: String!
+  ratio: Float!
+  resizeVersion: Int!
+  modifiedDate: String!
+}
+
+type Iteration {
+  actionId: ID!
+  iterationId: ID!
+}
+
+type ImageResult {
+  image: Image
+}
+
+type Query {
+  image(id: ID!): ImageResult
+}
+
+input CreateTagInput {
+  id: ID!
+  type: ImageTypeEnum!
+  url: String!
+}
+
+type AddImageOutput {
+  image: Image
+}
+
+type ReprocessAllImagesOutput {
+  iteration: Iteration
+}
+
+type Mutation {
+  addImage(input: CreateTagInput!): AddImageOutput
+  reprocessAllImages: ReprocessAllImagesOutput
+}

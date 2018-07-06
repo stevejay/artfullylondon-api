@@ -108,7 +108,7 @@ const EVENT_VALIDATOR = {
     ...entityValidator.REQUIRED_ENUM(occurrenceType.ALLOWED_VALUES),
     dependency: [
       {
-        test: value => value === occurrenceType.ONETIME,
+        test: value => value === occurrenceType.ONE_TIME,
         ensure: (__, attrs) =>
           attrs.dateFrom && attrs.dateFrom === attrs.dateTo,
         message: "Date from must equal date to and both must be given"
@@ -289,7 +289,7 @@ const EVENT_VALIDATOR = {
     each: {
       object: {
         date: entityValidator.REQUIRED_DATE,
-        at: entityValidator.OPTIONAL_DATE
+        at: entityValidator.OPTIONAL_TIME
       }
     }
   },
@@ -356,9 +356,7 @@ const EVENT_VALIDATOR = {
       message: "Can only have sold out performances if event is a performance"
     }
   },
-  version: entityValidator.REQUIRED_VERSION,
-  createdDate: entityValidator.OPTIONAL_DATE,
-  updatedDate: entityValidator.OPTIONAL_DATE
+  version: entityValidator.OPTIONAL_VERSION
 };
 
 function errorHandler(errors) {

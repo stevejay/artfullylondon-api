@@ -1,16 +1,21 @@
 import * as normaliser from "./normaliser";
+import * as linkType from "../types/link-type";
+import * as statusType from "../types/status-type";
+import * as talentType from "../types/talent-type";
 
 describe("talent normaliser", () => {
   it("should normalise a fully populated individual talent", () => {
     const request = {
       firstNames: " Anne  ",
       lastName: "   Trixy Stage",
-      status: "Active",
-      talentType: "Individual",
+      status: statusType.ACTIVE,
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor   ",
       description: "  An actor.  ",
       descriptionCredit: " Credit  ",
-      links: [{ type: "Wikipedia", url: "   https://en.wikipedia.org/foo  " }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "   https://en.wikipedia.org/foo  " }
+      ],
       images: [
         {
           id: "abcd1234abcd1234abcd1234abcd1234",
@@ -27,12 +32,14 @@ describe("talent normaliser", () => {
     expect(result).toEqual({
       firstNames: "Anne",
       lastName: "Trixy Stage",
-      status: "Active",
-      talentType: "Individual",
+      status: statusType.ACTIVE,
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       description: "An actor.",
       descriptionCredit: "Credit",
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "abcd1234abcd1234abcd1234abcd1234",
@@ -50,8 +57,8 @@ describe("talent normaliser", () => {
     const request = {
       firstNames: "",
       lastName: "Stage",
-      status: "Active",
-      talentType: "Individual",
+      status: statusType.ACTIVE,
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       version: 3
     };
@@ -61,8 +68,8 @@ describe("talent normaliser", () => {
     expect(result).toEqual({
       firstNames: undefined,
       lastName: "Stage",
-      status: "Active",
-      talentType: "Individual",
+      status: statusType.ACTIVE,
+      talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
       description: undefined,
       descriptionCredit: undefined,

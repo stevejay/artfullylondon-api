@@ -41,7 +41,7 @@ describe("named closures lookup generator", () => {
     );
 
     expect(result).toEqual({
-      BankHolidays: {
+      [namedClosureType.BANK_HOLIDAYS]: {
         label: "Bank Holidays",
         dates: [
           "2018-01-01",
@@ -62,7 +62,7 @@ describe("named closures lookup generator", () => {
           "2019-12-26"
         ]
       },
-      BankHolidayWeekends: {
+      [namedClosureType.BANK_HOLIDAY_WEEKENDS]: {
         label: "Bank Holiday Weekends",
         dates: [
           "2017-12-30",
@@ -101,27 +101,27 @@ describe("named closures lookup generator", () => {
           "2019-12-26"
         ]
       },
-      ChristmasEve: {
+      [namedClosureType.CHRISTMAS_EVE]: {
         label: "Christmas Eve",
         dates: ["2018-12-24", "2019-12-24"]
       },
-      ChristmasDay: {
+      [namedClosureType.CHRISTMAS_DAY]: {
         label: "Christmas Day",
         dates: ["2018-12-25", "2019-12-25"]
       },
-      BoxingDay: {
+      [namedClosureType.BOXING_DAY]: {
         label: "Boxing Day",
         dates: ["2018-12-26", "2019-12-26"]
       },
-      NewYearsEve: {
+      [namedClosureType.NEW_YEARS_EVE]: {
         label: "New Years Eve",
         dates: ["2018-12-31", "2019-12-31"]
       },
-      NewYearsDay: {
+      [namedClosureType.NEW_YEARS_DAY]: {
         label: "New Years Day",
         dates: ["2018-01-01", "2019-01-01"]
       },
-      ChristmasPeriod: {
+      [namedClosureType.CHRISTMAS_PERIOD]: {
         label: "Christmas Period",
         dates: [
           "2018-12-24",
@@ -144,11 +144,11 @@ describe("named closures lookup generator", () => {
           "2020-01-01"
         ]
       },
-      EasterSunday: {
+      [namedClosureType.EASTER_SUNDAY]: {
         label: "Easter Sunday",
         dates: ["2018-04-01", "2019-04-21"]
       },
-      EasterHolidayPeriod: {
+      [namedClosureType.EASTER_HOLIDAY_PERIOD]: {
         label: "Easter Holiday Period",
         dates: [
           "2018-03-30",
@@ -161,7 +161,7 @@ describe("named closures lookup generator", () => {
           "2019-04-22"
         ]
       },
-      AugustSaturdays: {
+      [namedClosureType.AUGUST_SATURDAYS]: {
         label: "August Saturdays",
         dates: [
           "2018-08-04",
@@ -175,7 +175,7 @@ describe("named closures lookup generator", () => {
           "2019-08-31"
         ]
       },
-      August: {
+      [namedClosureType.AUGUST]: {
         label: "August",
         dates: [
           "2018-08-01",
@@ -242,7 +242,7 @@ describe("named closures lookup generator", () => {
           "2019-08-31"
         ]
       },
-      RoshHashanah: {
+      [namedClosureType.ROSH_HASHANAH]: {
         label: "Rosh Hashanah",
         dates: [
           "2018-09-09",
@@ -253,7 +253,7 @@ describe("named closures lookup generator", () => {
           "2019-10-01"
         ]
       },
-      YomKippur: {
+      [namedClosureType.YOM_KIPPUR]: {
         label: "Yom Kippur",
         dates: ["2018-09-19", "2019-10-08", "2019-10-09"]
       }

@@ -2,9 +2,11 @@ import _ from "lodash";
 import fpPick from "lodash/fp/pick";
 import mappr from "mappr";
 import * as entityMapper from "../entity/mapper";
+import * as venueMapper from "../venue-service/mapper";
+import * as eventSeriesMapper from "../event-series-service/mapper";
+import * as talentMapper from "../talent-service/mapper";
 import * as idGenerator from "../entity/id-generator";
 import * as eventType from "../types/event-type";
-import * as entityType from "../types/entity-type";
 
 export const CURRENT_EVENT_SCHEME_VERSION = 4;
 
@@ -95,6 +97,7 @@ const mapReviews = mappr({
 export const mapCreateOrUpdateEventRequest = mappr.compose(
   params => ({
     id: params.id || idGenerator.generateFromEvent(params),
+    version: params.version || 1,
     schemeVersion: CURRENT_EVENT_SCHEME_VERSION
   }),
   fpPick([
@@ -120,6 +123,7 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
     "venueGuidance",
     "duration",
     "weSay",
+    "notes",
     "minAge",
     "maxAge",
     "soldOut",
@@ -171,34 +175,19 @@ export const mapCreateOrUpdateEventRequest = mappr.compose(
   entityMapper.mapRequestImages
 );
 
-export const mapToPublicSummaryResponse = mappr.compose(
-  () => ({ entityType: entityType.EVENT }),
-  fpPick([
-    "id",
-    "status",
-    "name",
-    "eventType",
-    "occurrenceType",
-    "costType",
-    "summary",
-    "soldOut",
-    "dateFrom",
-    "dateTo"
-  ]),
-  {
-    venueName: "venue.name",
-    venueId: "venue.id",
-    postcode: "venue.postcode",
-    latitude: "venue.latitude",
-    longitude: "venue.longitude"
-  },
-  entityMapper.mapResponseMainImage
-);
-
-export const mapToPublicFullResponse = mappr(
+export const mapResponse = mappr(
   mappr.compose(
-    mapToPublicSummaryResponse,
     fpPick([
+      "id",
+      "status",
+      "name",
+      "eventType",
+      "occurrenceType",
+      "costType",
+      "summary",
+      "soldOut",
+      "dateFrom",
+      "dateTo",
       "rating",
       "bookingType",
       "useVenueOpeningTimes",
@@ -206,12 +195,12 @@ export const mapToPublicFullResponse = mappr(
       "costFrom",
       "costTo",
       "bookingOpens",
-      "eventSeriesId",
       "venueGuidance",
       "duration",
       "description",
       "descriptionCredit",
       "weSay",
+      "notes",
       "minAge",
       "maxAge",
       "timesRanges",
@@ -228,44 +217,47 @@ export const mapToPublicFullResponse = mappr(
       "mediumTags",
       "styleTags",
       "geoTags",
-      "talents",
-      "venue",
-      "eventSeries",
       "reviews",
       "links",
       "images",
       "version"
     ]),
-    () => ({ isFullEntity: true })
+    {
+      venue: params => venueMapper.mapResponse(params.venue),
+      eventSeries: params =>
+        params.eventSeries
+          ? eventSeriesMapper.mapResponse(params.eventSeries)
+          : undefined,
+      talents: params =>
+        _.isEmpty(params.talents)
+          ? undefined
+          : params.talents.map(talent => ({
+              roles: talent.roles,
+              characters: talent.characters,
+              talent: talentMapper.mapResponse(talent.talent)
+            }))
+    }
   ),
   fixUpEventValuesFromReferencedEntities,
-  // We redo this mapping in case images are now coming from a referenced entity:
-  event => {
-    return {
-      ...event,
-      ...entityMapper.mapResponseMainImage(event)
-    };
-  }
+  event => ({
+    ...event,
+    ...entityMapper.mapResponseMainImage(event)
+  })
 );
 
 export function mergeReferencedEntities(event, referencedEntities) {
   const talentsIdMap = _.keyBy(referencedEntities.talents, "id");
-
-  const result = {
+  return {
     ...event,
     venue: referencedEntities.venue,
     eventSeries: referencedEntities.eventSeries || undefined,
     talents: _.isEmpty(event.talents)
       ? undefined
       : event.talents.map(talent => ({
-          ...talentsIdMap[talent.id],
-          ...talent
+          ...talent,
+          talent: talentsIdMap[talent.id]
         }))
   };
-
-  delete result.eventSeriesId;
-  delete result.venueId;
-  return result;
 }
 
 export function fixUpEventValuesFromReferencedEntities(event) {
@@ -274,16 +266,13 @@ export function fixUpEventValuesFromReferencedEntities(event) {
   if (result.eventSeries) {
     if (!result.description) {
       // use the event series description if the event has none
-
       if (result.eventSeries.description) {
         result.description = event.eventSeries.description;
-
         if (result.eventSeries.descriptionCredit) {
           result.descriptionCredit = result.eventSeries.descriptionCredit;
         }
       }
     }
-
     if (_.isEmpty(result.images)) {
       // use the event series images if the event has none
       if (!_.isEmpty(result.eventSeries.images)) {

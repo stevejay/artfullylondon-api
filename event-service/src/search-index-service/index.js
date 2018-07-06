@@ -1,3 +1,4 @@
+import * as log from "loglevel";
 import * as notifier from "../notifier";
 import * as eventRepository from "../persistence/event-repository";
 import * as iterationLogRepository from "../persistence/iteration-log-repository";
@@ -18,7 +19,10 @@ export async function updateEventSearchIndex(message) {
     true
   );
   dbEvent = eventMapper.mergeReferencedEntities(dbEvent, referencedEntities);
-  await notifier.indexEntity(eventMapper.mapToPublicFullResponse(dbEvent));
+  await notifier.indexEntity(
+    eventMapper.mapResponse(dbEvent),
+    entityType.EVENT
+  );
   await cacher.clearEntityEtag(entityType.EVENT, dbEvent.id);
 }
 
@@ -27,7 +31,6 @@ export async function refreshSearchIndex(params) {
   const actionId = `${params.entityType} refresh`;
   const iterationId = await iterationLogRepository.createLog(actionId);
   await notifier.searchIndexRefresh(actionId, iterationId, params.entityType);
-  return { acknowledged: true };
 }
 
 export async function processRefreshSearchIndexMessage(message) {
@@ -36,9 +39,10 @@ export async function processRefreshSearchIndexMessage(message) {
   const nextEntityId = await service.getNextId(message.lastId);
   if (nextEntityId) {
     try {
-      const result = await service.get({ id: nextEntityId });
-      await notifier.indexEntity(result.entity);
+      const entity = await service.get({ id: nextEntityId });
+      await notifier.indexEntity(entity, message.entityType);
     } catch (err) {
+      log.error(`RefreshSearchIndex iteration error: ${err.message}`);
       await iterationLogRepository.addErrorToLog(
         message.actionId,
         message.iterationId,

@@ -1,9 +1,10 @@
 import * as validator from "./validator";
+import * as imageType from "../types/image-type";
 
 describe("validateAddImageRequest", () => {
   it("should allow a valid request", () => {
     const request = {
-      type: "venue",
+      type: imageType.VENUE,
       id: "12345678123456781234567812345678",
       url: "http://foo.com/"
     };
@@ -20,14 +21,14 @@ describe("validateAddImageRequest", () => {
     ],
     [
       {
-        type: "venue",
+        type: imageType.VENUE,
         id: "1234",
         url: "http://foo.com/"
       }
     ],
     [
       {
-        type: "venue",
+        type: imageType.VENUE,
         id: "12345678123456781234567812345678",
         url: "foo"
       }

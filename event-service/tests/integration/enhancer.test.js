@@ -1,8 +1,9 @@
 import deepFreeze from "deep-freeze-strict";
 import * as enhancer from "../../src/enhancer";
+import * as linkType from "../../src/types/link-type";
 
 const WIKIPEDIA_LINK = {
-  type: "Wikipedia",
+  type: linkType.WIKIPEDIA,
   url: "https://en.wikipedia.org/wiki/Rabbit"
 };
 

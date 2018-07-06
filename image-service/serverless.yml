@@ -93,38 +93,6 @@ custom:
     imageTableName: ${self:custom.project}-${self:custom.stage}-image
     originalImagesBucketName: ${self:custom.project}-${self:custom.stage}-original-images
     resizedImagesBucketName: ${self:custom.project}-${self:custom.stage}-resized-images
-    errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"error\": \"$inputRoot\" }"
-    standardResponses:
-        headers:
-            Access-Control-Allow-Credentials : "'true'"
-        template: $input.path('$')
-        statusCodes:
-            200:
-                pattern: ''
-                template:
-                    application/json: $input.path("$.body")
-                # headers:
-                #     Cache-Control: integration.response.body.headers.Cache-Control
-            400:
-                pattern: '^\[400\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            401:
-                pattern: '^\[401\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            403:
-                pattern: '^\[403\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            404:
-                pattern: '^\[404\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
-            500:
-                pattern: '^\[500\].*'
-                template:
-                    application/json: ${self:custom.errorResponseTemplate}
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -143,75 +111,35 @@ custom:
         accountId: 1111111111111
 
 functions:
-    addImage:
-        handler: src/lambda/add-image.handler
-        timeout: 60
+    auth:
+        handler: src/lambda/auth-handler.handler
+    graphql:
+        handler: src/lambda/graphql-handler.handler
         environment:
             SERVERLESS_IMAGE_TABLE_NAME: ${self:custom.imageTableName}
             SERVERLESS_ITERATION_LOG_TABLE_NAME: ${self:custom.iterationLogTableName}
             SERVERLESS_ORIGINAL_IMAGES_BUCKET_NAME: ${self:custom.originalImagesBucketName}
             SERVERLESS_RESIZED_IMAGES_BUCKET_NAME: ${self:custom.resizedImagesBucketName}
-        events:
-            - http:
-                path: "image/{id}"
-                method: put
-                cors: true
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "id": "$input.params('id')",
-                                "type": $input.json('$.type'),
-                                "url": $input.json('$.url'),
-                                "authorization" : "$input.params().header.get('Authorization')"
-                            }
-                response: ${self:custom.standardResponses}
-                authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
-    getImageData:
-        handler: src/lambda/get-image-data.handler
-        timeout: 6
-        environment:
-            SERVERLESS_IMAGE_TABLE_NAME: ${self:custom.imageTableName}
-            SERVERLESS_ORIGINAL_IMAGES_BUCKET_NAME: ${self:custom.originalImagesBucketName}
-            SERVERLESS_RESIZED_IMAGES_BUCKET_NAME: ${self:custom.resizedImagesBucketName}
-        events:
-            - http:
-                path: "image/{id}"
-                method: get
-                cors: true
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "id": "$input.params('id')"
-                            }
-                response: ${self:custom.standardResponses}
-    reprocessImages:
-        handler: src/lambda/reprocess-images.handler
-        timeout: 6
-        environment:
             SERVERLESS_REPROCESS_IMAGES_TOPIC_ARN: ${self:custom.reprocessImagesTopicArn}
-            SERVERLESS_ITERATION_LOG_TABLE_NAME: ${self:custom.iterationLogTableName}
         events:
             - http:
-                path: "images/reprocess"
+                path: graphql
                 method: post
                 cors: true
-                integration: lambda
-                request:
-                    template:
-                        application/json: >
-                            {
-                                "authorization" : "$input.params().header.get('Authorization')"
-                            }
-                response: ${self:custom.standardResponses}
                 authorizer:
-                    name: authorizer
-                    arn: ${self:provider.environment.COGNITO_USER_POOL_ARN}
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
+            - http:
+                path: graphql
+                method: get
+                cors: true
+                authorizer:
+                    name: auth
+                    identitySource: method.request.header.Authorization
+                    resultTtlInSeconds: 300
+                    type: request
     reprocessImagesSns:
         handler: src/lambda/reprocess-images-sns.handler
         environment:

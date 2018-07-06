@@ -1,3 +1,4 @@
+// Note: Keep values as lowercase as these match the Elasticsearch index names.
 export const TALENT = "talent";
 export const VENUE = "venue";
 export const EVENT_SERIES = "event-series";

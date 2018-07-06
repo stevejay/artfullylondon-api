@@ -1,9 +1,48 @@
-import * as service from "../utils/service";
+import request from "request-promise-native";
 import * as elasticsearch from "../utils/elasticsearch";
-import * as testData from "./test-data";
+import * as testData from "../test-data";
 import * as searchIndexType from "../../src/types/search-index-type";
-import * as presetSearchType from "../../src/types/preset-search-type";
+import * as entityType from "../../src/types/entity-type";
 jest.setTimeout(60000);
+
+const ENTITY_COUNT_QUERY = `
+  query EntityCount {
+    entityCount {
+      results {
+        entityType
+        count
+      }
+    }
+  }
+`;
+
+const SITEMAP_EVENT_QUERY = `
+  query SitemapEvent {
+    sitemapEvent {
+      results {
+        id
+      }
+    }
+  }
+`;
+
+const FEATURED_EVENTS_QUERY = `
+  query FeaturedEvents($first: Int, $after: String) {
+    featuredEvents(first: $first, after: $after) {
+      edges {
+        node {
+          id
+          status
+          name
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
+  }
+`;
 
 describe("preset search", () => {
   beforeAll(async () => {
@@ -56,56 +95,88 @@ describe("preset search", () => {
   });
 
   it("should perform an entity count preset search", async () => {
-    const result = await service.get(
-      `/search/preset/${presetSearchType.ENTITY_COUNTS}`
-    );
+    const result = await request({
+      uri: "http://localhost:3013/graphql",
+      json: true,
+      method: "POST",
+      body: { query: ENTITY_COUNT_QUERY },
+      timeout: 30000
+    });
 
-    expect(result).toEqual(
-      '{body={"items":[{"entityType":"event","count":2},{"entityType":"event-series","count":1},{"entityType":"talent","count":2},{"entityType":"venue","count":2}],"params":{"id":"","name":"entity-counts","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
-    );
+    expect(result).toEqual({
+      data: {
+        entityCount: {
+          results: [
+            {
+              count: 2,
+              entityType: entityType.EVENT
+            },
+            {
+              count: 1,
+              entityType: entityType.EVENT_SERIES
+            },
+            {
+              count: 2,
+              entityType: entityType.TALENT
+            },
+            {
+              count: 2,
+              entityType: entityType.VENUE
+            }
+          ]
+        }
+      }
+    });
   });
 
   it("should perform a sitemap event ids preset search", async () => {
-    const result = await service.get(
-      `/search/preset/${presetSearchType.SITEMAP_EVENT_IDS}`
-    );
+    const result = await request({
+      uri: "http://localhost:3013/graphql",
+      json: true,
+      method: "POST",
+      body: { query: SITEMAP_EVENT_QUERY },
+      timeout: 30000
+    });
 
-    expect(result).toEqual(
-      '{body={"items":[{"id":"andy-warhol-exhibition"},{"id":"british-museum-perm"}],"total":2,"params":{"id":"","name":"sitemap-event-ids","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
-    );
+    expect(result).toEqual({
+      data: {
+        sitemapEvent: {
+          results: [
+            {
+              id: "event/andy-warhol-exhibition"
+            },
+            {
+              id: "event/british-museum-perm"
+            }
+          ]
+        }
+      }
+    });
   });
 
   it("should perform a featured events preset search", async () => {
-    const result = await service.get(
-      `/search/preset/${presetSearchType.FEATURED_EVENTS}`
-    );
+    const result = await request({
+      uri: "http://localhost:3013/graphql",
+      json: true,
+      method: "POST",
+      body: {
+        query: FEATURED_EVENTS_QUERY,
+        variables: {
+          first: 20
+        }
+      },
+      timeout: 30000
+    });
 
-    expect(result).toEqual(
-      '{body={"items":[],"total":0,"params":{"id":"","name":"featured-events","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
-    );
-  });
-
-  // it("should perform a venue related events preset search", async () => {
-  //   const result = await service.get(
-  //     `/search/preset/${presetSearchType.VENUE_RELATED_EVENTS}?id=${
-  //       testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id
-  //     }`
-  //   );
-
-  //   expect(result).toEqual(
-  //     '{body={"items":[{"entityType":"event","venueId":"almeida-theatre","name":"Andy Warhol: New York Start","dateTo":"2019-04-12","dates":[{"date":"2018-06-26","from":"10:00","to":"18:00"}],"id":"andy-warhol-exhibition","dateFrom":"2018-06-14","status":"Active"}],"total":1,"params":{"id":"almeida-theatre","name":"venue-related-events","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=public, max-age=1800}}'
-  //   );
-  // });
-
-  it("should perform an events by external ids preset search", async () => {
-    const result = await service.get(
-      `/search/preset/${
-        presetSearchType.EVENTS_BY_EXTERNAL_IDS
-      }?id=foo,bar&admin=true`
-    );
-
-    expect(result).toEqual(
-      '{body={"items":[],"total":0,"params":{"admin":true,"id":"foo,bar","name":"events-by-external-ids","isOffline":true,"stageVariables":{}}}, headers={Cache-Control=no-cache}}'
-    );
+    expect(result).toEqual({
+      data: {
+        featuredEvents: {
+          edges: [],
+          pageInfo: {
+            hasNextPage: false
+          }
+        }
+      }
+    });
   });
 });

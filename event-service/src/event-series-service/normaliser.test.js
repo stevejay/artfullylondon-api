@@ -1,16 +1,21 @@
 import * as normaliser from "./normaliser";
+import * as eventSeriesType from "../types/event-series-type";
+import * as linkType from "../types/link-type";
+import * as statusType from "../types/status-type";
 
 describe("event series normaliser", () => {
   it("should apply event normalisers to fully populated params", () => {
     const params = {
       name: "  Taming of the Shrew   ",
-      status: "Active",
-      eventSeriesType: "Season",
+      status: statusType.ACTIVE,
+      eventSeriesType: eventSeriesType.SEASON,
       occurrence: "  Some time of year   ",
       summary: "   A contemporary update of this Shakespeare classic   ",
       description: "  A contemporary update.  ",
       descriptionCredit: "   Some credit   ",
-      links: [{ type: "Wikipedia", url: "   https://en.wikipedia.org/foo  " }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "   https://en.wikipedia.org/foo  " }
+      ],
       images: [
         {
           id: "abcd1234abcd1234abcd1234abcd1234",
@@ -26,13 +31,15 @@ describe("event series normaliser", () => {
 
     expect(result).toEqual({
       name: "Taming of the Shrew",
-      status: "Active",
-      eventSeriesType: "Season",
+      status: statusType.ACTIVE,
+      eventSeriesType: eventSeriesType.SEASON,
       occurrence: "Some time of year",
       summary: "A contemporary update of this Shakespeare classic",
       description: "A contemporary update.",
       descriptionCredit: "Some credit",
-      links: [{ type: "Wikipedia", url: "https://en.wikipedia.org/foo" }],
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
       images: [
         {
           id: "abcd1234abcd1234abcd1234abcd1234",
@@ -49,8 +56,8 @@ describe("event series normaliser", () => {
   it("should apply event normalisers to minimal params", () => {
     const params = {
       name: "  Taming of the Shrew   ",
-      status: "Active",
-      eventSeriesType: "Season",
+      status: statusType.ACTIVE,
+      eventSeriesType: eventSeriesType.SEASON,
       occurrence: "  Some time of year   ",
       summary: "   A contemporary update of this Shakespeare classic   ",
       description: "  A contemporary update.  ",
@@ -65,8 +72,8 @@ describe("event series normaliser", () => {
 
     expect(result).toEqual({
       name: "Taming of the Shrew",
-      status: "Active",
-      eventSeriesType: "Season",
+      status: statusType.ACTIVE,
+      eventSeriesType: eventSeriesType.SEASON,
       occurrence: "Some time of year",
       summary: "A contemporary update of this Shakespeare classic",
       description: "A contemporary update.",
