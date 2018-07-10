@@ -26,6 +26,8 @@ custom:
     stage: ${opt:stage}
     region: ${opt:region, self:provider.region}
     indexDocumentTopicName: IndexDocument-${self:custom.stage}
+    deadLetterQueueTopicName: DeadLetterQueue-search-service-${self:custom.stage}
+    deadLetterQueueTopicArn: arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.deadLetterQueueTopicName}
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -52,7 +54,15 @@ functions:
     indexDocument:
         handler: src/lambda/index-document-handler.handler
         timeout: 300
+        onError: ${self:custom.deadLetterQueueTopicArn}
         events:
             - sns:
                 topicName: ${self:custom.indexDocumentTopicName}
                 displayName: Index a document so it is searchable
+
+resources:
+    Resources:
+        DeadLetterQueue:
+            Type: "AWS::SNS::Topic"
+            Properties:
+                TopicName: ${self:custom.deadLetterQueueTopicName}
