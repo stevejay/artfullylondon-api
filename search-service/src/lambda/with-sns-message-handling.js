@@ -12,7 +12,11 @@ export default function(serviceFunc) {
         cb(null, { ok: true });
       })
       .catch(err => {
-        log.error(`Error in SNS handler: ${err.message}`);
+        log.error(
+          `Error in SNS handler: ${err.message}. Event: ${JSON.stringify(
+            event.Records
+          )}`
+        );
         cb(err);
       });
   };
