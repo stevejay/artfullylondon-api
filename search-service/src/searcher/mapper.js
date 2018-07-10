@@ -44,19 +44,32 @@ export function mapSitemapEventSearchParams() {
   return { dateTo: timeUtils.formatAsIsoShortDateString(now) };
 }
 
-export function mapAutocompleteSearchResults(result) {
-  const options = _.get(result, "suggest.autocomplete[0].options");
-  const fuzzyOptions = _.get(result, "suggest.fuzzyAutocomplete[0].options");
+export function mapAutocompleteSearchResults(result, type) {
+  const take = type ? 5 : 3;
+  const mapped = _.take(
+    _.flatten(
+      entityType.ALLOWED_VALUES.map(type =>
+        mapAutocompleteSearchResultsForEntity(result, type, take)
+      )
+    ),
+    12
+  );
 
-  return {
-    results: _
-      .unionBy(options, fuzzyOptions, "_source.id")
-      .map(option => ({
-        ...option._source,
-        output: undefined,
-        name: option._source.output
-      }))
-  };
+  return { results: mapped };
+}
+
+function mapAutocompleteSearchResultsForEntity(result, type, take) {
+  const options = _.get(result, `suggest.${type}[0].options`);
+  const fuzzyOptions = _.get(result, `suggest.${type}_fuzzy[0].options`);
+  return _.take(
+    _.unionBy(options, fuzzyOptions, "_source.id").map(option => {
+      const result = { ...option._source };
+      result.name = result.output;
+      delete result.output;
+      return result;
+    }),
+    take
+  );
 }
 
 export function mapBasicSearchResults(result, first) {

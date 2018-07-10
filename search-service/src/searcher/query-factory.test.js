@@ -7,22 +7,23 @@ describe("createAutocompleteSearch", () => {
   test.each([
     // single entity search
     [
-      { term: "foo", entityType: entityType.TALENT, singleEntitySearch: true },
+      { term: "foo", entityType: entityType.TALENT },
       {
         index: searchIndexType.AUTOCOMPLETE,
         type: "doc",
         body: {
           size: 0,
           suggest: {
-            autocomplete: {
+            [entityType.TALENT]: {
               completion: {
                 contexts: { entityType: [entityType.TALENT] },
                 field: "nameSuggest",
+                fuzzy: false,
                 size: 5
               },
               prefix: "foo"
             },
-            fuzzyAutocomplete: {
+            [`${entityType.TALENT}_fuzzy`]: {
               completion: {
                 contexts: { entityType: [entityType.TALENT] },
                 field: "nameSuggest",
@@ -37,25 +38,85 @@ describe("createAutocompleteSearch", () => {
     ],
     // multiple entity search
     [
-      { term: "foo", singleEntitySearch: false },
+      { term: "foo" },
       {
         index: searchIndexType.AUTOCOMPLETE,
         type: "doc",
         body: {
           size: 0,
           suggest: {
-            autocomplete: {
+            [entityType.TALENT]: {
               completion: {
+                contexts: { entityType: [entityType.TALENT] },
                 field: "nameSuggest",
-                size: 5
+                fuzzy: false,
+                size: 3
               },
               prefix: "foo"
             },
-            fuzzyAutocomplete: {
+            [`${entityType.TALENT}_fuzzy`]: {
               completion: {
+                contexts: { entityType: [entityType.TALENT] },
                 field: "nameSuggest",
                 fuzzy: true,
-                size: 5
+                size: 3
+              },
+              prefix: "foo"
+            },
+
+            [entityType.VENUE]: {
+              completion: {
+                contexts: { entityType: [entityType.VENUE] },
+                field: "nameSuggest",
+                fuzzy: false,
+                size: 3
+              },
+              prefix: "foo"
+            },
+            [`${entityType.VENUE}_fuzzy`]: {
+              completion: {
+                contexts: { entityType: [entityType.VENUE] },
+                field: "nameSuggest",
+                fuzzy: true,
+                size: 3
+              },
+              prefix: "foo"
+            },
+
+            [entityType.EVENT]: {
+              completion: {
+                contexts: { entityType: [entityType.EVENT] },
+                field: "nameSuggest",
+                fuzzy: false,
+                size: 3
+              },
+              prefix: "foo"
+            },
+            [`${entityType.EVENT}_fuzzy`]: {
+              completion: {
+                contexts: { entityType: [entityType.EVENT] },
+                field: "nameSuggest",
+                fuzzy: true,
+                size: 3
+              },
+              prefix: "foo"
+            },
+
+            [entityType.EVENT_SERIES]: {
+              completion: {
+                contexts: { entityType: [entityType.EVENT_SERIES] },
+                field: "nameSuggest",
+                fuzzy: false,
+                size: 3
+              },
+              prefix: "foo"
+            },
+            [`${entityType.EVENT_SERIES}_fuzzy`]: {
+              completion: {
+                contexts: { entityType: [entityType.EVENT_SERIES] },
+                field: "nameSuggest",
+                fuzzy: true,
+                size: 3
               },
               prefix: "foo"
             }

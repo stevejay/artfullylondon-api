@@ -166,23 +166,24 @@ describe("mapEventAdvancedSearchParams", () => {
 
 describe("mapAutocompleteSearchResults", () => {
   test.each([
-    [{}, { results: [] }],
+    [null, {}, { results: [] }],
     [
+      entityType.EVENT,
       {
         suggest: {
-          autocomplete: [
+          [entityType.EVENT]: [
             {
               options: [
-                { _source: { id: "event/event-1", output: "1" } },
-                { _source: { id: "event/event-3", output: "3" } }
+                { _source: { id: "event/event-1", output: "e1" } },
+                { _source: { id: "event/event-3", output: "e3" } }
               ]
             }
           ],
-          fuzzyAutocomplete: [
+          [`${entityType.EVENT}_fuzzy`]: [
             {
               options: [
-                { _source: { id: "event/event-1", output: "1" } },
-                { _source: { id: "event/event-2", output: "2" } }
+                { _source: { id: "event/event-1", output: "e1" } },
+                { _source: { id: "event/event-2", output: "e2" } }
               ]
             }
           ]
@@ -190,14 +191,110 @@ describe("mapAutocompleteSearchResults", () => {
       },
       {
         results: [
-          { id: "event/event-1", name: "1" },
-          { id: "event/event-3", name: "3" },
-          { id: "event/event-2", name: "2" }
+          { id: "event/event-1", name: "e1" },
+          { id: "event/event-3", name: "e3" },
+          { id: "event/event-2", name: "e2" }
+        ]
+      }
+    ],
+    [
+      null,
+      {
+        suggest: {
+          [entityType.EVENT]: [
+            {
+              options: [
+                { _source: { id: "event/event-1", output: "e1" } },
+                { _source: { id: "event/event-3", output: "e3" } }
+              ]
+            }
+          ],
+          [`${entityType.EVENT}_fuzzy`]: [
+            {
+              options: [
+                { _source: { id: "event/event-1", output: "e1" } },
+                { _source: { id: "event/event-2", output: "e2" } }
+              ]
+            }
+          ],
+          [entityType.EVENT_SERIES]: [
+            {
+              options: [
+                {
+                  _source: { id: "event-series/event-series-1", output: "es1" }
+                },
+                {
+                  _source: { id: "event-series/event-series-3", output: "es3" }
+                }
+              ]
+            }
+          ],
+          [`${entityType.EVENT_SERIES}_fuzzy`]: [
+            {
+              options: [
+                {
+                  _source: { id: "event-series/event-series-1", output: "es1" }
+                },
+                {
+                  _source: { id: "event-series/event-series-2", output: "es2" }
+                }
+              ]
+            }
+          ],
+          [entityType.TALENT]: [
+            {
+              options: [
+                { _source: { id: "talent/talent-1", output: "t1" } },
+                { _source: { id: "talent/talent-3", output: "t3" } }
+              ]
+            }
+          ],
+          [`${entityType.TALENT}_fuzzy`]: [
+            {
+              options: [
+                { _source: { id: "talent/talent-1", output: "t1" } },
+                { _source: { id: "talent/talent-2", output: "t2" } }
+              ]
+            }
+          ],
+          [entityType.VENUE]: [
+            {
+              options: [
+                { _source: { id: "venue/venue-1", output: "v1" } },
+                { _source: { id: "venue/venue-3", output: "v3" } }
+              ]
+            }
+          ],
+          [`${entityType.VENUE}_fuzzy`]: [
+            {
+              options: [
+                { _source: { id: "venue/venue-1", output: "v1" } },
+                { _source: { id: "venue/venue-2", output: "v2" } },
+                { _source: { id: "venue/venue-4", output: "v4" } }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        results: [
+          { id: "event/event-1", name: "e1" },
+          { id: "event/event-3", name: "e3" },
+          { id: "event/event-2", name: "e2" },
+          { id: "event-series/event-series-1", name: "es1" },
+          { id: "event-series/event-series-3", name: "es3" },
+          { id: "event-series/event-series-2", name: "es2" },
+          { id: "venue/venue-1", name: "v1" },
+          { id: "venue/venue-3", name: "v3" },
+          { id: "venue/venue-2", name: "v2" },
+          { id: "talent/talent-1", name: "t1" },
+          { id: "talent/talent-3", name: "t3" },
+          { id: "talent/talent-2", name: "t2" }
         ]
       }
     ]
-  ])("%o should map to %o", (arg, expected) => {
-    expect(mapper.mapAutocompleteSearchResults(deepFreeze(arg))).toEqual(
+  ])("a %s search with result %o should map to %o", (type, arg, expected) => {
+    expect(mapper.mapAutocompleteSearchResults(deepFreeze(arg), type)).toEqual(
       expected
     );
   });

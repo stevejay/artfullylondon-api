@@ -131,17 +131,17 @@ describe("autocomplete search", () => {
         autocompleteSearch: {
           results: [
             {
-              entityType: entityType.TALENT,
-              id: "talent/1",
-              name: "Carrie Cracknell",
-              status: statusType.ACTIVE
-            },
-            {
               status: statusType.ACTIVE,
               entityType: entityType.VENUE,
               id: "venue/1",
               name: "Carrillion Theatre",
               postcode: "N6 2AA"
+            },
+            {
+              entityType: entityType.TALENT,
+              id: "talent/1",
+              name: "Carrie Cracknell",
+              status: statusType.ACTIVE
             }
           ]
         }

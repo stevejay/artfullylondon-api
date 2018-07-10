@@ -6,7 +6,7 @@ export async function autocompleteSearch(params) {
   const searchParams = mapper.mapAutocompleteSearchParams(params);
   const search = queryFactory.createAutocompleteSearch(searchParams);
   const results = await esClient.search(search);
-  return mapper.mapAutocompleteSearchResults(results);
+  return mapper.mapAutocompleteSearchResults(results, searchParams.entityType);
 }
 
 export async function basicSearch(params) {

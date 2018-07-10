@@ -6,32 +6,32 @@ import * as statusType from "../types/status-type";
 import * as occurrenceType from "../types/occurrence-type";
 
 export function createAutocompleteSearch(params) {
-  const suggest = esb
-    .completionSuggester("autocomplete", "nameSuggest")
-    .prefix(params.term)
-    .size(5);
-
-  const fuzzySuggest = esb
-    .completionSuggester("fuzzyAutocomplete", "nameSuggest")
-    .prefix(params.term)
-    .size(5)
-    .fuzzy(true);
+  const body = esb.requestBodySearch().size(0);
 
   if (params.entityType) {
-    suggest.contexts("entityType", [params.entityType]);
-    fuzzySuggest.contexts("entityType", [params.entityType]);
+    body.suggest(createSuggestSearch(params.entityType, params.term, false, 5));
+    body.suggest(createSuggestSearch(params.entityType, params.term, true, 5));
+  } else {
+    entityType.ALLOWED_VALUES.forEach(type => {
+      body.suggest(createSuggestSearch(type, params.term, false, 3));
+      body.suggest(createSuggestSearch(type, params.term, true, 3));
+    });
   }
 
   return {
     index: searchIndexType.AUTOCOMPLETE,
     type: "doc",
-    body: esb
-      .requestBodySearch()
-      .size(0)
-      .suggest(suggest)
-      .suggest(fuzzySuggest)
-      .toJSON()
+    body: body.toJSON()
   };
+}
+
+function createSuggestSearch(entityType, term, fuzzy, size) {
+  return esb
+    .completionSuggester(`${entityType}${fuzzy ? "_fuzzy" : ""}`, "nameSuggest")
+    .prefix(term)
+    .size(size)
+    .fuzzy(fuzzy)
+    .contexts("entityType", [entityType]);
 }
 
 export function createEntityCountSearches() {
