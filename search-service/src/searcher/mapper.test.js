@@ -173,16 +173,16 @@ describe("mapAutocompleteSearchResults", () => {
           autocomplete: [
             {
               options: [
-                { text: "1", _source: { id: "event/event-1" } },
-                { text: "3", _source: { id: "event/event-3" } }
+                { _source: { id: "event/event-1", output: "1" } },
+                { _source: { id: "event/event-3", output: "3" } }
               ]
             }
           ],
           fuzzyAutocomplete: [
             {
               options: [
-                { text: "1", _source: { id: "event/event-1" } },
-                { text: "2", _source: { id: "event/event-2" } }
+                { _source: { id: "event/event-1", output: "1" } },
+                { _source: { id: "event/event-2", output: "2" } }
               ]
             }
           ]

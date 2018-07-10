@@ -51,7 +51,11 @@ export function mapAutocompleteSearchResults(result) {
   return {
     results: _
       .unionBy(options, fuzzyOptions, "_source.id")
-      .map(option => ({ ...option._source, name: option._source.output }))
+      .map(option => ({
+        ...option._source,
+        output: undefined,
+        name: option._source.output
+      }))
   };
 }
 
