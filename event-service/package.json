@@ -67,6 +67,7 @@
     "redis": "^2.8.0",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
-    "source-map-support": "^0.5.6"
+    "source-map-support": "^0.5.6",
+    "verror": "^1.10.0"
   }
 }

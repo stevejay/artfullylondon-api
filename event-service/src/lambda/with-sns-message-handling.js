@@ -1,4 +1,5 @@
 import * as log from "loglevel";
+import VError from "verror";
 
 export default function(serviceFunc) {
   return function(event, context, cb) {
@@ -12,8 +13,11 @@ export default function(serviceFunc) {
         cb(null, { ok: true });
       })
       .catch(err => {
-        log.error(`Error in SNS handler: ${err.message}`);
-        cb(err);
+        const errMessage = `Error in SNS handler: ${
+          err.message
+        }. Event: ${JSON.stringify(event.Records)}`;
+        log.error(errMessage);
+        cb(new VError(err, errMessage));
       });
   };
 }
