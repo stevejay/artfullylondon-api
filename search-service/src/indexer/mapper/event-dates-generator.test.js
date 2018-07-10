@@ -1,8 +1,8 @@
 import deepFreeze from "deep-freeze";
 import * as eventDatesGenerator from "./event-dates-generator";
-import * as occurrenceType from '../../types/occurrence-type'
-import * as eventType from '../../types/event-type'
-import * as namedClosureType from '../../types/named-closure-type'
+import * as occurrenceType from "../../types/occurrence-type";
+import * as eventType from "../../types/event-type";
+import * as namedClosureType from "../../types/named-closure-type";
 
 describe("getEventDateRange", () => {
   const tests = [
@@ -227,7 +227,9 @@ describe("removeNamedClosuresDates", () => {
           "2016-12-25": { day: 6, times: [] }
         },
         namedClosuresLookup: {
-          [namedClosureType.CHRISTMAS_DAY]: ["2016-12-25", "2017-12-25"]
+          [namedClosureType.CHRISTMAS_DAY]: {
+            dates: ["2016-12-25", "2017-12-25"]
+          }
         }
       },
       expected: {
@@ -251,7 +253,9 @@ describe("removeNamedClosuresDates", () => {
           "2016-12-25": { day: 6, times: [] }
         },
         namedClosuresLookup: {
-          [namedClosureType.CHRISTMAS_DAY]: ["2016-12-25", "2017-12-25"]
+          [namedClosureType.CHRISTMAS_DAY]: {
+            dates: ["2016-12-25", "2017-12-25"]
+          }
         }
       },
       expected: {
@@ -274,7 +278,9 @@ describe("removeNamedClosuresDates", () => {
           "2016-12-25": { day: 6, times: [] }
         },
         namedClosuresLookup: {
-          [namedClosureType.CHRISTMAS_DAY]: ["2016-12-25", "2017-12-25"]
+          [namedClosureType.CHRISTMAS_DAY]: {
+            dates: ["2016-12-25", "2017-12-25"]
+          }
         }
       },
       expected: {
@@ -297,7 +303,9 @@ describe("removeNamedClosuresDates", () => {
           "2016-12-25": { day: 6, times: [] }
         },
         namedClosuresLookup: {
-          [namedClosureType.CHRISTMAS_DAY]: ["2016-12-25", "2017-12-25"]
+          [namedClosureType.CHRISTMAS_DAY]: {
+            dates: ["2016-12-25", "2017-12-25"]
+          }
         }
       },
       expected: {
@@ -314,7 +322,6 @@ describe("removeNamedClosuresDates", () => {
         deepFreeze(test.args.dates),
         test.args.namedClosuresLookup
       );
-
       expect(actual).toEqual(test.expected);
     });
   });
@@ -1029,7 +1036,6 @@ describe("addAdditionalTimes", () => {
   });
 });
 
-
 describe("removePartDayClosureDates", () => {
   const tests = [
     {
@@ -1327,7 +1333,6 @@ describe("removePartDayClosureDates", () => {
   });
 });
 
-
 describe("addSpecialDatesTags", () => {
   const tests = [
     {
@@ -1458,7 +1463,6 @@ describe("addSpecialDatesTags", () => {
   });
 });
 
-
 describe("removeSoldOutPerformances", () => {
   const tests = [
     {
@@ -1574,7 +1578,6 @@ describe("removeSoldOutPerformances", () => {
   });
 });
 
-
 describe("convertToList", () => {
   const tests = [
     {
@@ -1616,7 +1619,9 @@ describe("convertToList", () => {
 
   tests.forEach(test => {
     it(test.it, () => {
-      const actual = eventDatesGenerator.convertToList(deepFreeze(test.args.dates));
+      const actual = eventDatesGenerator.convertToList(
+        deepFreeze(test.args.dates)
+      );
       expect(actual).toEqual(test.expected);
     });
   });
@@ -1908,9 +1913,7 @@ describe("generate", () => {
               {
                 date: "2016-12-25",
                 at: "11:00",
-                audienceTags: [
-                  { id: "audience/teenagers", label: "teenagers" }
-                ]
+                audienceTags: [{ id: "audience/teenagers", label: "teenagers" }]
               }
             ],
             venue: {}
@@ -2369,7 +2372,11 @@ describe("generate", () => {
           test.args.event,
           new Date(test.args.dateToday),
           new Date(test.args.dateMax),
-          { [namedClosureType.BOXING_DAY]: ["2016-12-26", "2017-12-26"] }
+          {
+            [namedClosureType.BOXING_DAY]: {
+              dates: ["2016-12-26", "2017-12-26"]
+            }
+          }
         );
 
         expect(result).toEqual(test.expected);

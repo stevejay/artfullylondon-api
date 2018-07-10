@@ -106,6 +106,7 @@ aws dynamodb delete-table --endpoint-url http://localhost:4569 --table-name artf
   - https://www.apollographql.com/engine
 - Fix Jest not reporting correct line numbers (transpilation issue).
 - Look into using [joi](https://github.com/hapijs/joi) or [yup](https://www.npmjs.com/package/yup) for validation.
+- Change from dynamodb to postgres.
 
 ## Info
 

@@ -84,7 +84,7 @@ export function removeNamedClosuresDates(event, dates, namedClosuresLookup) {
 
   namedClosures.forEach(namedClosure => {
     const closureDates = namedClosuresLookup[namedClosure];
-    closureDates.forEach(date => {
+    closureDates.dates.forEach(date => {
       if (result[date]) {
         delete result[date];
       }
