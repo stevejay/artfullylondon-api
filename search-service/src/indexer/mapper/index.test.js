@@ -221,6 +221,174 @@ describe("mapVenueForAutocompleteIndex", () => {
   });
 });
 
+describe("mapEventForEventIndex", () => {
+  it("should map an event", () => {
+    const event = {
+      id: "event/pleasance-theatre/2017/the-very-hungry-caterpillar",
+      status: "ACTIVE",
+      name: "The Very Hungry Caterpillar",
+      eventType: "PERFORMANCE",
+      occurrenceType: "ONE_TIME",
+      costType: "PAID",
+      summary: "A production.",
+      dateFrom: "2017-03-19",
+      dateTo: "2017-03-19",
+      rating: 3,
+      bookingType: "REQUIRED",
+      useVenueOpeningTimes: false,
+      costFrom: 10,
+      costTo: 12,
+      bookingOpens: "2017-03-01",
+      duration: "02:00",
+      description: "<p>The Very Hungry Caterpillar</p>",
+      descriptionCredit: "Pleasance Theatre",
+      additionalPerformances: [
+        {
+          date: "2017-03-19",
+          at: "14:30"
+        }
+      ],
+      audienceTags: [
+        {
+          id: "audience/children",
+          label: "children"
+        }
+      ],
+      mediumTags: [
+        {
+          id: "medium/puppetry",
+          label: "puppetry"
+        }
+      ],
+      links: [
+        {
+          type: "HOMEPAGE",
+          url: "https://www.pleasance.co.uk/event/very-hungry-caterpillar"
+        }
+      ],
+      images: [
+        {
+          copyright: "Pamela Raith / Hungry Caterpillar Show",
+          id: "2aae2f6ce93b4a7f80b35060a9003138",
+          ratio: 0.44574780058651
+        }
+      ],
+      version: 1,
+      venue: {
+        id: "venue/pleasance-theatre",
+        status: "ACTIVE",
+        name: "Pleasance Theatre",
+        venueType: "THEATRE",
+        address: "Carpenters Mews\\nNorth Rd\\nLondon",
+        postcode: "N7 9EF",
+        latitude: 51.548796973338,
+        longitude: -0.12151211500168,
+        description: "<p>The Pleasance Theatre is a fringe theatre.</p>",
+        links: [
+          {
+            type: "FACEBOOK",
+            url: "https://www.facebook.com/ThePleasance/"
+          },
+          {
+            type: "TWITTER",
+            url: "https://twitter.com/ThePleasance"
+          },
+          {
+            type: "WIKIPEDIA",
+            url: "https://en.wikipedia.org/wiki/Pleasance_Islington"
+          },
+          {
+            type: "ACCESS",
+            url: "https://www.pleasance.co.uk/accessibility"
+          },
+          {
+            type: "HOMEPAGE",
+            url: "https://www.pleasance.co.uk/via/search/london"
+          }
+        ],
+        wheelchairAccessType: "UNKNOWN",
+        disabledBathroomType: "UNKNOWN",
+        hearingFacilitiesType: "UNKNOWN",
+        telephone: "020 7609 1800",
+        version: 3
+      },
+      talents: [
+        {
+          roles: ["Author / Illustrator"],
+          talent: {
+            id: "talent/eric-carle-author-illustrator",
+            status: "ACTIVE",
+            firstNames: "Eric",
+            lastName: "Carle",
+            talentType: "INDIVIDUAL",
+            commonRole: "Author / Illustrator",
+            version: 1
+          }
+        },
+        {
+          roles: ["Creator"],
+          talent: {
+            id: "talent/jonathan-rockefeller-director",
+            status: "ACTIVE",
+            firstNames: "Jonathan",
+            lastName: "Rockefeller",
+            talentType: "INDIVIDUAL",
+            commonRole: "Director",
+            version: 1
+          }
+        }
+      ],
+      mainImage: {
+        id: "2aae2f6ce93b4a7f80b35060a9003138",
+        ratio: 0.44574780058651,
+        copyright: "Pamela Raith / Hungry Caterpillar Show"
+      }
+    };
+
+    const result = mapper.mapEventForEventIndex(event);
+
+    expect(result).toEqual({
+      area: "NORTH",
+      artsType: "PERFORMING",
+      bookingType: "REQUIRED",
+      costFrom: 10,
+      costType: "PAID",
+      dateFrom: "2017-03-19",
+      dateTo: "2017-03-19",
+      dates: [],
+      entityType: "EVENT",
+      eventType: "PERFORMANCE",
+      externalEventId: "venue/pleasance-theatre|/event/very-hungry-caterpillar",
+      id: "event/pleasance-theatre/2017/the-very-hungry-caterpillar",
+      image: "2aae2f6ce93b4a7f80b35060a9003138",
+      imageCopyright: "Pamela Raith / Hungry Caterpillar Show",
+      imageRatio: 0.44574780058651,
+      latitude: 51.548796973338,
+      locationOptimized: {
+        lat: 51.548796973338,
+        lon: -0.12151211500168
+      },
+      longitude: -0.12151211500168,
+      name: "The Very Hungry Caterpillar",
+      name_sort: "very hungry caterpillar",
+      occurrenceType: "ONE_TIME",
+      postcode: "N7 9EF",
+      rating: 3,
+      status: "ACTIVE",
+      summary: "A production.",
+      tags: ["audience/children", "medium/puppetry"],
+      talents: [
+        "talent/eric-carle-author-illustrator",
+        "talent/jonathan-rockefeller-director"
+      ],
+      venueId: "venue/pleasance-theatre",
+      venueName: "Pleasance Theatre",
+      venueName_sort: "pleasance theatre",
+      version: 1
+    });
+  });
+});
+
 describe("mapEventForAutocompleteIndex", () => {
   it("should map an event", () => {
     const event = {

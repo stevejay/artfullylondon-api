@@ -171,8 +171,8 @@ export const mapEventForEventIndex = mappr.compose(
         : event.bookingType,
     area: geoMappings.mapLondonArea,
     artsType: tagMappings.mapArtsType,
-    locationOptimized: geoMappings.mapLocation,
-    talents: event => (event.talents || []).map(talent => talent.id),
+    locationOptimized: event => geoMappings.mapLocation(event.venue),
+    talents: event => (event.talents || []).map(talent => talent.talent.id),
     externalEventId: idMappings.mapExternalEventId,
     tags: tagMappings.mapTags,
     dates: datesMappings.mapDates

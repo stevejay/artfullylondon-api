@@ -178,7 +178,11 @@ const EVENT_CONSTRAINT = {
     array: true,
     each: {
       object: {
-        id: REQUIRED_STRING
+        talent: {
+          object: {
+            id: REQUIRED_STRING
+          }
+        }
       }
     }
   },
