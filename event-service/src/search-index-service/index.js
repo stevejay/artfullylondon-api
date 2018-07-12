@@ -51,7 +51,7 @@ export async function processRefreshSearchIndexMessage(message) {
         }`
       );
     }
-    await iterationThrottler(startTime, 500);
+    await iterationThrottler(startTime, 1000);
     await notifier.searchIndexRefresh(
       message.actionId,
       message.iterationId,
