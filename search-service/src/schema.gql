@@ -122,6 +122,7 @@ interface SearchNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
+  name: String!
   image: String
   imageCopyright: String
   imageRatio: Float
@@ -139,11 +140,11 @@ type Event implements SearchNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
+  name: String!
   image: String
   imageCopyright: String
   imageRatio: Float
   imageColor: String
-  name: String!
   eventType: EventTypeEnum!
   occurrenceType: OccurrenceTypeEnum!
   costType: CostTypeEnum!
@@ -163,11 +164,11 @@ type EventSeries implements SearchNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
+  name: String!
   image: String
   imageCopyright: String
   imageRatio: Float
   imageColor: String
-  name: String!
   eventSeriesType: EventSeriesTypeEnum!
   occurrence: String
   summary: String
@@ -177,6 +178,7 @@ type Talent implements SearchNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
+  name: String!
   image: String
   imageCopyright: String
   imageRatio: Float
@@ -191,11 +193,11 @@ type Venue implements SearchNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
+  name: String!
   image: String
   imageCopyright: String
   imageRatio: Float
   imageColor: String
-  name: String!
   venueType: VenueTypeEnum!
   address: String!
   postcode: String!

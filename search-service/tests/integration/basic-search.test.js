@@ -32,6 +32,7 @@ const BASIC_SEARCH_QUERY = `
           id
           entityType
           status
+          name
           ... on Talent {
             commonRole
           }
@@ -116,6 +117,7 @@ describe("basic search", () => {
                 entityType: entityType.TALENT,
                 id: testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id,
                 status: statusType.ACTIVE,
+                name: "Carrie Cracknell",
                 commonRole: "Director"
               }
             }
@@ -155,7 +157,7 @@ describe("basic search", () => {
     });
   });
 
-  it("should perform an admin search of venues", async () => {
+  it("should perform a paged admin search of venues", async () => {
     let result = await request({
       uri: "http://localhost:3013/graphql",
       json: true,
@@ -182,7 +184,8 @@ describe("basic search", () => {
               node: {
                 entityType: entityType.VENUE,
                 id: testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id,
-                status: statusType.ACTIVE
+                status: statusType.ACTIVE,
+                name: testData.VENUE_ACTIVE_ALMEIDA_THEATRE.name
               }
             },
             {
@@ -192,7 +195,8 @@ describe("basic search", () => {
               node: {
                 entityType: entityType.VENUE,
                 id: testData.VENUE_DELETED_ARCOLA_THEATRE.id,
-                status: statusType.DELETED
+                status: statusType.DELETED,
+                name: testData.VENUE_DELETED_ARCOLA_THEATRE.name
               }
             }
           ],
@@ -230,7 +234,8 @@ describe("basic search", () => {
               node: {
                 entityType: entityType.VENUE,
                 id: testData.VENUE_DELETED_ARCOLA_THEATRE.id,
-                status: statusType.DELETED
+                status: statusType.DELETED,
+                name: testData.VENUE_DELETED_ARCOLA_THEATRE.name
               }
             }
           ],
@@ -270,7 +275,8 @@ describe("basic search", () => {
               node: {
                 entityType: entityType.VENUE,
                 id: testData.VENUE_ACTIVE_ALMEIDA_THEATRE.id,
-                status: statusType.ACTIVE
+                status: statusType.ACTIVE,
+                name: testData.VENUE_ACTIVE_ALMEIDA_THEATRE.name
               }
             }
           ],
@@ -282,7 +288,7 @@ describe("basic search", () => {
     });
   });
 
-  it("should perform a admin location search of venues", async () => {
+  it("should perform an admin location search of venues", async () => {
     const result = await request({
       uri: "http://localhost:3013/graphql",
       json: true,
@@ -312,7 +318,8 @@ describe("basic search", () => {
               node: {
                 entityType: entityType.VENUE,
                 id: testData.VENUE_DELETED_ARCOLA_THEATRE.id,
-                status: statusType.DELETED
+                status: statusType.DELETED,
+                name: testData.VENUE_DELETED_ARCOLA_THEATRE.name
               }
             }
           ],
@@ -351,7 +358,8 @@ describe("basic search", () => {
               node: {
                 entityType: entityType.EVENT_SERIES,
                 id: testData.EVENT_SERIES_ACTIVE_BANG_SAID_THE_GUN.id,
-                status: statusType.ACTIVE
+                status: statusType.ACTIVE,
+                name: testData.EVENT_SERIES_ACTIVE_BANG_SAID_THE_GUN.name
               }
             }
           ],
@@ -390,7 +398,8 @@ describe("basic search", () => {
               node: {
                 entityType: entityType.EVENT,
                 id: testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION.id,
-                status: statusType.ACTIVE
+                status: statusType.ACTIVE,
+                name: testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION.name
               }
             }
           ],

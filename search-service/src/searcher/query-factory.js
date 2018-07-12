@@ -129,6 +129,7 @@ function createTalentSearch(params) {
       "imageCopyright",
       "imageRatio",
       "imageColor",
+      "name",
       "firstNames",
       "lastName",
       "talentType",

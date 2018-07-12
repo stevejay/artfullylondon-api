@@ -11,6 +11,7 @@ export const TALENT_ACTIVE_CARRIE_CRACKNELL = {
   commonRole: "Director",
   entityType: entityType.TALENT,
   talentType: talentType.INDIVIDUAL,
+  name: "Carrie Cracknell",
   firstNames: "Carrie",
   id: "talent/carrie-cracknell",
   lastName: "Cracknell",
@@ -23,6 +24,7 @@ export const TALENT_ACTIVE_DAVE_DONNELLY = {
   commonRole: "Actor",
   entityType: entityType.TALENT,
   talentType: talentType.INDIVIDUAL,
+  name: "Dave Donnelly",
   firstNames: "Dave",
   lastName: "Donnelly",
   lastName_sort: "donnelly"

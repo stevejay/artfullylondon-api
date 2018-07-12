@@ -50,7 +50,10 @@ export const mapTalentForTalentIndex = mappr.compose(
     "version"
   ]),
   mapMainImage,
-  { lastName_sort: mapNameToSortName }
+  {
+    name: mapTalentName,
+    lastName_sort: mapNameToSortName
+  }
 );
 
 export const mapTalentForAutocompleteIndex = mappr.compose(

@@ -48,6 +48,10 @@
           "type": "keyword",
           "index": false
         },
+        "name": {
+          "type": "text",
+          "index": false
+        },
         "firstNames": {
           "type": "text",
           "fields": {
