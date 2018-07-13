@@ -108,6 +108,7 @@ aws dynamodb delete-table --endpoint-url http://localhost:4569 --table-name artf
 - Look into using [joi](https://github.com/hapijs/joi) or [yup](https://www.npmjs.com/package/yup) for validation.
 - Change from dynamodb to postgres.
 - When autocomplete searching all entities, search for max 3 of each entity type.
+- Migration: Add dominantColor to images in event service db from image db.
 
 ## Info
 

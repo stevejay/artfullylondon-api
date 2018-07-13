@@ -127,7 +127,8 @@ describe("index document", () => {
         {
           copyright: "Pamela Raith / Hungry Caterpillar Show",
           id: "2aae2f6ce93b4a7f80b35060a9003138",
-          ratio: 0.44574780058651
+          ratio: 0.44574780058651,
+          dominantColor: "123456"
         }
       ],
       version: 1,
@@ -198,7 +199,8 @@ describe("index document", () => {
       mainImage: {
         id: "2aae2f6ce93b4a7f80b35060a9003138",
         ratio: 0.44574780058651,
-        copyright: "Pamela Raith / Hungry Caterpillar Show"
+        copyright: "Pamela Raith / Hungry Caterpillar Show",
+        dominantColor: "123456"
       }
     };
 
@@ -220,7 +222,8 @@ describe("index document", () => {
         _version: 1,
         _source: expect.objectContaining({
           entityType: entityType.EVENT,
-          id: eventToIndex.id
+          id: eventToIndex.id,
+          imageColor: "123456"
         })
       })
     );

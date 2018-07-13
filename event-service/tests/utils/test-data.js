@@ -304,7 +304,12 @@ export const createFullDbVenue = () => {
     ],
     links: [{ type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }],
     images: [
-      { id: "abcd1234abcd1234abcd1234abcd1234", ratio: 1.2, copyright: "Foo" }
+      {
+        id: "abcd1234abcd1234abcd1234abcd1234",
+        ratio: 1.2,
+        copyright: "Foo",
+        dominantColor: "af0090"
+      }
     ],
     weSay: "something",
     notes: "some notes",

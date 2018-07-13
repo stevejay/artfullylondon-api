@@ -113,7 +113,8 @@ describe("mapResponse", () => {
       mainImage: {
         id: "abcd1234abcd1234abcd1234abcd1234",
         copyright: "Foo",
-        ratio: 1.2
+        ratio: 1.2,
+        dominantColor: "af0090"
       },
       wheelchairAccessType: wheelchairAccessType.FULL_ACCESS,
       disabledBathroomType: disabledBathroomType.PRESENT,
@@ -144,7 +145,8 @@ describe("mapResponse", () => {
         {
           id: "abcd1234abcd1234abcd1234abcd1234",
           ratio: 1.2,
-          copyright: "Foo"
+          copyright: "Foo",
+          dominantColor: "af0090"
         }
       ],
       version: 1
