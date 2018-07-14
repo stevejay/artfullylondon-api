@@ -5,7 +5,7 @@ enum ImageTypeEnum {
   VENUE
 }
 
-type Image {
+type ImageDetails {
   id: ID!
   imageType: ImageTypeEnum!
   sourceUrl: String!
@@ -18,13 +18,13 @@ type Image {
   modifiedDate: String!
 }
 
-type Iteration {
+type ImageIteration {
   actionId: ID!
   iterationId: ID!
 }
 
 type ImageResult {
-  image: Image
+  image: ImageDetails
 }
 
 type Query {
@@ -38,11 +38,11 @@ input CreateTagInput {
 }
 
 type AddImageOutput {
-  image: Image
+  image: ImageDetails
 }
 
 type ReprocessAllImagesOutput {
-  iteration: Iteration
+  iteration: ImageIteration
 }
 
 type Mutation {

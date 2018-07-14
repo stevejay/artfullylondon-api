@@ -5,17 +5,17 @@ enum TagTypeEnum {
   AUDIENCE
 }
 
-type Tag {
+type TagDetail {
   tagType: TagTypeEnum!
   id: ID!
   label: String!
 }
 
 type TagSet {
-  medium: [Tag!]
-  style: [Tag!]
-  geo: [Tag!]
-  audience: [Tag!]
+  medium: [TagDetail!]
+  style: [TagDetail!]
+  geo: [TagDetail!]
+  audience: [TagDetail!]
 }
 
 type Query {
@@ -28,7 +28,7 @@ input CreateTagInput {
 }
 
 type CreateTagOutput {
-  tag: Tag
+  tag: TagDetail
 }
 
 input DeleteTagInput {

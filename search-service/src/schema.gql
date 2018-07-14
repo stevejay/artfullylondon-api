@@ -2,10 +2,10 @@ scalar IsoShortDate
 scalar ShortTime
 
 enum EntityTypeEnum {
-  EVENT
-  EVENT_SERIES
   TALENT
   VENUE
+  EVENT
+  EVENT_SERIES
 }
 
 enum StatusTypeEnum {

@@ -187,30 +187,6 @@ type Review {
   rating: Int!
 }
 
-# interface Entity {
-#   id: ID!
-#   status: StatusTypeEnum!
-#   links: [Link!]
-#   images: [Image!]
-#   weSay: String
-#   notes: String
-#   mainImage: Image
-#   description: String
-#   descriptionCredit: String
-# }
-
-# interface EntityForEdit {
-#   id: ID!
-#   status: StatusTypeEnum!
-#   version: Int!
-#   links: [Link!]
-#   images: [Image!]
-#   weSay: String
-#   notes: String
-#   description: String
-#   descriptionCredit: String
-# }
-
 type Talent {
   id: ID!
   status: StatusTypeEnum!
