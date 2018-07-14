@@ -82,7 +82,7 @@ const SEARCH_SERVICE_RESPONSE = {
 const EVENT_SERVICE_QUERY = `
 {
   eventSeries(id: "aaaaa") {
-    summary
+    notes
   }
 }
 `;
@@ -90,7 +90,7 @@ const EVENT_SERVICE_QUERY = `
 const EVENT_SERVICE_RESPONSE = {
   data: {
     eventSeries: {
-      summary: "Stand-up poetry"
+      notes: "Stand-up poetry"
     }
   }
 };

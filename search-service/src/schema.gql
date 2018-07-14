@@ -136,7 +136,7 @@ type EventDate {
   tags: [String!]
 }
 
-type Event implements SearchNode {
+type SearchEvent implements SearchNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
@@ -160,7 +160,7 @@ type Event implements SearchNode {
   externalEventId: String
 }
 
-type EventSeries implements SearchNode {
+type SearchEventSeries implements SearchNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
@@ -174,7 +174,7 @@ type EventSeries implements SearchNode {
   summary: String
 }
 
-type Talent implements SearchNode {
+type SearchTalent implements SearchNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
@@ -189,7 +189,7 @@ type Talent implements SearchNode {
   talentType: TalentTypeEnum!
 }
 
-type Venue implements SearchNode {
+type SearchVenue implements SearchNode {
   id: ID!
   entityType: EntityTypeEnum!
   status: StatusTypeEnum!
@@ -216,7 +216,7 @@ type SearchConnection {
 }
 
 type EventAdvancedSearchEdge {
-  node: Event!
+  node: SearchEvent!
   cursor: String!
 }
 
@@ -235,7 +235,7 @@ type EntityCountResult {
 }
 
 type SitemapEventResult {
-  results: [Event!]!
+  results: [SearchEvent!]!
 }
 
 type Query {

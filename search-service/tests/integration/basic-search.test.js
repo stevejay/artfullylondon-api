@@ -33,7 +33,7 @@ const BASIC_SEARCH_QUERY = `
           entityType
           status
           name
-          ... on Talent {
+          ... on SearchTalent {
             commonRole
           }
         }

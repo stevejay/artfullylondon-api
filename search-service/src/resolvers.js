@@ -39,13 +39,13 @@ export default {
     __resolveType(obj) {
       switch (obj.entityType) {
         case entityType.EVENT:
-          return "Event";
+          return "SearchEvent";
         case entityType.EVENT_SERIES:
-          return "EventSeries";
+          return "SearchEventSeries";
         case entityType.TALENT:
-          return "Talent";
+          return "SearchTalent";
         case entityType.VENUE:
-          return "Venue";
+          return "SearchVenue";
         default:
           throw new GraphQLError(`Unknown entity type: ${obj.entityType}`);
       }
