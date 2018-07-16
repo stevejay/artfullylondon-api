@@ -1,6 +1,6 @@
 # Artfully London API
 
-The main back-end code for the Artfully London website. An example of a GraphQL back-end implemented entirely using AWS Lambda nanoservices, written in Node.js and deployed using the Serverless framework.
+The main back-end code for the Artfully London website. An example of a GraphQL back-end implemented using AWS Lambda, written in Node.js and deployed using the Serverless framework.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
