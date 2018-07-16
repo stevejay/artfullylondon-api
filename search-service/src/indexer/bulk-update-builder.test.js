@@ -2,7 +2,7 @@ import BulkUpdateBuilder from "./bulk-update-builder";
 import * as statusType from "../types/status-type";
 import * as entityType from "../types/entity-type";
 
-describe("addFullSearchUpdate", () => {
+describe("addEntitySearchUpdate", () => {
   it("should add a full search update", () => {
     const document = {
       entityType: entityType.TALENT,
@@ -12,7 +12,7 @@ describe("addFullSearchUpdate", () => {
 
     const subject = new BulkUpdateBuilder();
 
-    subject.addFullSearchUpdate(document, "some-index");
+    subject.addEntitySearchUpdate(document, "some-index");
 
     const result = subject.build();
 
@@ -39,7 +39,7 @@ describe("addFullSearchUpdate", () => {
 
     const subject = new BulkUpdateBuilder();
 
-    subject.addFullSearchUpdate(document, "some-index");
+    subject.addEntitySearchUpdate(document, "some-index");
 
     const result = subject.build();
 

@@ -6,6 +6,27 @@ import * as bookingType from "../types/booking-type";
 import * as areaType from "../types/area-type";
 import * as artsType from "../types/arts-type";
 
+describe("mapSitemapEventSearchParams", () => {
+  it("should map the params", () => {
+    const result = mapper.mapSitemapEventSearchParams();
+    expect(result).toEqual({
+      dateTo: expect.stringMatching(/^2\d\d\d-\d\d-\d\d$/)
+    });
+  });
+});
+
+describe("mapSitemapEventSearchResults", () => {
+  const response = {
+    hits: {
+      hits: [{ _source: { id: "event/1" } }, { _source: { id: "event/2" } }]
+    }
+  };
+  const result = mapper.mapSitemapEventSearchResults(response);
+  expect(result).toEqual({
+    results: [{ id: "event/1" }, { id: "event/2" }]
+  });
+});
+
 describe("mapAutocompleteSearchParams", () => {
   test.each([[{ term: "Foo" }, { term: "foo" }]])(
     "%o should map to %o",
@@ -304,19 +325,19 @@ describe("mapEntityCountSearchResults", () => {
   test.each([
     [
       {
-        responses: [
-          { hits: { total: 1 } },
-          { hits: { total: 2 } },
-          { hits: { total: 3 } },
-          { hits: { total: 4 } }
-        ]
+        aggregations: {
+          [entityType.EVENT]: { doc_count: 1 },
+          [entityType.EVENT_SERIES]: { doc_count: 2 },
+          [entityType.VENUE]: { doc_count: 3 },
+          [entityType.TALENT]: { doc_count: 4 }
+        }
       },
       {
         results: [
           { entityType: entityType.EVENT, count: 1 },
           { entityType: entityType.EVENT_SERIES, count: 2 },
-          { entityType: entityType.TALENT, count: 3 },
-          { entityType: entityType.VENUE, count: 4 }
+          { entityType: entityType.VENUE, count: 3 },
+          { entityType: entityType.TALENT, count: 4 }
         ]
       }
     ]
@@ -327,76 +348,7 @@ describe("mapEntityCountSearchResults", () => {
   });
 });
 
-describe("mapBasicSearchResults", () => {
-  test.each([
-    [
-      {
-        responses: []
-      },
-      12,
-      { edges: [], pageInfo: { hasNextPage: false } }
-    ],
-    [
-      {
-        responses: [
-          {
-            hits: {
-              hits: [{ _source: { id: "event/event-1" }, sort: [123] }]
-            }
-          }
-        ]
-      },
-      12,
-      {
-        edges: [
-          {
-            node: { id: "event/event-1" },
-            cursor: "[123]"
-          }
-        ],
-        pageInfo: { hasNextPage: false }
-      }
-    ],
-    [
-      {
-        responses: [
-          {
-            hits: { hits: [{ _source: { id: "event/event-1" } }] }
-          },
-          {
-            hits: {
-              hits: [{ _source: { id: "event-series/event-series-1" } }]
-            }
-          },
-          {
-            hits: { hits: [{ _source: { id: "talent/talent-1" } }] }
-          },
-          { hits: { hits: [{ _source: { id: "venue/venue-1" } }] } }
-        ]
-      },
-      2,
-      {
-        edges: [
-          {
-            node: { id: "event/event-1" },
-            cursor: ""
-          },
-          {
-            node: { id: "event-series/event-series-1" },
-            cursor: ""
-          }
-        ],
-        pageInfo: { hasNextPage: false }
-      }
-    ]
-  ])("%o with first %d should map to %o", (arg, first, expected) => {
-    expect(mapper.mapBasicSearchResults(deepFreeze(arg), first)).toEqual(
-      expected
-    );
-  });
-});
-
-describe("mapEventAdvancedSearchResults", () => {
+describe("mapEntitySearchResults", () => {
   test.each([
     [
       {
@@ -423,10 +375,58 @@ describe("mapEventAdvancedSearchResults", () => {
         ],
         pageInfo: { hasNextPage: false }
       }
+    ],
+    [
+      {
+        hits: {
+          hits: [
+            { _source: { id: "event/event-1" }, sort: [123] },
+            { _source: { id: "event-series/event-series-1" }, sort: [456] }
+          ]
+        }
+      },
+      2,
+      {
+        edges: [
+          {
+            node: { id: "event/event-1" },
+            cursor: "[123]"
+          },
+          {
+            node: { id: "event-series/event-series-1" },
+            cursor: "[456]"
+          }
+        ],
+        pageInfo: { hasNextPage: true }
+      }
+    ],
+    [
+      {
+        hits: {
+          hits: [
+            { _source: { id: "event/event-1" }, sort: [123] },
+            { _source: { id: "event-series/event-series-1" }, sort: [456] }
+          ]
+        }
+      },
+      20,
+      {
+        edges: [
+          {
+            node: { id: "event/event-1" },
+            cursor: "[123]"
+          },
+          {
+            node: { id: "event-series/event-series-1" },
+            cursor: "[456]"
+          }
+        ],
+        pageInfo: { hasNextPage: false }
+      }
     ]
   ])("%o with first %d should map to %o", (arg, first, expected) => {
-    expect(
-      mapper.mapEventAdvancedSearchResults(deepFreeze(arg), first)
-    ).toEqual(expected);
+    expect(mapper.mapEntitySearchResults(deepFreeze(arg), first)).toEqual(
+      expected
+    );
   });
 });

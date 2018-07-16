@@ -26,10 +26,7 @@ async function createIndex(index) {
 
 (async () => {
   await createIndex("autocomplete");
-  await createIndex("talent");
-  await createIndex("venue");
-  await createIndex("event");
-  await createIndex("event-series");
+  await createIndex("entity");
 })().catch(err => {
   log.error(`CAUGHT ERROR: ${err.message}`);
 });

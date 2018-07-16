@@ -10,18 +10,12 @@ const INDEX_DOCUMENT_TOPIC_NAME = "IndexDocument";
 
 describe("index document", () => {
   beforeAll(async () => {
-    await elasticsearch.createIndex(searchIndexType.TALENT);
-    await elasticsearch.createIndex(searchIndexType.VENUE);
-    await elasticsearch.createIndex(searchIndexType.EVENT);
-    await elasticsearch.createIndex(searchIndexType.EVENT_SERIES);
+    await elasticsearch.createIndex(searchIndexType.ENTITY);
     await elasticsearch.createIndex(searchIndexType.AUTOCOMPLETE);
   });
 
   afterAll(async () => {
-    await elasticsearch.deleteIndex(searchIndexType.TALENT);
-    await elasticsearch.deleteIndex(searchIndexType.VENUE);
-    await elasticsearch.deleteIndex(searchIndexType.EVENT);
-    await elasticsearch.deleteIndex(searchIndexType.EVENT_SERIES);
+    await elasticsearch.deleteIndex(searchIndexType.ENTITY);
     await elasticsearch.deleteIndex(searchIndexType.AUTOCOMPLETE);
   });
 
@@ -43,13 +37,13 @@ describe("index document", () => {
     });
 
     const talent = await elasticsearch.getDocumentWithRetry(
-      searchIndexType.TALENT,
+      searchIndexType.ENTITY,
       talentToIndex.id
     );
 
     expect(talent).toEqual(
       expect.objectContaining({
-        _index: searchIndexType.TALENT,
+        _index: searchIndexType.ENTITY,
         _type: "doc",
         _id: talentToIndex.id,
         _version: 2,
@@ -210,13 +204,13 @@ describe("index document", () => {
     });
 
     const event = await elasticsearch.getDocumentWithRetry(
-      searchIndexType.EVENT,
+      searchIndexType.ENTITY,
       eventToIndex.id
     );
 
     expect(event).toEqual(
       expect.objectContaining({
-        _index: searchIndexType.EVENT,
+        _index: searchIndexType.ENTITY,
         _type: "doc",
         _id: eventToIndex.id,
         _version: 1,
@@ -293,13 +287,13 @@ describe("index document", () => {
     });
 
     const venue = await elasticsearch.getDocumentWithRetry(
-      searchIndexType.VENUE,
+      searchIndexType.ENTITY,
       venueToIndex.id
     );
 
     expect(venue).toEqual(
       expect.objectContaining({
-        _index: searchIndexType.VENUE,
+        _index: searchIndexType.ENTITY,
         _type: "doc",
         _id: venueToIndex.id,
         _version: 3,
@@ -363,13 +357,13 @@ describe("index document", () => {
     });
 
     const eventSeries = await elasticsearch.getDocumentWithRetry(
-      searchIndexType.EVENT_SERIES,
+      searchIndexType.ENTITY,
       eventSeriesToIndex.id
     );
 
     expect(eventSeries).toEqual(
       expect.objectContaining({
-        _index: searchIndexType.EVENT_SERIES,
+        _index: searchIndexType.ENTITY,
         _type: "doc",
         _id: eventSeriesToIndex.id,
         _version: 1,

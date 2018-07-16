@@ -71,19 +71,19 @@ const EVENT_ADVANCED_SEARCH_QUERY = `
 
 describe("event advanced search", () => {
   beforeAll(async () => {
-    await elasticsearch.createIndex(searchIndexType.EVENT);
+    await elasticsearch.createIndex(searchIndexType.ENTITY);
     await elasticsearch.indexDocument(
-      searchIndexType.EVENT,
+      searchIndexType.ENTITY,
       testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION
     );
     await elasticsearch.indexDocument(
-      searchIndexType.EVENT,
+      searchIndexType.ENTITY,
       testData.EVENT_ACTIVE_BRITISH_MUSEUM_PERM_COLL
     );
   });
 
   afterAll(async () => {
-    await elasticsearch.deleteIndex(searchIndexType.EVENT);
+    await elasticsearch.deleteIndex(searchIndexType.ENTITY);
   });
 
   it("should perform a public search", async () => {

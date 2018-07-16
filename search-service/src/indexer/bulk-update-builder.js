@@ -5,7 +5,7 @@ export default class BulkUpdateBuilder {
   constructor() {
     this._builder = new ESBulkUpdateBuilder();
   }
-  addFullSearchUpdate(document, indexName) {
+  addEntitySearchUpdate(document, indexName) {
     this._builder.index(
       document,
       indexName,

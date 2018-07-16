@@ -46,52 +46,46 @@ const FEATURED_EVENTS_QUERY = `
 
 describe("preset search", () => {
   beforeAll(async () => {
-    await elasticsearch.createIndex(searchIndexType.TALENT);
-    await elasticsearch.createIndex(searchIndexType.VENUE);
-    await elasticsearch.createIndex(searchIndexType.EVENT);
-    await elasticsearch.createIndex(searchIndexType.EVENT_SERIES);
+    await elasticsearch.createIndex(searchIndexType.ENTITY);
 
     await elasticsearch.indexDocument(
-      searchIndexType.TALENT,
+      searchIndexType.ENTITY,
       testData.TALENT_ACTIVE_CARRIE_CRACKNELL
     );
 
     await elasticsearch.indexDocument(
-      searchIndexType.TALENT,
+      searchIndexType.ENTITY,
       testData.TALENT_ACTIVE_DAVE_DONNELLY
     );
 
     await elasticsearch.indexDocument(
-      searchIndexType.VENUE,
+      searchIndexType.ENTITY,
       testData.VENUE_ACTIVE_ALMEIDA_THEATRE
     );
 
     await elasticsearch.indexDocument(
-      searchIndexType.VENUE,
+      searchIndexType.ENTITY,
       testData.VENUE_DELETED_ARCOLA_THEATRE
     );
 
     await elasticsearch.indexDocument(
-      searchIndexType.EVENT_SERIES,
+      searchIndexType.ENTITY,
       testData.EVENT_SERIES_ACTIVE_BANG_SAID_THE_GUN
     );
 
     await elasticsearch.indexDocument(
-      searchIndexType.EVENT,
+      searchIndexType.ENTITY,
       testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION
     );
 
     await elasticsearch.indexDocument(
-      searchIndexType.EVENT,
+      searchIndexType.ENTITY,
       testData.EVENT_ACTIVE_BRITISH_MUSEUM_PERM_COLL
     );
   });
 
   afterAll(async () => {
-    await elasticsearch.deleteIndex(searchIndexType.TALENT);
-    await elasticsearch.deleteIndex(searchIndexType.VENUE);
-    await elasticsearch.deleteIndex(searchIndexType.EVENT);
-    await elasticsearch.deleteIndex(searchIndexType.EVENT_SERIES);
+    await elasticsearch.deleteIndex(searchIndexType.ENTITY);
   });
 
   it("should perform an entity count preset search", async () => {
@@ -117,11 +111,11 @@ describe("preset search", () => {
             },
             {
               count: 2,
-              entityType: entityType.TALENT
+              entityType: entityType.VENUE
             },
             {
               count: 2,
-              entityType: entityType.VENUE
+              entityType: entityType.TALENT
             }
           ]
         }

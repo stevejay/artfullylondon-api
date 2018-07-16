@@ -8,59 +8,47 @@ import * as validator from "./validator";
 export async function index(request) {
   validator.validateIndexDocumentRequest(request);
   const builder = new BulkUpdateBuilder();
+  let documents = null;
 
   switch (request.entityType) {
     case entityType.TALENT:
       validator.validateTalent(request.entity);
-      builder
-        .addFullSearchUpdate(
-          mapper.mapTalentForTalentIndex(request.entity),
-          searchIndexType.TALENT
-        )
-        .addAutocompleteSearchUpdate(
-          mapper.mapTalentForAutocompleteIndex(request.entity),
-          searchIndexType.AUTOCOMPLETE
-        );
+      documents = {
+        entity: mapper.mapTalentForEntityIndex(request.entity),
+        autocomplete: mapper.mapTalentForAutocompleteIndex(request.entity)
+      };
       break;
     case entityType.VENUE:
       validator.validateVenue(request.entity);
-      builder
-        .addFullSearchUpdate(
-          mapper.mapVenueForVenueIndex(request.entity),
-          searchIndexType.VENUE
-        )
-        .addAutocompleteSearchUpdate(
-          mapper.mapVenueForAutocompleteIndex(request.entity),
-          searchIndexType.AUTOCOMPLETE
-        );
+      documents = {
+        entity: mapper.mapVenueForEntityIndex(request.entity),
+        autocomplete: mapper.mapVenueForAutocompleteIndex(request.entity)
+      };
       break;
     case entityType.EVENT_SERIES:
       validator.validateEventSeries(request.entity);
-      builder
-        .addFullSearchUpdate(
-          mapper.mapEventSeriesForEventSeriesIndex(request.entity),
-          searchIndexType.EVENT_SERIES
-        )
-        .addAutocompleteSearchUpdate(
-          mapper.mapEventSeriesForAutocompleteIndex(request.entity),
-          searchIndexType.AUTOCOMPLETE
-        );
+      documents = {
+        entity: mapper.mapEventSeriesForEntityIndex(request.entity),
+        autocomplete: mapper.mapEventSeriesForAutocompleteIndex(request.entity)
+      };
       break;
     case entityType.EVENT:
       validator.validateEvent(request.entity);
-      builder
-        .addFullSearchUpdate(
-          mapper.mapEventForEventIndex(request.entity),
-          searchIndexType.EVENT
-        )
-        .addAutocompleteSearchUpdate(
-          mapper.mapEventForAutocompleteIndex(request.entity),
-          searchIndexType.AUTOCOMPLETE
-        );
+      documents = {
+        entity: mapper.mapEventForEntityIndex(request.entity),
+        autocomplete: mapper.mapEventForAutocompleteIndex(request.entity)
+      };
       break;
     default:
       throw new Error(`Unsupported entity type ${request.entityType}`);
   }
+
+  builder
+    .addEntitySearchUpdate(documents.entity, searchIndexType.ENTITY)
+    .addAutocompleteSearchUpdate(
+      documents.autocomplete,
+      searchIndexType.AUTOCOMPLETE
+    );
 
   await esClient.bulk({ body: builder.build() });
 }

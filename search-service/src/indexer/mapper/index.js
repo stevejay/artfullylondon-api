@@ -38,7 +38,7 @@ function mapNameToSortName(entity) {
   return result.replace(COMMON_START_WORDS_WORDS_REGEX, " ").trim();
 }
 
-export const mapTalentForTalentIndex = mappr.compose(
+export const mapTalentForEntityIndex = mappr.compose(
   () => ({ entityType: entityType.TALENT }),
   fpPick([
     "id",
@@ -73,7 +73,7 @@ export const mapTalentForAutocompleteIndex = mappr.compose(
   }
 );
 
-export const mapVenueForVenueIndex = mappr.compose(
+export const mapVenueForEntityIndex = mappr.compose(
   () => ({ entityType: entityType.VENUE }),
   fpPick([
     "id",
@@ -108,7 +108,7 @@ export const mapVenueForAutocompleteIndex = mappr.compose(
   }
 );
 
-export const mapEventSeriesForEventSeriesIndex = mappr.compose(
+export const mapEventSeriesForEntityIndex = mappr.compose(
   () => ({ entityType: entityType.EVENT_SERIES }),
   fpPick([
     "id",
@@ -138,7 +138,7 @@ export const mapEventSeriesForAutocompleteIndex = mappr.compose(
   }
 );
 
-export const mapEventForEventIndex = mappr.compose(
+export const mapEventForEntityIndex = mappr.compose(
   () => ({ entityType: entityType.EVENT }),
   fpPick([
     "id",
