@@ -2,7 +2,6 @@ import request from "request-promise-native";
 import delay from "delay";
 import * as testData from "../utils/test-data";
 import * as dynamodb from "../utils/dynamodb";
-import * as redisUtils from "../utils/redis";
 import SnsListener from "../utils/serverless-offline-sns-listener";
 import * as entityType from "../../src/types/entity-type";
 import MockJwksServer from "../utils/mock-jwks-server";
@@ -32,7 +31,6 @@ describe("talent", () => {
     );
     mockJwksServer.start(3021);
     await dynamodb.truncateAllTables();
-    await redisUtils.flushAll();
   });
 
   afterAll(async () => {

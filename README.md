@@ -31,8 +31,6 @@ In order to run and develop the code locally, you need to install the following 
 - [Imagemagick](https://www.imagemagick.org/script/index.php) - Used for image querying and resizing in the Image Service (instructions below)
 - [LocalStack](https://localstack.cloud/) - Used for running DynamoDB and Elasticsearch locally (instructions below)
 
-You also need to run Redis somehow. One option is to run it locally, while another is to use a managed Redis service such as [RedisLabs](https://redislabs.com/).
-
 #### Imagemagick
 
 On Windows, install a [Windows binary release](https://www.imagemagick.org/script/download.php) of Imagemagick. Make sure to tick the 'Install legacy utilities' installer option.
@@ -95,11 +93,7 @@ aws dynamodb delete-table --endpoint-url http://localhost:4569 --table-name artf
 - Add AWS Cognito serverless configuration to the serverless files? (I think serverless supports AWS Cognito configuration now. Problem is it is not needed locally.)
 - See about CORS origin restrictions for getting images from resized and original S3 buckets.
 - DLQs: https://serverless.com/framework/docs/providers/aws/guide/functions/
-- IfNoneMatch bad string problem when sending etag in request.
 - Upgrade apollo-server-lambda to latest when release candidate finalised.
-- Sort out graphql-service graphql dependency.
-- Improve graphql validation to be able to partially replace the legacy validation.
-- Remove redis.
 - GraphQL info links:
   - Useful regex /[^\w{}]+/g
   - Database request batching https://github.com/facebook/dataloader
@@ -108,7 +102,6 @@ aws dynamodb delete-table --endpoint-url http://localhost:4569 --table-name artf
 - Look into using [joi](https://github.com/hapijs/joi) or [yup](https://www.npmjs.com/package/yup) for validation.
 - Change from dynamodb to postgres.
 - When autocomplete searching all entities, search for max 3 of each entity type.
-- Migration: Add dominantColor to images in event service db from image db.
 
 ## Info
 

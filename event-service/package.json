@@ -64,7 +64,6 @@
     "loglevel": "^1.6.1",
     "mappr": "^6.1.0",
     "normalise-request": "^1.4.4",
-    "redis": "^2.8.0",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
     "source-map-support": "^0.5.6",

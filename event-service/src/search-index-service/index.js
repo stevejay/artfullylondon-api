@@ -4,7 +4,6 @@ import * as eventRepository from "../persistence/event-repository";
 import * as iterationLogRepository from "../persistence/iteration-log-repository";
 import * as eventMapper from "../event-service/mapper";
 import * as entityType from "../types/entity-type";
-import * as cacher from "../cacher";
 import * as validator from "./validator";
 import iterationThrottler from "./iteration-throttler";
 import * as serviceLookup from "./service-lookup";
@@ -23,7 +22,6 @@ export async function updateEventSearchIndex(message) {
     eventMapper.mapResponse(dbEvent),
     entityType.EVENT
   );
-  await cacher.clearEntityEtag(entityType.EVENT, dbEvent.id);
 }
 
 export async function refreshSearchIndex(params) {
