@@ -6,7 +6,7 @@ import * as eventSeriesType from "../../types/event-series-type";
 import * as venueType from "../../types/venue-type";
 import * as eventType from "../../types/event-type";
 
-describe("mapTalentForTalentIndex", () => {
+describe("mapTalentForEntityIndex", () => {
   it("should map a talent with an image", () => {
     const talent = {
       id: "talent/talent-1",
@@ -32,7 +32,7 @@ describe("mapTalentForTalentIndex", () => {
       ]
     };
 
-    const result = mapper.mapTalentForTalentIndex(talent);
+    const result = mapper.mapTalentForEntityIndex(talent);
 
     expect(result).toEqual({
       entityType: entityType.TALENT,
@@ -63,7 +63,7 @@ describe("mapTalentForTalentIndex", () => {
       version: 1
     };
 
-    const result = mapper.mapTalentForTalentIndex(talent);
+    const result = mapper.mapTalentForEntityIndex(talent);
 
     expect(result).toEqual({
       entityType: entityType.TALENT,
@@ -107,7 +107,7 @@ describe("mapTalentForAutocompleteIndex", () => {
   });
 });
 
-describe("mapEventSeriesForEventSeriesIndex", () => {
+describe("mapEventSeriesForEntityIndex", () => {
   it("should map an event series", () => {
     const eventSeries = {
       id: "event-series-1",
@@ -119,7 +119,7 @@ describe("mapEventSeriesForEventSeriesIndex", () => {
       summary: "Some summary"
     };
 
-    const result = mapper.mapEventSeriesForEventSeriesIndex(eventSeries);
+    const result = mapper.mapEventSeriesForEntityIndex(eventSeries);
 
     expect(result).toEqual({
       entityType: entityType.EVENT_SERIES,
@@ -160,7 +160,7 @@ describe("mapEventSeriesForAutocompleteIndex", () => {
   });
 });
 
-describe("mapVenueForVenueIndex", () => {
+describe("mapVenueForEntityIndex", () => {
   it("should map a venue", () => {
     const venue = {
       id: "venue/venue-1",
@@ -174,7 +174,7 @@ describe("mapVenueForVenueIndex", () => {
       longitude: 22
     };
 
-    const result = mapper.mapVenueForVenueIndex(venue);
+    const result = mapper.mapVenueForEntityIndex(venue);
 
     expect(result).toEqual({
       entityType: entityType.VENUE,
@@ -223,7 +223,7 @@ describe("mapVenueForAutocompleteIndex", () => {
   });
 });
 
-describe("mapEventForEventIndex", () => {
+describe("mapEventForEntityIndex", () => {
   it("should map an event", () => {
     const event = {
       id: "event/pleasance-theatre/2017/the-very-hungry-caterpillar",
@@ -347,7 +347,7 @@ describe("mapEventForEventIndex", () => {
       }
     };
 
-    const result = mapper.mapEventForEventIndex(event);
+    const result = mapper.mapEventForEntityIndex(event);
 
     expect(result).toEqual({
       area: "NORTH",

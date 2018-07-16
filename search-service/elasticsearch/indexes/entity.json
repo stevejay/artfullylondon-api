@@ -43,7 +43,7 @@
       "properties": {
         "entityType": {
           "type": "keyword",
-          "index": false
+          "index": true
         },
         "id": {
           "type": "keyword",
@@ -52,6 +52,26 @@
         "status": {
           "type": "keyword",
           "index": true
+        },
+        "version": {
+          "type": "short",
+          "index": false
+        },
+        "image": {
+          "type": "text",
+          "index": false
+        },
+        "imageCopyright": {
+          "type": "text",
+          "index": false
+        },
+        "imageRatio": {
+          "type": "float",
+          "index": false
+        },
+        "imageColor": {
+          "type": "text",
+          "index": false
         },
         "name": {
           "type": "text",
@@ -68,6 +88,71 @@
         "name_sort": {
           "type": "keyword",
           "index": true
+        },
+        "firstNames": {
+          "type": "text",
+          "fields": {
+            "fuzzy": {
+              "type": "text",
+              "term_vector": "yes",
+              "analyzer": "standard"
+            },
+            "sort": {
+              "type": "keyword"
+            }
+          },
+          "analyzer": "english_custom"
+        },
+        "lastName": {
+          "type": "text",
+          "fields": {
+            "fuzzy": {
+              "type": "text",
+              "term_vector": "yes",
+              "analyzer": "standard"
+            }
+          },
+          "analyzer": "english_custom"
+        },
+        "lastName_sort": {
+          "type": "keyword"
+        },
+        "eventSeriesType": {
+          "type": "keyword",
+          "index": true
+        },
+        "occurrence": {
+          "type": "text",
+          "index": false
+        },
+        "venueType": {
+          "type": "keyword",
+          "index": true
+        },
+        "address": {
+          "type": "text",
+          "index": false
+        },
+        "postcode": {
+          "type": "text",
+          "index": false
+        },
+        "latitude": {
+          "type": "float",
+          "index": false
+        },
+        "longitude": {
+          "type": "float",
+          "index": false
+        },
+        "locationOptimized": {
+          "type": "geo_point"
+        },
+        "talentType": {
+          "type": "keyword"
+        },
+        "commonRole": {
+          "type": "keyword"
         },
         "venueId": {
           "type": "keyword",
@@ -92,10 +177,6 @@
         "area": {
           "type": "keyword",
           "index": true
-        },
-        "postcode": {
-          "type": "text",
-          "index": false
         },
         "eventSeriesId": {
           "type": "keyword",
@@ -159,33 +240,6 @@
           "type": "keyword",
           "index": true
         },
-        "image": {
-          "type": "text",
-          "index": false
-        },
-        "imageCopyright": {
-          "type": "text",
-          "index": false
-        },
-        "imageRatio": {
-          "type": "float",
-          "index": false
-        },
-        "imageColor": {
-          "type": "text",
-          "index": false
-        },
-        "latitude": {
-          "type": "float",
-          "index": false
-        },
-        "longitude": {
-          "type": "float",
-          "index": false
-        },
-        "locationOptimized": {
-          "type": "geo_point"
-        },
         "artsType": {
           "type": "keyword",
           "index": true
@@ -219,10 +273,6 @@
         "externalEventId": {
           "type": "keyword",
           "index": true
-        },
-        "version": {
-          "type": "short",
-          "index": false
         }
       }
     }

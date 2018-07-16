@@ -1,6 +1,5 @@
 import _ from "lodash";
 import simplify from "es-simplify";
-import looseInterleave from "loose-interleave";
 import * as entityType from "../types/entity-type";
 import * as artsType from "../types/arts-type";
 import * as timeUtils from "../time-utils";
@@ -54,7 +53,6 @@ export function mapAutocompleteSearchResults(result, type) {
     ),
     12
   );
-
   return { results: mapped };
 }
 
@@ -72,37 +70,7 @@ function mapAutocompleteSearchResultsForEntity(result, type, take) {
   );
 }
 
-export function mapBasicSearchResults(result, first) {
-  const hasSingleEntityType = result.responses.length === 1;
-  if (hasSingleEntityType) {
-    return mapSingleEntitySearchResults(result.responses[0], first);
-  }
-
-  const edgesList = result.responses.map(response =>
-    response.hits.hits.map(hit => ({
-      node: hit._source,
-      cursor: mapFromSortToCursor(hit.sort)
-    }))
-  );
-
-  const edges = _.take(looseInterleave.apply(null, edgesList), first);
-
-  return {
-    edges: edges.map(edge => ({
-      node: edge.node,
-      cursor: ""
-    })),
-    pageInfo: {
-      hasNextPage: false
-    }
-  };
-}
-
-export function mapEventAdvancedSearchResults(result, first) {
-  return mapSingleEntitySearchResults(result, first);
-}
-
-function mapSingleEntitySearchResults(result, first) {
+export function mapEntitySearchResults(result, first) {
   const edges = result.hits.hits.map(hit => ({
     node: hit._source,
     cursor: mapFromSortToCursor(hit.sort)
@@ -124,20 +92,10 @@ export function mapSitemapEventSearchResults(result) {
 
 export function mapEntityCountSearchResults(results) {
   return {
-    results: _
-      .zip(
-        [
-          entityType.EVENT,
-          entityType.EVENT_SERIES,
-          entityType.TALENT,
-          entityType.VENUE
-        ],
-        results.responses
-      )
-      .map(element => ({
-        entityType: element[0],
-        count: element[1].hits.total
-      }))
+    results: entityType.ALLOWED_VALUES.map(type => ({
+      entityType: type,
+      count: results.aggregations[type].doc_count || 0
+    }))
   };
 }
 

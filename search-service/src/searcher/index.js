@@ -11,21 +11,21 @@ export async function autocompleteSearch(params) {
 
 export async function basicSearch(params) {
   const searchParams = mapper.mapBasicSearchParams(params);
-  const searches = queryFactory.createBasicSearchSearches(searchParams);
-  const results = await esClient.multiSearch(searches);
-  return mapper.mapBasicSearchResults(results, searchParams.first);
+  const search = queryFactory.createBasicSearch(searchParams);
+  const results = await esClient.search(search);
+  return mapper.mapEntitySearchResults(results, searchParams.first);
 }
 
 export async function eventAdvancedSearch(params) {
   const searchParams = mapper.mapEventAdvancedSearchParams(params);
   const search = queryFactory.createEventAdvancedSearch(searchParams);
   const results = await esClient.search(search);
-  return mapper.mapEventAdvancedSearchResults(results, searchParams.first);
+  return mapper.mapEntitySearchResults(results, searchParams.first);
 }
 
 export async function entityCountSearch() {
-  const searches = queryFactory.createEntityCountSearches();
-  const results = await esClient.multiSearch(searches);
+  const search = queryFactory.createEntityCountSearch();
+  const results = await esClient.search(search);
   return mapper.mapEntityCountSearchResults(results);
 }
 

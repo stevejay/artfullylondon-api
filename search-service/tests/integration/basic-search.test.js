@@ -48,41 +48,80 @@ const BASIC_SEARCH_QUERY = `
 
 describe("basic search", () => {
   beforeAll(async () => {
-    await elasticsearch.createIndex(searchIndexType.TALENT);
-    await elasticsearch.createIndex(searchIndexType.VENUE);
-    await elasticsearch.createIndex(searchIndexType.EVENT);
-    await elasticsearch.createIndex(searchIndexType.EVENT_SERIES);
+    await elasticsearch.createIndex(searchIndexType.ENTITY);
     await elasticsearch.indexDocument(
-      searchIndexType.TALENT,
+      searchIndexType.ENTITY,
       testData.TALENT_ACTIVE_CARRIE_CRACKNELL
     );
     await elasticsearch.indexDocument(
-      searchIndexType.TALENT,
+      searchIndexType.ENTITY,
       testData.TALENT_ACTIVE_DAVE_DONNELLY
     );
     await elasticsearch.indexDocument(
-      searchIndexType.VENUE,
+      searchIndexType.ENTITY,
       testData.VENUE_ACTIVE_ALMEIDA_THEATRE
     );
     await elasticsearch.indexDocument(
-      searchIndexType.VENUE,
+      searchIndexType.ENTITY,
       testData.VENUE_DELETED_ARCOLA_THEATRE
     );
     await elasticsearch.indexDocument(
-      searchIndexType.EVENT_SERIES,
+      searchIndexType.ENTITY,
       testData.EVENT_SERIES_ACTIVE_BANG_SAID_THE_GUN
     );
     await elasticsearch.indexDocument(
-      searchIndexType.EVENT,
+      searchIndexType.ENTITY,
       testData.EVENT_ACTIVE_ANDY_WARHOL_EXHIBITION
     );
   });
 
   afterAll(async () => {
-    await elasticsearch.deleteIndex(searchIndexType.TALENT);
-    await elasticsearch.deleteIndex(searchIndexType.VENUE);
-    await elasticsearch.deleteIndex(searchIndexType.EVENT);
-    await elasticsearch.deleteIndex(searchIndexType.EVENT_SERIES);
+    await elasticsearch.deleteIndex(searchIndexType.ENTITY);
+  });
+
+  it("should perform a search of everything", async () => {
+    let result = await request({
+      uri: "http://localhost:3013/graphql",
+      json: true,
+      method: "POST",
+      body: {
+        query: BASIC_SEARCH_QUERY,
+        variables: { term: "carrie", first: 24 }
+      },
+      timeout: 30000,
+      resolveWithFullResponse: true
+    });
+
+    expect(result.headers).toEqual(
+      expect.objectContaining({
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*"
+      })
+    );
+
+    expect(result.body).toEqual({
+      data: {
+        basicSearch: {
+          edges: [
+            {
+              cursor: expect.stringContaining(
+                testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id
+              ),
+              node: {
+                entityType: entityType.TALENT,
+                id: testData.TALENT_ACTIVE_CARRIE_CRACKNELL.id,
+                status: statusType.ACTIVE,
+                name: "Carrie Cracknell",
+                commonRole: "Director"
+              }
+            }
+          ],
+          pageInfo: {
+            hasNextPage: false
+          }
+        }
+      }
+    });
   });
 
   it("should perform a search of talents", async () => {
