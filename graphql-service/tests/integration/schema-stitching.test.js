@@ -24,9 +24,8 @@ const DATA_SERVICE_RESPONSE = {
 
 const TAG_SERVICE_QUERY = `
 {
-  tags {
-    audience { label }
-    geo { label }
+  tags(tagType: GEO) {
+    nodes { label }
   }
 }
 `;
@@ -34,12 +33,11 @@ const TAG_SERVICE_QUERY = `
 const TAG_SERVICE_RESPONSE = {
   data: {
     tags: {
-      geo: [
+      nodes: [
         {
           label: "germany"
         }
-      ],
-      audience: []
+      ]
     }
   }
 };
