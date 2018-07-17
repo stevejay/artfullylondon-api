@@ -11,15 +11,12 @@ type TagDetail {
   label: String!
 }
 
-type TagSet {
-  medium: [TagDetail!]
-  style: [TagDetail!]
-  geo: [TagDetail!]
-  audience: [TagDetail!]
+type TagList {
+  nodes: [TagDetail!]!
 }
 
 type Query {
-  tags: TagSet!
+  tags(tagType: TagTypeEnum!): TagList
 }
 
 input CreateTagInput {
@@ -28,7 +25,7 @@ input CreateTagInput {
 }
 
 type CreateTagOutput {
-  tag: TagDetail
+  node: TagDetail
 }
 
 input DeleteTagInput {

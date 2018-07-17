@@ -27,42 +27,6 @@ describe("tag graphql querying", () => {
     mockJwksServer.stop();
   });
 
-  it("should support querying of all tags", async () => {
-    const result = await request({
-      uri: "http://localhost:3011/graphql",
-      json: true,
-      method: "POST",
-      headers: { Authorization: authUtils.createEditorAuthToken() },
-      body: { query: "{ tags { audience { label } geo { label } } }" },
-      timeout: 30000,
-      resolveWithFullResponse: true
-    });
-
-    expect(result.headers).toEqual(
-      expect.objectContaining({
-        "access-control-allow-credentials": "true",
-        "access-control-allow-origin": "*"
-      })
-    );
-
-    expect(result.body).toEqual({
-      data: {
-        tags: {
-          geo: [
-            {
-              label: "usa"
-            }
-          ],
-          audience: [
-            {
-              label: "families"
-            }
-          ]
-        }
-      }
-    });
-  });
-
   it("should support querying of tags by tag type", async () => {
     const result = await request({
       uri: "http://localhost:3011/graphql",
@@ -70,7 +34,7 @@ describe("tag graphql querying", () => {
       method: "POST",
       headers: { Authorization: authUtils.createEditorAuthToken() },
       body: {
-        query: "{ tags { geo { tagType, id , label } } }"
+        query: "{ tags(tagType: GEO) { nodes { tagType, id , label } } }"
       },
       timeout: 30000
     });
@@ -78,7 +42,7 @@ describe("tag graphql querying", () => {
     expect(result).toEqual({
       data: {
         tags: {
-          geo: [
+          nodes: [
             {
               tagType: tagType.GEO,
               id: "geo/usa",
