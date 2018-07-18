@@ -86,7 +86,9 @@ const SEARCH_SERVICE_RESPONSE = {
 const EVENT_SERVICE_QUERY = `
 {
   eventSeries(id: "aaaaa") {
-    notes
+    node {
+      notes
+    }
   }
 }
 `;
@@ -94,7 +96,9 @@ const EVENT_SERVICE_QUERY = `
 const EVENT_SERVICE_RESPONSE = {
   data: {
     eventSeries: {
-      notes: "Stand-up poetry"
+      node: {
+        notes: "Stand-up poetry"
+      }
     }
   }
 };

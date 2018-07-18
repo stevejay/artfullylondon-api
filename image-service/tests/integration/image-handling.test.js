@@ -80,7 +80,7 @@ describe("image handling", () => {
     await s3Utils.deleteBucket(RESIZED_BUCKET_NAME);
   });
 
-  it("should reject getting metadata for a non-existent image", async () => {
+  it("should return nothing when getting data for a non-existent image", async () => {
     const result = await request({
       uri: "http://localhost:3016/graphql",
       json: true,
@@ -95,13 +95,8 @@ describe("image handling", () => {
 
     expect(result).toEqual({
       data: {
-        image: null
-      },
-      errors: [
-        expect.objectContaining({
-          message: expect.stringContaining("Entity Not Found")
-        })
-      ]
+        image: { node: null }
+      }
     });
   });
 

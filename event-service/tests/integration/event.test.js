@@ -59,7 +59,7 @@ describe("event", () => {
       timeout: 14000
     });
 
-    testVenueId = response.data.createVenue.venue.id;
+    testVenueId = response.data.createVenue.node.id;
 
     response = await request({
       uri: "http://localhost:3014/graphql",
@@ -73,7 +73,7 @@ describe("event", () => {
       timeout: 14000
     });
 
-    testTalentId = response.data.createTalent.talent.id;
+    testTalentId = response.data.createTalent.node.id;
 
     response = await request({
       uri: "http://localhost:3014/graphql",
@@ -87,7 +87,7 @@ describe("event", () => {
       timeout: 14000
     });
 
-    testEventSeriesId = response.data.createEventSeries.eventSeries.id;
+    testEventSeriesId = response.data.createEventSeries.node.id;
 
     testEventBody = testData.createNewEventBody(
       testVenueId,
@@ -159,7 +159,7 @@ describe("event", () => {
       }
     });
 
-    testEventId = response.data.createEvent.event.id;
+    testEventId = response.data.createEvent.node.id;
 
     // Allow time for the SNS search index update message to be processed.
     await delay(5000);
@@ -193,17 +193,19 @@ describe("event", () => {
 
     expect(response).toEqual({
       data: {
-        event: expect.objectContaining({
-          id: testEventId,
-          summary: "An exhibition of paintings by Zaha Hadid",
-          venue: {
-            id: testVenueId
-          },
-          eventSeries: {
-            id: testEventSeriesId
-          },
-          talents: [{ talent: { id: testTalentId } }]
-        })
+        event: {
+          node: expect.objectContaining({
+            id: testEventId,
+            summary: "An exhibition of paintings by Zaha Hadid",
+            venue: {
+              id: testVenueId
+            },
+            eventSeries: {
+              id: testEventSeriesId
+            },
+            talents: [{ talent: { id: testTalentId } }]
+          })
+        }
       }
     });
   });
@@ -223,14 +225,16 @@ describe("event", () => {
 
     expect(response).toEqual({
       data: {
-        eventForEdit: expect.objectContaining({
-          id: testEventId,
-          summary: "An exhibition of paintings by Zaha Hadid",
-          version: 1,
-          venueId: testVenueId,
-          eventSeriesId: testEventSeriesId,
-          talents: [{ id: testTalentId }]
-        })
+        eventForEdit: {
+          node: expect.objectContaining({
+            id: testEventId,
+            summary: "An exhibition of paintings by Zaha Hadid",
+            version: 1,
+            venueId: testVenueId,
+            eventSeriesId: testEventSeriesId,
+            talents: [{ id: testTalentId }]
+          })
+        }
       }
     });
   });
@@ -323,13 +327,8 @@ describe("event", () => {
 
     expect(response).toEqual({
       data: {
-        event: null
-      },
-      errors: [
-        expect.objectContaining({
-          message: expect.stringContaining("Not Found")
-        })
-      ]
+        event: { node: null }
+      }
     });
   });
 

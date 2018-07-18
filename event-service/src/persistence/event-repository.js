@@ -7,25 +7,12 @@ import { VENUE_TABLE_NAME } from "./venue-repository";
 
 export const EVENT_TABLE_NAME = process.env.SERVERLESS_EVENT_TABLE_NAME;
 
-export async function get(id, consistentRead) {
-  return await entityRepository.get(EVENT_TABLE_NAME, id, consistentRead);
+export async function tryGet(id, consistentRead) {
+  return await entityRepository.tryGet(EVENT_TABLE_NAME, id, consistentRead);
 }
 
-export async function getMulti(ids) {
-  const response = await dynamodb.batchGet({
-    RequestItems: {
-      [EVENT_TABLE_NAME]: {
-        Keys: ids.map(id => ({ id })),
-        ProjectionExpression:
-          "id, #s, #n, eventType, occurrenceType, " +
-          "costType, dateFrom, dateTo, summary, " +
-          "performancesOverrides, images, venueId",
-        ExpressionAttributeNames: { "#n": "name", "#s": "status" }
-      }
-    }
-  });
-
-  return response.Responses[EVENT_TABLE_NAME];
+export async function get(id, consistentRead) {
+  return await entityRepository.get(EVENT_TABLE_NAME, id, consistentRead);
 }
 
 export async function getEventIdsByVenue(venueId) {

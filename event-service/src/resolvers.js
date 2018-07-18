@@ -21,28 +21,28 @@ export default {
   ShortTime,
   Query: {
     async talent(parent, params) {
-      return await talentService.get(params);
+      return { node: await talentService.get(params) };
     },
     async talentForEdit(parent, params) {
-      return await talentService.getForEdit(params);
+      return { node: await talentService.getForEdit(params) };
     },
     async venue(parent, params) {
-      return await venueService.get(params);
+      return { node: await venueService.get(params) };
     },
     async venueForEdit(parent, params) {
-      return await venueService.getForEdit(params);
+      return { node: await venueService.getForEdit(params) };
     },
     async eventSeries(parent, params) {
-      return await eventSeriesService.get(params);
+      return { node: await eventSeriesService.get(params) };
     },
     async eventSeriesForEdit(parent, params) {
-      return await eventSeriesService.getForEdit(params);
+      return { node: await eventSeriesService.getForEdit(params) };
     },
     async event(parent, params) {
-      return await eventService.get(params);
+      return { node: await eventService.get(params) };
     },
     async eventForEdit(parent, params) {
-      return await eventService.getForEdit(params);
+      return { node: await eventService.getForEdit(params) };
     }
   },
   Mutation: {

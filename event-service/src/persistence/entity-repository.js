@@ -22,6 +22,14 @@ export async function write(tableName, entity) {
   }
 }
 
+export function tryGet(tableName, id, consistentRead) {
+  return dynamodb.tryGet({
+    TableName: tableName,
+    Key: { id: id },
+    ConsistentRead: !!consistentRead
+  });
+}
+
 export function get(tableName, id, consistentRead) {
   return dynamodb.get({
     TableName: tableName,

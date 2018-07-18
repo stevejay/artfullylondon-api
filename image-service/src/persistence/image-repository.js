@@ -5,7 +5,7 @@ const BASIC_REQUEST = {
 };
 
 export async function getImage(imageId) {
-  return await dynamodb.get({ ...BASIC_REQUEST, Key: { id: imageId } });
+  return await dynamodb.tryGet({ ...BASIC_REQUEST, Key: { id: imageId } });
 }
 
 export async function validateDoesNotExist(imageId) {

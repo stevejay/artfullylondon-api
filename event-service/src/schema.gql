@@ -417,6 +417,30 @@ type EventForEdit {
   eventSeriesId: ID
 }
 
+type TalentResult {
+  node: Talent
+}
+
+type TalentForEditResult {
+  node: TalentForEdit
+}
+
+type VenueResult {
+  node: Venue
+}
+
+type VenueForEditResult {
+  node: VenueForEdit
+}
+
+type EventSeriesResult {
+  node: EventSeries
+}
+
+type EventSeriesForEditResult {
+  node: EventSeriesForEdit
+}
+
 type EventResult {
   node: Event
 }
@@ -426,14 +450,14 @@ type EventForEditResult {
 }
 
 type Query {
-  talent(id: ID!): Talent
-  talentForEdit(id: ID!): TalentForEdit
-  venue(id: ID!): Venue
-  venueForEdit(id: ID!): VenueForEdit
-  eventSeries(id: ID!): EventSeries
-  eventSeriesForEdit(id: ID!): EventSeriesForEdit
-  event(id: ID!): Event
-  eventForEdit(id: ID!): EventForEdit
+  talent(id: ID!): TalentResult
+  talentForEdit(id: ID!): TalentForEditResult
+  venue(id: ID!): VenueResult
+  venueForEdit(id: ID!): VenueForEditResult
+  eventSeries(id: ID!): EventSeriesResult
+  eventSeriesForEdit(id: ID!): EventSeriesForEditResult
+  event(id: ID!): EventResult
+  eventForEdit(id: ID!): EventForEditResult
 }
 
 input LinkInput {

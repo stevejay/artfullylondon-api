@@ -7,12 +7,12 @@ import * as eventRepository from "../persistence/event-repository";
 import * as entityType from "../types/entity-type";
 
 export async function get(params) {
-  const dbEventSeries = await eventSeriesRepository.get(params.id, false);
-  return mapper.mapResponse(dbEventSeries);
+  const dbEventSeries = await eventSeriesRepository.tryGet(params.id, false);
+  return dbEventSeries ? mapper.mapResponse(dbEventSeries) : null;
 }
 
 export async function getForEdit(params) {
-  return await eventSeriesRepository.get(params.id, true);
+  return await eventSeriesRepository.tryGet(params.id, true);
 }
 
 export async function createOrUpdate(params) {

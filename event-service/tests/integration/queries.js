@@ -1,9 +1,11 @@
 export const EVENT_SERIES_QUERY = `
 query GetEventSeries($id: ID!) {
   eventSeries(id: $id) {
-    id
-    name
-    summary
+    node {
+      id
+      name
+      summary
+    }
   }
 }
 `;
@@ -11,10 +13,12 @@ query GetEventSeries($id: ID!) {
 export const EVENT_SERIES_FOR_EDIT_QUERY = `
 query GetEventSeriesForEdit($id: ID!) {
   eventSeriesForEdit(id: $id) {
-    id
-    name
-    summary
-    version
+    node {
+      id
+      name
+      summary
+      version
+    }
   }
 }
 `;
@@ -98,18 +102,20 @@ mutation UpdateEventSeries(
 export const EVENT_QUERY = `
   query GetEvent($id: ID!) {
     event(id: $id) {
-      id
-      name
-      summary
-      venue {
+      node {
         id
-      }
-      eventSeries {
-        id
-      }
-      talents {
-        talent {
+        name
+        summary
+        venue {
           id
+        }
+        eventSeries {
+          id
+        }
+        talents {
+          talent {
+            id
+          }
         }
       }
     }
@@ -119,14 +125,16 @@ export const EVENT_QUERY = `
 export const EVENT_FOR_EDIT_QUERY = `
   query GetEventForEdit($id: ID!) {
     eventForEdit(id: $id) {
-      id
-      name
-      summary
-      version
-      venueId
-      eventSeriesId
-      talents {
+      node {
         id
+        name
+        summary
+        version
+        venueId
+        eventSeriesId
+        talents {
+          id
+        }
       }
     }
   }
@@ -365,10 +373,12 @@ export const UPDATE_EVENT_MUTATION = `
 export const TALENT_QUERY = `
   query GetTalent($id: ID!) {
     talent(id: $id) {
-      id
-      firstNames
-      lastName
-      commonRole
+      node {
+        id
+        firstNames
+        lastName
+        commonRole
+      }
     }
   }
 `;
@@ -376,11 +386,13 @@ export const TALENT_QUERY = `
 export const TALENT_FOR_EDIT_QUERY = `
   query GetTalentForEdit($id: ID!) {
     talentForEdit(id: $id) {
-      id
-      firstNames
-      lastName
-      commonRole
-      version
+      node {
+        id
+        firstNames
+        lastName
+        commonRole
+        version
+      }
     }
   }
 `;
@@ -466,10 +478,12 @@ export const UPDATE_TALENT_MUTATION = `
 export const VENUE_QUERY = `
   query GetVenue($id: ID!) {
     venue(id: $id) {
-      id
-      name
-      venueType
-      postcode
+      node {
+        id
+        name
+        venueType
+        postcode
+      }
     }
   }
 `;
@@ -477,11 +491,13 @@ export const VENUE_QUERY = `
 export const VENUE_FOR_EDIT_QUERY = `
   query GetVenueForEdit($id: ID!) {
     venueForEdit(id: $id) {
-      id
-      name
-      venueType
-      postcode
-      version
+      node {
+        id
+        name
+        venueType
+        postcode
+        version
+      }
     }
   }
 `;

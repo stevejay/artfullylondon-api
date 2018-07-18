@@ -91,7 +91,7 @@ describe("venue", () => {
       }
     });
 
-    testVenueId = response.data.createVenue.venue.id;
+    testVenueId = response.data.createVenue.node.id;
 
     await delay(3000);
     expect(snsListener.receivedMessages).toEqual([
@@ -121,11 +121,13 @@ describe("venue", () => {
 
     expect(response).toEqual({
       data: {
-        venue: expect.objectContaining({
-          id: testVenueId,
-          postcode: "N1 1TA",
-          venueType: venueType.THEATRE
-        })
+        venue: {
+          node: expect.objectContaining({
+            id: testVenueId,
+            postcode: "N1 1TA",
+            venueType: venueType.THEATRE
+          })
+        }
       }
     });
   });
@@ -145,12 +147,14 @@ describe("venue", () => {
 
     expect(response).toEqual({
       data: {
-        venueForEdit: expect.objectContaining({
-          id: testVenueId,
-          postcode: "N1 1TA",
-          venueType: venueType.THEATRE,
-          version: 1
-        })
+        venueForEdit: {
+          node: expect.objectContaining({
+            id: testVenueId,
+            postcode: "N1 1TA",
+            venueType: venueType.THEATRE,
+            version: 1
+          })
+        }
       }
     });
   });
@@ -244,13 +248,8 @@ describe("venue", () => {
 
     expect(response).toEqual({
       data: {
-        venue: null
-      },
-      errors: [
-        expect.objectContaining({
-          message: expect.stringContaining("Not Found")
-        })
-      ]
+        venue: { node: null }
+      }
     });
   });
 });
