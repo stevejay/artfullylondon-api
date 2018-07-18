@@ -1,5 +1,4 @@
 import * as tagRepository from "./persistence/tag-repository";
-import * as tagType from "./tag-type";
 import * as validator from "./validator";
 import * as normaliser from "./normaliser";
 import * as mapper from "./mapper";
@@ -7,12 +6,9 @@ import * as authorizer from "./authorizer";
 
 export default {
   Query: {
-    tags: () => ({
-      medium: () => tagRepository.getByTagType(tagType.MEDIUM),
-      style: () => tagRepository.getByTagType(tagType.STYLE),
-      audience: () => tagRepository.getByTagType(tagType.AUDIENCE),
-      geo: () => tagRepository.getByTagType(tagType.GEO)
-    })
+    async tags(__, request) {
+      return { nodes: await tagRepository.getByTagType(request.tagType) };
+    }
   },
   Mutation: {
     async createTag(__, request, context) {
@@ -21,7 +17,7 @@ export default {
       validator.validateCreateTagRequest(tag);
       const dbTag = mapper.mapCreateTagRequest(tag);
       await tagRepository.createTag(dbTag);
-      return { tag: dbTag };
+      return { node: dbTag };
     },
     async deleteTag(__, request, context) {
       authorizer.checkUserIsAuthorizedForMutation(context);

@@ -25,7 +25,7 @@ describe("tag graphql querying", () => {
       headers: { Authorization: authUtils.createEditorAuthToken() },
       body: {
         query:
-          'mutation { createTag(input: { tagType: GEO, label: "USA" }) { tag { tagType, id, label } } }'
+          'mutation { createTag(input: { tagType: GEO, label: "USA" }) { node { tagType, id, label } } }'
       },
       timeout: 30000
     });
@@ -33,7 +33,7 @@ describe("tag graphql querying", () => {
     expect(result).toEqual({
       data: {
         createTag: {
-          tag: {
+          node: {
             id: "geo/usa",
             label: "usa",
             tagType: tagType.GEO
@@ -51,7 +51,7 @@ describe("tag graphql querying", () => {
       headers: { Authorization: authUtils.createReaderAuthToken() },
       body: {
         query:
-          'mutation { createTag(input: { tagType: GEO, label: "Mexico" }) { tag { tagType, id, label } } }'
+          'mutation { createTag(input: { tagType: GEO, label: "Mexico" }) { node { tagType, id, label } } }'
       },
       timeout: 30000
     });
