@@ -5,7 +5,10 @@ import * as mapper from "./mapper";
 import * as notifier from "../notifier";
 
 export async function get(params) {
-  let dbEvent = await eventRepository.get(params.id, false);
+  let dbEvent = await eventRepository.tryGet(params.id, false);
+  if (!dbEvent) {
+    return null;
+  }
   const referencedEntities = await eventRepository.getReferencedEntities(
     dbEvent,
     false
@@ -15,7 +18,7 @@ export async function get(params) {
 }
 
 export async function getForEdit(params) {
-  return await eventRepository.get(params.id, true);
+  return await eventRepository.tryGet(params.id, true);
 }
 
 export async function createOrUpdate(params) {

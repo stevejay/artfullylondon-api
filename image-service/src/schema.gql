@@ -5,7 +5,7 @@ enum ImageTypeEnum {
   VENUE
 }
 
-type ImageDetails {
+type Image {
   id: ID!
   imageType: ImageTypeEnum!
   sourceUrl: String!
@@ -24,7 +24,7 @@ type ImageIteration {
 }
 
 type ImageResult {
-  image: ImageDetails
+  node: Image
 }
 
 type Query {
@@ -38,7 +38,7 @@ input CreateTagInput {
 }
 
 type AddImageOutput {
-  image: ImageDetails
+  node: Image
 }
 
 type ReprocessAllImagesOutput {

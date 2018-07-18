@@ -8,12 +8,12 @@ import * as notifier from "../notifier";
 import * as entityType from "../types/entity-type";
 
 export async function get(params) {
-  const dbVenue = await venueRepository.get(params.id, false);
-  return mapper.mapResponse(dbVenue);
+  const dbVenue = await venueRepository.tryGet(params.id, false);
+  return dbVenue ? mapper.mapResponse(dbVenue) : null;
 }
 
 export async function getForEdit(params) {
-  return await venueRepository.get(params.id, true);
+  return await venueRepository.tryGet(params.id, true);
 }
 
 export async function createOrUpdate(params) {

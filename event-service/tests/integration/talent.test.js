@@ -82,7 +82,7 @@ describe("talent", () => {
     expect(response).toEqual({
       data: {
         createTalent: {
-          talent: expect.objectContaining({
+          node: expect.objectContaining({
             firstNames: "Byron",
             commonRole: "Poet"
           })
@@ -90,7 +90,7 @@ describe("talent", () => {
       }
     });
 
-    testTalentId = response.data.createTalent.talent.id;
+    testTalentId = response.data.createTalent.node.id;
 
     await delay(3000);
     expect(snsListener.receivedMessages).toEqual([
@@ -120,11 +120,13 @@ describe("talent", () => {
 
     expect(response).toEqual({
       data: {
-        talent: expect.objectContaining({
-          id: testTalentId,
-          firstNames: "Byron",
-          commonRole: "Poet"
-        })
+        talent: {
+          node: expect.objectContaining({
+            id: testTalentId,
+            firstNames: "Byron",
+            commonRole: "Poet"
+          })
+        }
       }
     });
   });
@@ -144,12 +146,14 @@ describe("talent", () => {
 
     expect(response).toEqual({
       data: {
-        talentForEdit: expect.objectContaining({
-          id: testTalentId,
-          firstNames: "Byron",
-          commonRole: "Poet",
-          version: 1
-        })
+        talentForEdit: {
+          node: expect.objectContaining({
+            id: testTalentId,
+            firstNames: "Byron",
+            commonRole: "Poet",
+            version: 1
+          })
+        }
       }
     });
   });
@@ -205,7 +209,7 @@ describe("talent", () => {
     expect(response).toEqual({
       data: {
         updateTalent: {
-          talent: expect.objectContaining({
+          node: expect.objectContaining({
             firstNames: "Byron New",
             commonRole: "Poet"
           })
@@ -241,13 +245,8 @@ describe("talent", () => {
 
     expect(response).toEqual({
       data: {
-        talent: null
-      },
-      errors: [
-        expect.objectContaining({
-          message: expect.stringContaining("Not Found")
-        })
-      ]
+        talent: { node: null }
+      }
     });
   });
 });

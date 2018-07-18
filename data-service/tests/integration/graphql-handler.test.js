@@ -5,16 +5,18 @@ describe("graphql handler", () => {
   it("should return data", async () => {
     const query = `
     {
-      heroImage {
-        name
-        dominantColor
-        label
+      heroImages {
+        nodes {
+          name
+          dominantColor
+          label
+        }
       }
       namedClosures {
-        BankHolidays
-        EasterSunday
-        RoshHashanah
-        YomKippur
+        lists {
+          type
+          dates
+        }
       }
     }`;
 
@@ -36,11 +38,15 @@ describe("graphql handler", () => {
 
     expect(result.body).toEqual({
       data: expect.objectContaining({
-        heroImage: expect.objectContaining({
-          name: "shoreditch-graffiti",
-          dominantColor: "#2e2d27",
-          label: "Graffiti in Shoreditch"
-        })
+        heroImages: {
+          nodes: expect.arrayContaining([
+            {
+              name: "shoreditch-graffiti",
+              dominantColor: "#2e2d27",
+              label: "Graffiti in Shoreditch"
+            }
+          ])
+        }
       })
     });
   });

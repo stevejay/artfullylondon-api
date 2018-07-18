@@ -4,20 +4,26 @@ jest.setTimeout(60000);
 
 const DATA_SERVICE_QUERY = `
 {
-  heroImage {
-    name
-    dominantColor
-    label
+  heroImages {
+    nodes {
+      name
+      dominantColor
+      label
+    }
   }
 }
 `;
 
 const DATA_SERVICE_RESPONSE = {
   data: {
-    heroImage: {
-      name: "shoreditch-graffiti",
-      dominantColor: "#2e2d27",
-      label: "Graffiti in Shoreditch"
+    heroImages: {
+      nodes: [
+        {
+          name: "shoreditch-graffiti",
+          dominantColor: "#2e2d27",
+          label: "Graffiti in Shoreditch"
+        }
+      ]
     }
   }
 };
@@ -80,7 +86,9 @@ const SEARCH_SERVICE_RESPONSE = {
 const EVENT_SERVICE_QUERY = `
 {
   eventSeries(id: "aaaaa") {
-    notes
+    node {
+      notes
+    }
   }
 }
 `;
@@ -88,7 +96,9 @@ const EVENT_SERVICE_QUERY = `
 const EVENT_SERVICE_RESPONSE = {
   data: {
     eventSeries: {
-      notes: "Stand-up poetry"
+      node: {
+        notes: "Stand-up poetry"
+      }
     }
   }
 };
@@ -96,7 +106,7 @@ const EVENT_SERVICE_RESPONSE = {
 const IMAGE_SERVICE_QUERY = `
 {
   image(id: "aaaa") {
-    image {
+    node {
       width
     }
   }
@@ -106,7 +116,7 @@ const IMAGE_SERVICE_QUERY = `
 const IMAGE_SERVICE_RESPONSE = {
   data: {
     image: {
-      image: {
+      node: {
         width: 250
       }
     }

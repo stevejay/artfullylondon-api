@@ -17,12 +17,12 @@ export async function addImage(request) {
   const imageData = await imageProcessingService.processImage(image);
   const dbImage = mapper.mapImageDataToDb(imageData);
   await imageRepository.createImage(dbImage);
-  return { image: mapper.mapImageToResponse(dbImage) };
+  return { node: mapper.mapImageToResponse(dbImage) };
 }
 
 export async function getImageData(params) {
   const dbImage = await imageRepository.getImage(params.id);
-  return { image: mapper.mapImageToResponse(dbImage) };
+  return { node: dbImage ? mapper.mapImageToResponse(dbImage) : null };
 }
 
 export async function startReprocessingImages() {
@@ -39,11 +39,16 @@ export async function reprocessNextImage(message) {
   const nextImage = await imageRepository.getNextImage(message.lastId);
   if (nextImage) {
     try {
-      let dbImage = await imageRepository.getImage(nextImage.id);
+      const dbImage = await imageRepository.getImage(nextImage.id);
+      if (!dbImage) {
+        throw new Error("Not Found");
+      }
       if (dbImage.resizeVersion !== constants.CURRENT_IMAGE_RESIZE_VERSION) {
-        const image = await imageProcessingService.reprocessImage(dbImage);
-        dbImage = mapper.mapImageDataToDb(image);
-        await imageRepository.updateImage(dbImage);
+        const updatedImage = await imageProcessingService.reprocessImage(
+          dbImage
+        );
+        const updatedDbImage = mapper.mapImageDataToDb(updatedImage);
+        await imageRepository.updateImage(updatedDbImage);
       }
     } catch (err) {
       await iterationLogRepository.addErrorToLog(

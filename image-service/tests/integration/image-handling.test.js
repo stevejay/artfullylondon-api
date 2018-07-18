@@ -17,7 +17,7 @@ const IMAGE_TABLE_NAME = "artfullylondon-development-image";
 const IMAGE_QUERY = `
   query Image($id: ID!) {
     image(id: $id) {
-      image {
+      node {
         id
         imageType
         sourceUrl
@@ -36,7 +36,7 @@ const IMAGE_QUERY = `
 const IMAGE_MUTATION = `
   mutation AddImage($id: ID!, $type: ImageTypeEnum!, $url: String!) {
     addImage(input: { id: $id, type: $type, url: $url }) {
-      image {
+      node {
         id
         imageType
         sourceUrl
@@ -80,7 +80,7 @@ describe("image handling", () => {
     await s3Utils.deleteBucket(RESIZED_BUCKET_NAME);
   });
 
-  it("should reject getting metadata for a non-existent image", async () => {
+  it("should return nothing when getting data for a non-existent image", async () => {
     const result = await request({
       uri: "http://localhost:3016/graphql",
       json: true,
@@ -95,13 +95,8 @@ describe("image handling", () => {
 
     expect(result).toEqual({
       data: {
-        image: null
-      },
-      errors: [
-        expect.objectContaining({
-          message: expect.stringContaining("Entity Not Found")
-        })
-      ]
+        image: { node: null }
+      }
     });
   });
 
@@ -139,7 +134,7 @@ describe("image handling", () => {
     expect(result).toEqual({
       data: {
         addImage: {
-          image: expect.objectContaining(expectedImageData)
+          node: expect.objectContaining(expectedImageData)
         }
       }
     });
@@ -159,7 +154,7 @@ describe("image handling", () => {
     expect(result).toEqual({
       data: {
         image: {
-          image: expect.objectContaining(expectedImageData)
+          node: expect.objectContaining(expectedImageData)
         }
       }
     });

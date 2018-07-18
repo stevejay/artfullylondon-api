@@ -7,12 +7,12 @@ import * as notifier from "../notifier";
 import * as entityType from "../types/entity-type";
 
 export async function get(params) {
-  const dbTalent = await talentRepository.get(params.id, false);
-  return mapper.mapResponse(dbTalent);
+  const dbTalent = await talentRepository.tryGet(params.id, false);
+  return dbTalent ? mapper.mapResponse(dbTalent) : null;
 }
 
 export async function getForEdit(params) {
-  return await talentRepository.get(params.id, true);
+  return await talentRepository.tryGet(params.id, true);
 }
 
 export async function createOrUpdate(params) {

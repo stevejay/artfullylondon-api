@@ -82,14 +82,14 @@ describe("event series", () => {
     expect(response).toEqual({
       data: {
         createEventSeries: {
-          eventSeries: expect.objectContaining({
+          node: expect.objectContaining({
             summary: "Stand-up poetry"
           })
         }
       }
     });
 
-    testEventSeriesId = response.data.createEventSeries.eventSeries.id;
+    testEventSeriesId = response.data.createEventSeries.node.id;
 
     await delay(3000);
     expect(snsListener.receivedMessages).toEqual([
@@ -119,10 +119,12 @@ describe("event series", () => {
 
     expect(response).toEqual({
       data: {
-        eventSeries: expect.objectContaining({
-          id: testEventSeriesId,
-          summary: "Stand-up poetry"
-        })
+        eventSeries: {
+          node: expect.objectContaining({
+            id: testEventSeriesId,
+            summary: "Stand-up poetry"
+          })
+        }
       }
     });
   });
@@ -142,11 +144,13 @@ describe("event series", () => {
 
     expect(response).toEqual({
       data: {
-        eventSeriesForEdit: expect.objectContaining({
-          id: testEventSeriesId,
-          summary: "Stand-up poetry",
-          version: 1
-        })
+        eventSeriesForEdit: {
+          node: expect.objectContaining({
+            id: testEventSeriesId,
+            summary: "Stand-up poetry",
+            version: 1
+          })
+        }
       }
     });
   });
@@ -202,7 +206,7 @@ describe("event series", () => {
     expect(response).toEqual({
       data: {
         updateEventSeries: {
-          eventSeries: expect.objectContaining({
+          node: expect.objectContaining({
             id: testEventSeriesId,
             summary: "Stand-up poetry New"
           })
@@ -238,13 +242,8 @@ describe("event series", () => {
 
     expect(response).toEqual({
       data: {
-        eventSeries: null
-      },
-      errors: [
-        expect.objectContaining({
-          message: expect.stringContaining("Not Found")
-        })
-      ]
+        eventSeries: { node: null }
+      }
     });
   });
 });
