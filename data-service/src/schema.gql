@@ -6,14 +6,20 @@ type HeroImage {
   label: String!
 }
 
-type NamedClosuresSet {
-  BankHolidays: [IsoShortDate!]!
-  EasterSunday: [IsoShortDate!]!
-  RoshHashanah: [IsoShortDate!]!
-  YomKippur: [IsoShortDate!]!
+type HeroImagesResult {
+  nodes: [HeroImage!]!
+}
+
+type NamedClosureList {
+  type: String!
+  dates: [IsoShortDate!]!
+}
+
+type NamesClosuresResult {
+  lists: [NamedClosureList!]!
 }
 
 type Query {
-  heroImage: HeroImage!
-  namedClosures: NamedClosuresSet!
+  heroImages: HeroImagesResult
+  namedClosures: NamesClosuresResult
 }

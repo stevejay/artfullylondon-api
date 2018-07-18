@@ -83,7 +83,7 @@ describe("venue", () => {
     expect(response).toEqual({
       data: {
         createVenue: {
-          venue: expect.objectContaining({
+          node: expect.objectContaining({
             postcode: "N1 1TA",
             venueType: venueType.THEATRE
           })
@@ -206,7 +206,7 @@ describe("venue", () => {
     expect(response).toEqual({
       data: {
         updateVenue: {
-          venue: expect.objectContaining({
+          node: expect.objectContaining({
             id: testVenueId,
             postcode: "N8 0KL",
             venueType: venueType.THEATRE

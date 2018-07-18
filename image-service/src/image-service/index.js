@@ -17,12 +17,12 @@ export async function addImage(request) {
   const imageData = await imageProcessingService.processImage(image);
   const dbImage = mapper.mapImageDataToDb(imageData);
   await imageRepository.createImage(dbImage);
-  return { image: mapper.mapImageToResponse(dbImage) };
+  return { node: mapper.mapImageToResponse(dbImage) };
 }
 
 export async function getImageData(params) {
   const dbImage = await imageRepository.getImage(params.id);
-  return { image: mapper.mapImageToResponse(dbImage) };
+  return { node: mapper.mapImageToResponse(dbImage) };
 }
 
 export async function startReprocessingImages() {

@@ -17,7 +17,7 @@ const IMAGE_TABLE_NAME = "artfullylondon-development-image";
 const IMAGE_QUERY = `
   query Image($id: ID!) {
     image(id: $id) {
-      image {
+      node {
         id
         imageType
         sourceUrl
@@ -36,7 +36,7 @@ const IMAGE_QUERY = `
 const IMAGE_MUTATION = `
   mutation AddImage($id: ID!, $type: ImageTypeEnum!, $url: String!) {
     addImage(input: { id: $id, type: $type, url: $url }) {
-      image {
+      node {
         id
         imageType
         sourceUrl
@@ -139,7 +139,7 @@ describe("image handling", () => {
     expect(result).toEqual({
       data: {
         addImage: {
-          image: expect.objectContaining(expectedImageData)
+          node: expect.objectContaining(expectedImageData)
         }
       }
     });
@@ -159,7 +159,7 @@ describe("image handling", () => {
     expect(result).toEqual({
       data: {
         image: {
-          image: expect.objectContaining(expectedImageData)
+          node: expect.objectContaining(expectedImageData)
         }
       }
     });

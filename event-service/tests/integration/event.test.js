@@ -145,7 +145,7 @@ describe("event", () => {
     expect(response).toEqual({
       data: {
         createEvent: {
-          event: expect.objectContaining({
+          node: expect.objectContaining({
             summary: "An exhibition of paintings by Zaha Hadid",
             venue: {
               id: testVenueId
@@ -286,7 +286,7 @@ describe("event", () => {
     expect(response).toEqual({
       data: {
         updateEvent: {
-          event: expect.objectContaining({
+          node: expect.objectContaining({
             id: testEventId,
             summary: "New summary"
           })

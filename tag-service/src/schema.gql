@@ -11,12 +11,12 @@ type TagDetail {
   label: String!
 }
 
-type TagList {
+type TagsResult {
   nodes: [TagDetail!]!
 }
 
 type Query {
-  tags(tagType: TagTypeEnum!): TagList
+  tags(tagType: TagTypeEnum!): TagsResult
 }
 
 input CreateTagInput {

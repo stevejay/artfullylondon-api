@@ -110,21 +110,26 @@ enum BookingTypeEnum {
   REQUIRED_FOR_NON_MEMBERS
 }
 
-type Link {
+type EntityLink {
   type: LinkTypeEnum!
   url: String!
 }
 
-type Image {
+type EntityImage {
   id: ID!
   ratio: Float!
   copyright: String
   dominantColor: String
 }
 
-type Tag {
+type EntityTag {
   id: ID!
   label: String!
+}
+
+type EntityReview {
+  source: String!
+  rating: Int!
 }
 
 type DayOpeningTime {
@@ -160,7 +165,7 @@ type DatePerformance {
 type SpecialPerformance {
   date: IsoShortDate!
   at: ShortTime!
-  audienceTags: [Tag!]
+  audienceTags: [EntityTag!]
 }
 
 type DateClosedTimeAt {
@@ -172,7 +177,7 @@ type SpecialOpeningTime {
   date: IsoShortDate!
   from: ShortTime!
   to: ShortTime!
-  audienceTags: [Tag!]
+  audienceTags: [EntityTag!]
 }
 
 type TimesRange {
@@ -182,19 +187,14 @@ type TimesRange {
   label: String!
 }
 
-type Review {
-  source: String!
-  rating: Int!
-}
-
 type Talent {
   id: ID!
   status: StatusTypeEnum!
-  links: [Link!]
-  images: [Image!]
+  links: [EntityLink!]
+  images: [EntityImage!]
   weSay: String
   notes: String
-  mainImage: Image
+  mainImage: EntityImage
   description: String
   descriptionCredit: String
   firstNames: String
@@ -207,8 +207,8 @@ type TalentForEdit {
   id: ID!
   status: StatusTypeEnum!
   version: Int!
-  links: [Link!]
-  images: [Image!]
+  links: [EntityLink!]
+  images: [EntityImage!]
   weSay: String
   notes: String
   description: String
@@ -234,11 +234,11 @@ type EventTalentForEdit {
 type Venue {
   id: ID!
   status: StatusTypeEnum!
-  links: [Link!]
-  images: [Image!]
+  links: [EntityLink!]
+  images: [EntityImage!]
   weSay: String
   notes: String
-  mainImage: Image
+  mainImage: EntityImage
   description: String
   descriptionCredit: String
   name: String!
@@ -263,8 +263,8 @@ type VenueForEdit {
   id: ID!
   status: StatusTypeEnum!
   version: Int!
-  links: [Link!]
-  images: [Image!]
+  links: [EntityLink!]
+  images: [EntityImage!]
   weSay: String
   notes: String
   description: String
@@ -290,11 +290,11 @@ type VenueForEdit {
 type EventSeries {
   id: ID!
   status: StatusTypeEnum!
-  links: [Link!]
-  images: [Image!]
+  links: [EntityLink!]
+  images: [EntityImage!]
   weSay: String
   notes: String
-  mainImage: Image
+  mainImage: EntityImage
   description: String
   descriptionCredit: String
   name: String!
@@ -307,8 +307,8 @@ type EventSeriesForEdit {
   id: ID!
   status: StatusTypeEnum!
   version: Int!
-  links: [Link!]
-  images: [Image!]
+  links: [EntityLink!]
+  images: [EntityImage!]
   weSay: String
   notes: String
   description: String
@@ -322,11 +322,11 @@ type EventSeriesForEdit {
 type Event {
   id: ID!
   status: StatusTypeEnum!
-  links: [Link!]
-  images: [Image!]
+  links: [EntityLink!]
+  images: [EntityImage!]
   weSay: String
   notes: String
-  mainImage: Image
+  mainImage: EntityImage
   description: String
   descriptionCredit: String
   name: String!
@@ -358,11 +358,11 @@ type Event {
   additionalOpeningTimes: [DateOpeningTime!]
   specialOpeningTimes: [SpecialOpeningTime!]
   openingTimesClosures: [DateClosedTimeRange!]
-  audienceTags: [Tag!]
-  mediumTags: [Tag!]
-  styleTags: [Tag!]
-  geoTags: [Tag!]
-  reviews: [Review!]
+  audienceTags: [EntityTag!]
+  mediumTags: [EntityTag!]
+  styleTags: [EntityTag!]
+  geoTags: [EntityTag!]
+  reviews: [EntityReview!]
   talents: [EventTalent!]
   venue: Venue!
   eventSeries: EventSeries
@@ -372,8 +372,8 @@ type EventForEdit {
   id: ID!
   status: StatusTypeEnum!
   version: Int!
-  links: [Link!]
-  images: [Image!]
+  links: [EntityLink!]
+  images: [EntityImage!]
   weSay: String
   notes: String
   description: String
@@ -407,14 +407,22 @@ type EventForEdit {
   additionalOpeningTimes: [DateOpeningTime!]
   specialOpeningTimes: [SpecialOpeningTime!]
   openingTimesClosures: [DateClosedTimeRange!]
-  audienceTags: [Tag!]
-  mediumTags: [Tag!]
-  styleTags: [Tag!]
-  geoTags: [Tag!]
-  reviews: [Review!]
+  audienceTags: [EntityTag!]
+  mediumTags: [EntityTag!]
+  styleTags: [EntityTag!]
+  geoTags: [EntityTag!]
+  reviews: [EntityReview!]
   talents: [EventTalentForEdit!]
   venueId: ID!
   eventSeriesId: ID
+}
+
+type EventResult {
+  node: Event
+}
+
+type EventForEditResult {
+  node: EventForEdit
 }
 
 type Query {
@@ -526,7 +534,7 @@ input CreateTalentInput {
 }
 
 type CreateTalentResult {
-  talent: Talent
+  node: Talent!
 }
 
 input UpdateTalentInput {
@@ -546,7 +554,7 @@ input UpdateTalentInput {
 }
 
 type UpdateTalentResult {
-  talent: Talent
+  node: Talent!
 }
 
 input CreateVenueInput {
@@ -576,7 +584,7 @@ input CreateVenueInput {
 }
 
 type CreateVenueResult {
-  venue: Venue
+  node: Venue!
 }
 
 input UpdateVenueInput {
@@ -608,7 +616,7 @@ input UpdateVenueInput {
 }
 
 type UpdateVenueResult {
-  venue: Venue
+  node: Venue!
 }
 
 input CreateEventSeriesInput {
@@ -626,7 +634,7 @@ input CreateEventSeriesInput {
 }
 
 type CreateEventSeriesResult {
-  eventSeries: EventSeries
+  node: EventSeries!
 }
 
 input UpdateEventSeriesInput {
@@ -646,7 +654,7 @@ input UpdateEventSeriesInput {
 }
 
 type UpdateEventSeriesResult {
-  eventSeries: EventSeries
+  node: EventSeries!
 }
 
 input CreateEventInput {
@@ -697,7 +705,7 @@ input CreateEventInput {
 }
 
 type CreateEventResult {
-  event: Event
+  node: Event!
 }
 
 input UpdateEventInput {
@@ -750,7 +758,7 @@ input UpdateEventInput {
 }
 
 type UpdateEventResult {
-  event: Event
+  node: Event!
 }
 
 input RefreshSearchIndexInput {
@@ -758,7 +766,7 @@ input RefreshSearchIndexInput {
 }
 
 type RefreshSearchIndexResult {
-  ok: Boolean
+  ok: Boolean!
 }
 
 type Mutation {

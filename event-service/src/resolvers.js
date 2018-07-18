@@ -20,73 +20,73 @@ export default {
   IsoShortDate,
   ShortTime,
   Query: {
-    async talent(__, params) {
+    async talent(parent, params) {
       return await talentService.get(params);
     },
-    async talentForEdit(__, params) {
+    async talentForEdit(parent, params) {
       return await talentService.getForEdit(params);
     },
-    async venue(__, params) {
+    async venue(parent, params) {
       return await venueService.get(params);
     },
-    async venueForEdit(__, params) {
+    async venueForEdit(parent, params) {
       return await venueService.getForEdit(params);
     },
-    async eventSeries(__, params) {
+    async eventSeries(parent, params) {
       return await eventSeriesService.get(params);
     },
-    async eventSeriesForEdit(__, params) {
+    async eventSeriesForEdit(parent, params) {
       return await eventSeriesService.getForEdit(params);
     },
-    async event(__, params) {
+    async event(parent, params) {
       return await eventService.get(params);
     },
-    async eventForEdit(__, params) {
+    async eventForEdit(parent, params) {
       return await eventService.getForEdit(params);
     }
   },
   Mutation: {
-    async createTalent(__, params, context) {
+    async createTalent(parent, params, context) {
       validator.validateUserForMutation(context);
       const talent = await talentService.createOrUpdate(params.input);
-      return { talent };
+      return { node: talent };
     },
-    async updateTalent(__, params, context) {
+    async updateTalent(parent, params, context) {
       validator.validateUserForMutation(context);
       const talent = await talentService.createOrUpdate(params.input);
-      return { talent };
+      return { node: talent };
     },
-    async createVenue(__, params, context) {
+    async createVenue(parent, params, context) {
       validator.validateUserForMutation(context);
       const venue = await venueService.createOrUpdate(params.input);
-      return { venue };
+      return { node: venue };
     },
-    async updateVenue(__, params, context) {
+    async updateVenue(parent, params, context) {
       validator.validateUserForMutation(context);
       const venue = await venueService.createOrUpdate(params.input);
-      return { venue };
+      return { node: venue };
     },
-    async createEventSeries(__, params, context) {
+    async createEventSeries(parent, params, context) {
       validator.validateUserForMutation(context);
       const eventSeries = await eventSeriesService.createOrUpdate(params.input);
-      return { eventSeries };
+      return { node: eventSeries };
     },
-    async updateEventSeries(__, params, context) {
+    async updateEventSeries(parent, params, context) {
       validator.validateUserForMutation(context);
       const eventSeries = await eventSeriesService.createOrUpdate(params.input);
-      return { eventSeries };
+      return { node: eventSeries };
     },
-    async createEvent(__, params, context) {
+    async createEvent(parent, params, context) {
       validator.validateUserForMutation(context);
       const event = await eventService.createOrUpdate(params.input);
-      return { event };
+      return { node: event };
     },
-    async updateEvent(__, params, context) {
+    async updateEvent(parent, params, context) {
       validator.validateUserForMutation(context);
       const event = await eventService.createOrUpdate(params.input);
-      return { event };
+      return { node: event };
     },
-    async refreshSearchIndex(__, params, context) {
+    async refreshSearchIndex(parent, params, context) {
       validator.validateUserForMutation(context);
       await searchIndexService.refreshSearchIndex(params.input);
       return { ok: true };

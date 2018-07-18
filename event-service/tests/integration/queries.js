@@ -46,7 +46,7 @@ mutation CreateEventSeries(
     occurrence: $occurrence
     summary: $summary
   }) {
-    eventSeries {
+    node {
       id
       name
       summary
@@ -86,7 +86,7 @@ mutation UpdateEventSeries(
     occurrence: $occurrence
     summary: $summary
   }) {
-    eventSeries {
+    node {
       id
       name
       summary
@@ -225,7 +225,7 @@ export const CREATE_EVENT_MUTATION = `
       talents: $talents
       reviews: $reviews
     }) {
-      event {
+      node {
         id
         name
         summary
@@ -342,7 +342,7 @@ export const UPDATE_EVENT_MUTATION = `
       talents: $talents
       reviews: $reviews
     }) {
-      event {
+      node {
         id
         name
         summary
@@ -412,7 +412,7 @@ export const CREATE_TALENT_MUTATION = `
       talentType: $talentType
       commonRole: $commonRole
     }) {
-      talent {
+      node {
         id
         firstNames
         lastName
@@ -453,7 +453,7 @@ export const UPDATE_TALENT_MUTATION = `
       talentType: $talentType
       commonRole: $commonRole
     }) {
-      talent {
+      node {
         id
         firstNames
         lastName
@@ -537,7 +537,7 @@ export const CREATE_VENUE_MUTATION = `
       openingTimesClosures: $openingTimesClosures
       namedClosures: $namedClosures
     }) {
-      venue {
+      node {
         id
         name
         venueType
@@ -602,7 +602,7 @@ export const UPDATE_VENUE_MUTATION = `
       openingTimesClosures: $openingTimesClosures
       namedClosures: $namedClosures
     }) {
-      venue {
+      node {
         id
         name
         venueType

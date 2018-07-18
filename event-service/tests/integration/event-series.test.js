@@ -82,7 +82,7 @@ describe("event series", () => {
     expect(response).toEqual({
       data: {
         createEventSeries: {
-          eventSeries: expect.objectContaining({
+          node: expect.objectContaining({
             summary: "Stand-up poetry"
           })
         }
@@ -202,7 +202,7 @@ describe("event series", () => {
     expect(response).toEqual({
       data: {
         updateEventSeries: {
-          eventSeries: expect.objectContaining({
+          node: expect.objectContaining({
             id: testEventSeriesId,
             summary: "Stand-up poetry New"
           })

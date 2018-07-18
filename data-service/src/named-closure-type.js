@@ -1,0 +1,4 @@
+export const BANK_HOLIDAYS = "BANK_HOLIDAYS";
+export const EASTER_SUNDAY = "EASTER_SUNDAY";
+export const ROSH_HASHANAH = "ROSH_HASHANAH";
+export const YOM_KIPPUR = "YOM_KIPPUR";

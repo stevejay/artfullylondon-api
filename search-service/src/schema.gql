@@ -129,7 +129,7 @@ interface SearchNode {
   imageColor: String
 }
 
-type EventDate {
+type SearchEventDate {
   date: IsoShortDate!
   from: ShortTime!
   to: ShortTime
@@ -156,7 +156,7 @@ type SearchEvent implements SearchNode {
   longitude: Float!
   dateFrom: IsoShortDate
   dateTo: IsoShortDate
-  dates: [EventDate!]
+  dates: [SearchEventDate!]
   externalEventId: String
 }
 

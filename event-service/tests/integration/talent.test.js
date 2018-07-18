@@ -82,7 +82,7 @@ describe("talent", () => {
     expect(response).toEqual({
       data: {
         createTalent: {
-          talent: expect.objectContaining({
+          node: expect.objectContaining({
             firstNames: "Byron",
             commonRole: "Poet"
           })
@@ -205,7 +205,7 @@ describe("talent", () => {
     expect(response).toEqual({
       data: {
         updateTalent: {
-          talent: expect.objectContaining({
+          node: expect.objectContaining({
             firstNames: "Byron New",
             commonRole: "Poet"
           })
