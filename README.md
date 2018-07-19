@@ -20,7 +20,7 @@ This repository contains the API that supports this functionality. It is compose
 
 ### Authentication
 
-Admin user authentication is handled using AWS Cognito while public user authentication is handled using Auth0. (Passwordless authentication was required for public users and AWS Cognito does not support that authentication method, as of June 2018.)
+Admin user authentication is handled using AWS Cognito while public user authentication is handled using Auth0. (Passwordless authentication was required for public users and, as of June 2018, AWS Cognito does not support that authentication method.)
 
 ## Development
 
@@ -46,7 +46,7 @@ On Windows, you can follow these steps to install and run LocalStack:
 
 #### Authentication
 
-When running the services locally, Cognito authentication is disabled. When running on a different environment, you need to have created a Cognito user pool for it. The instructions to do that are [here](https://stackoverflow.com/a/45253010).
+When running the services locally, Cognito authentication is enabled via a mock JWKS server. When running on a different environment, you need to have created a Cognito user pool for it. The instructions to do that are [here](https://stackoverflow.com/a/45253010).
 
 When running the User Service on any environment, you need to have created an Auth0 passwordless authentication account.
 
