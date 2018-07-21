@@ -7,7 +7,7 @@ describe("event normaliser", () => {
       name: "   Taming of the Shrew  ",
       summary: "   A contemporary update of this Shakespeare classic  ",
       description:
-        "  <p>A contemporary update of this Shakespeare classic by the acclaimed director Sam Mendes.</p>  ",
+        "  <p><script>alert('hello world')</script>A contemporary update of this Shakespeare classic by the acclaimed director Sam Mendes.</p>  ",
       descriptionCredit: "   Some credit   ",
       links: [
         { type: linkType.WIKIPEDIA, url: "   https://en.wikipedia.org/foo   " }

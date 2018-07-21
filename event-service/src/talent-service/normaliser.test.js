@@ -11,7 +11,7 @@ describe("talent normaliser", () => {
       status: statusType.ACTIVE,
       talentType: talentType.INDIVIDUAL,
       commonRole: "Actor   ",
-      description: "  An actor.  ",
+      description: "<p>An actor.<script>alert('hello world')</script></p>",
       descriptionCredit: " Credit  ",
       links: [
         { type: linkType.WIKIPEDIA, url: "   https://en.wikipedia.org/foo  " }
@@ -35,7 +35,7 @@ describe("talent normaliser", () => {
       status: statusType.ACTIVE,
       talentType: talentType.INDIVIDUAL,
       commonRole: "Actor",
-      description: "An actor.",
+      description: "<p>An actor.</p>",
       descriptionCredit: "Credit",
       links: [
         { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }

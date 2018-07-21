@@ -1,6 +1,7 @@
-import normalise from "normalise-request";
+import normalise from "../normalise";
 import {
   STRING_NORMALISER,
+  HTML_NORMALISER,
   LINKS_NORMALISER,
   IMAGES_NORMALISER
 } from "../entity/normaliser";
@@ -8,7 +9,7 @@ import {
 const EVENT_SERIES_NORMALISER = {
   name: STRING_NORMALISER,
   summary: STRING_NORMALISER,
-  description: STRING_NORMALISER,
+  description: HTML_NORMALISER,
   descriptionCredit: STRING_NORMALISER,
   occurrence: STRING_NORMALISER,
   links: LINKS_NORMALISER,

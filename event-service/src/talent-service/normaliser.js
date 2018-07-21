@@ -1,6 +1,7 @@
-import normalise from "normalise-request";
+import normalise from "../normalise";
 import {
   STRING_NORMALISER,
+  HTML_NORMALISER,
   LINKS_NORMALISER,
   IMAGES_NORMALISER
 } from "../entity/normaliser";
@@ -9,7 +10,7 @@ const TALENT_NORMALISER = {
   firstNames: STRING_NORMALISER,
   lastName: STRING_NORMALISER,
   commonRole: STRING_NORMALISER,
-  description: STRING_NORMALISER,
+  description: HTML_NORMALISER,
   descriptionCredit: STRING_NORMALISER,
   links: LINKS_NORMALISER,
   images: IMAGES_NORMALISER,

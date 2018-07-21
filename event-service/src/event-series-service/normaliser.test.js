@@ -60,7 +60,8 @@ describe("event series normaliser", () => {
       eventSeriesType: eventSeriesType.SEASON,
       occurrence: "  Some time of year   ",
       summary: "   A contemporary update of this Shakespeare classic   ",
-      description: "  A contemporary update.  ",
+      description:
+        "<p>A contemporary update.<script>alert('hello world')</script></p>",
       descriptionCredit: "   ",
       links: [],
       images: [],
@@ -76,7 +77,7 @@ describe("event series normaliser", () => {
       eventSeriesType: eventSeriesType.SEASON,
       occurrence: "Some time of year",
       summary: "A contemporary update of this Shakespeare classic",
-      description: "A contemporary update.",
+      description: "<p>A contemporary update.</p>",
       descriptionCredit: undefined,
       links: undefined,
       images: undefined,

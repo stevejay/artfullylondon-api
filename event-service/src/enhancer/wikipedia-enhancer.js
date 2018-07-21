@@ -19,7 +19,7 @@ export function createWikipediaUrl(entity) {
   }
 
   const title = wikipediaLink.url.substring(lastSlashIndex + 1);
-  return `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${title}&exchars=4000`;
+  return `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${title}&exchars=1200`;
 }
 
 export function parseWikipediaResponse(response) {

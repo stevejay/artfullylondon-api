@@ -13,7 +13,8 @@ describe("venue normaliser", () => {
       name: "Almeida Theatre   ",
       status: statusType.ACTIVE,
       venueType: venueType.THEATRE,
-      description: "   description   ",
+      description:
+        "   <p>description<script>alert('hello world')</script></p>   ",
       descriptionCredit: " Some credit   ",
       address: "Almeida St\n   Islington  ,  \r\nLondon",
       postcode: "n1   1ta",
@@ -53,7 +54,7 @@ describe("venue normaliser", () => {
       name: "Almeida Theatre",
       status: statusType.ACTIVE,
       venueType: venueType.THEATRE,
-      description: "description",
+      description: "<p>description</p>",
       descriptionCredit: "Some credit",
       address: "Almeida St\nIslington\nLondon",
       postcode: "N1 1TA",

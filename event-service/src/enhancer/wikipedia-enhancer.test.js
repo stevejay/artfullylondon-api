@@ -13,7 +13,7 @@ describe("createWikipediaUrl", () => {
     [{ links: [WIKIPEDIA_LINK], description: "Some description" }, null],
     [
       { links: [WIKIPEDIA_LINK] },
-      "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=Rabbit&exchars=4000"
+      "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=Rabbit&exchars=1200"
     ]
   ])("%o should create url %s", (params, expected) => {
     const result = wikipediaEnhancer.createWikipediaUrl(params);
