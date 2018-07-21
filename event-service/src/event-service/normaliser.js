@@ -1,6 +1,7 @@
-import normalise from "normalise-request";
+import normalise from "../normalise";
 import {
   STRING_NORMALISER,
+  HTML_NORMALISER,
   BASIC_ARRAY_NORMALISER,
   LINKS_NORMALISER,
   IMAGES_NORMALISER
@@ -79,7 +80,7 @@ const EVENT_NORMALISER = {
     }
   },
   soldOutPerformances: BASIC_ARRAY_NORMALISER,
-  description: STRING_NORMALISER,
+  description: HTML_NORMALISER,
   descriptionCredit: STRING_NORMALISER,
   links: LINKS_NORMALISER,
   images: IMAGES_NORMALISER,

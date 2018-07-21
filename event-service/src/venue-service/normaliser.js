@@ -1,6 +1,7 @@
-import normalise from "normalise-request";
+import normalise from "../normalise";
 import {
   STRING_NORMALISER,
+  HTML_NORMALISER,
   BASIC_ARRAY_NORMALISER,
   LINKS_NORMALISER,
   IMAGES_NORMALISER
@@ -23,7 +24,7 @@ const VENUE_NORMALISER = {
     collapseWhitespace: true,
     ...STRING_NORMALISER
   },
-  description: STRING_NORMALISER,
+  description: HTML_NORMALISER,
   descriptionCredit: STRING_NORMALISER,
   openingTimes: BASIC_ARRAY_NORMALISER,
   additionalOpeningTimes: BASIC_ARRAY_NORMALISER,

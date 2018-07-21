@@ -3,6 +3,12 @@ export const STRING_NORMALISER = {
   undefinedIfEmpty: true
 };
 
+export const HTML_NORMALISER = {
+  trim: true,
+  sanitizeHtml: true,
+  undefinedIfEmpty: true
+};
+
 export const BASIC_ARRAY_NORMALISER = {
   undefinedIfEmpty: true
 };
