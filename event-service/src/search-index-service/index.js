@@ -15,7 +15,8 @@ export async function updateEventSearchIndex(message) {
   let dbEvent = await eventRepository.get(message.eventId, true);
   const referencedEntities = await eventRepository.getReferencedEntities(
     dbEvent,
-    true
+    true,
+    { fetchVenue: true, fetchEventSeries: true, fetchTalents: true }
   );
   dbEvent = eventMapper.mergeReferencedEntities(dbEvent, referencedEntities);
   await notifier.indexEntity(

@@ -43,11 +43,13 @@ export async function createOrUpdate(event) {
   await entityRepository.write(EVENT_TABLE_NAME, event);
 }
 
-export function getReferencedEntities(event, consistentRead) {
+export function getReferencedEntities(event, consistentRead, options) {
   return getReferencedEntitiesImpl(
-    event.venueId,
-    event.eventSeriesId,
-    (event.talents || []).map(talent => talent.id),
+    options.fetchVenue ? event.venueId : null,
+    options.fetchEventSeries ? event.eventSeriesId : null,
+    options.fetchTalents
+      ? (event.talents || []).map(talent => talent.id)
+      : null,
     consistentRead
   );
 }
@@ -58,6 +60,10 @@ async function getReferencedEntitiesImpl(
   talentIds,
   consistentRead
 ) {
+  if (!venueId && !eventSeriesId && _.isEmpty(talentIds)) {
+    return null;
+  }
+
   const params = {
     RequestItems: {}
   };

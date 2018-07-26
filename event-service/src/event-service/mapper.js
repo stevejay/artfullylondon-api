@@ -223,7 +223,8 @@ export const mapResponse = mappr(
       "version"
     ]),
     {
-      venue: params => venueMapper.mapResponse(params.venue),
+      venue: params =>
+        params.venue ? venueMapper.mapResponse(params.venue) : undefined,
       eventSeries: params =>
         params.eventSeries
           ? eventSeriesMapper.mapResponse(params.eventSeries)
@@ -234,7 +235,9 @@ export const mapResponse = mappr(
           : params.talents.map(talent => ({
               roles: talent.roles,
               characters: talent.characters,
-              talent: talentMapper.mapResponse(talent.talent)
+              talent: talent.talent
+                ? talentMapper.mapResponse(talent.talent)
+                : undefined
             }))
     }
   ),
@@ -246,18 +249,25 @@ export const mapResponse = mappr(
 );
 
 export function mergeReferencedEntities(event, referencedEntities) {
-  const talentsIdMap = _.keyBy(referencedEntities.talents, "id");
+  if (!referencedEntities) {
+    return event;
+  }
   return {
     ...event,
-    venue: referencedEntities.venue,
+    venue: referencedEntities.venue || undefined,
     eventSeries: referencedEntities.eventSeries || undefined,
-    talents: _.isEmpty(event.talents)
-      ? undefined
-      : event.talents.map(talent => ({
-          ...talent,
-          talent: talentsIdMap[talent.id]
-        }))
+    talents: _.isEmpty(referencedEntities.talents)
+      ? event.talents
+      : mergeReferencedTalentEntities(event.talents, referencedEntities.talents)
   };
+}
+
+function mergeReferencedTalentEntities(eventTalents, referencedTalents) {
+  const talentIdMap = _.keyBy(referencedTalents, "id");
+  return eventTalents.map(talent => ({
+    ...talent,
+    talent: talentIdMap[talent.id]
+  }));
 }
 
 export function fixUpEventValuesFromReferencedEntities(event) {

@@ -594,4 +594,68 @@ describe("mapResponse", () => {
       copyright: "bar"
     });
   });
+
+  it("should map an exhibition event with no requested referenced entities", () => {
+    const dbItem = testData.createFullExhibitionDbEvent();
+    const referencedEntities = {};
+    const event = mapper.mergeReferencedEntities(dbItem, referencedEntities);
+    const result = mapper.mapResponse(event);
+
+    expect(result).toEqual({
+      id: testData.PERFORMANCE_EVENT_ID,
+      status: statusType.ACTIVE,
+      name: "Taming of the Shrew",
+      eventType: eventType.EXHIBITION,
+      occurrenceType: occurrenceType.BOUNDED,
+      dateFrom: "2016-02-11",
+      dateTo: "2016-02-13",
+      costType: costType.PAID,
+      bookingType: bookingType.NOT_REQUIRED,
+      timedEntry: true,
+      summary: "A Shakespearian classic",
+      description: "A contemporary update of this Shakespearian classic",
+      descriptionCredit: "Description credit",
+      rating: 3,
+      minAge: 14,
+      maxAge: 18,
+      links: [
+        { type: linkType.WIKIPEDIA, url: "https://en.wikipedia.org/foo" }
+      ],
+      venueGuidance: "Through the curtains",
+      useVenueOpeningTimes: false,
+      openingTimes: [{ day: 7, from: "12:00", to: "16:00" }],
+      additionalOpeningTimes: [
+        { date: "2016-08-15", from: "17:00", to: "18:00" }
+      ],
+      duration: "01:00",
+      talents: [
+        {
+          roles: ["Director"]
+        }
+      ],
+      audienceTags: [{ id: "audience/families", label: "families" }],
+      mediumTags: [{ id: "medium/sculpture", label: "sculpture" }],
+      styleTags: [{ id: "style/contemporary", label: "contemporary" }],
+      geoTags: [
+        { id: "geo/europe", label: "europe" },
+        { id: "geo/spain", label: "spain" }
+      ],
+      images: [
+        {
+          id: "12345678123456781234567812345678",
+          ratio: 1.2,
+          copyright: "foo"
+        }
+      ],
+      mainImage: {
+        id: "12345678123456781234567812345678",
+        ratio: 1.2,
+        copyright: "foo"
+      },
+      reviews: [{ source: "The Guardian", rating: 4 }],
+      weSay: "something",
+      notes: "some notes",
+      version: 4
+    });
+  });
 });

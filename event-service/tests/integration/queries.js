@@ -140,6 +140,37 @@ export const EVENT_FOR_EDIT_QUERY = `
   }
 `;
 
+export const EVENT_FOR_EDIT_WITH_ALL_REFERENCES_QUERY = `
+  query GetEventForEdit($id: ID!) {
+    eventForEdit(id: $id) {
+      node {
+        id
+        name
+        summary
+        version
+        venueId
+        venue {
+          id
+          name
+        }
+        eventSeriesId
+        eventSeries {
+          id
+          name
+        }
+        talents {
+          id
+          talent {
+            id
+            firstNames
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const CREATE_EVENT_MUTATION = `
   mutation CreateEvent(
     $status: StatusTypeEnum!

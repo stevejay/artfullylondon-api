@@ -15,6 +15,7 @@ import {
   UPDATE_EVENT_SERIES_MUTATION,
   EVENT_QUERY,
   EVENT_FOR_EDIT_QUERY,
+  EVENT_FOR_EDIT_WITH_ALL_REFERENCES_QUERY,
   CREATE_EVENT_MUTATION,
   UPDATE_EVENT_MUTATION,
   CREATE_TALENT_MUTATION,
@@ -233,6 +234,51 @@ describe("event", () => {
             venueId: testVenueId,
             eventSeriesId: testEventSeriesId,
             talents: [{ id: testTalentId }]
+          })
+        }
+      }
+    });
+  });
+
+  it("should get the event for edit with referenced entity details", async () => {
+    const response = await request({
+      uri: "http://localhost:3014/graphql",
+      json: true,
+      method: "POST",
+      headers: { Authorization: authUtils.createReaderAuthToken() },
+      body: {
+        query: EVENT_FOR_EDIT_WITH_ALL_REFERENCES_QUERY,
+        variables: { id: testEventId }
+      },
+      timeout: 14000
+    });
+
+    expect(response).toEqual({
+      data: {
+        eventForEdit: {
+          node: expect.objectContaining({
+            id: testEventId,
+            summary: "An exhibition of paintings by Zaha Hadid",
+            version: 1,
+            venueId: testVenueId,
+            venue: expect.objectContaining({
+              id: testVenueId,
+              name: testVenueBody.name
+            }),
+            eventSeriesId: testEventSeriesId,
+            eventSeries: expect.objectContaining({
+              id: testEventSeriesId,
+              name: testEventSeriesBody.name
+            }),
+            talents: [
+              {
+                id: testTalentId,
+                talent: expect.objectContaining({
+                  id: testTalentId,
+                  lastName: testTalentBody.lastName
+                })
+              }
+            ]
           })
         }
       }

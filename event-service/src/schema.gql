@@ -229,6 +229,7 @@ type EventTalentForEdit {
   roles: [String!]
   characters: [String!]
   id: ID!
+  talent: Talent!
 }
 
 type Venue {
@@ -415,6 +416,8 @@ type EventForEdit {
   talents: [EventTalentForEdit!]
   venueId: ID!
   eventSeriesId: ID
+  venue: Venue!
+  eventSeries: EventSeries
 }
 
 type TalentResult {
