@@ -1,4 +1,6 @@
 import { RegularExpression } from "@okgrow/graphql-scalars";
+import parseFields from "graphql-parse-fields";
+import _ from "lodash";
 import * as talentService from "./talent-service";
 import * as venueService from "./venue-service";
 import * as eventSeriesService from "./event-series-service";
@@ -15,6 +17,16 @@ const ShortTime = new RegularExpression(
   "ShortTime",
   /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/
 );
+
+// TODO move this
+function getEventFetchOptions(info) {
+  const fields = parseFields(info);
+  return {
+    fetchVenue: _.get(fields, "node.venue", false),
+    fetchEventSeries: _.get(fields, "node.eventSeries", false),
+    fetchTalents: _.get(fields, "node.talents.talent", false)
+  };
+}
 
 export default {
   IsoShortDate,
@@ -38,11 +50,13 @@ export default {
     async eventSeriesForEdit(parent, params) {
       return { node: await eventSeriesService.getForEdit(params) };
     },
-    async event(parent, params) {
-      return { node: await eventService.get(params) };
+    async event(parent, params, context, info) {
+      const options = getEventFetchOptions(info);
+      return { node: await eventService.get(params, options) };
     },
-    async eventForEdit(parent, params) {
-      return { node: await eventService.getForEdit(params) };
+    async eventForEdit(parent, params, context, info) {
+      const options = getEventFetchOptions(info);
+      return { node: await eventService.getForEdit(params, options) };
     }
   },
   Mutation: {
@@ -78,11 +92,13 @@ export default {
     },
     async createEvent(parent, params, context) {
       validator.validateUserForMutation(context);
+      // TODO could use info to only get requested referenced entities
       const event = await eventService.createOrUpdate(params.input);
       return { node: event };
     },
     async updateEvent(parent, params, context) {
       validator.validateUserForMutation(context);
+      // TODO could use info to only get requested referenced entities
       const event = await eventService.createOrUpdate(params.input);
       return { node: event };
     },

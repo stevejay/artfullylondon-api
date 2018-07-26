@@ -4,21 +4,26 @@ import * as validator from "./validator";
 import * as mapper from "./mapper";
 import * as notifier from "../notifier";
 
-export async function get(params) {
-  let dbEvent = await eventRepository.tryGet(params.id, false);
+export async function get(params, options) {
+  const dbEvent = await getImpl(params, options, false);
+  return dbEvent ? mapper.mapResponse(dbEvent) : null;
+}
+
+export async function getForEdit(params, options) {
+  return await getImpl(params, options, true);
+}
+
+async function getImpl(params, options, consistentRead) {
+  let dbEvent = await eventRepository.tryGet(params.id, consistentRead);
   if (!dbEvent) {
     return null;
   }
   const referencedEntities = await eventRepository.getReferencedEntities(
     dbEvent,
-    false
+    consistentRead,
+    options
   );
-  dbEvent = mapper.mergeReferencedEntities(dbEvent, referencedEntities);
-  return mapper.mapResponse(dbEvent);
-}
-
-export async function getForEdit(params) {
-  return await eventRepository.tryGet(params.id, true);
+  return mapper.mergeReferencedEntities(dbEvent, referencedEntities);
 }
 
 export async function createOrUpdate(params) {
@@ -29,7 +34,8 @@ export async function createOrUpdate(params) {
   await notifier.updateEvent(dbEvent.id);
   const referencedEntities = await eventRepository.getReferencedEntities(
     dbEvent,
-    false
+    false,
+    { fetchVenue: true, fetchEventSeries: true, fetchTalents: true }
   );
   dbEvent = mapper.mergeReferencedEntities(dbEvent, referencedEntities);
   return mapper.mapResponse(dbEvent);
