@@ -12,8 +12,6 @@ export default {
     },
     // TODO make a single call to the db.
     watches: (__, ___, context, info) => {
-      console.log("INFO", JSON.stringify(info));
-
       return {
         async tag() {
           return await watchService.getWatches({

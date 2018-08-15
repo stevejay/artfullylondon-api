@@ -20,7 +20,7 @@ async function handlerImpl(event) {
     ...policy,
     context: {
       cognitoUsername: payload["cognito:username"],
-      isEditor: (payload["cognito:groups"] || []).includes("editors")
+      isEditor: (payload["cognito:groups"] || []).includes("editors").toString()
     }
   };
 }
