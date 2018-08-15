@@ -1,5 +1,5 @@
 export function validateUserForMutation(context) {
-  if (!context.authorizer.isEditor) {
+  if (context.authorizer.isEditor !== "true") {
     throw new Error("[401] User not authorized for requested action");
   }
 }

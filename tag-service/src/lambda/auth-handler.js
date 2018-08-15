@@ -16,13 +16,14 @@ async function handlerImpl(event) {
   const authPolicy = new AuthPolicy(payload.sub, event.methodArn);
   authPolicy.allowMethod(AuthPolicy.HttpVerb.ALL, "/*");
   const policy = authPolicy.build();
-  return {
+  const result = {
     ...policy,
     context: {
       cognitoUsername: payload["cognito:username"],
-      isEditor: (payload["cognito:groups"] || []).includes("editors")
+      isEditor: (payload["cognito:groups"] || []).includes("editors").toString()
     }
   };
+  return result;
 }
 
 export function handler(event, context, cb) {
